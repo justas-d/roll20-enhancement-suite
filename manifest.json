@@ -1,7 +1,7 @@
 {
 
   "manifest_version": 2,
-  "name": "Roll20 Character IO",
+  "name": "Roll20 Character Sheet IO",
   "version": "1.0",
 
   "description": "Provides import and export to file options for roll20 character sheets.",
@@ -13,8 +13,9 @@
   "content_scripts": [
     {
       "matches": ["*://app.roll20.net/editor/*"],
-      "js": ["io.js"]
+      "js": ["roll20-io-bootstrap.js"]
     }
-  ]
+  ],
 
+  "web_accessible_resources": ["roll20-io-payload.js"]
 }
