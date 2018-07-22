@@ -1,14 +1,22 @@
-const injectId = "io-script";
+const injectId = "io-scripts";
 
 let existing = document.getElementById(injectId);
-
 if(existing) {
     document.head.removeChild(existing);
 }
 
-var s = document.createElement("script");
-s.src = browser.extension.getURL("roll20-io-payload.js");
-s.id = "io-script";
-s.onload = function() { this.remove(); };
-document.head.appendChild(s);
-//(document.head || document.documentElement).appendChild(s);
+var root = document.createElement("div");
+root.id = injectId;
+
+function createScript(payload, module) {
+    var s = document.createElement("script");
+    s.src = browser.extension.getURL(payload);
+    s.onload = () => { this.remove(); };
+
+    root.appendChild(s);
+}
+
+createScript("FileSaver.js");
+createScript("roll20-io-payload.js");
+
+document.head.appendChild(root);

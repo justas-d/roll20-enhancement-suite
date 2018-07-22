@@ -17,5 +17,5 @@
     }
   ],
 
-  "web_accessible_resources": ["roll20-io-payload.js"]
+  "web_accessible_resources": ["roll20-io-payload.js", "FileSaver.js"]
 }
