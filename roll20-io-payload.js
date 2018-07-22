@@ -68,7 +68,7 @@ function createAndImportPc(fileHandle, errCallback) {
     }
 
     let reader = new FileReader();
-    reader.readAsText(file);
+    reader.readAsText(fileHandle);
 
     reader.onload = (e) => {
         let data = JSON.parse(e.target.result);
