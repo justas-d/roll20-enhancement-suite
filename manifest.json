@@ -6,6 +6,10 @@
 
   "description": "Provides import and export to file options for roll20 character sheets.",
 
+  "icons": {
+      "48": "icon.svg"
+  },
+
 
   "content_scripts": [
     {
