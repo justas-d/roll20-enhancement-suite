@@ -1,15 +1,14 @@
 {
 
   "manifest_version": 2,
-  "name": "Roll20 Character Sheet IO",
+  "name": "Roll20 Character Import/Export",
   "version": "1.0",
 
-  "description": "Provides import and export to file options for roll20 character sheets.",
+  "description": "Allows JSON importing and exporting of attribute based roll20 character sheets.",
 
   "icons": {
       "48": "icon.svg"
   },
-
 
   "content_scripts": [
     {
