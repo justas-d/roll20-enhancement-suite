@@ -1,5 +1,7 @@
 # roll20-character-exporter-importer
-Allows JSON importing/exporting of roll20 character sheets. WebExtentions plugin.
+Allows JSON importing/exporting of roll20 character sheets.
+Available as a WebExtentions plugin:
+* [for Firefox](https://addons.mozilla.org/en-US/firefox/addon/roll20-character-import-export/)
 
 ## Exporting a character
 You can export a character by opening up it's sheet and pressing the "Export" button on the header. 
