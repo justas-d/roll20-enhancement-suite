@@ -13,9 +13,6 @@ function exportPc(pc) {
     var jsonBlob = new Blob([jsonData], { type: 'data:application/javascript;charset=utf-8' });
 
     saveAs(jsonBlob, data.name + ".json");
-
-    //    var link=window.URL.createObjectURL(jsonBlob);
-    //    window.open(link, "_blank");
 }
 
 function matchAndProcessTitle(t, e) {
