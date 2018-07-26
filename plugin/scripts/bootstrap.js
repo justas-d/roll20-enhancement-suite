@@ -1,5 +1,5 @@
 console.log("=================");
-console.log("r20io bootstrap");
+console.log("r20es bootstrap");
 console.log("=================");
 
 
@@ -23,7 +23,9 @@ function createScript(payload, module) {
     root.appendChild(s);
 }
 
-createScript("FileSaver.js");
-createScript("roll20-io-payload.js");
+createScript("scripts/FileSaver.js");
+createScript("scripts/payload.js");
 
 document.head.appendChild(root);
+
+console.log("r20es bootstrap done");

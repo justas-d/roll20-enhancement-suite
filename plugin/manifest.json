@@ -10,12 +10,22 @@
       "48": "icon.svg"
   },
 
+  "permissions": [
+    "*://app.roll20.net/editor/*",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+
   "content_scripts": [
     {
       "matches": ["*://app.roll20.net/editor/*"],
-      "js": ["roll20-io-bootstrap.js"]
+      "js": ["scripts/bootstrap.js"]
     }
   ],
 
-  "web_accessible_resources": ["roll20-io-payload.js", "FileSaver.js"]
+  "background": {
+      "scripts": ["scripts/background.js"]
+  },
+
+  "web_accessible_resources": ["scrips/payload.js", "scripts/FileSaver.js"]
 }
