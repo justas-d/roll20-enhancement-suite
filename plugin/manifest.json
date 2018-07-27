@@ -1,10 +1,10 @@
 {
 
   "manifest_version": 2,
-  "name": "Roll20 Character Import/Export",
+  "name": "Roll20 Enhancment Suite",
   "version": "1.0",
 
-  "description": "Allows JSON importing and exporting of attribute based roll20 character sheets.",
+  "description": "Bunch of improvements to roll20.",
 
   "icons": {
       "48": "icon.svg"
@@ -13,7 +13,8 @@
   "permissions": [
     "*://app.roll20.net/editor/*",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "storage"
   ],
 
   "content_scripts": [
@@ -24,7 +25,13 @@
   ],
 
   "background": {
-      "scripts": ["scripts/background.js"]
+      "scripts": ["hooks.js", "scripts/background.js"]
+  },
+
+  "browser_action": {
+    "default_icon": "icon.svg",
+    "default_title": "Roll20 Enhancment Suite",
+    "default_popup": "popup/index.html"
   },
 
   "web_accessible_resources": ["scrips/payload.js", "scripts/FileSaver.js"]

@@ -1,7 +1,8 @@
 # r20es
 
 ## Canvas
-* Render the layer of token (Have a little "BG, PL, GM, DL" in the top right of the token, gm's only)
+* DONE Render the layer of token (Have a little "BG, PL, GM, DL" in the top right of the token, gm's only)
+
 * Right click -> Quick spawn from journal with a fuzzy search
 * Shift + mwheel zoom
 * Local storage -> mark tokens as permenantely GM only.
@@ -15,6 +16,7 @@
 * Right click -> duplicate
 
 ## Misc
+* Remove countdown at the start
 * Transluceny on the paper divs.
 * Keybind for going forward/back in initiative. (Mousetrap.)
 * Autoselect token when it's their turn.
