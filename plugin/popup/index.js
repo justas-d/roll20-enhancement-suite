@@ -5,18 +5,14 @@ var sending = browser.runtime.sendMessage(null, {
 
 function drawHooks(hooks) {
 
-    console.log("drawing hooks");
-    console.log(hooks);
-
     let root = document.getElementById("hooks");
-    console.log(root);
 
     while (root.firstChild) {
         root.removeChild(root.firstChild);
     }
 
-    for(let i = 0; i < hooks.length; i++) {
-        let hook = hooks[i];
+    for(let key in hooks) {
+        let hook = hooks[key];
 
         let elem = document.createElement("div");
         let input = document.createElement("input");
@@ -26,7 +22,7 @@ function drawHooks(hooks) {
             var sending = browser.runtime.sendMessage(null, {
                 background: {
                     type: "update_hook_enabled",
-                    hookId: i,
+                    hookId: key,
                     state: e.target.checked,
                 }
             });
@@ -46,7 +42,3 @@ browser.runtime.onMessage.addListener((msg) => {
         drawHooks(msg.popup.hooks);
     }
 });
-
-//    <input type="checkbox">Developer mode</input>
-
-

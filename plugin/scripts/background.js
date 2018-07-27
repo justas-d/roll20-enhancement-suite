@@ -1,42 +1,53 @@
 window.r20es = window.r20es || {};
 
-window.r20es.hooks = [
-    {
+window.r20es.hooks = {
+
+    dev_mode: {
         enabled: true,
         name: "Developer mode",
-        id: "dev_mode",
         includes: "/editor/startjs/",
+
         find: "environment: \"production\"",
         patch: "environment: \"development\"",
     },
 
-    {
+
+    token_layer_drawing: {
         enabled: true,
         name: "Token layer drawing (GM Only)",
-        id: "token_layer_drawing",
         includes: "assets/app.js",
+
         find: "this.model.view.updateBackdrops(e),this.active",
         patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es.tokenDrawBg(e, this), this.active",
+    },
+
+    seenad_override: {
+        enabled: true,
+        name: "Skip ad",
+        includes: "assets/app.js",
+
+        find: "showGoogleAd=function(){",
+        patch: "showGoogleAd=function(){return;"
     }
-];
+};
+
+browser.runtime.onConnect.addListener(port => {
+    port.postMessage({hooks: window.r20es.hooks});
+});
 
 {
     let keys = {};
-    for(let i = 0; i < window.r20es.hooks.length; i++) {
-        keys[window.r20es.hooks[i].id] = true;
-    }
 
-    console.log(keys);
+    for(let id in window.r20es.hooks) {
+        keys[id] = true;
+    }
 
     browser.storage.local.get(keys)
         .then(p => {
-            console.log(p);
             for(var key in p) {
-                for(let hook of window.r20es.hooks) {
-                    if(hook.id === key) {
-                        hook.enabled = p[key];
-                        console.log(`${key}: ${hook.enabled}`);
-                    }
+                let hook = window.r20es.hooks[key];
+                if(hook) {
+                    hook.enabled = p[key];
                 }
             }
         });
@@ -55,34 +66,46 @@ browser.runtime.onMessage.addListener((msg) => {
             hook.enabled = msg.background.state;
 
             let save = {};
-            save[hook.id] = hook.enabled;
+            save[msg.background.hookId] = hook.enabled;
             browser.storage.local.set(save);
         }
     }
 });
 
+function tryPatch(dt, hook, mod) {
+    if(dt.url.includes(hook.includes)) {
+        console.log(`[${hook.includes}] patching`);
+        let filter = browser.webRequest.filterResponseData(dt.requestId);
+        let decoder = new TextDecoder("utf-8");
+        let encoder = new TextEncoder();
+
+        let str = "";
+            filter.ondata = event => {
+            str += decoder.decode(event.data, {stream: true});
+        };
+
+        filter.onstop = event => {
+            str = str.replace(mod.find, mod.patch);
+            console.log(`[${hook.includes}] [${mod.find}] done!`);
+            
+            filter.write(encoder.encode(str));
+            filter.close();
+        };
+    }
+}
+
 function listener(dt) {
-    for(let hook of window.r20es.hooks) {
+    for(let id in window.r20es.hooks) {
+        let hook = window.r20es.hooks[id];
+
         if(!hook.enabled) continue;
 
-        if(dt.url.includes(hook.includes)) {
-            console.log(`[${hook.includes}] patching`);
-            let filter = browser.webRequest.filterResponseData(dt.requestId);
-            let decoder = new TextDecoder("utf-8");
-            let encoder = new TextEncoder();
-
-            let str = "";
-                filter.ondata = event => {
-                str += decoder.decode(event.data, {stream: true});
-            };
-
-            filter.onstop = event => {
-                str = str.replace(hook.find, hook.patch);
-                console.log(`[${hook.includes}] done!`);
-                
-                filter.write(encoder.encode(str));
-                filter.close();
-            };
+        if(hook.mods) {
+            for(let mod of hook.mods) {
+                tryPatch(dt, hook, mod);
+            }
+        } else {
+            tryPatch(dt, hook, hook);
         }
     }
 }

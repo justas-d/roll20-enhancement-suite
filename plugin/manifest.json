@@ -34,5 +34,16 @@
     "default_popup": "popup/index.html"
   },
 
-  "web_accessible_resources": ["scrips/payload.js", "scripts/FileSaver.js"]
+  "applications": {
+    "gecko": {
+      "id": "{ffed5dfa-f0e1-403d-905d-ac3f698660a7}"
+     }
+  },
+
+  "web_accessible_resources": [
+      "scrips/payload.js",
+      "scripts/FileSaver.js",
+      "scripts/draw_current_layer.js",
+      "scripts/character_io.js"
+  ]
 }

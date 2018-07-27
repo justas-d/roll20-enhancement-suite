@@ -16,7 +16,8 @@
 * Right click -> duplicate
 
 ## Misc
-* Remove countdown at the start
+* DONE Remove countdown at the start
+
 * Transluceny on the paper divs.
 * Keybind for going forward/back in initiative. (Mousetrap.)
 * Autoselect token when it's their turn.
