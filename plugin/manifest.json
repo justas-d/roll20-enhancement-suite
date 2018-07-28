@@ -44,6 +44,7 @@
       "scrips/payload.js",
       "scripts/FileSaver.js",
       "scripts/draw_current_layer.js",
-      "scripts/character_io.js"
+      "scripts/character_io.js",
+      "scripts/bulk_initiative.js"
   ]
 }

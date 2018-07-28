@@ -24,7 +24,6 @@ function createScript(payload, module) {
 
 createScript("scripts/FileSaver.js");
 createScript("scripts/payload.js");
-createScript("scripts/character_io.js");
 
 document.head.appendChild(root);
 
@@ -32,8 +31,11 @@ var bg = browser.runtime.connect("{ffed5dfa-f0e1-403d-905d-ac3f698660a7}");
 
 function bgListener(msg) {
     if(msg.hooks) {
-        if(msg.hooks.token_layer_drawing.enabled) {
-            createScript("scripts/draw_current_layer.js");
+        for(let id in msg.hooks) {
+            let hook = msg.hooks[id];
+            if(hook.enabled && hook.inject) {
+                createScript(hook.inject);
+            }
         }
     }
 

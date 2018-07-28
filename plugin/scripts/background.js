@@ -5,8 +5,8 @@ window.r20es.hooks = {
     dev_mode: {
         enabled: true,
         name: "Developer mode",
-        includes: "/editor/startjs/",
 
+        includes: "/editor/startjs/",
         find: "environment: \"production\"",
         patch: "environment: \"development\"",
     },
@@ -15,8 +15,10 @@ window.r20es.hooks = {
     token_layer_drawing: {
         enabled: true,
         name: "Token layer drawing (GM Only)",
-        includes: "assets/app.js",
 
+        inject: "scripts/draw_current_layer.js",
+
+        includes: "assets/app.js",
         find: "this.model.view.updateBackdrops(e),this.active",
         patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es.tokenDrawBg(e, this), this.active",
     },
@@ -24,10 +26,24 @@ window.r20es.hooks = {
     seenad_override: {
         enabled: true,
         name: "Skip ad",
-        includes: "assets/app.js",
 
-        find: "showGoogleAd=function(){",
-        patch: "showGoogleAd=function(){return;"
+        includes: "/editor/startjs/",
+        find: "d20ext.showGoogleAd();",
+        patch: 'window.d20ext.seenad = !0, $("#loading-overlay").find("div").hide(), window.currentPlayer && d20.Campaign.pages.length > 0 && d20.Campaign.handlePlayerPageChanges(), void $.get("/editor/startping/true");'
+    },
+
+    bulk_initiative: {
+        enabled: true,
+        name: "Bulk Initiative",
+
+        inject: "scripts/bulk_initiative.js",
+    },
+
+    character_io: {
+        enabled: true,
+        name: "Character Exporter/Importer",
+
+        inject: "scripts/character_io.js",
     }
 };
 
@@ -73,25 +89,23 @@ browser.runtime.onMessage.addListener((msg) => {
 });
 
 function tryPatch(dt, hook, mod) {
-    if(dt.url.includes(hook.includes)) {
-        console.log(`[${hook.includes}] patching`);
-        let filter = browser.webRequest.filterResponseData(dt.requestId);
-        let decoder = new TextDecoder("utf-8");
-        let encoder = new TextEncoder();
+    console.log(`[${hook.includes}] patching`);
+    let filter = browser.webRequest.filterResponseData(dt.requestId);
+    let decoder = new TextDecoder("utf-8");
+    let encoder = new TextEncoder();
 
-        let str = "";
-            filter.ondata = event => {
-            str += decoder.decode(event.data, {stream: true});
-        };
+    let str = "";
+        filter.ondata = event => {
+        str += decoder.decode(event.data, {stream: true});
+    };
 
-        filter.onstop = event => {
-            str = str.replace(mod.find, mod.patch);
-            console.log(`[${hook.includes}] [${mod.find}] done!`);
-            
-            filter.write(encoder.encode(str));
-            filter.close();
-        };
-    }
+    filter.onstop = event => {
+        str = str.replace(mod.find, mod.patch);
+        console.log(`[${hook.includes}] [${mod.find}] done!`);
+        
+        filter.write(encoder.encode(str));
+        filter.close();
+    };
 }
 
 function listener(dt) {
@@ -100,12 +114,15 @@ function listener(dt) {
 
         if(!hook.enabled) continue;
 
-        if(hook.mods) {
-            for(let mod of hook.mods) {
-                tryPatch(dt, hook, mod);
+
+        if(hook.includes && dt.url.includes(hook.includes)) {
+            if(hook.mods) {
+                for(let mod of hook.mods) {
+                    tryPatch(dt, hook, mod);
+                }
+            } else {
+                tryPatch(dt, hook, hook);
             }
-        } else {
-            tryPatch(dt, hook, hook);
         }
     }
 }
