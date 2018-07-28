@@ -1,6 +1,5 @@
 window.r20es = window.r20es || {};
 
-// selection:created
 window.r20es.hooks = {
 
     expose_d20: {
@@ -8,8 +7,8 @@ window.r20es.hooks = {
         force: true,
 
         includes: "assets/app.js",
-        find: "finalPageLoad=function(){",
-        patch: "finalPageLoad=function(){window.d20=d20,"
+        find: "window.d20=d20)",
+        patch: "window.d20=d20);window.d20=d20;",
     },
 
     dev_mode: {
