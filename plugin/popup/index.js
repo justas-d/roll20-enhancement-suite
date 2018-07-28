@@ -13,6 +13,7 @@ function drawHooks(hooks) {
 
     for(let key in hooks) {
         let hook = hooks[key];
+        if(hook.force) continue;
 
         let elem = document.createElement("div");
         let input = document.createElement("input");

@@ -1,6 +1,16 @@
 window.r20es = window.r20es || {};
 
+// selection:created
 window.r20es.hooks = {
+
+    expose_d20: {
+        enabled: true,
+        force: true,
+
+        includes: "assets/app.js",
+        find: "finalPageLoad=function(){",
+        patch: "finalPageLoad=function(){window.d20=d20,"
+    },
 
     dev_mode: {
         enabled: true,
@@ -52,13 +62,15 @@ browser.runtime.onConnect.addListener(port => {
 });
 
 {
-    let keys = {};
+    let localKeys = {};
 
     for(let id in window.r20es.hooks) {
-        keys[id] = true;
+        if(localKeys[id] && localKeys[id].force) continue;
+
+        localKeys[id] = true;
     }
 
-    browser.storage.local.get(keys)
+    browser.storage.local.get(localKeys)
         .then(p => {
             for(var key in p) {
                 let hook = window.r20es.hooks[key];
@@ -77,7 +89,6 @@ browser.runtime.onMessage.addListener((msg) => {
             });
         }
         if(msg.background.type === "update_hook_enabled") {
-            console.log("received!");
             let hook = window.r20es.hooks[msg.background.hookId];
             hook.enabled = msg.background.state;
 
