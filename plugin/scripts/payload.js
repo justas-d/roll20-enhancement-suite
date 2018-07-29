@@ -75,7 +75,7 @@ window.r20es.selectInitiativeToken = function (data) {
         window.d20.engine.unselect();
         window.d20.engine.select(obj);
     }
-};
+}
 
 window.r20es.pingInitiativeToken = function (data) {
     
@@ -100,7 +100,7 @@ window.r20es.pingInitiativeToken = function (data) {
         
         d20.engine.renderTop();
     }
-};
+}
 
 window.r20es.moveCameraTo = function(data) {
     if(data.id) data = getCanvasObjById(data.id);
@@ -110,6 +110,4 @@ window.r20es.moveCameraTo = function(data) {
 
     editor.scrollTop = Math.floor(data.top * window.d20.engine.canvasZoom) - Math.floor(window.d20.engine.canvasHeight / 2) + 125 * window.d20.engine.canvasZoom;
     editor.scrollLeft = Math.floor(data.left * window.d20.engine.canvasZoom) - Math.floor(window.d20.engine.canvasWidth / 2) + 125 * window.d20.engine.canvasZoom;
-
-    console.log("we panning!!");
 }

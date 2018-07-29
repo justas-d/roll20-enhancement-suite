@@ -17,10 +17,10 @@
 
 ## Misc
 * DONE Remove countdown at the start
+* DONE Autoselect token when it's their turn.
 
 * Transluceny on the paper divs.
 * Keybind for going forward/back in initiative. (Mousetrap.)
-* Autoselect token when it's their turn.
 * Toggle hide the player list at the bottom left.
 * Table import/export (https://app.roll20.net/forum/post/1144568/slug%7D)
 * Macro export/import
