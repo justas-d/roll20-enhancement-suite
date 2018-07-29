@@ -82,6 +82,8 @@ window.r20es.pingInitiativeToken = function (data) {
     let obj = getCanvasObjById(data.id);
     if(obj) {
         
+        if(obj.model.get("layer") !== "objects") return;
+        
         var y = {
             left: obj.left,
             top: obj.top,
