@@ -103,6 +103,33 @@ for(var r20es_i = 0; r20es_i < r20es_len; r20es_i++) {
         name: "Character Exporter/Importer",
 
         inject: "scripts/character_io.js",
+    },
+
+    auto_select_next_token: {
+        enabled: true,
+        name: "Select token on its turn",
+
+        includes: "assets/app.js",
+        find: "e.push(t[0]);",
+        patch: "e.push(t[0]);window.r20es.selectInitiativeToken(e[0]);"
+    },
+
+    auto_ping_next_token: {
+        enabled: true,
+        name: "Ping token on its turn",
+
+        includes: "assets/app.js",
+        find: "e.push(t[0]);",
+        patch: "e.push(t[0]);window.r20es.pingInitiativeToken(e[0]);"
+    },
+
+    auto_focus_next_token: {
+        enabled: true,
+        name: "Move local camera to token on its turn",
+
+        includes: "assets/app.js",
+        find: "e.push(t[0]);",
+        patch: "e.push(t[0]);window.r20es.moveCameraTo(e[0]);"
     }
 };
 
@@ -152,32 +179,15 @@ function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-function tryPatch(dt, mod) {
+function addModToQueueIfOk(dt, mod, queue) {
     if(mod.includes && dt.url.includes(mod.includes)) {
-        console.log(`[${mod.includes}] patching`);
-        let filter = browser.webRequest.filterResponseData(dt.requestId);
-        let decoder = new TextDecoder("utf-8");
-        let encoder = new TextEncoder();
-
-        let escapedFind = escapeRegExp(mod.find);
-
-        let str = "";
-            filter.ondata = event => {
-            str += decoder.decode(event.data, {stream: true});
-        };
-
-        filter.onstop = event => {
-            str = str.replace(new RegExp(escapedFind, 'g'), mod.patch);
-
-            console.log(`[${mod.includes}] [${mod.find}] done!`);
-            
-            filter.write(encoder.encode(str));
-            filter.close();
-        };
+        queue.push(mod);
     }
 }
 
 function listener(dt) {
+
+    let hooks = [];
     for(let id in window.r20es.hooks) {
         let hook = window.r20es.hooks[id];
 
@@ -185,12 +195,40 @@ function listener(dt) {
 
         if(hook.mods) {
             for(let mod of hook.mods) {
-                tryPatch(dt, mod);
+                addModToQueueIfOk(dt, mod, hooks);
             }
         } else {
-            tryPatch(dt, hook);
+            addModToQueueIfOk(dt, hook, hooks);
         }
     }
+
+    if(hooks.length <= 0) return;
+    console.log(hooks);
+
+    let filter = browser.webRequest.filterResponseData(dt.requestId);
+    let decoder = new TextDecoder("utf-8");
+    let encoder = new TextEncoder();
+
+    let str = "";
+    filter.ondata = event => {
+        str += decoder.decode(event.data, {stream: true});
+    };
+
+    filter.onstop = _ => {
+        console.log("we in there");
+        console.log(hooks);
+
+        for(let mod of hooks) {
+            if(!mod.find || !mod.patch) continue;
+
+            str = str.replace(new RegExp(escapeRegExp(mod.find), 'g'), mod.patch);
+            console.log(`[${mod.includes}] [${mod.find}] done!`);
+
+        }
+
+        filter.write(encoder.encode(str));
+        filter.close();
+    };
 }
 
 browser.webRequest.onBeforeRequest.addListener(
