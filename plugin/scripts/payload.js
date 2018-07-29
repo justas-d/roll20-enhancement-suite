@@ -1,9 +1,8 @@
 console.log("[r20es] payload.js is being injected.");
 
-r20es = {};
-window.r20es = r20es;
+window.r20es = window.r20es || {};
 
-r20es.getTransform = function (ctx) {
+window.r20es.getTransform = function (ctx) {
   if ('currentTransform' in ctx) {
     return ctx.currentTransform
   }
@@ -14,7 +13,7 @@ r20es.getTransform = function (ctx) {
   }
 };
 
-r20es.getRotation = function (ctx) {
+window.r20es.getRotation = function (ctx) {
   let t = window.r20es.getTransform(ctx);
   let rad = Math.atan2(t.b, t.a);
   if (rad < 0) { // angle is > Math.PI
@@ -23,14 +22,14 @@ r20es.getRotation = function (ctx) {
   return rad;
 };
 
-r20es.getCustomLayerData = function(layer) {
+window.r20es.getCustomLayerData = function(layer) {
     if(layer === "map") return {bigTxt: "MAP BACKGROUND", txt: "MP", bg: "rgba(255,255,0,0.5)"}
     else if(layer === "objects") return {bigTxt: "TOKENS (PLAYER VISIBLE)", txt: "TK", bg: "rgba(255,0,0,0.5)"}
     else if(layer === "gmlayer") return {bigTxt: "GAME MASTER TOKENS", txt: "GM", bg: "rgba(0,255,0,0.5)"}
     return {txt: layer, bg: "rgba(255,255,255,0.5)"}
 }
 
-r20es.tokenDrawBg = function(ctx, graphic) {
+window.r20es.tokenDrawBg = function(ctx, graphic) {
 
     let data = window.r20es.getCustomLayerData(graphic.model.get("layer"));
 

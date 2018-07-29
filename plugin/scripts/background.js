@@ -11,6 +11,18 @@ window.r20es.hooks = {
         patch: "window.d20=d20);window.d20=d20;",
     },
 
+    /*
+    debugger: {
+        enabled: true,
+        force: true,
+
+        includes: "assets/app.js",
+
+        find: 'else t=$(this).attr("data-macroid");',
+        patch: 'else t=$(this).attr("data-macroid");debugger;'
+    },
+    */
+
     dev_mode: {
         enabled: true,
         name: "Developer mode",
@@ -41,11 +53,38 @@ window.r20es.hooks = {
         patch: 'window.d20ext.seenad = !0, $("#loading-overlay").find("div").hide(), window.currentPlayer && d20.Campaign.pages.length > 0 && d20.Campaign.handlePlayerPageChanges(), void $.get("/editor/startping/true");'
     },
 
-    bulk_initiative: {
+    bulk_macros: {
         enabled: true,
-        name: "Bulk Initiative",
+        name: "Bulk macros",
 
-        inject: "scripts/bulk_initiative.js",
+        mods: [
+
+            { // for logic
+                includes: "assets/app.js",
+                find: "d20.textchat.doChatInput=function(t,n){",
+                patch: `d20.textchat.doChatInput=function(t,n){
+let r20es_selected = d20.engine.selected();
+let r20es_len = r20es_selected.length;
+if(r20es_len <= 0) r20es_len = 1;
+for(var r20es_i = 0; r20es_i < r20es_len; r20es_i++) {
+    let r20es_injected_obj = 
+        (r20es_i < r20es_selected.length && r20es_selected[r20es_i].model)
+            ? r20es_selected[r20es_i]
+            : null;`
+            },
+
+            { // closing brace
+                includes: "assets/app.js",
+                find: '}else console.log("No document!")',
+                patch: '}else console.log("No document!")}'
+            },
+
+            { // inject object
+                includes: "assets/app.js",
+                find: "var l=d20.engine.selected();l.length>0&&l[0].model&&(a.currentSelected=l[0]);",
+                patch: "a.currentSelected = r20es_injected_obj;"
+            }
+        ]
     },
 
     character_io: {
@@ -98,24 +137,33 @@ browser.runtime.onMessage.addListener((msg) => {
     }
 });
 
-function tryPatch(dt, hook, mod) {
-    console.log(`[${hook.includes}] patching`);
-    let filter = browser.webRequest.filterResponseData(dt.requestId);
-    let decoder = new TextDecoder("utf-8");
-    let encoder = new TextEncoder();
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
 
-    let str = "";
-        filter.ondata = event => {
-        str += decoder.decode(event.data, {stream: true});
-    };
+function tryPatch(dt, mod) {
+    if(mod.includes && dt.url.includes(mod.includes)) {
+        console.log(`[${mod.includes}] patching`);
+        let filter = browser.webRequest.filterResponseData(dt.requestId);
+        let decoder = new TextDecoder("utf-8");
+        let encoder = new TextEncoder();
 
-    filter.onstop = event => {
-        str = str.replace(mod.find, mod.patch);
-        console.log(`[${hook.includes}] [${mod.find}] done!`);
-        
-        filter.write(encoder.encode(str));
-        filter.close();
-    };
+        let escapedFind = escapeRegExp(mod.find);
+
+        let str = "";
+            filter.ondata = event => {
+            str += decoder.decode(event.data, {stream: true});
+        };
+
+        filter.onstop = event => {
+            str = str.replace(new RegExp(escapedFind, 'g'), mod.patch);
+
+            console.log(`[${mod.includes}] [${mod.find}] done!`);
+            
+            filter.write(encoder.encode(str));
+            filter.close();
+        };
+    }
 }
 
 function listener(dt) {
@@ -124,15 +172,12 @@ function listener(dt) {
 
         if(!hook.enabled) continue;
 
-
-        if(hook.includes && dt.url.includes(hook.includes)) {
-            if(hook.mods) {
-                for(let mod of hook.mods) {
-                    tryPatch(dt, hook, mod);
-                }
-            } else {
-                tryPatch(dt, hook, hook);
+        if(hook.mods) {
+            for(let mod of hook.mods) {
+                tryPatch(dt, mod);
             }
+        } else {
+            tryPatch(dt, hook);
         }
     }
 }

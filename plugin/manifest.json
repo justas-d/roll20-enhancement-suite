@@ -25,7 +25,7 @@
   ],
 
   "background": {
-      "scripts": ["hooks.js", "scripts/background.js"]
+      "scripts": ["scripts/background.js"]
   },
 
   "browser_action": {
