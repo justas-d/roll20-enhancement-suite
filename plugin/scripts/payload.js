@@ -53,3 +53,4 @@ window.r20es.tokenDrawBg = function(ctx, graphic) {
 
     ctx.restore();
 };
+

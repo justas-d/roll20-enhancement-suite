@@ -1,34 +1,55 @@
 if(window.is_gm) {
-    let div = document.createElement("div");
+    
+    const notSelectModeIndicatorId = "r20es-mode-indicator";
 
-    div.style.height ="auto";
-    div.style.marginBottom ="15px";
-    div.style.marginRight ="15px";
-    div.style.width ="auto";
-    div.style.maxWidth ="100%";
-    div.style.overflowX ="hidden";
-    div.style.position ="absolute";
-    div.style.bottom ="0";
-    div.style.right ="0";
-    div.style.backgroundClip = "border-box";
+    let root= document.createElement("div");
+    //    root.style.height ="auto";
+    root.style.marginBottom ="15px";
+    root.style.marginRight ="15px";
+    root.style.width ="auto";
+    root.style.maxWidth ="100%";
+    root.style.overflowX ="hidden";
+    root.style.position ="absolute";
+    root.style.bottom ="0";
+    root.style.right ="0";
+    root.style.backgroundClip = "border-box";
+
+    {
+        let div = document.createElement("div");
+        div.id = notSelectModeIndicatorId;
+        div.style.background = "rgba(255,0,0,0.5)";
+        div.style.padding = "4px";
+        div.style.display = "none";
+        root.appendChild(div);
+
+        let text = document.createElement("p");
+        text.style.fontFamily=  "Helvetica";
+        text.style.fontSize= "26px"; 
+        text.innerHTML = "NOT SELECTING!";
+        div.appendChild(text);
+    }
+        
+    let div = document.createElement("div");
+    div.style.padding = "4px";
+    root.appendChild(div);
 
     let text = document.createElement("p");
     text.style.fontFamily=  "Helvetica";
-    text.style.fontSize= "26px";
+    text.style.fontSize= "26px"; 
+    div.appendChild(text);
 
-
-    function render(layer) {
+    function render(layer) { 
         let data = window.r20es.getCustomLayerData(layer);
 
         text.innerHTML = data.bigTxt;
         div.style.backgroundColor = data.bg;
     }
 
-    div.appendChild(text);
+    
 
     render(window.currentEditingLayer);
 
-    document.getElementById("playerzone").appendChild(div);
+    document.getElementById("playerzone").appendChild(root);
 
     function callback(ctx) { 
         let l = "";
@@ -43,4 +64,19 @@ if(window.is_gm) {
     $("#editinglayer li.chooseobjects").on("click", callback);
     $("#editinglayer li.choosemap").on("click", callback);
     $("#editinglayer li.choosegmlayer").on("click", callback);
+
+    function updateModeIndicator(mode) {
+        
+        let rmElem = document.getElementById(notSelectModeIndicatorId);
+        rmElem.style.display = (mode === "select" ? "none" : "block");
+
+        console.log(`UPDATE MODE INDICATOR ${rmElem.style.display} ${mode}`);
+    }
+
+    updateModeIndicator(window.d20.engine.mode);
+
+    window.r20es.setModePrologue = updateModeIndicator;
 }
+
+
+

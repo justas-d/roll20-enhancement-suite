@@ -39,9 +39,20 @@ window.r20es.hooks = {
 
         inject: "scripts/draw_current_layer.js",
 
-        includes: "assets/app.js",
-        find: "this.model.view.updateBackdrops(e),this.active",
-        patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es.tokenDrawBg(e, this), this.active",
+        mods: [
+            {
+                includes: "assets/app.js",
+                find: "this.model.view.updateBackdrops(e),this.active",
+                patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es.tokenDrawBg(e, this), this.active"
+
+            },
+
+            {
+                includes: "assets/app.js",
+                find: "function setMode(e){",
+                patch: "function setMode(e){if(window.r20es) window.r20es.setModePrologue(e);",
+            }
+        ]
     },
 
     seenad_override: {
