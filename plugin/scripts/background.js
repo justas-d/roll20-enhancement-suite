@@ -130,6 +130,30 @@ for(var r20es_i = 0; r20es_i < r20es_len; r20es_i++) {
         includes: "assets/app.js",
         find: "e.push(t[0]);",
         patch: "e.push(t[0]);window.r20es.moveCameraTo(e[0]);"
+    },
+
+    roll_and_apply_hit_dice_5e_ogl_r20: {
+        enabled: true,
+
+        name: "Roll and apply hit dice (5e, official r20 sheet)",
+        actionType: "r20es-5e-ogl-hit-dice",
+
+        mods: [
+            {
+                includes: "/editor/",
+                find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
+                patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
+<li class='head hasSub' data-action-type='${this.actionType}'>Roll&Apply Hit Dice</li>`,
+            },
+
+            {
+                includes: "assets/app.js",
+                find: `else if("toback"==e)`,
+                patch: `else if("${this.actionType}"==e) window.r20es.rollAndApplyHitDice5eOGL(n), i(), d20.token_editor.removeRadialMenu();else if("toback"==e)`
+            }
+        ]
+        
+
     }
 };
 

@@ -113,3 +113,45 @@ window.r20es.moveCameraTo = function(data) {
     editor.scrollTop = Math.floor(data.top * window.d20.engine.canvasZoom) - Math.floor(window.d20.engine.canvasHeight / 2) + 125 * window.d20.engine.canvasZoom;
     editor.scrollLeft = Math.floor(data.left * window.d20.engine.canvasZoom) - Math.floor(window.d20.engine.canvasWidth / 2) + 125 * window.d20.engine.canvasZoom;
 }
+
+window.r20es.rollAndApplyHitDice5eOGL = function(objects) {
+
+    // TODO: custom hpFormula name, custom bar?_* vars 
+    for(let token of objects) {
+    
+        if(!token.model || !token.model.character) continue;
+
+        let attribs = token.model.character.attribs;
+
+        // find hpForumla
+        let hpFormula = null;
+        for(let attrib of attribs.models) {
+            if(!hpFormula && attrib.attributes.name === "npc_hpformula") {
+                hpFormula = attrib.attributes.current;
+                break;
+            }
+        }
+
+        if(!hpFormula) continue;
+
+        // roll hpForumla
+        let callbackId = generateUUID();    
+        window.d20.textchat.doChatInput(`/w gm [[${hpFormula}]]`, callbackId);
+    
+        // apply hp formula in the roll callback
+        let event = `mancerroll:${callbackId}`;
+        $(document).on(event, (_, o) => {
+            $(document).off(event);
+
+            console.log("we in there");
+
+            if(!o.inlinerolls || o.inlinerolls.length <= 0) return;
+
+            console.log(token.model.attributes);
+            let hp = o.inlinerolls[0].results.total;
+            token.model.attributes.bar3_max = hp;
+            token.model.attributes.bar3_value = hp;            
+            token.model.save();
+        });
+    }
+}
