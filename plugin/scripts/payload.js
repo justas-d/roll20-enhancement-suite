@@ -34,6 +34,9 @@ window.r20es.tokenDrawBg = function(ctx, graphic) {
     let data = window.r20es.getCustomLayerData(graphic.model.get("layer"));
 
     ctx.save();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 2;
+
     ctx.rotate(-window.r20es.getRotation(ctx));
 
     let sz = 18
