@@ -171,11 +171,8 @@ window.r20es.handleBulkMacroMenuClick = function(obj) {
     let action = obj.target.getAttribute("r20es-macro-action");
     if(!action) return;
 
-    
-
     let sel = window.d20.engine.selected();
-    console.log(sel);
-   // window.d20.engine.unselect();
+    window.d20.engine.unselect();
 
     for(let obj of sel) {
         window.d20.engine.select(obj);
@@ -191,9 +188,6 @@ window.r20es.handleBulkMacroMenuClick = function(obj) {
     for(let obj of sel) {
         window.d20.engine.select(obj);
     }
-    
-
-    //t && (t.remove(), t = !1), e && clearTimeout(e)
 }
 
 window.r20es.handleBulkMacroObserverCallback = function(muts) {
