@@ -10,26 +10,7 @@ function addCategoryElemToCanvasTokenRightClickMenu(name, actionType, callback) 
 <ul class="submenu" id="${actionType}" data-menuname="${actionType}" style="width: auto;display: none;">
 
 </ul>`,
-        },
-
-        {
-            includes: "assets/app.js",
-            find: `else if("addturn"==e)`,
-            patch: `else if(console.log(e) || "${actionType}"==e) window.r20es.${callback}(this), i(), d20.token_editor.removeRadialMenu();else if("addturn"==e)`
         }
-        
-/*
-        <li class="head hasSub" data-menuname="advanced"> Advanced »
-    <ul class="submenu" data-menuname="advanced" style="display: none;">
-        <li data-action-type="group">Group</li>
-        <li data-action-type="ungroup">Ungroup</li>
-        <li class="" data-action-type="toggledrawing">Is Drawing</li>
-        <li class="" data-action-type="togglefliph">Flip Horizontal</li>
-        <li class="" data-action-type="toggleflipv">Flip Vertical</li>
-        <li data-action-type="setdimensions">Set Dimensions</li>
-    </ul>
-</li>
-*/
     ];
 }
 
