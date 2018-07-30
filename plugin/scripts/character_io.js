@@ -93,10 +93,6 @@ function createAndImportPc(fileHandle, errCallback) {
                 }
             }
 
-            if(!stored) {
-                stored = pc.attribs.create();
-            }
-
             stored.attributes.name = importAttrib.name;
             stored.attributes.current = importAttrib.current;
             stored.attributes.max = importAttrib.max;

@@ -1,5 +1,56 @@
 window.r20es = window.r20es || {};
 
+function addCategoryElemToCanvasTokenRightClickMenu(name, actionType, callback) {
+    return [
+        {
+            includes: "/editor/",
+            find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
+            patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
+<li class="head hasSub" data-menuname="${actionType}"> ${name} »
+<ul class="submenu" id="${actionType}" data-menuname="${actionType}" style="width: auto;display: none;">
+
+</ul>`,
+        },
+
+        {
+            includes: "assets/app.js",
+            find: `else if("addturn"==e)`,
+            patch: `else if(console.log(e) || "${actionType}"==e) window.r20es.${callback}(this), i(), d20.token_editor.removeRadialMenu();else if("addturn"==e)`
+        }
+        
+/*
+        <li class="head hasSub" data-menuname="advanced"> Advanced »
+    <ul class="submenu" data-menuname="advanced" style="display: none;">
+        <li data-action-type="group">Group</li>
+        <li data-action-type="ungroup">Ungroup</li>
+        <li class="" data-action-type="toggledrawing">Is Drawing</li>
+        <li class="" data-action-type="togglefliph">Flip Horizontal</li>
+        <li class="" data-action-type="toggleflipv">Flip Vertical</li>
+        <li data-action-type="setdimensions">Set Dimensions</li>
+    </ul>
+</li>
+*/
+    ];
+}
+
+
+function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
+    return [
+        {
+            includes: "/editor/",
+            find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
+            patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
+<li class='head hasSub' data-action-type='${actionType}'>${name}</li>`,
+        },
+
+        {
+            includes: "assets/app.js",
+            find: `else if("toback"==e)`,
+            patch: `else if("${actionType}"==e) window.r20es.${callback}(n), i(), d20.token_editor.removeRadialMenu();else if("toback"==e)`
+        }
+    ];
+}
+
 window.r20es.hooks = {
 
     expose_d20: {
@@ -10,18 +61,6 @@ window.r20es.hooks = {
         find: "window.d20=d20)",
         patch: "window.d20=d20);window.d20=d20;",
     },
-
-    /*
-    debugger: {
-        enabled: true,
-        force: true,
-
-        includes: "assets/app.js",
-
-        find: 'else t=$(this).attr("data-macroid");',
-        patch: 'else t=$(this).attr("data-macroid");debugger;'
-    },
-    */
 
     dev_mode: {
         enabled: true,
@@ -64,40 +103,6 @@ window.r20es.hooks = {
         patch: 'window.d20ext.seenad = !0, $("#loading-overlay").find("div").hide(), window.currentPlayer && d20.Campaign.pages.length > 0 && d20.Campaign.handlePlayerPageChanges(), void $.get("/editor/startping/true");'
     },
 
-    bulk_macros: {
-        enabled: true,
-        name: "Bulk macros",
-
-        mods: [
-
-            { // for logic
-                includes: "assets/app.js",
-                find: "d20.textchat.doChatInput=function(t,n){",
-                patch: `d20.textchat.doChatInput=function(t,n){
-let r20es_selected = d20.engine.selected();
-let r20es_len = r20es_selected.length;
-if(r20es_len <= 0) r20es_len = 1;
-for(var r20es_i = 0; r20es_i < r20es_len; r20es_i++) {
-    let r20es_injected_obj = 
-        (r20es_i < r20es_selected.length && r20es_selected[r20es_i].model)
-            ? r20es_selected[r20es_i]
-            : null;`
-            },
-
-            { // closing brace
-                includes: "assets/app.js",
-                find: '}else console.log("No document!")',
-                patch: '}else console.log("No document!")}'
-            },
-
-            { // inject object
-                includes: "assets/app.js",
-                find: "var l=d20.engine.selected();l.length>0&&l[0].model&&(a.currentSelected=l[0]);",
-                patch: "a.currentSelected = r20es_injected_obj;"
-            }
-        ]
-    },
-
     character_io: {
         enabled: true,
         name: "Character Exporter/Importer",
@@ -114,15 +119,6 @@ for(var r20es_i = 0; r20es_i < r20es_len; r20es_i++) {
         patch: "e.push(t[0]);window.r20es.selectInitiativeToken(e[0]);"
     },
 
-    auto_ping_next_token: {
-        enabled: true,
-        name: "Ping token on its turn",
-
-        includes: "assets/app.js",
-        find: "e.push(t[0]);",
-        patch: "e.push(t[0]);window.r20es.pingInitiativeToken(e[0]);"
-    },
-
     auto_focus_next_token: {
         enabled: true,
         name: "Move local camera to token on its turn",
@@ -132,29 +128,30 @@ for(var r20es_i = 0; r20es_i < r20es_len; r20es_i++) {
         patch: "e.push(t[0]);window.r20es.moveCameraTo(e[0]);"
     },
 
+    auto_ping_next_token: {
+        enabled: true,
+        name: "Ping tokens visible to players on their turns",
+
+        includes: "assets/app.js",
+        find: "e.push(t[0]);",
+        patch: "e.push(t[0]);window.r20es.pingInitiativeToken(e[0]);"
+    },
+
     roll_and_apply_hit_dice_5e_ogl_r20: {
         enabled: true,
 
         name: "Roll and apply hit dice (5e, official r20 sheet)",
-        actionType: "r20es-5e-ogl-hit-dice",
 
-        mods: [
-            {
-                includes: "/editor/",
-                find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
-                patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
-<li class='head hasSub' data-action-type='${this.actionType}'>Roll&Apply Hit Dice</li>`,
-            },
+        mods: addElemToCanvasTokenRightClickMenu("Hit Dice", "r20es-5e-ogl-hit-dice", "rollAndApplyHitDice5eOGL")
+    },
 
-            {
-                includes: "assets/app.js",
-                find: `else if("toback"==e)`,
-                patch: `else if("${this.actionType}"==e) window.r20es.rollAndApplyHitDice5eOGL(n), i(), d20.token_editor.removeRadialMenu();else if("toback"==e)`
-            }
-        ]
-        
+    bulk_macros: {
+        enabled: true,
+        name: "Bulk macros",
 
-    }
+        inject: "scripts/bulk_macros.js",
+        mods: addCategoryElemToCanvasTokenRightClickMenu("Bulk Roll", "r20es-bulk-macro-menu", "handleBulkMacroMenuClick")
+    }        
 };
 
 browser.runtime.onConnect.addListener(port => {

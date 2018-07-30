@@ -116,9 +116,15 @@ window.r20es.moveCameraTo = function(data) {
 
 window.r20es.rollAndApplyHitDice5eOGL = function(objects) {
 
+    // tokens will locally disappear if we do not unselect them here
+    let oldSel = window.d20.engine.selected();
+    window.d20.engine.unselect();
+
+    let numRolled = 0;
     // TODO: custom hpFormula name, custom bar?_* vars 
-    for(let token of objects) {
-    
+    for(let token of objects) {  
+        console.log(token);
+
         if(!token.model || !token.model.character) continue;
 
         let attribs = token.model.character.attribs;
@@ -139,19 +145,131 @@ window.r20es.rollAndApplyHitDice5eOGL = function(objects) {
         window.d20.textchat.doChatInput(`/w gm [[${hpFormula}]]`, callbackId);
     
         // apply hp formula in the roll callback
-        let event = `mancerroll:${callbackId}`;
-        $(document).on(event, (_, o) => {
-            $(document).off(event);
-
-            console.log("we in there");
+        $(document).on(`mancerroll:${callbackId}`, (_, o) => {
+            $(document).off(`mancerroll:${callbackId}`);
 
             if(!o.inlinerolls || o.inlinerolls.length <= 0) return;
 
-            console.log(token.model.attributes);
             let hp = o.inlinerolls[0].results.total;
-            token.model.attributes.bar3_max = hp;
-            token.model.attributes.bar3_value = hp;            
-            token.model.save();
+
+            token.model.save({bar3_max: hp, bar3_value: hp});
+
+            // reselect when we're done processing all callbacks.
+            numRolled++;
+            if(numRolled >= objects.length) {
+                for(let sel of oldSel)
+                    window.d20.engine.select(sel);
+            }
         });
     }
 }
+
+window.r20es.handleBulkMacroMenuClick = function(obj) {
+
+    if(!obj.target) return;
+    
+    let action = obj.target.getAttribute("r20es-macro-action");
+    if(!action) return;
+
+    
+
+    let sel = window.d20.engine.selected();
+    console.log(sel);
+   // window.d20.engine.unselect();
+
+    for(let obj of sel) {
+        window.d20.engine.select(obj);
+        window.d20.textchat.doChatInput(action);
+        window.d20.engine.unselect();
+    }
+
+    window.d20.engine.unselect();
+
+    window.d20.token_editor.removeRadialMenu();
+    window.d20.token_editor.closeContextMenu();
+
+    for(let obj of sel) {
+        window.d20.engine.select(obj);
+    }
+    
+
+    //t && (t.remove(), t = !1), e && clearTimeout(e)
+}
+
+window.r20es.handleBulkMacroObserverCallback = function(muts) {
+
+    let sel = window.d20.engine.selected();
+    if(sel.length <= 0) return;
+
+    addMacro = (macro, arr) => arr[macro.get("id")] = { 
+        name: macro.get("name"),
+        action: macro.get("action")
+    };
+
+    let root = document.getElementById("r20es-bulk-macro-menu");
+    if(!root || root.childElementCount > 0) return;
+    
+    for(var e of muts) {
+        for(let node of e.addedNodes) {
+            if(node.className && node.className === "actions_menu d20contextmenu") {
+                
+                let macros = {};
+
+                for(let macro of window.currentPlayer.macros.models) {
+                    addMacro(macro, macros);
+                }
+
+                // check if selection contains objects that represent the same char
+                let firstId = null;
+                let selCharacter = null;
+                let areAllSame = true;
+                for(let obj of sel) {
+                    firstId = obj.model && obj.model.character ? obj.model.character.get("id") : null;
+                    if(firstId) {
+                        selCharacter = obj.model.character;
+                        break;
+                    }
+                }
+                
+                for(let obj of sel) {
+                    if(!obj.model || !obj.model.character) continue;
+                    if(obj.model.character.get("id") !== firstId) {
+                        areAllSame = false;
+                        break;
+                    }
+                }
+
+                if(areAllSame) {    
+                    for(let macro of selCharacter.abilities.models) {
+                        addMacro(macro, macros);
+                    }
+                }
+
+                // create menu options
+                for(let id in macros) {
+                    let macro = macros[id];
+                    let elem = document.createElement("li");
+
+                    macro.action = macro.action.replace("@{selected|", `@{${selCharacter.get("name")}|`);
+                    elem.setAttribute("data-action-type", "r20es-bulk-macro-menu");
+                    elem.setAttribute("r20es-macro-action", macro.action);
+                    elem.innerHTML = macro.name;
+                    elem.onclick = window.r20es.handleBulkMacroMenuClick;
+
+                    root.appendChild(elem);
+                }
+
+             //   console.log(macros);
+
+                
+
+                //<li data-action-type="ungroup">Ungroup</li>
+                //console.log(root);
+                //console.log(node.childNodes[1]);
+                //console.log(node);
+            }
+        }
+    }
+}
+
+
