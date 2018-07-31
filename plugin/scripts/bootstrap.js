@@ -2,21 +2,26 @@ console.log("=================");
 console.log("r20es bootstrap");
 console.log("=================");
 
+
 const injectId = "io-scripts";
 
+
 let existing = document.getElementById(injectId);
+
 if(existing) {
-    document.head.removeChild(existing);
+    existing.remove();
 }
 
 var root = document.createElement("div");
 root.id = injectId;
 
-function createScript(payload, module) {
+function createScript(payload) {
+    if(!payload) return;
+
     var s = document.createElement("script");
-	let ctx = chrome || browser;
-	
-    s.src = ctx.extension.getURL(payload);
+    
+    s.src = (chrome || browser).extension.getURL(payload);
+    
     s.onload = () => { s.remove(); };
 
     root.appendChild(s);
@@ -33,8 +38,12 @@ function bgListener(msg) {
     if(msg.hooks) {
         for(let id in msg.hooks) {
             let hook = msg.hooks[id];
-            if(hook.enabled && hook.inject) {
-                createScript(hook.inject);
+            if(!hook.enabled) continue;
+
+            if(hook.inject) {
+                for(let payload of hook.inject) {
+                    createScript(payload);
+                }
             }
         }
     }

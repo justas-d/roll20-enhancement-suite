@@ -173,7 +173,7 @@ window.r20es.handleBulkMacroMenuClick = function(obj) {
 
     let sel = window.d20.engine.selected();
     window.d20.engine.unselect();
-
+    window.r20es.readFile
     for(let obj of sel) {
         window.d20.engine.select(obj);
         window.d20.textchat.doChatInput(action);
@@ -226,7 +226,7 @@ window.r20es.handleBulkMacroObserverCallback = function(muts) {
                 }
                 
                 for(let obj of sel) {
-                    if(!obj.model || !obj.model.character) continue;
+                    if(!obj.model || !obj.model.character) continwindow.r20es.readFileue;
                     if(obj.model.character.get("id") !== firstId) {
                         areAllSame = false;
                         break;
@@ -252,18 +252,55 @@ window.r20es.handleBulkMacroObserverCallback = function(muts) {
 
                     root.appendChild(elem);
                 }
-
-             //   console.log(macros);
-
-                
-
-                //<li data-action-type="ungroup">Ungroup</li>
-                //console.log(root);
-                //console.log(node.childNodes[1]);
-                //console.log(node);
             }
         }
     }
 }
 
+window.r20es.readFile = function(file, callback) {
+    if(!file) {
+        alert("No file given.");
+        return;
+    }
 
+    let reader = new FileReader();
+    reader.readAsText(file);
+
+    reader.onload = callback;
+}
+
+window.r20es.importTablesFromJson = function(e) {
+    let table = window.d20.Campaign.rollabletables.create();
+    table.save(e);
+}
+
+window.r20es.importTablesFromTableExport = function(e) {
+    console.log(e);
+}
+
+function getTable(e) {
+
+    let tableId = $(e.target).closest("div[r20es-table-id]")[0].getAttribute("r20es-table-id");
+    if(!tableId) { alert("Failed to get table id."); return null; }
+
+    let table = window.d20.Campaign.rollabletables.get(tableId); 
+    if(!table) { alert(`Failed to get table. Table id: ${tableId}`); return null; }
+
+    return table;
+}
+
+window.r20es.exportTableToJson = function(e) {
+    let table = getTable(e);
+    if(!table) return;
+    console.log(table);
+    
+    let json = JSON.stringify(table.attributes, null , 4);
+    console.log(json);
+
+    var jsonBlob = new Blob([json], { type: 'data:application/javascript;charset=utf-8' });
+    saveAs(jsonBlob, table.get("name") + ".json");
+}
+
+window.r20es.exportTableToTableExport= function(e) {
+    console.log(e);
+}

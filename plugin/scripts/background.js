@@ -33,7 +33,6 @@ function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
 }
 
 window.r20es.hooks = {
-
     expose_d20: {
         enabled: true,
         force: true,
@@ -57,7 +56,7 @@ window.r20es.hooks = {
         enabled: true,
         name: "Token layer drawing (GM Only)",
 
-        inject: "scripts/draw_current_layer.js",
+        inject: ["scripts/draw_current_layer.js"],
 
         mods: [
             {
@@ -88,7 +87,7 @@ window.r20es.hooks = {
         enabled: true,
         name: "Character Exporter/Importer",
 
-        inject: "scripts/character_io.js",
+        inject: ["scripts/character_io.js"],
     },
 
     auto_select_next_token: {
@@ -130,9 +129,32 @@ window.r20es.hooks = {
         enabled: true,
         name: "Bulk macros",
 
-        inject: "scripts/bulk_macros.js",
+        inject: ["scripts/bulk_macros.js"],
         mods: addCategoryElemToCanvasTokenRightClickMenu("Bulk Roll", "r20es-bulk-macro-menu", "handleBulkMacroMenuClick")
-    }        
+    },
+
+    import_export_table: {
+        enabled: true,
+        name: "Table Import/export",
+        inject: ["scripts/import_export_table.js"],
+
+        mods: [
+            { // export buttons
+                includes: "/editor/",
+                find: "<button class='btn btn-danger deleterollabletable'>Delete Rollable Table</button>",
+                patch: `<button class='btn r20es-table-export-json'>Export</button>
+<button class='btn r20es-table-export-tableexport'>Export (TableExport)</button>
+<button class='btn btn-danger deleterollabletable'>Delete Rollable Table</button>`
+            },
+
+            { // add table id to popup
+                includes: "assets/app.js",
+                find: `this.$el.on("click",".deleterollabletable"`,
+                patch: `this.el.setAttribute("r20es-table-id", this.model.get("id")),this.$el.on("click",".deleterollabletable"`,                    
+            }
+        ]
+
+    }
 };
 
 browser.runtime.onConnect.addListener(port => {
@@ -205,7 +227,6 @@ function listener(dt) {
     }
 
     if(hooks.length <= 0) return;
-    console.log(hooks);
 
     let filter = browser.webRequest.filterResponseData(dt.requestId);
     let decoder = new TextDecoder("utf-8");
@@ -217,9 +238,6 @@ function listener(dt) {
     };
 
     filter.onstop = _ => {
-        console.log("we in there");
-        console.log(hooks);
-
         for(let mod of hooks) {
             if(!mod.find || !mod.patch) continue;
 

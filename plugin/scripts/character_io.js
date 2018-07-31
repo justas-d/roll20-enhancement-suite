@@ -8,7 +8,6 @@ function exportPc(pc) {
     let jsonData = JSON.stringify(data, null, 4);
 
     var jsonBlob = new Blob([jsonData], { type: 'data:application/javascript;charset=utf-8' });
-
     saveAs(jsonBlob, data.name + ".json");
 }
 
@@ -34,7 +33,7 @@ function matchAndProcessTitle(t, e) {
 
         t.appendChild(exportButton);
 
-        return true;
+        return true;("===========================================================================");
     }
 
     return false;
@@ -62,15 +61,9 @@ function removeIfExists(id, root) {
     }
 }
 
-function createAndImportPc(fileHandle, errCallback) {
-    if(!fileHandle) {
-        return "No file selected";
-    }
+function createAndImportPc(fileHandle) {
 
-    let reader = new FileReader();
-    reader.readAsText(fileHandle);
-
-    reader.onload = (e) => {
+    window.r20es.readFile(fileHandle, (e) => {
         let data = JSON.parse(e.target.result);
 
         let pc = window.Campaign.characters.create({
@@ -103,9 +96,8 @@ function createAndImportPc(fileHandle, errCallback) {
         pc.save();
 
         console.log("Imported!")
-    };
 
-    return "";
+    });
 }
 
 {
@@ -125,8 +117,16 @@ function createAndImportPc(fileHandle, errCallback) {
         root.appendChild(header);
     }
 
-    let errMsg = document.createElement("p");
-    root.appendChild(errMsg);
+    let btn = document.createElement("button");
+    btn.innerHTML = "Import Character";
+    btn.id = importButtonId;
+    btn.style.float = "Left";
+    btn.className = "btn";
+
+    btn.onclick = () => {
+        createAndImportPc(fs.files[0]);
+        e.target.value = "";
+    };
 
     removeIfExists(importDivId, rootOfDiv);
 
@@ -135,26 +135,11 @@ function createAndImportPc(fileHandle, errCallback) {
     fs.id = importFileSelectorId;
 
     fs.onchange= (e) => {
-        errMsg.innerHTML = "";
-
-        if(e.target.files.length > 0) {
-            let btn = document.createElement("button");
-            btn.innerHTML = "Import Character";
-            btn.id = importButtonId;
-            btn.style.float = "none";
-
-            btn.onclick = () => {
-                errMsg.innerHTML = createAndImportPc(e.target.files[0]);
-                removeIfExists(importButtonId, root);
-                e.target.value = "";
-            };
-
-            root.appendChild(btn);
-        } else {
-            removeIfExists(importButtonId, root);
-        }
+        btn.disabled = !(e.target.files.length > 0);
     };
 
     root.appendChild(fs);
+    root.appendChild(btn);
+
     rootOfDiv.appendChild(root);
 }
