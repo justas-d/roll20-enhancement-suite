@@ -492,15 +492,9 @@ function getTable(e) {
 window.r20es.exportTableToJson = function(e) {
     let table = getTable(e);
     if(!table) return;
-    console.log(table);
     
     let json = JSON.stringify(table.attributes, null , 4);
-    console.log(json);
 
     var jsonBlob = new Blob([json], { type: 'data:application/javascript;charset=utf-8' });
     saveAs(jsonBlob, table.get("name") + ".json");
-}
-
-window.r20es.exportTableToTableExport= function(e) {
-    console.log(e);
 }

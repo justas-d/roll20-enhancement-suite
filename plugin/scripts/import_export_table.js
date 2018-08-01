@@ -1,7 +1,6 @@
 function matchAndProcessTitle(e) {
     if(!e.className || !e.classList.contains("rollabletableeditor")) return;
 
-    $(e).find(".r20es-table-export-tableexport")[0].onclick = (e) => { window.r20es.exportTableToTableExport(e) };
     $(e).find(".r20es-table-export-json")[0].onclick = (e) => { window.r20es.exportTableToJson(e) } ;
 }
 

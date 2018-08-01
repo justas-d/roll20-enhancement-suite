@@ -143,7 +143,6 @@ window.r20es.hooks = {
                 includes: "/editor/",
                 find: "<button class='btn btn-danger deleterollabletable'>Delete Rollable Table</button>",
                 patch: `<button class='btn r20es-table-export-json'>Export</button>
-<button class='btn r20es-table-export-tableexport'>Export (TableExport)</button>
 <button class='btn btn-danger deleterollabletable'>Delete Rollable Table</button>`
             },
 
