@@ -269,15 +269,13 @@ window.r20es.readFile = function(file, callback) {
     reader.onload = callback;
 }
 
-window.r20es.importTablesFromJson = function(e) {
+function importTablesFromJson(e) {
     let table = window.d20.Campaign.rollabletables.create();
     
 
     for(let id in e.items) {
         let item = e.items[id];
         delete item.id;
-
-        console.log(item);
 
         table.tableitems.create(item);
     }
@@ -287,8 +285,197 @@ window.r20es.importTablesFromJson = function(e) {
     table.save(e);
 }
 
-window.r20es.importTablesFromTableExport = function(e) {
-    console.log(e);
+window.r20es.importTablesFromJson = function(e) {
+    e = JSON.parse(e);
+    importTablesFromJson(e);
+}
+
+window.r20es.importTablesFromTableExport = function(raw) {
+    let tknIdx = 0;
+
+    isspace = c => c === '\n' || c === '\r' || c === '\t' || c === ' ' || c === '\f' || c === '\v';
+    isdigit = c => ((c>='0') && (c<='9'));
+
+    function nextToken() {
+
+        while(true) {
+            if(raw.length <= tknIdx) break;
+            var isExcl = raw[tknIdx] === '!';
+            var isDashes = raw.length > (tknIdx + 1) && (raw[tknIdx] === '-' && raw[tknIdx+1] === '-' );
+
+            if(isExcl || isDashes) break;
+
+            tknIdx++;
+        }
+
+        if(raw.length <= tknIdx) return {eof: true};
+
+        if(raw[tknIdx] === '!') {
+            // command token
+            tknIdx++
+
+            let ret = {command: ""};
+            while(true) {
+                if(raw.length <= tknIdx) break;
+                if(isspace(raw[tknIdx])) break;
+
+                ret.command += raw[tknIdx++];
+            }
+            
+            ret.command = ret.command.trim();
+            return ret;
+
+        } else if(raw[tknIdx] === '-') {
+            // arg token
+            tknIdx += 2;
+
+            let ret = {arg: ""};
+
+            function tryMatch(str, idx) {
+
+                for(let i = 0; i < str.length; i++) {
+                    if(idx >= raw.length) return null;
+                    if(raw[idx] !== str[i]) return null;
+                    idx++;
+                }
+        
+                return {idx: idx};
+            }
+
+            function tryMatchEscapedAscii() {   
+                let start = tryMatch("<%%", tknIdx);
+                if(!start) 
+                    return false;
+                let numBuffer = "";
+
+                let tempIdx = start.idx;
+                while(raw.length > tempIdx && isdigit(raw[tempIdx])) {
+                    numBuffer += raw[tempIdx++];
+                }
+
+                let end = tryMatch("%%>", tempIdx);
+                if(!end) 
+                    return false;
+
+                let ascii = parseInt(numBuffer);
+                if(ascii === NaN)
+                    return false;
+
+                tknIdx = end.idx;
+                ret.arg += String.fromCharCode(ascii);
+
+                return true;
+            }
+
+            function tryMatchEscapedSlashes() {
+                let isEscapedSlash = tryMatch("[TABLEEXPORT:ESCAPE]", tknIdx);
+                if(!isEscapedSlash) return false;
+
+                tknIdx = isEscapedSlash.idx;
+                ret.arg += "--";
+
+                return true;
+            }
+
+            while(true) {
+                if(raw.length <= (tknIdx+1)) break;
+                if(raw[tknIdx] === '!') break;
+                if(raw[tknIdx] === '-' && raw[tknIdx+1] === '-') break;
+
+                if(tryMatchEscapedAscii()) continue;
+                if(tryMatchEscapedSlashes()) continue;
+                
+                ret.arg += raw[tknIdx++];
+            }
+            
+            ret.arg = ret.arg.trim();
+            return ret;
+        }
+
+        alert(`Table export lexer matched unknown start of token: ${raw[tknIdx]}`);
+        return null;
+    }
+
+    function nextStatement() {
+
+        let token = nextToken();
+        let ret = {};
+
+        function readArgs(numArgs, who) {
+            let tokens = [];
+            
+            for(let i = 0; i < numArgs; i++) {
+                tokens[i] = nextToken();
+                if(!tokens[i]) alert(`${who} expected ${numArgs}, got ${i+1}`);
+            }
+
+            return tokens;
+        }
+    
+        do {
+            if(token.command) {
+                if(token.command === "import-table") {
+
+                    ret.table = {};
+                    let argTokens = readArgs(2, "import-table");
+                    ret.table.name = argTokens[0].arg;
+                    ret.table.showplayers = argTokens[1].arg === "show";
+                    return ret;
+                    
+                } else if(token.command == "import-table-item") {
+                    ret.item = {};
+                    let argTokens = readArgs(4, "import-table-item");
+                    ret.item.tableName =  argTokens[0].arg;
+                    ret.item.name=  argTokens[1].arg;
+                    ret.item.weight =  argTokens[2].arg;
+                    ret.item.avatar =  argTokens[3].arg;
+                    return ret;
+
+                } else {
+                    alert(`Unknown TableExport command: ${token.command}`);
+
+                    // skip args
+                    while(true) {
+                        token = nextToken();
+                        if(!token.arg) break;
+                    }
+                }
+            } else if(token.eof) { 
+                ret.eof = true; 
+                return ret; 
+            } else {
+                alert(`Unexpected token: ${token}. Expected a command token.`);
+            }
+            
+        }while(token.eof === undefined);
+    }
+    
+    let statement = null;
+    let tables = {};
+    do {
+        statement = nextStatement();
+        if(statement.eof) break;
+        else if(statement.table) {
+            tables[statement.table.name] = statement.table;
+        } else if(statement.item) {
+            let table = tables[statement.item.tableName];
+
+            if(table)  {
+                table.items = table.items || {};
+
+                delete statement.item.tableName;
+                table.items[statement.item.name] = statement.item;
+            } else {
+                alert(`Table not found: ${statement.item.tableName}`);
+            }
+        }
+        
+    }while(statement.eof === undefined);
+
+    for(let name in tables) {
+        importTablesFromJson(tables[name]);
+    }
+    
 }
 
 function getTable(e) {

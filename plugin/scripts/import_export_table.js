@@ -42,8 +42,7 @@ observer.observe(document.body, { childList: true, subtree: true });
     function mkCallback(cb) {
         return  _ => {
             window.r20es.readFile(fs.files[0], (e2) => {
-                let data = JSON.parse(e2.target.result);
-                cb(data);
+                cb(e2.target.result);
             });
             
             //fs.value = "";
@@ -55,14 +54,14 @@ observer.observe(document.body, { childList: true, subtree: true });
     jsonButton.disabled = true;
     jsonButton.className = "btn";
     jsonButton.style.float = "left";
-    jsonButton.onclick = mkCallback(window.r20es.importTablesFromJson);
+    jsonButton.onclick = mkCallback((e) => {window.r20es.importTablesFromJson(e)});
 
     let tableExportButton = document.createElement("button");
     tableExportButton.innerHTML = "Import (TableExport)";
     tableExportButton.disabled = true;
     tableExportButton.className = "btn";
     tableExportButton.style.float = "left";
-    tableExportButton.onclick = mkCallback(window.r20es.importTablesFromTableExport);
+    tableExportButton.onclick = mkCallback((e) => window.r20es.importTablesFromTableExport(e));
 
 
     fs.onchange= (e) => {
