@@ -33,17 +33,17 @@ function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
 }
 
 window.r20es.hooks = {
+    
     expose_d20: {
-        enabled: true,
+        
         force: true,
 
         includes: "assets/app.js",
-        find: "window.d20=d20)",
-        patch: "window.d20=d20);window.d20=d20;",
+        find: "var d20=d20||{};",
+        patch: "var d20=d20||{};window.d20=d20;"
     },
 
     dev_mode: {
-        enabled: true,
         name: "Developer mode",
 
         includes: "/editor/startjs/",
@@ -53,7 +53,7 @@ window.r20es.hooks = {
 
 
     token_layer_drawing: {
-        enabled: true,
+        
         name: "Token layer drawing (GM Only)",
 
         inject: ["scripts/draw_current_layer.js"],
@@ -75,7 +75,7 @@ window.r20es.hooks = {
     },
 
     seenad_override: {
-        enabled: true,
+        
         name: "Skip ad",
 
         includes: "/editor/startjs/",
@@ -84,14 +84,14 @@ window.r20es.hooks = {
     },
 
     character_io: {
-        enabled: true,
+        
         name: "Character Exporter/Importer",
 
         inject: ["scripts/character_io.js"],
     },
 
     auto_select_next_token: {
-        enabled: true,
+        
         name: "Select token on its turn",
 
         includes: "assets/app.js",
@@ -100,7 +100,7 @@ window.r20es.hooks = {
     },
 
     auto_focus_next_token: {
-        enabled: true,
+        
         name: "Move local camera to token on its turn",
 
         includes: "assets/app.js",
@@ -109,7 +109,7 @@ window.r20es.hooks = {
     },
 
     auto_ping_next_token: {
-        enabled: true,
+        
         name: "Ping tokens visible to players on their turns",
 
         includes: "assets/app.js",
@@ -118,7 +118,7 @@ window.r20es.hooks = {
     },
 
     roll_and_apply_hit_dice_5e_ogl_r20: {
-        enabled: true,
+        
 
         name: "Roll and apply hit dice (5e, official r20 sheet)",
 
@@ -126,7 +126,7 @@ window.r20es.hooks = {
     },
 
     bulk_macros: {
-        enabled: true,
+        
         name: "Bulk macros",
 
         inject: ["scripts/bulk_macros.js"],
@@ -134,7 +134,7 @@ window.r20es.hooks = {
     },
 
     import_export_table: {
-        enabled: true,
+        
         name: "Table Import/export",
         inject: ["scripts/import_export_table.js"],
 

@@ -271,6 +271,19 @@ window.r20es.readFile = function(file, callback) {
 
 window.r20es.importTablesFromJson = function(e) {
     let table = window.d20.Campaign.rollabletables.create();
+    
+
+    for(let id in e.items) {
+        let item = e.items[id];
+        delete item.id;
+
+        console.log(item);
+
+        table.tableitems.create(item);
+    }
+    
+    delete e.id;
+    delete e.items;
     table.save(e);
 }
 

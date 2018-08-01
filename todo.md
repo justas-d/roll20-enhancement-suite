@@ -3,14 +3,15 @@
 ## Canvas
 * DONE Render the layer of token (Have a little "BG, PL, GM, DL" in the top right of the token, gm's only)
 * DONE Bulk roll initiative
+* DONE Bulk roll hit dice and apply it to token hp.
 
 * Right click -> Quick spawn from journal with a fuzzy search
 * Shift + mwheel zoom
 * Local storage -> mark tokens as permenantely GM only.
 * Auto roll initiative for select tokens. (Such as NPCs accompanying the party)
-* Bulk roll hit dice and apply it to token hp.
+
 * Auto generate action macros
-* Perma show token bubbles in a stealthy, out of the way manner.
+* aPerma show token bubbles in a stealthy, out of the way manner.
 
 ## Journal
 * Right click -> duplicate
