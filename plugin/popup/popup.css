@@ -1,3 +1,23 @@
+* {
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+.header {
+    text-align: center;
+}
+
+.header h2 {
+    margin-bottom: 0;
+}
+.header h3 {
+    margin-top: 0;
+}
+
+body {
+    background-color: #FFFFFF;
+    margin: 0;
+}
+
 .selected-item {
     background-color: #f2f2f2;
 }
@@ -7,19 +27,24 @@
     padding-left: 8px;
 }
 
-.settings {
-    margin: 16px;
-    margin-left: 32px;
+hook {
+    display: block;
+    padding: 4px;
+}
 
+.settings {
+    padding: 4px;
+    margin-left: 16px;
     background-color:whitesmoke;
-    outline:dashed;
-    
-    padding: 10px;
 }
 
 .settings setting {
-    padding-bottom: 8px;
+    padding-bottom: 32px;
     display: block;
+}
+
+.settings p {
+    max-width: 500px;
 }
 
 .settings input {

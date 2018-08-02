@@ -20,6 +20,12 @@ function drawSettings(parent, hook, id) {
     root.id = id;
     parent.appendChild(root);
 
+    let desc = document.createElement("p");
+    desc.innerHTML = hook.description;
+    root.appendChild(desc);
+
+    if(!hook.config) return;
+
     for(let cfgId in hook.config) {
         let cfgView = hook.configView[cfgId];
         
@@ -103,20 +109,10 @@ function drawHooks(hooks) {
         let hook = hooks[key];
         if(hook.force) continue;
 
-    
-        let root = null;
+        let elem = document.createElement("hook");
+        hooksRoot.appendChild(elem);
 
-        let hasConfig = hook.configView;
-        if(hasConfig) {
-            root = document.createElement("div");
-            hooksRoot.appendChild(root);
-        } else {
-            root = hooksRoot;
-        }
-        
-        let elem = document.createElement("div");
         let input = document.createElement("input");
-        
         input.type = "checkbox";
         input.checked = hook.config.enabled;
 
@@ -129,35 +125,29 @@ function drawHooks(hooks) {
         
         let span = document.createElement("span");
 
-        if(hasConfig) {
-            let innerSpan = document.createElement("span");
-            innerSpan.innerHTML = hook.name;
-            span.appendChild(innerSpan);
+        let innerSpan = document.createElement("span");
+        innerSpan.innerHTML = hook.name;
+        span.appendChild(innerSpan);
 
-            let icon = document.createElement("span");
-            icon.classList.add("icon-span");
-            icon.innerHTML = "▼";
-            span.appendChild(icon);
-            
-            elem.addEventListener("mouseenter", () => {
-                elem.classList.add("selected-item");
-            });
+        let icon = document.createElement("span");
+        icon.classList.add("icon-span");
+        icon.innerHTML = "▼";
+        span.appendChild(icon);
+        
+        elem.addEventListener("mouseenter", () => {
+            elem.classList.add("selected-item");
+        });
 
-            elem.addEventListener("mouseleave", () => {
-                elem.classList.remove("selected-item");
-            });
+        elem.addEventListener("mouseleave", () => {
+            elem.classList.remove("selected-item");
+        });
 
-            span.addEventListener("click", () => {
-                if(!hideSettings(root, hook, key))
-                    drawSettings(root, hook, key);
-            });
-        } else {
-            span.innerHTML = hook.name;
-        }
+        span.addEventListener("click", () => {
+            if(!hideSettings(elem, hook, key))
+                drawSettings(elem, hook, key);
+        });
 
         elem.appendChild(span);
-        
-        root.appendChild(elem);
     }
 }
 

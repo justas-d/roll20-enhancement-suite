@@ -43,40 +43,32 @@ window.r20es.hooks = {
         patch: "var d20=d20||{};window.d20=d20;"
     },
 
-    devMode: {
-        name: "Developer mode",
-
-        includes: "/editor/startjs/",
-        find: "environment: \"production\"",
-        patch: "environment: \"development\"",
-    },
-
-
     tokenLayerDrawing: {
         
         name: "Token layer drawing (GM Only)",
+        description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
+
+        includes: "assets/app.js",
+        find: "this.model.view.updateBackdrops(e),this.active",
+        patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es.tokenDrawBg(e, this), this.active"
+    },
+
+    activeLayerHud: {
+
+        name: "Display active layer (GM Only)",
+        description: "Displays the active edit layer as well as whether the select tool is active.",
 
         inject: ["scripts/draw_current_layer.js"],
 
-        mods: [
-            {
-                includes: "assets/app.js",
-                find: "this.model.view.updateBackdrops(e),this.active",
-                patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es.tokenDrawBg(e, this), this.active"
-
-            },
-
-            {
-                includes: "assets/app.js",
-                find: "function setMode(e){",
-                patch: "function setMode(e){if(window.r20es) window.r20es.setModePrologue(e);",
-            }
-        ]
+        includes: "assets/app.js",
+        find: "function setMode(e){",
+        patch: "function setMode(e){if(window.r20es) window.r20es.setModePrologue(e);",
     },
 
     seenadOverride: {
         
         name: "Skip ad",
+        description : "Skips loading ads",
 
         includes: "/editor/startjs/",
         find: "d20ext.showGoogleAd();",
@@ -86,6 +78,7 @@ window.r20es.hooks = {
     characterImportExport: {
         
         name: "Character Exporter/Importer",
+        description : "Provides character importing (in the journal) and exporting (in the journal and on sheets).",
 
         inject: ["scripts/character_io.js"],
     },
@@ -93,6 +86,7 @@ window.r20es.hooks = {
     autoSelectNextToken: {
         
         name: "Select token on its turn",
+        description : "Automatically selects a token on it's turn",
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -101,7 +95,8 @@ window.r20es.hooks = {
 
     autoFocusNextToken: {
         
-        name: "Move local camera to token on its turn",
+        name: "Move camera to token on its turn",
+        description : "Automatically moves the local camera to the token on it's turn. The camera movement is local only, meaning only your camera will move.",
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -111,6 +106,7 @@ window.r20es.hooks = {
     autoPingNextToken: {
         
         name: "Ping tokens visible to players on their turns",
+        description : "Automatically pings a token on it's turn.",
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -119,8 +115,8 @@ window.r20es.hooks = {
 
     rollAndApplyHitDice: {
         
-
         name: "Roll and apply hit dice",
+        description : `Adds a "Hit Dice" option to the token right click menu which rolls and applies hit dice for the selected tokens.`,
 
         mods: addElemToCanvasTokenRightClickMenu("Hit Dice", "r20es-hit-dice", "rollAndApplyHitDice"),
 
@@ -150,6 +146,7 @@ window.r20es.hooks = {
     bulkMacros: {
      
         name: "Bulk macros",
+        description : `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
 
         inject: ["scripts/bulk_macros.js"],
         mods: addCategoryElemToCanvasTokenRightClickMenu("Bulk Roll", "r20es-bulk-macro-menu", "handleBulkMacroMenuClick")
@@ -158,6 +155,8 @@ window.r20es.hooks = {
     importExportTable: {
         
         name: "Table Import/export",
+        description : "Provides rollable table importing and exporting. Supports TableExport format tables.",
+
         inject: ["scripts/import_export_table.js"],
 
         mods: [
@@ -174,7 +173,6 @@ window.r20es.hooks = {
                 patch: `this.el.setAttribute("r20es-table-id", this.model.get("id")),this.$el.on("click",".deleterollabletable"`,                    
             }
         ]
-
     }
 };
 

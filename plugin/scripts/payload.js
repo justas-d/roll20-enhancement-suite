@@ -526,9 +526,3 @@ window.r20es.exportTableToJson = function(e) {
     var jsonBlob = new Blob([json], { type: 'data:application/javascript;charset=utf-8' });
     saveAs(jsonBlob, table.get("name") + ".json");
 }
-
-/*
-API notes
-    * for state, use window.d20.Campaign.save() and .get(), coupling it with local storage in case roll20 decides to trim unused attributes.
-    * investiage if on() events are exposed to us
-*/
