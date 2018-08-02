@@ -1,5 +1,6 @@
 window.r20es = window.r20es || {};
 
+
 function addCategoryElemToCanvasTokenRightClickMenu(name, actionType, callback) {
     return [
         {
@@ -41,6 +42,14 @@ window.r20es.hooks = {
         includes: "assets/app.js",
         find: "var d20=d20||{};",
         patch: "var d20=d20||{};window.d20=d20;"
+    },
+
+    createFinalPageLoadEvent: {
+        force: true,
+        includes: "assets/app.js",
+
+        find: `$("#loading-overlay").hide()`,
+        patch: `$("#loading-overlay").hide();window.r20es.onAppLoad.fire(null);`
     },
 
     tokenLayerDrawing: {

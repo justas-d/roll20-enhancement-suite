@@ -14,6 +14,31 @@ function recvPluginMsg(e) {
 window.removeEventListener("message", recvPluginMsg);
 window.addEventListener("message", recvPluginMsg);
 
+window.r20es.onAppLoad = window.r20es.onAppLoad || {listeners: []};
+
+window.r20es.onAppLoad.fire = function() {
+    if(window.r20es.isWindowLoaded) return;
+    window.r20es.isWindowLoaded = true;
+
+    for(let listener of window.r20es.onAppLoad.listeners) {
+        listener();
+    }
+}
+
+window.r20es.onAppLoad.addEventListener = function(fx) {
+    window.r20es.onAppLoad.listeners.push(fx);
+}
+
+window.r20es.safeParseJson = function(str) {
+
+    try {
+        return JSON.parse(str);
+    } catch(err) {
+        alert("File is not a valid JSON file.");
+    }
+    return null;
+} 
+
 window.r20es.getTransform = function (ctx) {
     if ('currentTransform' in ctx) {
         return ctx.currentTransform
@@ -254,7 +279,7 @@ window.r20es.handleBulkMacroObserverCallback = function(muts) {
                 }
                 
                 for(let obj of sel) {
-                    if(!obj.model || !obj.model.character) continwindow.r20es.readFileue;
+                    if(!obj.model || !obj.model.character) continue;
                     if(obj.model.character.get("id") !== firstId) {
                         areAllSame = false;
                         break;
@@ -288,13 +313,14 @@ window.r20es.handleBulkMacroObserverCallback = function(muts) {
 window.r20es.readFile = function(file, callback) {
     if(!file) {
         alert("No file given.");
-        return;
+        return false;
     }
 
     let reader = new FileReader();
     reader.readAsText(file);
 
     reader.onload = callback;
+    return true;
 }
 
 function importTablesFromJson(e) {
@@ -503,7 +529,6 @@ window.r20es.importTablesFromTableExport = function(raw) {
     for(let name in tables) {
         importTablesFromJson(tables[name]);
     }
-    
 }
 
 function getTable(e) {

@@ -2,7 +2,6 @@ console.log("=================");
 console.log("r20es bootstrap");
 console.log("=================");
 
-
 const injectId = "io-scripts";
 
 let existing = document.getElementById(injectId);
