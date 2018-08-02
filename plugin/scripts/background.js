@@ -182,6 +182,25 @@ window.r20es.hooks = {
                 patch: `this.el.setAttribute("r20es-table-id", this.model.get("id")),this.$el.on("click",".deleterollabletable"`,                    
             }
         ]
+    },
+
+    duplicateInJournalContextMenu: {
+        name: `"Duplicate" in journal context menu`,
+        description: `Adds a "Duplicate" entry to the context menu of items found in the journal.`,
+
+        mods: [
+            {
+                includes: "assets/app.js",
+                find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
+                patch: `$("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]",() => {window.r20es.onJournalDuplicate($currentItemTarget.attr("data-itemid"))}),
+$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
+            }, 
+            {
+                includes: "/editor/",
+                find: `<li data-action-type='archiveitem'>Archive Item</li>`,
+                patch: `<li data-action-type='r20esduplicate'>Duplicate</li><li data-action-type='archiveitem'>Archive Item</li>`
+            }
+        ]
     }
 };
 

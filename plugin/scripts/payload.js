@@ -562,6 +562,32 @@ window.r20es.exportTableToJson = function(e) {
     
     let json = JSON.stringify(table.attributes, null , 4);
 
-    var jsonBlob = new Blob([json], { type: 'data:application/javascript;charset=utf-8' });
+    let jsonBlob = new Blob([json], { type: 'data:application/javascript;charset=utf-8' });
     saveAs(jsonBlob, table.get("name") + ".json");
+}
+
+window.r20es.onJournalDuplicate = function(id) {
+
+    let note = d20.Campaign.handouts.get(id);
+    let char = d20.Campaign.characters.get(id);
+
+    if(char)  {
+        if(!note.editview.el.firstElementChild)
+            note.editview.render();
+
+        $(note.editview.el).find(".duplicate").trigger("click");
+    } else if(note) {
+        let json = note.toJSON();
+        delete json.id;
+
+        let newNote = note.collection.create(json);
+
+        setTimeout(() => {
+            var blobs = {};
+            if(note._blobcache.notes) blobs.notes = note._blobcache.notes;
+            if(note._blobcache.gmnotes) blobs.gmnotes = note._blobcache.gmnotes;
+
+            newNote.updateBlobs(blobs);
+        }, 100);
+    }
 }
