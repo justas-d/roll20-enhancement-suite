@@ -166,8 +166,8 @@ window.r20es.moveCameraTo = function(data) {
 }
 
 function sendChat(asWho, msg) {
-    if(!asWho) asWho = "r20es";
-    window.d20.textchat.doChatInput(`/as ${asWho} ${msg}`);
+    if(!asWho) asWho = "R20ES";
+    window.d20.textchat.doChatInput(`/w "${window.currentPlayer.get("displayname")}" &{template:default} {{name=${asWho}}} {{${msg}}}`);
 }
 
 window.r20es.rollAndApplyHitDice = function(objects) {
@@ -198,7 +198,7 @@ window.r20es.rollAndApplyHitDice = function(objects) {
         }
 
         if(!hpFormula) {
-            sendChat("Hit dice", `Could not find attribute ${config.diceFormulaAttribute}`)
+            sendChat("R20ES_HitDice", `Could not find attribute ${config.diceFormulaAttribute}`)
             continue;
         }
 
