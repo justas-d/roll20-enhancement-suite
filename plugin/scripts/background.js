@@ -255,11 +255,14 @@ function loadLocalStorage() {
                 
                 if(!hook) continue;
 
+                let cfg = null;
                 if(typeof(save) === "boolean") {
-                    hook.config = {enabled: true};
+                    cfg = {enabled: true};
                 } else {
-                    hook.config = save;
+                    cfg = save;
                 }
+
+                hook.config = Object.assign(hook.config, cfg); // overwrite defaults
                 
                 console.log(`localStorage: Loaded ${key}`);
                 console.log(hook.config);
