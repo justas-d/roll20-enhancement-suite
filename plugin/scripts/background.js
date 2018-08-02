@@ -201,6 +201,13 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
                 patch: `<li data-action-type='r20esduplicate'>Duplicate</li><li data-action-type='archiveitem'>Archive Item</li>`
             }
         ]
+    },
+
+    initiativeShortcuts: {
+        name: "Initiative shortcuts",
+        description: "Creates a shortcut for advancing (Ctrl+Right Arrow) in the initiative list.",
+
+        inject: ["scripts/initiative_shortcuts.js"],
     }
 };
 
