@@ -13,6 +13,7 @@
 
 ## Journal
 * DONE Right click -> duplicate
+* Export default token
 
 ## Misc
 * DONE Remove countdown at the start

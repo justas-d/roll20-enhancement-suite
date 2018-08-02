@@ -1,12 +1,33 @@
 function exportPc(pc) {
 
     let data = {
-        schema_version: 1,
+        schema_version: 2,
+        oldId: pc.attributes.id,
         name: pc.attributes.name,
         avatar: pc.attributes.avatar,
         bio: pc._blobcache.bio,
-        attribs: pc.attribs
+        attribs: [],
+        abilities: []
     };
+
+    for(let attrib of pc.attribs.models) {
+        data.attribs.push({
+            name: attrib.attributes.name,
+            current: attrib.attributes.current,
+            max: attrib.attributes.max,
+            id: attrib.attributes.id,
+        });
+    }
+
+    for(let abil of pc.abilities.models) {
+        data.abilities.push({
+            name: abil.attributes.name,
+            description: abil.attributes.description,
+            istokenaction: abil.attributes.istokenaction,
+            action: abil.attributes.action,
+            order: abil.attributes.order
+        });
+    }
 
     let jsonData = JSON.stringify(data, null, 4);
 
@@ -14,69 +35,107 @@ function exportPc(pc) {
     saveAs(jsonBlob, data.name + ".json");
 }
 
-let formatVersions = {
-    1: {
-        isValidData: function(data) {
 
-            let invalid = msg => { return {isValid: false, reason: msg}; }
-            let hasNot = what => !(what in data);
-        
-            if(hasNot("name")) return invalid("name not found");
-            if(hasNot("avatar")) return invalid("avatar not found");
-            if(hasNot("bio")) return invalid("bio not found");
-            if(hasNot("attribs")) return invalid("attribs not found");
+let formatVersions = {};
 
-            let idx = 0;
-            for(let attrib of data.attribs) {
-                if(!("name" in attrib)) return invalid(`Attribute index ${idx} doesn't have name`);
-                if(!("current" in attrib)) return invalid(`Attribute index ${idx} doesn't have current`);
-                if(!("max" in attrib)) return invalid(`Attribute index ${idx} doesn't have max`);
-            }
+let fmtInvalid = msg => { return {isValid: false, reason: msg}; }
 
-            return {isValid: true};
-        },
+formatVersions[1] = {
+    isValidData: function(data) {
+
+        let hasNot = what => !(what in data);
     
-        overwrite: function(pc, data) {
-            pc.save({
-                name: data.name,
-                avatar: data.avatar,
-        
-            });
-            
-            pc.updateBlobs({bio: data.bio});
-        
-            for(let i = 0; i < data.attribs.length; i++) {
-            
-                let importAttrib = data.attribs[i];
-                let stored = null;
-            
-                for(let storedIdx = 0; storedIdx < pc.attribs.models.length; storedIdx++) {
-                    let model = pc.attribs.models[storedIdx];
-                    if(model.get("name") === importAttrib.name) {
-                        stored = model;
-                        break;
-                    }
-                }
+        if(hasNot("name")) return fmtInvalid("name not found");
+        if(hasNot("avatar")) return fmtInvalid("avatar not found");
+        if(hasNot("bio")) return fmtInvalid("bio not found");
+        if(hasNot("attribs")) return fmtInvalid("attribs not found");
 
-                if(!stored) {
-                    pc.attribs.create({
-                        name: importAttrib.name,
-                        current: importAttrib.current,
-                        max: importAttrib.max
-                    });
-                } else {
-                    stored.attributes.name = importAttrib.name;
-                    stored.attributes.current = importAttrib.current;
-                    stored.attributes.max = importAttrib.max;
-                    stored.save();
-                }
-            }
-    
-            pc.view.render();
-            pc.save();
-    
-            console.log("Imported!")
+        let idx = 0;
+        for(let el of data.attribs) {
+            if(!("name" in el)) return fmtInvalid(`Attribute index ${idx} doesn't have name`);
+            if(!("current" in el)) return fmtInvalid(`Attribute index ${idx} doesn't have current`);
+            if(!("max" in el)) return fmtInvalid(`Attribute index ${idx} doesn't have max`);
         }
+
+        return {isValid: true};
+    },
+
+    overwrite: function(pc, data) {
+        pc.save({
+            name: data.name,
+            avatar: data.avatar,
+    
+        });
+        
+        pc.updateBlobs({bio: data.bio});
+        pc.attribs.reset();
+    
+        for(let importAttrib of data.attribs) {
+            pc.attribs.create(importAttrib);
+        }
+
+        pc.view.render();
+        pc.save();
+
+        console.log("Imported v1!");
+    }
+};
+
+formatVersions[2] = {
+    isValidData: function(data) { 
+        
+        let hasNot = what => !(what in data);
+    
+        if(hasNot("name")) return fmtInvalid("name not found");
+        if(hasNot("oldId")) return fmtInvalid("oldId not found");
+        if(hasNot("avatar")) return fmtInvalid("avatar not found");
+        if(hasNot("bio")) return fmtInvalid("bio not found");
+        if(hasNot("attribs")) return fmtInvalid("attribs not found");
+
+        let idx = 0;
+        for(let el of data.attribs) {
+            if(!("name" in el)) return fmtInvalid(`Attribute index ${idx} doesn't have name`);
+            if(!("current" in el)) return fmtInvalid(`Attribute index ${idx} doesn't have current`);
+            if(!("max" in el)) return fmtInvalid(`Attribute index ${idx} doesn't have max`);
+            if(!("id" in el)) return fmtInvalid(`Attribute index ${idx} doesn't have id`);
+        }
+
+        idx = 0;
+        for(let el of data.abilities) {
+            if(!("name" in el)) return fmtInvalid(`Ability index ${idx} doesn't have name`);
+            if(!("description" in el)) return fmtInvalid(`Ability index ${idx} doesn't have description`);
+            if(!("istokenaction" in el)) return fmtInvalid(`Ability index ${idx} doesn't have istokenaction`);
+            if(!("action" in el)) return fmtInvalid(`Ability index ${idx} doesn't have action`);
+            if(!("order" in el)) return fmtInvalid(`Ability index ${idx} doesn't have order`);
+        }
+
+        return {isValid: true};
+    },
+
+    overwrite: function(pc, data) {
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+        }
+
+        // some attributes store the id of the exported character
+        // we replace them here with the new id 
+        let jsonData = JSON.stringify(data);
+        jsonData = jsonData.replace(new RegExp(escapeRegExp(data.oldId), 'g'), pc.attributes.id);
+        data = JSON.parse(jsonData);
+
+        formatVersions[1].overwrite(pc, data);
+
+        pc.abilities.reset();
+
+        for(let abil of data.abilities) {
+            pc.abilities.create(abil);
+        }
+
+        pc.view.render();
+        pc.save();
+
+        console.log("Imported v2!");
     }
 };
 
