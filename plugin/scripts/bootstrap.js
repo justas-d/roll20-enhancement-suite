@@ -5,7 +5,6 @@ console.log("=================");
 
 const injectId = "io-scripts";
 
-
 let existing = document.getElementById(injectId);
 
 if(existing) {
@@ -27,30 +26,45 @@ function createScript(payload) {
     root.appendChild(s);
 }
 
-createScript("scripts/FileSaver.js");
-createScript("scripts/payload.js");
-
 document.head.appendChild(root);
 
-var bg = browser.runtime.connect("{ffed5dfa-f0e1-403d-905d-ac3f698660a7}");
+var bgComms = browser.runtime.connect("{ffed5dfa-f0e1-403d-905d-ac3f698660a7}");
+
+function requestHooksFromBackend() {
+    console.log("requesting hooks from backend");
+    bgComms.postMessage({request: "hooks"});
+}
+
+var hasInjectedHooks = false;
 
 function bgListener(msg) {
+    console.log("Received background message");
     if(msg.hooks) {
-        for(let id in msg.hooks) {
-            let hook = msg.hooks[id];
-            if(!hook.enabled) continue;
 
-            if(hook.inject) {
+        window.postMessage({r20es_hooks: msg.hooks}, "https://app.roll20.net/editor/");
+
+        if(!hasInjectedHooks) {
+            hasInjectedHooks = true;
+
+            for(let id in msg.hooks) {
+                let hook = msg.hooks[id];
+
+                if(!hook.config.enabled) continue;
+                if(!hook.inject) continue;
+
                 for(let payload of hook.inject) {
                     createScript(payload);
                 }
             }
         }
     }
-
-    bg.onMessage.removeListener(bgListener);
 }
 
-bg.onMessage.addListener(bgListener);
+bgComms.onMessage.addListener(bgListener);
+
+requestHooksFromBackend();
+
+createScript("scripts/FileSaver.js");
+createScript("scripts/payload.js");
 
 console.log("r20es bootstrap done");

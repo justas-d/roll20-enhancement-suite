@@ -1,0 +1,35 @@
+.selected-item {
+    background-color: #f2f2f2;
+}
+
+.icon-span {
+    float: right;
+    padding-left: 8px;
+}
+
+.settings {
+    margin: 16px;
+    margin-left: 32px;
+
+    background-color:whitesmoke;
+    outline:dashed;
+    
+    padding: 10px;
+}
+
+.settings setting {
+    padding-bottom: 8px;
+    display: block;
+}
+
+.settings input {
+    float: right;
+}
+
+.settings select {
+    float: right;
+}
+
+.settings span{
+    padding-right: 16px;
+}

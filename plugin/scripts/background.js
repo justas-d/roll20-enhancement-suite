@@ -34,7 +34,7 @@ function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
 
 window.r20es.hooks = {
     
-    expose_d20: {
+    exposeD20: {
         
         force: true,
 
@@ -43,7 +43,7 @@ window.r20es.hooks = {
         patch: "var d20=d20||{};window.d20=d20;"
     },
 
-    dev_mode: {
+    devMode: {
         name: "Developer mode",
 
         includes: "/editor/startjs/",
@@ -52,7 +52,7 @@ window.r20es.hooks = {
     },
 
 
-    token_layer_drawing: {
+    tokenLayerDrawing: {
         
         name: "Token layer drawing (GM Only)",
 
@@ -74,7 +74,7 @@ window.r20es.hooks = {
         ]
     },
 
-    seenad_override: {
+    seenadOverride: {
         
         name: "Skip ad",
 
@@ -83,14 +83,14 @@ window.r20es.hooks = {
         patch: 'window.d20ext.seenad = !0, $("#loading-overlay").find("div").hide(), window.currentPlayer && d20.Campaign.pages.length > 0 && d20.Campaign.handlePlayerPageChanges(), void $.get("/editor/startping/true");'
     },
 
-    character_io: {
+    characterImportExport: {
         
         name: "Character Exporter/Importer",
 
         inject: ["scripts/character_io.js"],
     },
 
-    auto_select_next_token: {
+    autoSelectNextToken: {
         
         name: "Select token on its turn",
 
@@ -99,7 +99,7 @@ window.r20es.hooks = {
         patch: "e.push(t[0]);window.r20es.selectInitiativeToken(e[0]);"
     },
 
-    auto_focus_next_token: {
+    autoFocusNextToken: {
         
         name: "Move local camera to token on its turn",
 
@@ -108,7 +108,7 @@ window.r20es.hooks = {
         patch: "e.push(t[0]);window.r20es.moveCameraTo(e[0]);"
     },
 
-    auto_ping_next_token: {
+    autoPingNextToken: {
         
         name: "Ping tokens visible to players on their turns",
 
@@ -117,23 +117,45 @@ window.r20es.hooks = {
         patch: "e.push(t[0]);window.r20es.pingInitiativeToken(e[0]);"
     },
 
-    roll_and_apply_hit_dice_5e_ogl_r20: {
+    rollAndApplyHitDice: {
         
 
-        name: "Roll and apply hit dice (5e, official r20 sheet)",
+        name: "Roll and apply hit dice",
 
-        mods: addElemToCanvasTokenRightClickMenu("Hit Dice", "r20es-5e-ogl-hit-dice", "rollAndApplyHitDice5eOGL")
+        mods: addElemToCanvasTokenRightClickMenu("Hit Dice", "r20es-hit-dice", "rollAndApplyHitDice"),
+
+        configView: {
+            diceFormulaAttribute: {
+                display: "Hit dice formula attribute",
+                type: "string",
+            },
+            bar: {
+                display: "HP Bar",
+                type: "dropdown",
+
+                dropdownValues: {
+                    bar1: "Bar 1",
+                    bar2: "Bar 2",
+                    bar3: "Bar 3"
+                },
+            }
+        },
+
+        config: {
+            diceFormulaAttribute: "npc_hpformula",
+            bar: "bar1",
+        }
     },
 
-    bulk_macros: {
-        
+    bulkMacros: {
+     
         name: "Bulk macros",
 
         inject: ["scripts/bulk_macros.js"],
         mods: addCategoryElemToCanvasTokenRightClickMenu("Bulk Roll", "r20es-bulk-macro-menu", "handleBulkMacroMenuClick")
     },
 
-    import_export_table: {
+    importExportTable: {
         
         name: "Table Import/export",
         inject: ["scripts/import_export_table.js"],
@@ -156,28 +178,91 @@ window.r20es.hooks = {
     }
 };
 
+let ports = [];
+
+function sendHooksToPort(port) {
+    port.postMessage({hooks: window.r20es.hooks});   
+    console.log("Background sent hooks to plugin to be sent to page");
+}
+
+function sendHooksToAllPorts() {
+    let idx = ports.length;
+
+    while(idx --> 0) {
+        let port = ports[idx];
+        
+        if(port.error) {
+            console.log(`Port error: ${port.error}`);
+            ports.splice(idx, 1);
+            continue;
+        }
+
+        sendHooksToPort(port);
+    }
+}
+
 browser.runtime.onConnect.addListener(port => {
-    port.postMessage({hooks: window.r20es.hooks});
+    console.log("Background established new port");
+
+    ports.push(port);
+
+    port.onMessage.addListener(e => {
+        if(e.request && e.request === "hooks")
+            sendHooksToPort(port)
+    });
 });
 
-{
-    let localKeys = {};
+function loadLocalStorage() {
+
+    let get = {};
 
     for(let id in window.r20es.hooks) {
-        if(localKeys[id] && localKeys[id].force) continue;
-
-        localKeys[id] = true;
+        get[id] = true;
     }
-
-    browser.storage.local.get(localKeys)
+    
+    browser.storage.local.get(get)
         .then(p => {
+           
             for(var key in p) {
                 let hook = window.r20es.hooks[key];
-                if(hook) {
-                    hook.enabled = p[key];
+                let save = p[key];
+                
+                if(!hook) continue;
+
+                if(typeof(save) === "boolean") {
+                    hook.config = {enabled: true};
+                } else {
+                    hook.config = save;
                 }
+                
+                console.log(`localStorage: Loaded ${key}`);
+                console.log(hook.config);
             }
         });
+
+    
+    // fill in required defaults
+    for(let id in window.r20es.hooks) {
+        let hook = window.r20es.hooks[id];
+        
+        if(!hook.config) {
+            hook.config = {};
+            hook.config.enabled = true;
+        }
+    }
+}
+
+loadLocalStorage();
+
+function updateLocalStorage() {
+    let save = {};
+
+    for(let id in window.r20es.hooks) {
+        let hook = window.r20es.hooks[id];
+        save[id] = hook.config;
+    }
+
+    browser.storage.local.set(save);
 }
 
 browser.runtime.onMessage.addListener((msg) => {
@@ -187,13 +272,14 @@ browser.runtime.onMessage.addListener((msg) => {
                 popup: {hooks: window.r20es.hooks, type: "receive_hooks"}
             });
         }
-        if(msg.background.type === "update_hook_enabled") {
+        if(msg.background.type === "update_hook_config") {
             let hook = window.r20es.hooks[msg.background.hookId];
-            hook.enabled = msg.background.state;
+            
+            hook.config = Object.assign(hook.config, msg.background.config);
+            console.log(hook.config);
 
-            let save = {};
-            save[msg.background.hookId] = hook.enabled;
-            browser.storage.local.set(save);
+            updateLocalStorage();
+            sendHooksToAllPorts();
         }
     }
 });
@@ -214,7 +300,7 @@ function listener(dt) {
     for(let id in window.r20es.hooks) {
         let hook = window.r20es.hooks[id];
 
-        if(!hook.enabled) continue;
+        if(!hook.config.enabled) continue;
 
         if(hook.mods) {
             for(let mod of hook.mods) {

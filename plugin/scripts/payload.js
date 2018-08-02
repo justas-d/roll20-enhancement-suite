@@ -2,6 +2,18 @@ console.log("[r20es] payload.js is being injected.");
 
 window.r20es = window.r20es || {};
 
+function recvPluginMsg(e) {
+    
+    if(e.data.r20es_hooks) {
+        e.stopPropagation();
+        console.log("Page received hooks from backend!");
+        window.r20es.hooks = e.data.r20es_hooks;
+    }
+}
+
+window.removeEventListener("message", recvPluginMsg);
+window.addEventListener("message", recvPluginMsg);
+
 window.r20es.getTransform = function (ctx) {
     if ('currentTransform' in ctx) {
         return ctx.currentTransform
@@ -30,7 +42,7 @@ window.r20es.getCustomLayerData = function (layer) {
 }
 
 window.r20es.tokenDrawBg = function (ctx, graphic) {
-
+    
     let data = window.r20es.getCustomLayerData(graphic.model.get("layer"));
 
     ctx.save();
@@ -114,35 +126,46 @@ window.r20es.moveCameraTo = function(data) {
     editor.scrollLeft = Math.floor(data.left * window.d20.engine.canvasZoom) - Math.floor(window.d20.engine.canvasWidth / 2) + 125 * window.d20.engine.canvasZoom;
 }
 
-window.r20es.rollAndApplyHitDice5eOGL = function(objects) {
+function sendChat(asWho, msg) {
+    if(!asWho) asWho = "r20es";
+    window.d20.textchat.doChatInput(`/as ${asWho} ${msg}`);
+}
+
+window.r20es.rollAndApplyHitDice = function(objects) {
 
     // tokens will locally disappear if we do not unselect them here
     let oldSel = window.d20.engine.selected();
     window.d20.engine.unselect();
 
     let numRolled = 0;
-    // TODO: custom hpFormula name, custom bar?_* vars 
+
+    console.log(window.r20es.hooks);
+    
     for(let token of objects) {  
         console.log(token);
 
         if(!token.model || !token.model.character) continue;
 
         let attribs = token.model.character.attribs;
+        let config  = window.r20es.hooks.rollAndApplyHitDice.config;        
 
         // find hpForumla
         let hpFormula = null;
         for(let attrib of attribs.models) {
-            if(!hpFormula && attrib.attributes.name === "npc_hpformula") {
+            if(!hpFormula && attrib.attributes.name === config.diceFormulaAttribute) {
                 hpFormula = attrib.attributes.current;
                 break;
             }
         }
 
-        if(!hpFormula) continue;
+        if(!hpFormula) {
+            sendChat("Hit dice", `Could not find attribute ${config.diceFormulaAttribute}`)
+            continue;
+        }
 
         // roll hpForumla
         let callbackId = generateUUID();    
-        window.d20.textchat.doChatInput(`/w gm [[${hpFormula}]]`, callbackId);
+        window.d20.textchat.doChatInput(`/w gm ${token.model.character.get("name")}: [[${hpFormula}]]`, callbackId);
     
         // apply hp formula in the roll callback
         $(document).on(`mancerroll:${callbackId}`, (_, o) => {
@@ -152,7 +175,12 @@ window.r20es.rollAndApplyHitDice5eOGL = function(objects) {
 
             let hp = o.inlinerolls[0].results.total;
 
-            token.model.save({bar3_max: hp, bar3_value: hp});
+            let barValue = config.bar + "_value";
+            let barMax = config.bar + "_max";
+            let save = {};
+            save[barValue] = hp;
+            save[barMax] = hp;
+            token.model.save(save);
 
             // reselect when we're done processing all callbacks.
             numRolled++;
@@ -173,7 +201,7 @@ window.r20es.handleBulkMacroMenuClick = function(obj) {
 
     let sel = window.d20.engine.selected();
     window.d20.engine.unselect();
-    window.r20es.readFile
+    
     for(let obj of sel) {
         window.d20.engine.select(obj);
         window.d20.textchat.doChatInput(action);
@@ -498,3 +526,9 @@ window.r20es.exportTableToJson = function(e) {
     var jsonBlob = new Blob([json], { type: 'data:application/javascript;charset=utf-8' });
     saveAs(jsonBlob, table.get("name") + ".json");
 }
+
+/*
+API notes
+    * for state, use window.d20.Campaign.save() and .get(), coupling it with local storage in case roll20 decides to trim unused attributes.
+    * investiage if on() events are exposed to us
+*/
