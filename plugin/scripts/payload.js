@@ -29,6 +29,20 @@ window.r20es.onAppLoad.addEventListener = function(fx) {
     window.r20es.onAppLoad.listeners.push(fx);
 }
 
+window.r20es.addSidebarSeparator = function(root) {
+    function addClear() {
+        let clear1 = document.createElement("div");
+        clear1.className = "clear";
+        clear1.style.height = 10;
+        root.appendChild(clear1);
+    }
+
+    addClear();
+    let hr = document.createElement("hr");
+    root.appendChild(hr);
+    addClear();
+}
+
 window.r20es.safeParseJson = function(str) {
 
     try {

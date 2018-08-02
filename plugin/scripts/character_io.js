@@ -127,7 +127,7 @@ function mutCallback(muts) {
                 exportPc(pc); 
             };
             exportButton.classList.add(exportButtonClass);
-            exportButton.style.paddingLeft = 8;
+            exportButton.style.marginRight = "8px";
             root.appendChild(exportButton);
             
             let fs = document.createElement("input");
@@ -138,7 +138,7 @@ function mutCallback(muts) {
             overwriteButton.innerHTML = "Overwrite";
             overwriteButton.classList.add("btn");
             overwriteButton.disabled = true;
-            overwriteButton.style.paddingLeft = 8;
+            overwriteButton.style.marginRight = "8px";
 
             overwriteButton.onclick = _ => { 
 
@@ -165,7 +165,9 @@ window.r20es.onAppLoad.addEventListener(() => {
     var observer = new MutationObserver(mutCallback);
     observer.observe(document.body, { childList: true, subtree: true });
 
-    let journal = document.getElementById("journal");
+    let journal = document.getElementById("journal").getElementsByClassName("content")[0];
+    window.r20es.addSidebarSeparator(journal);
+
     let root = document.createElement("div");
     journal.appendChild(root);
 
@@ -200,8 +202,8 @@ window.r20es.onAppLoad.addEventListener(() => {
         btn.disabled = !(e.target.files.length > 0);
     };
 
-    root.appendChild(btn);
     root.appendChild(fs);
+    root.appendChild(btn);
 });
 
 console.log("Loaded character_io");

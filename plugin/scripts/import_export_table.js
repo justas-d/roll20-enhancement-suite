@@ -22,8 +22,9 @@ observer.observe(document.body, { childList: true, subtree: true });
 {
     const importFileSelectorId = "r20es-rollabletable-import-fileselector";
 
-    let rootOfDiv = document.getElementById("deckstables");
-
+    let rootOfDiv = document.getElementById("deckstables").getElementsByClassName("content")[0];
+    window.r20es.addSidebarSeparator(rootOfDiv);
+    
     let root = document.createElement("div");
 
     {
