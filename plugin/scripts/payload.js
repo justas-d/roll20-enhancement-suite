@@ -572,22 +572,35 @@ window.r20es.onJournalDuplicate = function(id) {
     let char = d20.Campaign.characters.get(id);
 
     if(char)  {
-        if(!note.editview.el.firstElementChild)
-            note.editview.render();
+        clone = () => { $(char.editview.el).find(".duplicate").trigger("click"); }
 
-        $(note.editview.el).find(".duplicate").trigger("click");
+        if(!char.editview.el.firstElementChild) {
+            char.editview.render();
+        }
+        
+        if(!char._blobcache.defaulttoken) {
+            char._getLatestBlob("defaulttoken", clone);
+        } else {
+            clone();
+        }
+        
     } else if(note) {
+        var blobs = {};
+
+        note._getLatestBlob("notes", (b) => {blobs.notes = b});
+        note._getLatestBlob("gmnotes", (b) => {blobs.gmnotes = b});
+
+        if(!note.editview.el.firstElementChild) {
+            note.editview.render();    
+        }
+
         let json = note.toJSON();
         delete json.id;
 
         let newNote = note.collection.create(json);
 
         setTimeout(() => {
-            var blobs = {};
-            if(note._blobcache.notes) blobs.notes = note._blobcache.notes;
-            if(note._blobcache.gmnotes) blobs.gmnotes = note._blobcache.gmnotes;
-
             newNote.updateBlobs(blobs);
-        }, 100);
+        }, 1000);
     }
 }
