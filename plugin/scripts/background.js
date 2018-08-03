@@ -148,7 +148,7 @@ window.r20es.hooks = {
 
         config: {
             diceFormulaAttribute: "npc_hpformula",
-            bar: "bar1",
+            bar: "bar3",
         }
     },
 
