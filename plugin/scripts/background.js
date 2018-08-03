@@ -208,10 +208,17 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
         description: "Creates a shortcut for advancing (Ctrl+Right Arrow) in the initiative list.",
 
         inject: ["scripts/initiative_shortcuts.js"],
+    },
+
+    changeRepresentsIdWhenDuplicating: {
+        name: `Reassign default token "Represents" when duplicating`,
+        description : `This will make sure that if a character, who we want to duplicate, has default token, the character that he default token represents will be set to the duplicated character.`,
+
+        includes: "assets/app.js",
+        find: "o.defaulttoken=e.model._blobcache.defaulttoken",
+        patch: `o.defaulttoken = window.r20es.replaceAll(e.model._blobcache.defaulttoken, e.model.get("id"), n.get("id"))`
     }
 };
-
-let ports = [];
 
 function sendHooksToPort(port) {
     port.postMessage({hooks: window.r20es.hooks});   
