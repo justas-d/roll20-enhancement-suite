@@ -165,9 +165,9 @@ window.r20es.moveCameraTo = function(data) {
     editor.scrollLeft = Math.floor(data.left * window.d20.engine.canvasZoom) - Math.floor(window.d20.engine.canvasWidth / 2) + 125 * window.d20.engine.canvasZoom;
 }
 
-function sendChat(asWho, msg) {
+function sendChat(asWho, msg, callbackId) {
     if(!asWho) asWho = "R20ES";
-    window.d20.textchat.doChatInput(`/w "${window.currentPlayer.get("displayname")}" &{template:default} {{name=${asWho}}} {{${msg}}}`);
+    window.d20.textchat.doChatInput(`/w "${window.currentPlayer.get("displayname")}" &{template:default} {{name=${asWho}}} {{${msg}}}`, callbackId);
 }
 
 window.r20es.rollAndApplyHitDice = function(objects) {
@@ -203,8 +203,8 @@ window.r20es.rollAndApplyHitDice = function(objects) {
         }
 
         // roll hpForumla
-        let callbackId = generateUUID();    
-        window.d20.textchat.doChatInput(`/w gm ${token.model.character.get("name")}: [[${hpFormula}]]`, callbackId);
+        let callbackId = generateUUID();
+        sendChat("R20ES_HitDice", `${token.model.character.get("name")}: [[${hpFormula}]]`, callbackId);
     
         // apply hp formula in the roll callback
         $(document).on(`mancerroll:${callbackId}`, (_, o) => {
