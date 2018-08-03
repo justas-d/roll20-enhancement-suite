@@ -566,24 +566,33 @@ window.r20es.exportTableToJson = function(e) {
     saveAs(jsonBlob, table.get("name") + ".json");
 }
 
+window.r20es.replaceAll = function(where, find, replace) {
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }
+
+    return where.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+
+}
+
 window.r20es.onJournalDuplicate = function(id) {
 
     let note = d20.Campaign.handouts.get(id);
     let char = d20.Campaign.characters.get(id);
 
     if(char)  {
-        clone = () => { $(char.editview.el).find(".duplicate").trigger("click"); }
+        char._getLatestBlob("notes", () => {});
+        char._getLatestBlob("gmnotes", () => {});
+        char._getLatestBlob("defaulttoken", () => {});
 
         if(!char.editview.el.firstElementChild) {
             char.editview.render();
         }
-        
-        if(!char._blobcache.defaulttoken) {
-            char._getLatestBlob("defaulttoken", clone);
-        } else {
-            clone();
-        }
-        
+
+        setTimeout(() => {
+            { $(char.editview.el).find(".duplicate").trigger("click"); }
+        }, 1000);
+    
     } else if(note) {
         var blobs = {};
 
