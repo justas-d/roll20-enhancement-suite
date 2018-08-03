@@ -1,7 +1,12 @@
-window.r20es = window.r20es || {};
+/* 
+ * Responsible for 
+ *   managing the hook array singleton
+ *   saving/loading any hook config changes into/from localStorage
+ *   sending out hook data to the bootstrapper
+ *   injecting hook patches into caught requests
+ */
 
-
-function addCategoryElemToCanvasTokenRightClickMenu(name, actionType, callback) {
+ function addCategoryElemToCanvasTokenRightClickMenu(name, actionType, callback) {
     return [
         {
             includes: "/editor/",
@@ -33,8 +38,7 @@ function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
     ];
 }
 
-window.r20es.hooks = {
-    
+let hooks = {
     exposeD20: {
         
         force: true,
@@ -67,7 +71,7 @@ window.r20es.hooks = {
         name: "Display active layer (GM Only)",
         description: "Displays the active edit layer as well as whether the select tool is active.",
 
-        inject: ["scripts/draw_current_layer.js"],
+        inject: ["draw_current_layer.js"],
 
         includes: "assets/app.js",
         find: "function setMode(e){",
@@ -89,7 +93,7 @@ window.r20es.hooks = {
         name: "Character Exporter/Importer",
         description : "Provides character importing (in the journal) and exporting (in the journal and on sheets).",
 
-        inject: ["scripts/character_io.js"],
+        inject: ["character_io.js"],
     },
 
     autoSelectNextToken: {
@@ -157,7 +161,7 @@ window.r20es.hooks = {
         name: "Bulk macros",
         description : `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
 
-        inject: ["scripts/bulk_macros.js"],
+        inject: ["bulk_macros.js"],
         mods: addCategoryElemToCanvasTokenRightClickMenu("Bulk Roll", "r20es-bulk-macro-menu", "handleBulkMacroMenuClick")
     },
 
@@ -166,7 +170,7 @@ window.r20es.hooks = {
         name: "Table Import/export",
         description : "Provides rollable table importing and exporting. Supports TableExport format tables.",
 
-        inject: ["scripts/import_export_table.js"],
+        inject: ["import_export_table.js"],
 
         mods: [
             { // export buttons
@@ -207,7 +211,7 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
         name: "Initiative shortcuts",
         description: "Creates a shortcut for advancing (Ctrl+Right Arrow) in the initiative list.",
 
-        inject: ["scripts/initiative_shortcuts.js"],
+        inject: ["initiative_shortcuts.js"],
     },
 
     changeRepresentsIdWhenDuplicating: {
@@ -221,7 +225,7 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
 };
 
 function sendHooksToPort(port) {
-    port.postMessage({hooks: window.r20es.hooks});   
+    port.postMessage({hooks: hooks});   
     console.log("Background sent hooks to plugin to be sent to page");
 }
 
@@ -241,24 +245,11 @@ function sendHooksToAllPorts() {
     }
 }
 
-let ports = [];
-
-browser.runtime.onConnect.addListener(port => {
-    console.log("Background established new port");
-
-    ports.push(port);
-
-    port.onMessage.addListener(e => {
-        if(e.request && e.request === "hooks")
-            sendHooksToPort(port)
-    });
-});
-
 function loadLocalStorage() {
 
     let get = {};
 
-    for(let id in window.r20es.hooks) {
+    for(let id in hooks) {
         get[id] = true;
     }
     
@@ -266,7 +257,7 @@ function loadLocalStorage() {
         .then(p => {
            
             for(var key in p) {
-                let hook = window.r20es.hooks[key];
+                let hook = hooks[key];
                 let save = p[key];
                 
                 if(!hook) continue;
@@ -287,8 +278,8 @@ function loadLocalStorage() {
 
     
     // fill in required defaults
-    for(let id in window.r20es.hooks) {
-        let hook = window.r20es.hooks[id];
+    for(let id in hooks) {
+        let hook = hooks[id];
         
         if(!hook.config) {
             hook.config = {};
@@ -297,37 +288,17 @@ function loadLocalStorage() {
     }
 }
 
-loadLocalStorage();
 
 function updateLocalStorage() {
     let save = {};
 
-    for(let id in window.r20es.hooks) {
-        let hook = window.r20es.hooks[id];
+    for(let id in hooks) {
+        let hook = hooks[id];
         save[id] = hook.config;
     }
 
     browser.storage.local.set(save);
 }
-
-browser.runtime.onMessage.addListener((msg) => {
-    if(msg.background) {
-        if(msg.background.type === "get_hooks") {
-            browser.runtime.sendMessage(null, {
-                popup: {hooks: window.r20es.hooks, type: "receive_hooks"}
-            });
-        }
-        if(msg.background.type === "update_hook_config") {
-            let hook = window.r20es.hooks[msg.background.hookId];
-            
-            hook.config = Object.assign(hook.config, msg.background.config);
-            console.log(hook.config);
-
-            updateLocalStorage();
-            sendHooksToAllPorts();
-        }
-    }
-});
 
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -339,24 +310,24 @@ function addModToQueueIfOk(dt, mod, queue) {
     }
 }
 
-function listener(dt) {
+function requestListener(dt) {
 
-    let hooks = [];
-    for(let id in window.r20es.hooks) {
-        let hook = window.r20es.hooks[id];
+    let hookQueue = [];
+    for(let id in hooks) {
+        let hook = hooks[id];
 
         if(!hook.config.enabled) continue;
 
         if(hook.mods) {
             for(let mod of hook.mods) {
-                addModToQueueIfOk(dt, mod, hooks);
+                addModToQueueIfOk(dt, mod, hookQueue);
             }
         } else {
-            addModToQueueIfOk(dt, hook, hooks);
+            addModToQueueIfOk(dt, hook, hookQueue);
         }
     }
 
-    if(hooks.length <= 0) return;
+    if(hookQueue.length <= 0) return;
 
     let filter = browser.webRequest.filterResponseData(dt.requestId);
     let decoder = new TextDecoder("utf-8");
@@ -368,7 +339,7 @@ function listener(dt) {
     };
 
     filter.onstop = _ => {
-        for(let mod of hooks) {
+        for(let mod of hookQueue) {
             if(!mod.find || !mod.patch) continue;
 
             str = str.replace(new RegExp(escapeRegExp(mod.find), 'g'), mod.patch);
@@ -381,11 +352,42 @@ function listener(dt) {
     };
 }
 
+loadLocalStorage();
+let ports = [];
+
+browser.runtime.onConnect.addListener(port => {
+    console.log("Background established new port");
+
+    ports.push(port);
+
+    port.onMessage.addListener(e => {
+        if(e.request && e.request === "hooks")
+            sendHooksToPort(port)
+    });
+});
+
+browser.runtime.onMessage.addListener((msg) => {
+    if(msg.background) {
+        if(msg.background.type === "get_hooks") {
+            browser.runtime.sendMessage(null, {
+                popup: {hooks: hooks, type: "receive_hooks"}
+            });
+        }
+        if(msg.background.type === "update_hook_config") {
+            let hook = hooks[msg.background.hookId];
+            
+            hook.config = Object.assign(hook.config, msg.background.config);
+            console.log(hook.config);
+
+            updateLocalStorage();
+            sendHooksToAllPorts();
+        }
+    }
+});
+
 browser.webRequest.onBeforeRequest.addListener(
-    listener,
+    requestListener,
     {urls: ["*://app.roll20.net/*"]},
     ["blocking"]);
 
 console.log("r20es Background hook script initialized");
-
-

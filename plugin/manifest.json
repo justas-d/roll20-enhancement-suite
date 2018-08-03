@@ -25,7 +25,7 @@
   ],
 
   "background": {
-      "scripts": ["scripts/background.js"]
+      "scripts": ["scripts/backend.js"]
   },
 
   "browser_action": {
@@ -40,13 +40,5 @@
      }
   },
 
-  "web_accessible_resources": [
-      "scrips/payload.js",
-      "scripts/FileSaver.js",
-      "scripts/draw_current_layer.js",
-      "scripts/character_io.js",
-      "scripts/bulk_initiative.js",
-      "scripts/import_export_table.js",
-      "scripts/initiative_shortcuts.js"
-  ]
+  "web_accessible_resources": [ "scripts/*" ]
 }

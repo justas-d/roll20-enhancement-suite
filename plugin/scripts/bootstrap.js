@@ -1,7 +1,14 @@
+/*
+ * Responsible for 
+ *   injecting the r20es global environment and modules, 
+ *   communicating with the backend on behalf of the injected scripts.
+ */
+
 console.log("=================");
 console.log("r20es bootstrap");
 console.log("=================");
 
+// inject scripts
 const injectId = "io-scripts";
 
 let existing = document.getElementById(injectId);
@@ -27,14 +34,16 @@ function createScript(payload) {
 
 document.head.appendChild(root);
 
-var bgComms = browser.runtime.connect("{ffed5dfa-f0e1-403d-905d-ac3f698660a7}");
+
+// setup comms with the backend
+let bgComms = browser.runtime.connect("{ffed5dfa-f0e1-403d-905d-ac3f698660a7}");
 
 function requestHooksFromBackend() {
     console.log("requesting hooks from backend");
     bgComms.postMessage({request: "hooks"});
 }
 
-var hasInjectedHooks = false;
+let hasInjectedHooks = false;
 
 function bgListener(msg) {
     console.log("Received background message");
@@ -52,7 +61,7 @@ function bgListener(msg) {
                 if(!hook.inject) continue;
 
                 for(let payload of hook.inject) {
-                    createScript(payload);
+                    createScript("scripts/modules/" + payload);
                 }
             }
         }
@@ -63,7 +72,8 @@ bgComms.onMessage.addListener(bgListener);
 
 requestHooksFromBackend();
 
+// inject global environment
 createScript("scripts/FileSaver.js");
-createScript("scripts/payload.js");
+createScript("scripts/globals.js");
 
 console.log("r20es bootstrap done");
