@@ -4,6 +4,8 @@
 
 .header {
     text-align: center;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .header h2 {
@@ -14,12 +16,24 @@
 }
 
 body {
-    background-color: #FFFFFF;
-    margin: 0;
+    margin: 0px;
+}
+
+.category > h3 {
+    margin: 0px;
+    padding-left: 12px;
+    padding-right: 12px;
+    
+}
+
+.category > ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
 }
 
 .selected-item {
-    background-color: #f2f2f2;
+    background-color:rgb(248, 248, 248);
 }
 
 .icon-span {
@@ -32,29 +46,40 @@ hook {
     padding: 4px;
 }
 
-.settings {
-    padding: 4px;
-    margin-left: 16px;
-    background-color:whitesmoke;
+hook > .contents {
+    margin-left: 25px;
 }
 
-.settings setting {
+.settings {
+    padding: 4px;
+    padding-left: 35px;
+}
+
+hr {
+    
+    border-top: 1px solid rgb(248, 248, 248);
+}
+
+.settings > setting {
     padding-bottom: 10px;
     display: block;
 }
 
-.settings p {
+.settings > p {
+    margin: 0;
+    margin-bottom: 8px;
+    
     max-width: 500px;
 }
 
-.settings input {
+setting > input {
     float: right;
 }
 
-.settings select {
+setting > select {
     float: right;
 }
 
-.settings span{
+.settings > span{
     padding-right: 16px;
 }

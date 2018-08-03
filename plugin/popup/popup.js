@@ -24,7 +24,7 @@ function drawSettings(parent, hook, id) {
     desc.innerHTML = hook.description;
     root.appendChild(desc);
 
-    if(!hook.config) return;
+    if(!hook.configView) return;
 
     for(let cfgId in hook.config) {
         let cfgView = hook.configView[cfgId];
@@ -97,6 +97,7 @@ function hideSettings(parent, hook, id) {
     return true;
 }
 
+
 function drawHooks(hooks) {
 
     let hooksRoot = document.getElementById("hooks");
@@ -105,55 +106,86 @@ function drawHooks(hooks) {
         hooksRoot.removeChild(hooksRoot.firstChild);
     }
 
+    let byCategory = {};
     for(let key in hooks) {
         let hook = hooks[key];
         if(hook.force) continue;
 
-        let elem = document.createElement("hook");
-        hooksRoot.appendChild(elem);
-
-        let input = document.createElement("input");
-        input.type = "checkbox";
-        input.checked = hook.config.enabled;
-
-        input.addEventListener("click", (e) => { 
-            hook.config.enabled = e.target.checked;
-            notifyBackendOfHookMutation(hook, key);
-        });
-
-        elem.appendChild(input);        
+        if(!(hook.category in byCategory))
+            byCategory[hook.category] = [];
         
-        let span = document.createElement("span");
+        byCategory[hook.category].push(key);
+    }
 
-        let innerSpan = document.createElement("span");
-        innerSpan.innerHTML = hook.name;
-        span.appendChild(innerSpan);
+    for(let categoryName in byCategory) {
+        let bucket = byCategory[categoryName];
 
-        let icon = document.createElement("span");
-        icon.classList.add("icon-span");
-        icon.innerHTML = "▼";
-        span.appendChild(icon);
+        let hr = document.createElement("hr");
+        let categoryRoot = document.createElement("div");
+        let categoryText = document.createElement("h3");
+        let categoryContainer = document.createElement("ul");
+        categoryText.innerHTML = categoryName;        
+        categoryRoot.classList.add("category");
+        categoryRoot.appendChild(categoryText);
+        categoryRoot.appendChild(categoryContainer);
         
-        elem.addEventListener("mouseenter", () => {
-            elem.classList.add("selected-item");
-        });
+        for(let hookId of bucket) {function drawCategory() {
+    
+        }
+            let hook = hooks[hookId];
+            if(hook.force) continue;
 
-        elem.addEventListener("mouseleave", () => {
-            elem.classList.remove("selected-item");
-        });
+            let elem = document.createElement("hook");
+            let contents = document.createElement("div");
+            contents.classList.add("contents");
+            elem.appendChild(contents);
+            categoryContainer.appendChild(elem);
+    
+            let input = document.createElement("input");
+            input.type = "checkbox";
+            input.checked = hook.config.enabled;
+    
+            input.addEventListener("click", (e) => { 
+                hook.config.enabled = e.target.checked;
+                notifyBackendOfHookMutation(hook, hookId);
+            });
+    
+            contents.appendChild(input);        
+            
+            let span = document.createElement("span");
+    
+            let innerSpan = document.createElement("span");
+            innerSpan.innerHTML = hook.name;
+            span.appendChild(innerSpan);
+    
+            let icon = document.createElement("span");
+            icon.classList.add("icon-span");
+            icon.innerHTML = "▼";
+            span.appendChild(icon);
+            
+            elem.addEventListener("mouseenter", () => {
+                elem.classList.add("selected-item");
+            });
+    
+            elem.addEventListener("mouseleave", () => {
+                elem.classList.remove("selected-item");
+            });
+    
+            span.addEventListener("click", () => {
+                if(!hideSettings(contents, hook, hookId))
+                    drawSettings(contents, hook, hookId);
+            });
+    
+            contents.appendChild(span);
+        }
 
-        span.addEventListener("click", () => {
-            if(!hideSettings(elem, hook, key))
-                drawSettings(elem, hook, key);
-        });
-
-        elem.appendChild(span);
+        hooksRoot.appendChild(categoryRoot);
+        hooksRoot.appendChild(hr);
     }
 }
 
 browser.runtime.onMessage.addListener((msg) => {
     if(msg.popup && msg.popup.type === "receive_hooks") {
-        console.log(msg.popup.hooks);
         drawHooks(msg.popup.hooks);
     }
 });
