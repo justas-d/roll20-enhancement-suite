@@ -38,9 +38,16 @@ function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
     ];
 }
 
+let categories = {
+    canvas: "Canvas",
+    exportImport: "Exporting/Importing",
+    initiative: "Initiative",
+    token: "Token",
+    journal: "Journal",
+}
+
 let hooks = {
     exposeD20: {
-        
         force: true,
 
         includes: "assets/app.js",
@@ -57,9 +64,9 @@ let hooks = {
     },
 
     tokenLayerDrawing: {
-        
         name: "Token layer drawing (GM Only)",
         description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
+        category: categories.canvas,
 
         includes: "assets/app.js",
         find: "this.model.view.updateBackdrops(e),this.active",
@@ -70,6 +77,7 @@ let hooks = {
 
         name: "Display active layer (GM Only)",
         description: "Displays the active edit layer as well as whether the select tool is active.",
+        category: categories.canvas,
 
         inject: ["draw_current_layer.js"],
 
@@ -82,6 +90,7 @@ let hooks = {
         
         name: "Skip ad",
         description : "Skips loading ads",
+        category: categories.canvas,
 
         includes: "/editor/startjs/",
         find: "d20ext.showGoogleAd();",
@@ -89,17 +98,17 @@ let hooks = {
     },
 
     characterImportExport: {
-        
         name: "Character Exporter/Importer",
         description : "Provides character importing (in the journal) and exporting (in the journal and on sheets).",
+        category: categories.exportImport,
 
         inject: ["character_io.js"],
     },
 
     autoSelectNextToken: {
-        
         name: "Select token on its turn",
         description : "Automatically selects a token on it's turn",
+        category: categories.initiative,
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -107,9 +116,9 @@ let hooks = {
     },
 
     autoFocusNextToken: {
-        
         name: "Move camera to token on its turn",
         description : "Automatically moves the local camera to the token on it's turn. The camera movement is local only, meaning only your camera will move.",
+        category: categories.initiative,
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -117,9 +126,9 @@ let hooks = {
     },
 
     autoPingNextToken: {
-        
         name: "Ping tokens visible to players on their turns",
         description : "Automatically pings a token on it's turn.",
+        category: categories.initiative,
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -127,9 +136,9 @@ let hooks = {
     },
 
     rollAndApplyHitDice: {
-        
         name: "Roll and apply hit dice",
         description : `Adds a "Hit Dice" option to the token right click menu which rolls and applies hit dice for the selected tokens.`,
+        category: categories.token,
 
         mods: addElemToCanvasTokenRightClickMenu("Hit Dice", "r20es-hit-dice", "rollAndApplyHitDice"),
 
@@ -157,18 +166,18 @@ let hooks = {
     },
 
     bulkMacros: {
-     
         name: "Bulk macros",
         description : `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
+        category: categories.token,
 
         inject: ["bulk_macros.js"],
         mods: addCategoryElemToCanvasTokenRightClickMenu("Bulk Roll", "r20es-bulk-macro-menu", "handleBulkMacroMenuClick")
     },
 
     importExportTable: {
-        
         name: "Table Import/export",
         description : "Provides rollable table importing and exporting. Supports TableExport format tables.",
+        category: categories.exportImport,
 
         inject: ["import_export_table.js"],
 
@@ -191,6 +200,7 @@ let hooks = {
     duplicateInJournalContextMenu: {
         name: `"Duplicate" in journal context menu`,
         description: `Adds a "Duplicate" entry to the context menu of items found in the journal.`,
+        category: categories.journal,
 
         mods: [
             {
@@ -210,6 +220,7 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
     initiativeShortcuts: {
         name: "Initiative shortcuts",
         description: "Creates a shortcut for advancing (Ctrl+Right Arrow) in the initiative list.",
+        category: categories.initiative,
 
         inject: ["initiative_shortcuts.js"],
     },
@@ -217,6 +228,7 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
     changeRepresentsIdWhenDuplicating: {
         name: `Reassign default token "Represents" when duplicating`,
         description : `This will make sure that if a character, who we want to duplicate, has default token, the character that he default token represents will be set to the duplicated character.`,
+        category: categories.token,
 
         includes: "assets/app.js",
         find: "o.defaulttoken=e.model._blobcache.defaulttoken",
