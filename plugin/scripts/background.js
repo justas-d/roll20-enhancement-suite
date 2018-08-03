@@ -241,6 +241,8 @@ function sendHooksToAllPorts() {
     }
 }
 
+let ports = [];
+
 browser.runtime.onConnect.addListener(port => {
     console.log("Background established new port");
 
