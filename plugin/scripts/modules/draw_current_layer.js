@@ -4,12 +4,21 @@ window.r20es.onAppLoad.addEventListener(() => {
         const selectId = "r20es-select";
         const layerId = "r20es-layer";
 
-        let textStyle = {
-            fontFamily: "Helvetica",
-            fontSize: "26px"
+        const divStyle = {
+            padding: "4px",
+            height: "30px",
         }
 
-        let root = window.r20es.createElement("div", {
+        const textStyle = {
+            fontFamily: "Helvetica",
+            fontSize: "26px",
+            display: "inline-block",
+            verticalAlign: "middle",
+            margin: "0px",
+            lineHeight: divStyle.height
+        }
+
+        window.r20es.createElement("div", {
             style: {
                 marginBottom: "15px",
                 marginRight: "15px",
@@ -26,22 +35,18 @@ window.r20es.onAppLoad.addEventListener(() => {
             [
                 window.r20es.createElement("div", {
                     id: selectId,
-                    style: {
-                        background: "rgba(255,0,0,0.5)",
-                        padding: "4px",
-                        display: "none"
-                    }
+                    style: window.r20es.copy(divStyle, {background: "rgba(255,0,0,0.5)"})
                 },
                     [
                         window.r20es.createElement("p", { 
-                            innerHTML: "NOT SELECTING!",
+                            innerHTML: "Not selecting!",
                             style: textStyle 
                         })
                     ]
                 ),
                 window.r20es.createElement("div", {
                     id: layerId,
-                    style: { pading: "4pdx" }
+                    style: divStyle
                 },
                     [
                         window.r20es.createElement("p", { style: textStyle })
