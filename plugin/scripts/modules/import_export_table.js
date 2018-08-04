@@ -5,7 +5,7 @@ function matchAndProcessTitle(e) {
 }
 
 // dom mutation watcher that will let us attach export/import buttons to character sheets.
-var callback = function(mutationsList) {
+function mutCallback(mutationsList) {
     for(var e of mutationsList) {
         if(!matchAndProcessTitle(e.target)) {
             for(let t of e.addedNodes)
@@ -14,12 +14,15 @@ var callback = function(mutationsList) {
     }
 };
 
-// Create an observer instance linked to the callback function
-var observer = new MutationObserver(callback);
-observer.observe(document.body, { childList: true, subtree: true });
+
+window.r20es.onAppLoad.addEventListener(() => {
+
+    if(!window.is_gm) return;
+
+    var observer = new MutationObserver(mutCallback);
+    observer.observe(document.body, { childList: true, subtree: true });
 
 
-{
     const importFileSelectorId = "r20es-rollabletable-import-fileselector";
 
     let rootOfDiv = document.getElementById("deckstables").getElementsByClassName("content")[0];
@@ -74,4 +77,4 @@ observer.observe(document.body, { childList: true, subtree: true });
     root.appendChild(tableExportButton);
 
     rootOfDiv.appendChild(root);
-}
+})
