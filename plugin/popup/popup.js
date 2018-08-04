@@ -129,9 +129,7 @@ function drawHooks(hooks) {
         categoryRoot.appendChild(categoryText);
         categoryRoot.appendChild(categoryContainer);
         
-        for(let hookId of bucket) {function drawCategory() {
-    
-        }
+        for(let hookId of bucket) {
             let hook = hooks[hookId];
             if(hook.force) continue;
 
@@ -160,7 +158,8 @@ function drawHooks(hooks) {
     
             let icon = document.createElement("span");
             icon.classList.add("icon-span");
-            icon.innerHTML = "▼";
+            
+            icon.innerHTML = hook.gmOnly ? "GM Only ▼" : "▼";
             span.appendChild(icon);
             
             elem.addEventListener("mouseenter", () => {
