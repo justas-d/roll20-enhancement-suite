@@ -211,19 +211,12 @@ let hooks = {
         category: categories.journal,
         gmOnly: true,
 
-        mods: [
-            {
-                includes: "assets/app.js",
-                find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
-                patch: `$("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]",() => {window.r20es.onJournalDuplicate($currentItemTarget.attr("data-itemid"))}),
+        inject: ["add_duplicate_to_journal_menu.js"],
+
+        includes: "assets/app.js",
+        find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
+        patch: `$("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]",() => {window.r20es.onJournalDuplicate($currentItemTarget.attr("data-itemid"))}),
 $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
-            }, 
-            {
-                includes: "/editor/",
-                find: `<li data-action-type='archiveitem'>Archive Item</li>`,
-                patch: `<li data-action-type='r20esduplicate'>Duplicate</li><li data-action-type='archiveitem'>Archive Item</li>`
-            }
-        ]
     },
 
     initiativeShortcuts: {
