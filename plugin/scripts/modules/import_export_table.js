@@ -48,7 +48,7 @@ window.r20es.onAppLoad.addEventListener(() => {
                 cb(e2.target.result);
             });
             
-            //fs.value = "";
+            fs.value = "";
         }
     };
 
