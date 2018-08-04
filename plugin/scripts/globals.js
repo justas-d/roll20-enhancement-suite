@@ -37,19 +37,37 @@ window.r20es.copy = function (what, overrides) {
     return copy;
 }
 
-window.r20es.createElement = function (type, _attributes, _children, parent) {
+window.r20es.createElement = function (type, _attributes, children, parent) {
     let elem = document.createElement(type);
     const attributes = _attributes || {};
-    const children = _children || [];
 
     let isEvent = (what) => what.startsWith("on");
     let getEventName = (what) => what.substring(2).toLowerCase();
+
+    function recursiveAddChildren(ch) {
+        for (let child of ch) {
+            if(!child) continue;
+            if (typeof (child) === "function") {
+                recursiveAddChildren(child());
+            } else {
+                elem.appendChild(child);
+            }
+        }
+    }
+
+    if (children) {
+        recursiveAddChildren(children);
+    }
 
     for (let attribId in attributes) {
         let val = attributes[attribId];
 
         if (attribId === "innerHTML") {
             elem.innerHTML = val;
+        } else if(attribId === "value") {
+            elem.value = val;
+        } else if(attribId === "checked") {
+            elem.checked = val;
         } else if (attribId === "style") {
             for (let elemId in val) {
                 elem.style[elemId] = val[elemId];
@@ -69,12 +87,9 @@ window.r20es.createElement = function (type, _attributes, _children, parent) {
         }
     }
 
-    for (let child of children) {
-        elem.appendChild(child);
-    }
-
-    if (parent)
+    if (parent) {
         parent.appendChild(elem);
+    }
 
     return elem;
 }
@@ -122,16 +137,16 @@ window.r20es.getRotation = function (ctx) {
     return rad;
 };
 
-window.r20es.getCustomLayerData = function (layer) {
-    if (layer === "map") return { bigTxt: "Map Background", txt: "MP", bg: "rgba(255,255,0,0.5)" }
-    else if (layer === "objects") return { bigTxt: "Tokens (Player Visible)", txt: "TK", bg: "rgba(255,0,0,0.5)" }
-    else if (layer === "gmlayer") return { bigTxt: "Game Master Tokens", txt: "GM", bg: "rgba(0,255,0,0.5)" }
-    return { txt: layer, bg: "rgba(255,255,255,0.5)" }
+window.r20es.getLayerData = function (layer) {
+    if (layer === "map") return { selector: "#editinglayer li.choosemap", bigTxt: "Map Background", txt: "MP", bg: "rgba(255,255,0,0.5)" }
+    else if (layer === "objects") return { selector: "#editinglayer li.chooseobjects", bigTxt: "Tokens (Player Visible)", txt: "TK", bg: "rgba(255,0,0,0.5)" }
+    else if (layer === "gmlayer") return { selector: "#editinglayer li.choosegmlayer", bigTxt: "Game Master Tokens", txt: "GM", bg: "rgba(0,255,0,0.5)" }
+    return { selector: "", txt: layer, bg: "rgba(255,255,255,0.5)" }
 }
 
 window.r20es.tokenDrawBg = function (ctx, graphic) {
 
-    let data = window.r20es.getCustomLayerData(graphic.model.get("layer"));
+    let data = window.r20es.getLayerData(graphic.model.get("layer"));
 
     ctx.save();
     ctx.globalAlpha = 1;

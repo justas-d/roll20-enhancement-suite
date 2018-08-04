@@ -57,7 +57,7 @@ window.r20es.onAppLoad.addEventListener(() => {
         );
 
         function render(layer) {
-            let data = window.r20es.getCustomLayerData(layer);
+            let data = window.r20es.getLayerData(layer);
 
             const div = $(`#${layerId}`)[0];
             const text = $(div).find("p")[0];
