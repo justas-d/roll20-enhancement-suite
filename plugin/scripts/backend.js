@@ -64,9 +64,10 @@ let hooks = {
     },
 
     tokenLayerDrawing: {
-        name: "Token layer drawing (GM Only)",
+        name: "Token layer drawing",
         description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
         category: categories.canvas,
+        gmOnly: true,
 
         includes: "assets/app.js",
         find: "this.model.view.updateBackdrops(e),this.active",
@@ -75,9 +76,10 @@ let hooks = {
 
     activeLayerHud: {
 
-        name: "Display active layer (GM Only)",
+        name: "Display active layer",
         description: "Displays the active edit layer as well as whether the select tool is active.",
         category: categories.canvas,
+        gmOnly: true,
 
         inject: ["draw_current_layer.js"],
 
@@ -109,6 +111,7 @@ let hooks = {
         name: "Select token on its turn",
         description : "Automatically selects a token on it's turn",
         category: categories.initiative,
+        gmOnly: true,
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -119,6 +122,7 @@ let hooks = {
         name: "Move camera to token on its turn",
         description : "Automatically moves the local camera to the token on it's turn. The camera movement is local only, meaning only your camera will move.",
         category: categories.initiative,
+        gmOnly: true,
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -129,6 +133,7 @@ let hooks = {
         name: "Ping tokens visible to players on their turns",
         description : "Automatically pings a token on it's turn.",
         category: categories.initiative,
+        gmOnly: true,
 
         includes: "assets/app.js",
         find: "e.push(t[0]);",
@@ -139,6 +144,7 @@ let hooks = {
         name: "Roll and apply hit dice",
         description : `Adds a "Hit Dice" option to the token right click menu which rolls and applies hit dice for the selected tokens.`,
         category: categories.token,
+        gmOnly: true,
 
         mods: addElemToCanvasTokenRightClickMenu("Hit Dice", "r20es-hit-dice", "rollAndApplyHitDice"),
 
@@ -169,6 +175,7 @@ let hooks = {
         name: "Bulk macros",
         description : `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
         category: categories.token,
+        gmOnly: true,
 
         inject: ["bulk_macros.js"],
         mods: addCategoryElemToCanvasTokenRightClickMenu("Bulk Roll", "r20es-bulk-macro-menu", "handleBulkMacroMenuClick")
@@ -178,6 +185,7 @@ let hooks = {
         name: "Table Import/export",
         description : "Provides rollable table importing and exporting. Supports TableExport format tables.",
         category: categories.exportImport,
+        gmOnly: true,
 
         inject: ["import_export_table.js"],
 
@@ -201,6 +209,7 @@ let hooks = {
         name: `"Duplicate" in journal context menu`,
         description: `Adds a "Duplicate" entry to the context menu of items found in the journal.`,
         category: categories.journal,
+        gmOnly: true,
 
         mods: [
             {
@@ -221,6 +230,7 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
         name: "Initiative shortcuts",
         description: "Creates a shortcut for advancing (Ctrl+Right Arrow) in the initiative list.",
         category: categories.initiative,
+        gmOnly: true,
 
         inject: ["initiative_shortcuts.js"],
     },
@@ -229,6 +239,7 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
         name: `Reassign default token "Represents" when duplicating`,
         description : `This will make sure that if a character, who we want to duplicate, has default token, the character that he default token represents will be set to the duplicated character.`,
         category: categories.token,
+        gmOnly: true,
 
         includes: "assets/app.js",
         find: "o.defaulttoken=e.model._blobcache.defaulttoken",
