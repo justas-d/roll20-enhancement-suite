@@ -32,8 +32,11 @@ function createScript(payload) {
     root.appendChild(s);
 }
 
-document.head.appendChild(root);
+// inject global environment
+createScript("scripts/FileSaver.js");
+createScript("scripts/globals.js");
 
+document.head.appendChild(root);
 
 // setup comms with the backend
 let bgComms = browser.runtime.connect("{ffed5dfa-f0e1-403d-905d-ac3f698660a7}");
@@ -71,9 +74,5 @@ function bgListener(msg) {
 bgComms.onMessage.addListener(bgListener);
 
 requestHooksFromBackend();
-
-// inject global environment
-createScript("scripts/FileSaver.js");
-createScript("scripts/globals.js");
 
 console.log("r20es bootstrap done");
