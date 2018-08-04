@@ -56,21 +56,20 @@ hook > .contents {
     padding-left: 35px;
 }
 
-hr {
-    
-    border-top: 1px solid rgb(248, 248, 248);
-}
-
-.settings > setting {
-    padding-bottom: 10px;
-    display: block;
-}
-
 .settings > p {
     margin: 0;
     margin-bottom: 8px;
     
     max-width: 400px;
+}
+
+hr {
+    border-top: 1px solid rgb(248, 248, 248);
+}
+
+setting {
+    padding-bottom: 10px;
+    display: block;
 }
 
 setting > input {

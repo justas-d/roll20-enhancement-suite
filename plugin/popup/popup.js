@@ -1,5 +1,64 @@
+
+// TODO : @HACK dedupe, this is taken straight from globals.js
+function createElement(type, _attributes, children, parent) {
+    let elem = document.createElement(type);
+    const attributes = _attributes || {};
+
+    let isEvent = (what) => what.startsWith("on");
+    let getEventName = (what) => what.substring(2).toLowerCase();
+
+    function recursiveAddChildren(ch) {
+        for (let child of ch) {
+            if(!child) continue;
+            if (typeof (child) === "function") {
+                recursiveAddChildren(child());
+            } else {
+                elem.appendChild(child);
+            }
+        }
+    }
+
+    if (children) {
+        recursiveAddChildren(children);
+    }
+
+    for (let attribId in attributes) {
+        let val = attributes[attribId];
+
+        if (attribId === "innerHTML") {
+            elem.innerHTML = val;
+        } else if(attribId === "value") {
+            elem.value = val;
+        } else if(attribId === "checked") {
+            elem.checked = val;
+        } else if (attribId === "style") {
+            for (let elemId in val) {
+                elem.style[elemId] = val[elemId];
+            }
+        } else if (attribId === "className") {
+            if (typeof (val) === "object" && "length" in val) {
+                for (let className of val) {
+                    elem.classList.add(className);
+                }
+            } else {
+                elem.className = val;
+            }
+        } else if (isEvent(attribId)) {
+            elem.addEventListener(getEventName(attribId), val);
+        } else {
+            elem.setAttribute(attribId, val);
+        }
+    }
+
+    if (parent) {
+        parent.appendChild(elem);
+    }
+
+    return elem;
+}
+
 var sending = browser.runtime.sendMessage(null, {
-    background: {type: "get_hooks"}
+    background: { type: "get_hooks" }
 });
 
 function notifyBackendOfHookMutation(hook, id) {
@@ -14,177 +73,152 @@ function notifyBackendOfHookMutation(hook, id) {
     });
 }
 
-function drawSettings(parent, hook, id) {
-    let root = document.createElement("div");
-    root.classList.add("settings");
-    root.id = id;
-    parent.appendChild(root);
+function mapObj(obj, fx) {
+    return Object.keys(obj).reduce((accum, curVal) => {
+        let val = fx(obj[curVal], curVal);
 
-    let desc = document.createElement("p");
-    desc.innerHTML = hook.description;
-    root.appendChild(desc);
+        if (val !== undefined && val !== null) {
+            accum.push(val);
+        }
 
-    if(!hook.configView) return;
+        return accum;
+    }, []);
+}
 
-    for(let cfgId in hook.config) {
-        let cfgView = hook.configView[cfgId];
-        
-        if(cfgId === "enabled") continue;
+function drawConfig(hook, id) {
+    if (!hook.configView) return null;
 
-        if(cfgView.type === "string") {
-            let prop = document.createElement("setting");
-            
-            let text = document.createElement("span");
-            text.innerHTML = cfgView.display;
-            prop.appendChild(text);
+    return createElement("div", null, [
+        () => mapObj(hook.configView, (cfgView, cfgId) => {
+            let inputElement = null;
 
-            let input = document.createElement("input");
-            input.type="text";
-            input.value = hook.config[cfgId] || "";
-            input.addEventListener("change", (e) => {
-                hook.config[cfgId] = e.target.value;
-            });
+            if (cfgId === "enabled") {
+                return null;
+            }
+            if (cfgView.type === "string") {
+                inputElement = createElement("input", {
+                    type: "text",
+                    value: hook.config[cfgId] || "",
+                    onChange: (e) => {
+                        hook.config[cfgId] = e.target.value;
+                    }
+                });
 
-            prop.appendChild(input);
-            
-            root.appendChild(prop);
-
-        } else if(cfgView.type === "dropdown") {
-            let prop = document.createElement("setting");
-
-            let text = document.createElement("span");
-            text.innerHTML = cfgView.display;
-            prop.appendChild(text);
-
-            let select = document.createElement("select");
-            prop.appendChild(select);
-        
-            select.addEventListener("change", (e) => {
-                hook.config[cfgId] = e.target.value;
-            });
-
-            for(let val in cfgView.dropdownValues) {
-                let disp = cfgView.dropdownValues[val];
-
-                let opt = document.createElement("option");
-                opt.value = val;
-                opt.innerHTML = disp;
-                select.appendChild(opt);
+            } else if (cfgView.type === "dropdown") {
+                inputElement = createElement("select", {
+                    onChange: (e) => { hook.config[cfgId] = e.target.value; },
+                    value: console.log(hook.config[cfgId]) || hook.config[cfgId]
+                }, mapObj(cfgView.dropdownValues, (disp, val) => createElement("option", { value: val, innerHTML: disp })));
+            } else if(cfgView.type === "checkbox") {
+                inputElement = createElement("input", {
+                    onChange: e => { hook.config[cfgId] = e.target.checked; },
+                    type: "checkbox",
+                    checked: hook.config[cfgId]
+                })
+            } else {
+                alert(`Unknown config type: ${cfgView.type}`);
+                return null;
             }
 
-            select.value = hook.config[cfgId];
-            root.appendChild(prop);
+            return createElement("setting", null, [
+                createElement("span", { innerHTML: cfgView.display }),
+                inputElement
+            ]);
+        }),
 
-        } else {
-            alert(`Unknown config type: ${cfgView.type}`);
-        }
-    }
+        createElement("button", {
+            innerHTML: "Save",
+            onClick: _ => { notifyBackendOfHookMutation(hook, id); }
+        })
+    ]);
+}
 
-    let button = document.createElement("button");
-    button.innerHTML = "Save";
-    button.addEventListener("click", () => {
-        notifyBackendOfHookMutation(hook, id);
-    });
-
-    root.appendChild(button);
+function drawSettings(hook, id) {
+    return createElement("div", {
+        id: id,
+        className: "settings",
+    },
+        [
+            createElement("p", { innerHTML: hook.description }),
+            drawConfig(hook, id)
+        ]
+    );
 }
 
 function hideSettings(parent, hook, id) {
     let root = document.getElementById(id);
-    if(!root) return false;
+    if (!root) return false;
 
     root.remove();
     return true;
 }
 
-
 function drawHooks(hooks) {
+    let root = document.getElementById("root");
 
-    let hooksRoot = document.getElementById("hooks");
-
-    while (hooksRoot.firstChild) {
-        hooksRoot.removeChild(hooksRoot.firstChild);
+    while (root.firstChild) {
+        root.removeChild(root.firstChild);
     }
 
     let byCategory = {};
-    for(let key in hooks) {
+    for (let key in hooks) {
         let hook = hooks[key];
-        if(hook.force) continue;
+        if (hook.force) continue;
 
-        if(!(hook.category in byCategory))
+        if (!(hook.category in byCategory))
             byCategory[hook.category] = [];
-        
+
         byCategory[hook.category].push(key);
     }
 
-    for(let categoryName in byCategory) {
-        let bucket = byCategory[categoryName];
+    createElement("div", null, mapObj(byCategory, (bucket, categoryName) => {
+        return createElement("div", {className: "category"}, [
+            createElement("h3", { innerHTML: categoryName }),
+            createElement("ul", null, bucket.filter(el => !el.force).map(hookId => {
+                const hook = hooks[hookId];
 
-        let hr = document.createElement("hr");
-        let categoryRoot = document.createElement("div");
-        let categoryText = document.createElement("h3");
-        let categoryContainer = document.createElement("ul");
-        categoryText.innerHTML = categoryName;        
-        categoryRoot.classList.add("category");
-        categoryRoot.appendChild(categoryText);
-        categoryRoot.appendChild(categoryContainer);
+                return createElement("hook", {
+                    onMouseEnter: e => e.target.classList.add("selected-item"),
+                    onMouseLeave: e => e.target.classList.remove("selected-item")
+                }, [
+                        createElement("div", { className: "contents" }, [
+
+                            createElement("input", {
+                                type: "checkbox",
+                                checked: hook.config.enabled,
+                                onClick: e => {
+                                    hook.config.enabled = e.target.checked;
+                                    notifyBackendOfHookMutation(hook, hookId);
+                                }
+                            }),
+                            createElement("span", {
+                                onClick: e => {
+                                    const contents = e.target.parentNode;
+                                    if(contents.tagName.toLowerCase() !== "span") return;
+                                    
+                                    if (!hideSettings(contents, hook, hookId)) {
+                                        contents.appendChild(drawSettings(hook, hookId));
+                                    }
+                                }
+                            }, [
+                                    createElement("span", { innerHTML: hook.name }),
+                                    createElement("span", {
+                                        className: "icon-span",
+                                        innerHTML: hook.gmOnly ? "GM Only ▼" : "▼"
+                                    })
+                                ])
+
+                        ])
+                    ]);
+            })),
         
-        for(let hookId of bucket) {
-            let hook = hooks[hookId];
-            if(hook.force) continue;
-
-            let elem = document.createElement("hook");
-            let contents = document.createElement("div");
-            contents.classList.add("contents");
-            elem.appendChild(contents);
-            categoryContainer.appendChild(elem);
-    
-            let input = document.createElement("input");
-            input.type = "checkbox";
-            input.checked = hook.config.enabled;
-    
-            input.addEventListener("click", (e) => { 
-                hook.config.enabled = e.target.checked;
-                notifyBackendOfHookMutation(hook, hookId);
-            });
-    
-            contents.appendChild(input);        
-            
-            let span = document.createElement("span");
-    
-            let innerSpan = document.createElement("span");
-            innerSpan.innerHTML = hook.name;
-            span.appendChild(innerSpan);
-    
-            let icon = document.createElement("span");
-            icon.classList.add("icon-span");
-            
-            icon.innerHTML = hook.gmOnly ? "GM Only ▼" : "▼";
-            span.appendChild(icon);
-            
-            elem.addEventListener("mouseenter", () => {
-                elem.classList.add("selected-item");
-            });
-    
-            elem.addEventListener("mouseleave", () => {
-                elem.classList.remove("selected-item");
-            });
-    
-            span.addEventListener("click", () => {
-                if(!hideSettings(contents, hook, hookId))
-                    drawSettings(contents, hook, hookId);
-            });
-    
-            contents.appendChild(span);
-        }
-
-        hooksRoot.appendChild(categoryRoot);
-        hooksRoot.appendChild(hr);
-    }
+            createElement("hr"),
+        ]);
+    }), root);
 }
 
 browser.runtime.onMessage.addListener((msg) => {
-    if(msg.popup && msg.popup.type === "receive_hooks") {
+    if (msg.popup && msg.popup.type === "receive_hooks") {
         drawHooks(msg.popup.hooks);
     }
 });
