@@ -13,7 +13,7 @@
 
 ## Journal
 * DONE Right click -> duplicate
-* Export default token
+* DONE Export default token
 
 ## Misc
 * DONE Remove countdown at the start
@@ -22,4 +22,4 @@
 * DONE Keybind for going forward/back in initiative. (Mousetrap.)
 
 * Transluceny on the paper divs.
-* Toggle hide the player list at the bottom left.
+

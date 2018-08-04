@@ -132,7 +132,7 @@ formatVersions[2] = {
         data = JSON.parse(jsonData);
 
         // replace represents id
-        if(data.defaulttoken) {
+        if (data.defaulttoken) {
             data.defaulttoken = data.defaulttoken.replace(oldIdRegexp, pc.attributes.id);
         }
 
@@ -140,18 +140,18 @@ formatVersions[2] = {
             name: data.name,
             avatar: data.avatar,
         };
-        
+
         {
             let blobs = {};
             let shouldUpdate = false;
-            if(data.bio.length > 0) { blobs.bio = data.bio; shouldUpdate = true; }
-            if(data.gmnotes.length > 0) { blobs.gmnotes = data.gmnotes; shouldUpdate = true; }
-            if(data.defaulttoken.length > 0) { blobs.defaulttoken = data.defaulttoken; shouldUpdate = true; }
+            if (data.bio.length > 0) { blobs.bio = data.bio; shouldUpdate = true; }
+            if (data.gmnotes.length > 0) { blobs.gmnotes = data.gmnotes; shouldUpdate = true; }
+            if (data.defaulttoken.length > 0) { blobs.defaulttoken = data.defaulttoken; shouldUpdate = true; }
 
-            if (shouldUpdate)  {
+            if (shouldUpdate) {
                 pc.updateBlobs(blobs);
 
-                if("defaulttoken" in blobs) {
+                if ("defaulttoken" in blobs) {
                     save.defaulttoken = (new Date).getTime();
                 }
             }
@@ -173,7 +173,7 @@ formatVersions[2] = {
 
         pc.view.render();
         pc.save(save);
-        
+
         console.log("Imported v2!");
     }
 };
@@ -215,46 +215,49 @@ function mutCallback(muts) {
                 return false;
             }
 
-            let root = document.createElement("span");
-            e.target.appendChild(root);
+            window.r20es.createElement("span", null, [
+                window.r20es.createElement("button", {
+                    innerHTML: "Export",
+                    className: ["btn", exportButtonClass],
+                    style: {
+                        marginRight: "8px"
+                    },
+                    onClick: () => { exportPc(pc) }
 
-            let exportButton = document.createElement("button");
-            exportButton.innerHTML = "Export";
-            exportButton.classList.add("btn");
-            exportButton.onclick = _ => {
-                exportPc(pc);
-            };
-            exportButton.classList.add(exportButtonClass);
-            exportButton.style.marginRight = "8px";
-            root.appendChild(exportButton);
+                }),
 
-            let fs = document.createElement("input");
-            fs.type = "file";
-            fs.style.display = "inline";
+                window.r20es.createElement("button", {
+                    innerHTML: "Overwrite",
+                    className: "btn",
+                    disabled: true,
+                    style: {
+                        marginRight: "8px"
+                    },
 
-            let overwriteButton = document.createElement("button");
-            overwriteButton.innerHTML = "Overwrite";
-            overwriteButton.classList.add("btn");
-            overwriteButton.disabled = true;
-            overwriteButton.style.marginRight = "8px";
+                    onClick: e => {
+                        const input = $(e.target.parentNode).find("input")[0];
+                        const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
 
-            overwriteButton.onclick = _ => {
+                        processFileReading(input.files[0], (version, data) => {
+                            if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`))
+                                version.overwrite(pc, data);
+                        });
 
-                processFileReading(fs.files[0], (version, data) => {
-                    if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`))
-                        version.overwrite(pc, data);
-                });
-
-                fs.value = "";
-                overwriteButton.disabled = true;
-            };
-
-            fs.onchange = (e) => {
-                overwriteButton.disabled = !(e.target.files.length > 0);
-            };
-
-            root.appendChild(overwriteButton);
-            root.appendChild(fs);
+                        input.value = "";
+                        overwriteButton.disabled = true;
+                    }
+                }),
+                window.r20es.createElement("input", {
+                    type: "file",
+                    style: {
+                        display: "inline"
+                    },
+                    onChange: (e) => {
+                        const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
+                        overwriteButton.disabled = !(e.target.files.length > 0);
+                    }
+                })
+            ], e.target);
         }
     }
 }
@@ -264,47 +267,51 @@ window.r20es.onAppLoad.addEventListener(() => {
     var observer = new MutationObserver(mutCallback);
     observer.observe(document.body, { childList: true, subtree: true });
 
-    if(!window.is_gm) return;
+    if (!window.is_gm) return;
 
     let journal = document.getElementById("journal").getElementsByClassName("content")[0];
     window.r20es.addSidebarSeparator(journal);
 
-    let root = document.createElement("div");
-    journal.appendChild(root);
+    window.r20es.createElement("div", null, [
+        window.r20es.createElement("h3", {
+            innerHTML: "Import Character",
+            style: {
+                marginBottom: "5px",
+                marginLeft: "5px",
+            }
+        }),
 
-    {
-        let header = document.createElement("h3");
-        header.style.marginBottom = "5px";
-        header.style.marginLeft = "5px";
-        header.innerHTML = "Import Character";
-        root.appendChild(header);
-    }
+        window.r20es.createElement("input", {
+            type: "file",
 
-    let fs = document.createElement("input");
-    fs.type = "file";
+            onChange: e => {
+                const btn = $(e.target.parentNode).find("button")[0];
+                btn.disabled = !(e.target.files.length > 0);
+            }
+        }),
 
-    let btn = document.createElement("button");
-    btn.innerHTML = "Import Character";
-    btn.style.float = "Left";
-    btn.disabled = true;
-    btn.className = "btn";
+        window.r20es.createElement("button", {
+            innerHTML: "Import Character",
+            disabled: true,
+            className: "btn",
+            style: {
+                float: "Left",
+            },
+            onClick: e => {
+                const input = $(e.target.parentNode).find("input")[0];
 
-    btn.onclick = () => {
-        processFileReading(fs.files[0], (version, data) => {
-            let pc = window.Campaign.characters.create();
-            version.overwrite(pc, data);
-        });
+                processFileReading(input.files[0], (version, data) => {
+                    let pc = window.Campaign.characters.create();
+                    version.overwrite(pc, data);
+                });
 
-        fs.value = "";
-        btn.disabled = true;
-    };
+                input.value = "";
+                e.target.disabled = true;
+            }
+        }),
+    ], journal);
 
-    fs.onchange = (e) => {
-        btn.disabled = !(e.target.files.length > 0);
-    };
-
-    root.appendChild(fs);
-    root.appendChild(btn);
+    window.r20es.addSidebarSeparator(journal);
 });
 
 console.log("Loaded character_io");
