@@ -130,8 +130,8 @@ let hooks = {
     },
 
     autoPingNextToken: {
-        name: "Ping tokens visible to players on their turns",
-        description : "Automatically pings a token on it's turn.",
+        name: "Ping visible token on its turn",
+        description : "Automatically pings a token on it's turn only if that token is on the player token layer.",
         category: categories.initiative,
         gmOnly: true,
 
@@ -229,7 +229,7 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
     },
 
     changeRepresentsIdWhenDuplicating: {
-        name: `Reassign default token "Represents" when duplicating`,
+        name: `Reassign "Represents" when duplicating`,
         description : `This will make sure that if a character, who we want to duplicate, has default token, the character that he default token represents will be set to the duplicated character.`,
         category: categories.token,
         gmOnly: true,
@@ -237,6 +237,26 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
         includes: "assets/app.js",
         find: "o.defaulttoken=e.model._blobcache.defaulttoken",
         patch: `o.defaulttoken = window.r20es.replaceAll(e.model._blobcache.defaulttoken, e.model.get("id"), n.get("id"))`
+    },
+
+    shiftClickToTokenLayer: {
+        name: "Shift-click to switch to token layer.",
+        description: "When shift clicking, will set the current layer to the layer of the token underneath the mouse.",
+        category: categories.canvas,
+        gmOnly: true,
+
+        inject: ["shift_click_select.js"],
+
+        configView: {
+            select: {
+                display: "Also select token",
+                type: "checkbox"
+            }
+        },
+
+        config: {
+            select: false,
+        }
     }
 };
 
@@ -369,6 +389,7 @@ function requestListener(dt) {
 }
 
 loadLocalStorage();
+
 let ports = [];
 
 browser.runtime.onConnect.addListener(port => {
@@ -383,6 +404,7 @@ browser.runtime.onConnect.addListener(port => {
 });
 
 browser.runtime.onMessage.addListener((msg) => {
+    console.log("Background received message!");
     if(msg.background) {
         if(msg.background.type === "get_hooks") {
             browser.runtime.sendMessage(null, {
@@ -390,6 +412,8 @@ browser.runtime.onMessage.addListener((msg) => {
             });
         }
         if(msg.background.type === "update_hook_config") {
+            console.log(`Background is updating hook config for ${msg.background.hookId}`);
+
             let hook = hooks[msg.background.hookId];
             
             hook.config = Object.assign(hook.config, msg.background.config);
