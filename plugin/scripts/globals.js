@@ -29,6 +29,14 @@ window.r20es.onAppLoad.addEventListener = function (fx) {
     window.r20es.onAppLoad.listeners.push(fx);
 }
 
+window.r20es.copy = function (what, overrides) {
+    let copy = Object.assign({}, what);
+    if(overrides) {
+        copy = Object.assign(copy, overrides);
+    }
+    return copy;
+}
+
 window.r20es.createElement = function (type, _attributes, _children, parent) {
     let elem = document.createElement(type);
     const attributes = _attributes || {};
@@ -115,9 +123,9 @@ window.r20es.getRotation = function (ctx) {
 };
 
 window.r20es.getCustomLayerData = function (layer) {
-    if (layer === "map") return { bigTxt: "MAP BACKGROUND", txt: "MP", bg: "rgba(255,255,0,0.5)" }
-    else if (layer === "objects") return { bigTxt: "TOKENS (PLAYER VISIBLE)", txt: "TK", bg: "rgba(255,0,0,0.5)" }
-    else if (layer === "gmlayer") return { bigTxt: "GAME MASTER TOKENS", txt: "GM", bg: "rgba(0,255,0,0.5)" }
+    if (layer === "map") return { bigTxt: "Map Background", txt: "MP", bg: "rgba(255,255,0,0.5)" }
+    else if (layer === "objects") return { bigTxt: "Tokens (Player Visible)", txt: "TK", bg: "rgba(255,0,0,0.5)" }
+    else if (layer === "gmlayer") return { bigTxt: "Game Master Tokens", txt: "GM", bg: "rgba(0,255,0,0.5)" }
     return { txt: layer, bg: "rgba(255,255,255,0.5)" }
 }
 
@@ -127,7 +135,7 @@ window.r20es.tokenDrawBg = function (ctx, graphic) {
 
     ctx.save();
     ctx.globalAlpha = 1;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2; // TODO : config for this
 
     ctx.rotate(-window.r20es.getRotation(ctx));
 
