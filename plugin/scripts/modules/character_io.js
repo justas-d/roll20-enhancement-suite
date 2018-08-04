@@ -260,8 +260,11 @@ function mutCallback(muts) {
 }
 
 window.r20es.onAppLoad.addEventListener(() => {
+
     var observer = new MutationObserver(mutCallback);
     observer.observe(document.body, { childList: true, subtree: true });
+
+    if(!window.is_gm) return;
 
     let journal = document.getElementById("journal").getElementsByClassName("content")[0];
     window.r20es.addSidebarSeparator(journal);
