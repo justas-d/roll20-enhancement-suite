@@ -29,6 +29,17 @@ window.r20es.onAppLoad.addEventListener = function(fx) {
     window.r20es.onAppLoad.listeners.push(fx);
 }
 
+window.r20es.createElement = function(type, attributes, innerHTML) {
+    let elem = document.createElement(type);
+    for(let attribId in attributes) {
+        elem.setAttribute(attribId, attributes[attribId]);
+    }
+    if(innerHTML)
+        elem.innerHTML = innerHTML;
+
+    return elem;
+}
+
 window.r20es.addSidebarSeparator = function(root) {
     function addClear() {
         let clear1 = document.createElement("div");
