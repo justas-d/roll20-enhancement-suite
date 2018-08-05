@@ -33,8 +33,8 @@ function createScript(payload) {
 }
 
 // inject global environment
-createScript("scripts/FileSaver.js");
-createScript("scripts/globals.js");
+createScript("js/FileSaver.js");
+createScript("js/globals.js");
 
 document.head.appendChild(root);
 
@@ -64,7 +64,7 @@ function bgListener(msg) {
                 if(!hook.inject) continue;
 
                 for(let payload of hook.inject) {
-                    createScript("scripts/modules/" + payload);
+                    createScript("js/" + payload);
                 }
             }
         }

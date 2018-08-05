@@ -20,18 +20,18 @@
   "content_scripts": [
     {
       "matches": ["*://app.roll20.net/editor/*"],
-      "js": ["scripts/bootstrap.js"]
+      "js": ["js/bootstrap.js"]
     }
   ],
 
   "background": {
-      "scripts": ["scripts/backend.js"]
+      "scripts": ["js/background.js"]
   },
 
   "browser_action": {
     "default_icon": "icon.svg",
     "default_title": "Roll20 Enhancement Suite",
-    "default_popup": "popup/popup.html"
+    "default_popup": "popup.html"
   },
 
   "applications": {
@@ -40,5 +40,5 @@
      }
   },
 
-  "web_accessible_resources": [ "scripts/*" ]
+  "web_accessible_resources": [ "js/*" ]
 }
