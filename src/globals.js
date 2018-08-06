@@ -272,7 +272,7 @@ window.r20es.handleBulkMacroObserverCallback = function (muts) {
     let sel = window.d20.engine.selected();
     if (sel.length <= 0) return;
 
-    addMacro = (macro, arr) => arr[macro.get("id")] = {
+    const addMacro = (macro, arr) => arr[macro.get("id")] = {
         name: macro.get("name"),
         action: macro.get("action")
     };
@@ -301,6 +301,8 @@ window.r20es.handleBulkMacroObserverCallback = function (muts) {
                         break;
                     }
                 }
+
+                if(!selCharacter) return;
 
                 for (let obj of sel) {
                     if (!obj.model || !obj.model.character) continue;
@@ -370,8 +372,8 @@ window.r20es.importTablesFromJson = function (e) {
 window.r20es.importTablesFromTableExport = function (raw) {
     let tknIdx = 0;
 
-    isspace = c => c === '\n' || c === '\r' || c === '\t' || c === ' ' || c === '\f' || c === '\v';
-    isdigit = c => ((c >= '0') && (c <= '9'));
+    const isspace = c => c === '\n' || c === '\r' || c === '\t' || c === ' ' || c === '\f' || c === '\v';
+    const isdigit = c => ((c >= '0') && (c <= '9'));
 
     {
         let naiveVerfiyIdx = 0;
