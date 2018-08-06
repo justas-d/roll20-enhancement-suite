@@ -231,13 +231,13 @@ $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
         patch: `o.defaulttoken = window.r20es.replaceAll(e.model._blobcache.defaulttoken, e.model.get("id"), n.get("id"))`
     },
 
-    shiftClickToTokenLayer: {
-        name: "Shift-click to switch to token layer.",
-        description: "When shift clicking, will set the current layer to the layer of the token underneath the mouse.",
+    middleClickToTokenLayer: {
+        name: "Middle click to switch to token layer.",
+        description: "When middle clicking (scroll wheel), will set the current layer to the layer of the token underneath the mouse.",
         category: categories.canvas,
         gmOnly: true,
 
-        inject: ["shift-click-select.js"],
+        inject: ["middle-click-select.js"],
 
         configView: {
             select: {

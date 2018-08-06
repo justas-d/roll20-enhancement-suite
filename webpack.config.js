@@ -17,7 +17,7 @@ registerModule("bulk-macros");
 registerModule("character-io");
 registerModule("draw-current-layer");
 registerModule("initiative-shortcuts");
-registerModule("shift-click-select");
+registerModule("middle-click-select");
 registerModule("table-io");
 
 module.exports = {
