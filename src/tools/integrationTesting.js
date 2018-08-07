@@ -2,6 +2,7 @@ class IntegrationTesting {
     constructor(hooks) {
         console.log(hooks);
         this.hookTable = {};
+        this.wasAnyModHooked = false;
 
         for (let hookId in hooks) {
             const hook = hooks[hookId];
@@ -37,10 +38,16 @@ class IntegrationTesting {
     }
 
     onModHooked(mod, hook) {
+        this.wasAnyModHooked = true;
         this.hookTable[hook.id][mod.find].got++;
     }
 
     verifyModHooks() {
+        if(!this.wasAnyModHooked) {
+            console.error("No mods were hooked. This is likely due to a plugin reload. Refresh the page and try again.");
+            return;
+        }
+
         let failures = [];
 
         for (let hookId in this.hookTable) {
