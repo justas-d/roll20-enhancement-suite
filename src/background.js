@@ -1,5 +1,8 @@
 import { hooks } from './hooks.js'
 import { Config } from './tools/config.js';
+import { IntegrationTesting } from './tools/integrationTesting.js';
+
+window.integrationTesting = new IntegrationTesting(hooks);
 
 function sendHooksToPort(port) {
     port.postMessage({ hooks: hooks });
@@ -81,9 +84,9 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-function addModToQueueIfOk(dt, mod, queue) {
+function addModToQueueIfOk(dt, mod, queue, hook) {
     if (mod.includes && dt.url.includes(mod.includes)) {
-        queue.push(mod);
+        queue.push({mod: mod, hook: hook});
     }
 }
 
@@ -97,10 +100,10 @@ function requestListener(dt) {
 
         if (hook.mods) {
             for (let mod of hook.mods) {
-                addModToQueueIfOk(dt, mod, hookQueue);
+                addModToQueueIfOk(dt, mod, hookQueue, hook);
             }
         } else {
-            addModToQueueIfOk(dt, hook, hookQueue);
+            addModToQueueIfOk(dt, hook, hookQueue, hook);
         }
     }
 
@@ -116,12 +119,16 @@ function requestListener(dt) {
     };
 
     filter.onstop = _ => {
-        for (let mod of hookQueue) {
+        for (let combo of hookQueue) {
+            const mod = combo.mod;
+            const hook = combo.hook;
+
             if (!mod.find || !mod.patch) continue;
 
-            // TODO : @TESTING use replacer function here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
-            // to know if we have replaced at all and whether we have replaced the expected amount of matches.
-            str = str.replace(new RegExp(escapeRegExp(mod.find), 'g'), mod.patch);
+            str = str.replace(new RegExp(escapeRegExp(mod.find), 'g'), _ => {
+                window.integrationTesting.onModHooked(mod, hook);
+                return mod.patch;
+            });
             console.log(`[${mod.includes}] [${mod.find}] done!`);
 
         }
