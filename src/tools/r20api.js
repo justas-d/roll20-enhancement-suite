@@ -55,7 +55,7 @@ R20.isGM = function () {
 
 R20.getCurrentLayer = function () {
     return window.currentEditingLayer;
-}
+}        
 
 R20.getCurrentToolName = function () {
     return window.d20.engine.mode;
@@ -119,6 +119,7 @@ R20.say = function (what, callback) {
 
 R20.sayToSelf = function(what, callbackId) {
     R20.say(`/w "${R20.getCurrentPlayer().get("displayname")}" ${what}`, callbackId);
+    // TODO : try out d20.textchat.incoming
 }
 
 R20.ping = function(left, top, playerId, pageId, layer) {
