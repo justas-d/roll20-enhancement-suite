@@ -1,36 +1,66 @@
-window.r20es.onAppLoad.addEventListener(() => {
-    if (!window.is_gm) return;
+import { R20Module } from "../tools/r20Module";
+import { R20 } from "../tools/r20api";
+import { getLayerData } from "../tools/layerData";
 
-    document.addEventListener("click", (e) =>{
+class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
+    onClick(e) {
+        if (e.button !== 1) return;
 
-        if(e.button !== 1) return;
+        const objs = R20.getCurrentPageTokens();
+        let idx = objs.length;
 
-        const canvas = window.d20.engine.canvas;
-        
-        window.d20.Campaign.activePage().reorderByZ();
-        let objs = canvas.getObjects().reverse();
+        while (idx-- > 0) {
+            const obj = objs[idx];
 
-        for (let obj of objs) {
-            if (canvas.containsPoint(e, obj) && obj.model) {
+            if (R20.doesTokenContainMouse(e, obj) && obj.model) {
                 let layer = obj.model.get("layer");
 
-                if (window.currentEditingLayer !== layer) {
+                if (R20.getCurrentLayer() !== layer) {
 
-                    const selector = window.r20es.getLayerData(layer).selector;
+                    const selector = getLayerData(layer).selector;
                     $(selector).trigger("click");
+                }
 
-                    if (window.r20es.hooks.middleClickToTokenLayer.config.select) {
-                        window.d20.engine.unselect();
-                        window.d20.engine.select(obj);
-                    }
+                if (window.r20es.hooks.middleClickToTokenLayer.config.select) {
+                    R20.selectToken(obj);
                 }
 
                 break;
             }
         }
-    });
-    
-    console.log("shit_click_select ready!");
-});
+    }
 
+    setup() {
+        if (!R20.isGM()) return;
+        console.log("setup listener");
 
+        document.addEventListener("click", this.onClick);
+    }
+
+    dispose() {
+        document.removeEventListener("click", this.onClick);
+    }
+}
+
+if (R20Module.canInstall()) new MiddleClickSelectModule(__filename).install();
+
+const hook = {
+    id: "middleClickToTokenLayer",
+    name: "Middle click to switch to token layer.",
+    description: "When middle clicking (scroll wheel), will set the current layer to the layer of the token underneath the mouse.",
+    category: R20Module.category.canvas,
+    gmOnly: true,
+
+    configView: {
+        select: {
+            display: "Also select token",
+            type: "checkbox"
+        }
+    },
+
+    config: {
+        select: false,
+    }
+};
+
+export { hook as MiddleClickSelectHook }

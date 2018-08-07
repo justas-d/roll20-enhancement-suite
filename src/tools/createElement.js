@@ -7,7 +7,7 @@ function createElement(type, _attributes, children, parent) {
 
     function recursiveAddChildren(ch) {
         for (let child of ch) {
-            if(!child) continue;
+            if (!child) continue;
             if (typeof (child) === "function") {
                 recursiveAddChildren(child());
             } else {
@@ -25,9 +25,9 @@ function createElement(type, _attributes, children, parent) {
 
         if (attribId === "innerHTML") {
             elem.innerHTML = val;
-        } else if(attribId === "value") {
+        } else if (attribId === "value") {
             elem.value = val;
-        } else if(attribId === "checked") {
+        } else if (attribId === "checked") {
             elem.checked = val;
         } else if (attribId === "style") {
             for (let elemId in val) {
@@ -55,4 +55,20 @@ function createElement(type, _attributes, children, parent) {
     return elem;
 }
 
-export {createElement};
+
+function createSidebarSeparator() {
+    const addClear = _ =>
+        createElement("div", {
+            className: "clear",
+            style: { height: 10 }
+        });
+
+    return [
+        addClear(),
+        createElement("hr"),
+        addClear()
+    ];
+
+}
+
+export { createElement, createSidebarSeparator};

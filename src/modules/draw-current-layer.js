@@ -1,8 +1,23 @@
-window.r20es.onAppLoad.addEventListener(() => {
-    if (window.is_gm) {
+import { R20Module } from '../tools/r20Module'
+import { R20 } from '../tools/r20api.js';
+import { getLayerData } from '../tools/layerData.js';
+import { createElement } from '../tools/createElement.js';
+import { MiscUtil } from '../tools/miscUtil.js';
 
-        const selectId = "r20es-select";
-        const layerId = "r20es-layer";
+class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
+    constructor(id) {
+        super(id);
+
+        this.selectId = "r20es-select";
+        this.layerId = "r20es-layer";
+        this.rootId = "r20es-drawCurrentLayer-root";
+
+        this.onToolChange = this.onToolChange.bind(this);
+        this.updateModeIndicator = this.updateModeIndicator.bind(this);
+    }
+
+    setup() {
+        if (!R20.isGM) return;
 
         const divStyle = {
             padding: "4px",
@@ -18,7 +33,8 @@ window.r20es.onAppLoad.addEventListener(() => {
             lineHeight: divStyle.height
         }
 
-        window.r20es.createElement("div", {
+        createElement("div", {
+            id: this.rootId,
             style: {
                 marginBottom: "15px",
                 marginRight: "15px",
@@ -33,63 +49,84 @@ window.r20es.onAppLoad.addEventListener(() => {
 
         },
             [
-                window.r20es.createElement("div", {
-                    id: selectId,
-                    style: window.r20es.copy(divStyle, {background: "rgba(255,0,0,0.5)"})
+                createElement("div", {
+                    id: this.selectId,
+                    style: MiscUtil.copy(divStyle, { background: "rgba(255,0,0,0.5)" })
                 },
                     [
-                        window.r20es.createElement("p", { 
+                        createElement("p", {
                             innerHTML: "Not selecting!",
-                            style: textStyle 
+                            style: textStyle
                         })
                     ]
                 ),
-                window.r20es.createElement("div", {
-                    id: layerId,
+                createElement("div", {
+                    id: this.layerId,
                     style: divStyle
                 },
                     [
-                        window.r20es.createElement("p", { style: textStyle })
+                        createElement("p", { style: textStyle })
                     ]
                 )
 
             ], document.getElementById("playerzone")
         );
 
-        function render(layer) {
-            let data = window.r20es.getLayerData(layer);
+        $("#editinglayer li.chooseobjects").on("click", this.onToolChange);
+        $("#editinglayer li.choosemap").on("click", this.onToolChange);
+        $("#editinglayer li.choosegmlayer").on("click", this.onToolChange);
 
-            const div = $(`#${layerId}`)[0];
-            const text = $(div).find("p")[0];
+        window.r20es.setModePrologue = this.updateModeIndicator;
 
-            div.style.backgroundColor = data.bg;
-            text.innerHTML = data.bigTxt;
-        }
-
-        render(window.currentEditingLayer);
-
-        function callback(ctx) {
-            let l = "";
-
-            if (ctx.target.className === "choosegmlayer") { l = "gmlayer"; }
-            else if (ctx.target.className === "choosemap") { l = "map"; }
-            else if (ctx.target.className === "chooseobjects") { l = "objects"; }
-
-            render(l);
-        }
-
-        $("#editinglayer li.chooseobjects").on("click", callback);
-        $("#editinglayer li.choosemap").on("click", callback);
-        $("#editinglayer li.choosegmlayer").on("click", callback);
-
-        function updateModeIndicator(mode) {
-
-            const div = $(`#${selectId}`)[0];
-            div.style.display = (mode === "select" ? "none" : "block");
-        }
-
-        updateModeIndicator(window.d20.engine.mode);
-
-        window.r20es.setModePrologue = updateModeIndicator;
+        this.render(R20.getCurrentLayer());
+        this.updateModeIndicator(R20.getCurrentToolName());
     }
-});
+
+    onToolChange(e) {
+        let l = null;
+
+        if (e.target.className === "choosegmlayer") { l = "gmlayer"; }
+        else if (e.target.className === "choosemap") { l = "map"; }
+        else if (e.target.className === "chooseobjects") { l = "objects"; }
+
+        this.render(l);
+    }
+
+    updateModeIndicator(mode) {
+        const div = $(`#${this.selectId}`)[0];
+        div.style.display = (mode === "select" ? "none" : "block");
+    }
+
+    render(layer) {
+        const data = getLayerData(layer);
+        const div = $(`#${this.layerId}`)[0];
+        const text = $(div).find("p")[0];
+
+        div.style.backgroundColor = data.bg;
+        text.innerHTML = data.bigTxt;
+    }
+
+    dispose() {
+        let elem = document.getElementById(this.rootId);
+        if (elem) {
+            elem.remove();
+        }
+    }
+}
+
+if (R20Module.canInstall()) new DrawCurrentLayerModule(__filename).install();
+
+const hook = {
+    id: "activeLayerHud",
+    name: "Display active layer",
+    description: "Displays the active edit layer as well as whether the select tool is active.",
+    category: R20Module.category.canvas,
+    gmOnly: true,
+
+    includes: "assets/app.js",
+    find: "function setMode(e){",
+    patch: "function setMode(e){if(window.r20es) window.r20es.setModePrologue(e);",
+
+};
+
+export { hook as DrawCurrentLayerHook };

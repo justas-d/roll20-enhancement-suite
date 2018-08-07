@@ -3,10 +3,6 @@
 
 import {createElement} from './tools/createElement.js'
 
-var sending = browser.runtime.sendMessage(null, {
-    background: { type: "get_hooks" }
-});
-
 function notifyBackendOfHookMutation(hook, id) {
     console.log("Popup is notifying backend of hook config mutation!");
 
@@ -163,8 +159,18 @@ function drawHooks(hooks) {
     }), root);
 }
 
-browser.runtime.onMessage.addListener((msg) => {
+browser.runtime.onMessage.addListener(msg => {
+    console.log("Popup received messaage!");
     if (msg.popup && msg.popup.type === "receive_hooks") {
+        console.log("Popup received hooks!");
+        console.log(msg);
         drawHooks(msg.popup.hooks);
     }
 });
+
+
+browser.runtime.sendMessage(null, {
+    background: { type: "get_hooks" }
+});
+
+console.log("Popup script running.");

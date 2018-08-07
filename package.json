@@ -19,5 +19,8 @@
         "react-dom": "16.2.0",
         "web-ext": "2.8.0",
         "webpack": "3.10.0"
+    },
+    "dependencies": {
+        "save-as": "0.1.8"
     }
 }

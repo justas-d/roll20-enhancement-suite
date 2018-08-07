@@ -1,4 +1,4 @@
-# r20es
+# window.r20es
 
 ## Canvas
 * DONE Render the layer of token (Have a little "BG, PL, GM, DL" in the top right of the token, gm's only)

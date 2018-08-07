@@ -1,26 +1,25 @@
 const path = require('path');
 const webpack = require('webpack');
+const fs = require('fs');
 
 let entry = {};
 
-let registerModule = name => entry[name] = `./src/modules/${name}.js`;
-let registerSrc = name => entry[name] = `./src/${name}.js`
+function registerFolder(folder) {
+    fs.readdirSync(folder).forEach(f => {
+        if(!f.endsWith(".js")) return;
+        const name = f.slice(0, -3);
 
-registerSrc("background");
-registerSrc("bootstrap");
-registerSrc("globals");
-registerSrc("popup");
-registerSrc("FileSaver");
+        entry[name] = folder + f;
+    });
+}
 
-registerModule("add-duplicate-to-journal-menu");
-registerModule("bulk-macros");
-registerModule("character-io");
-registerModule("draw-current-layer");
-registerModule("initiative-shortcuts");
-registerModule("middle-click-select");
-registerModule("table-io");
+registerFolder("./src/");
+registerFolder("./src/modules/");
 
 module.exports = {
+    context: __dirname,
+    node: { __filename: true},
+    
     entry: entry,
     output: {
         // This copies each source entry into the extension dist folder named
