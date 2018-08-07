@@ -20,17 +20,6 @@ console.log("=================");
 // inject global environment
 injectScript("globals.js");
 
-
-for(let hookId in hooks) {
-    const hook = hooks[hookId];
-
-    console.log(hook);
-    if(!("filename" in hook)) continue;
-
-    
-    injectScript(hook.filename);
-}
-
 // setup comms with the backend
 let bgComms = browser.runtime.connect(Config.extentionId);
 
@@ -46,4 +35,13 @@ bgComms.onMessage.addListener(bgListener);
 console.log("requesting hooks from backend");
 bgComms.postMessage({ request: "hooks" });
 
-console.log("window.r20es bootstrap done");
+// inject modules
+for(let hookId in hooks) {
+    const hook = hooks[hookId];
+
+    if(!("filename" in hook)) continue;
+    
+    injectScript(hook.filename);
+}
+
+console.log("r20es bootstrap done");

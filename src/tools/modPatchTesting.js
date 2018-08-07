@@ -1,4 +1,4 @@
-class IntegrationTesting {
+class ModPatchTesting {
     constructor(hooks) {
         console.log(hooks);
         this.hookTable = {};
@@ -55,8 +55,6 @@ class IntegrationTesting {
 
             for (let modId in mods) {
                 const modData = mods[modId];
-                const mod = modData.mod;
-                const hook = modData.hook;
 
                 const msg = `${modData.mod.find} -> ${modData.mod.patch} x ${modData.got}/${modData.expected}`;
                 if (modData.got === modData.expected) {
@@ -92,4 +90,4 @@ class IntegrationTesting {
     }
 }
 
-export { IntegrationTesting }
+export { ModPatchTesting }

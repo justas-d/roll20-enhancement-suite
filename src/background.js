@@ -1,8 +1,8 @@
 import { hooks } from './hooks.js'
 import { Config } from './tools/config.js';
-import { IntegrationTesting } from './tools/integrationTesting.js';
+import { ModPatchTesting } from './tools/modPatchTesting.js';
 
-window.integrationTesting = new IntegrationTesting(hooks);
+window.modPatchTesting = new ModPatchTesting(hooks);
 
 function sendHooksToPort(port) {
     let promise = port.postMessage({ hooks: hooks });
@@ -126,7 +126,7 @@ function requestListener(dt) {
             if (!mod.find || !mod.patch) continue;
 
             str = str.replace(new RegExp(escapeRegExp(mod.find), 'g'), _ => {
-                window.integrationTesting.onModHooked(mod, hook);
+                window.modPatchTesting.onModHooked(mod, hook);
                 return mod.patch;
             });
             console.log(`[${mod.includes}] [${mod.find}] done!`);
@@ -148,8 +148,11 @@ browser.runtime.onConnect.addListener(port => {
     ports.push(port);
 
     port.onMessage.addListener(e => {
+        console.log("Background received message from r20");
+        console.log(e);
+    
         if (e.request && e.request === "hooks") {
-            sendHooksToPort(port)
+            sendHooksToPort(port);
         }
     });
 });

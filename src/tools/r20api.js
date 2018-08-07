@@ -124,7 +124,7 @@ R20.sayToSelf = function(what, callbackId) {
 R20.ping = function(left, top, playerId, pageId, layer) {
     playerId = playerId || R20.getCurrentPlayer().id;
 
-    var y = {
+    d20.engine.pings[playerId] = {
         left: left,
         top: top,
         radius: -5,
@@ -132,8 +132,6 @@ R20.ping = function(left, top, playerId, pageId, layer) {
         pageid: pageId || R20.getCurrentPage().id,
         currentLayer: layer || R20.getCurrentLayer()
     };
-
-    d20.engine.pings[playerId] = y;
 
     d20.engine.pinging = {
         downx: left,
