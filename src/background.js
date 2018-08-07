@@ -1,4 +1,5 @@
 import { hooks } from './hooks.js'
+import { Config } from './tools/config.js';
 
 function sendHooksToPort(port) {
     port.postMessage({ hooks: hooks });
@@ -118,6 +119,8 @@ function requestListener(dt) {
         for (let mod of hookQueue) {
             if (!mod.find || !mod.patch) continue;
 
+            // TODO : @TESTING use replacer function here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
+            // to know if we have replaced at all and whether we have replaced the expected amount of matches.
             str = str.replace(new RegExp(escapeRegExp(mod.find), 'g'), mod.patch);
             console.log(`[${mod.includes}] [${mod.find}] done!`);
 
@@ -150,12 +153,12 @@ browser.runtime.onMessage.addListener((msg) => {
 
     if (msg.background) {
         if (msg.background.type === "get_hooks") {
-            
+
             // avoids DOM clone exceptions
             const hookData = JSON.parse(JSON.stringify(hooks, null, 4));
-            const payload = {popup: {hooks: hookData, type: "receive_hooks"}};
+            const payload = { popup: { hooks: hookData, type: "receive_hooks" } };
 
-            browser.runtime.sendMessage("{ffed5dfa-f0e1-403d-905d-ac3f698660a7}", payload);
+            browser.runtime.sendMessage(Config.extentionId, payload);
 
             console.log("Background sent message to popup.");
             console.log(payload);

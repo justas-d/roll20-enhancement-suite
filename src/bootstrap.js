@@ -1,3 +1,5 @@
+import { Config } from "./tools/config";
+
 function injectScript(name) {
     console.log(`Injecting ${name}`);
 
@@ -30,7 +32,7 @@ injectScript("table-io");
 injectScript("token-layer-drawing");
 
 // setup comms with the backend
-let bgComms = browser.runtime.connect("{ffed5dfa-f0e1-403d-905d-ac3f698660a7}");
+let bgComms = browser.runtime.connect(Config.extentionId);
 
 function bgListener(msg) {
     console.log("Received background message");
