@@ -2,6 +2,8 @@ import { createElement } from '../tools/createElement.js'
 import { R20Module } from "../tools/r20Module"
 import { R20 } from '../tools/r20api.js';
 
+const bulkMarcoMenuId = "r20es-bulk-macro-menu";
+
 class BulkMacroModule extends R20Module.OnAppLoadBase {
     constructor(id) {
         super(id);
@@ -43,7 +45,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
             action: macro.get("action")
         };
 
-        let root = document.getElementById("r20es-bulk-macro-menu");
+        let root = document.getElementById(bulkMarcoMenuId);
         if (!root || root.childElementCount > 0) return;
 
         for (var e of muts) {
@@ -58,6 +60,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                     }
 
                     // check if selection contains objects that represent the same char
+                    // TODO : areAllSame is broken right now
                     let firstId = null;
                     let selCharacter = null;
                     let areAllSame = true;
@@ -91,7 +94,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                         macro.action = macro.action.replace("@{selected|", `@{${selCharacter.get("name")}|`);
 
                         createElement("li", {
-                            "data-action-type": "r20es-bulk-macro-menu",
+                            "data-action-type": bulkMarcoMenuId,
                             [this.actionAttribute]: macro.action,
                             innerHTML: macro.name,
                             onClick: this.menuClick
@@ -117,20 +120,6 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new BulkMacroModule(__filename).install();
 
-function addCategoryElemToCanvasTokenRightClickMenu(name, actionType, callback) {
-    return [
-        {
-            includes: "/editor/",
-            find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
-            patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
-<li class="head hasSub" data-menuname="${actionType}"> ${name} »
-<ul class="submenu" id="${actionType}" data-menuname="${actionType}" style="width: auto;display: none;">
-
-</ul>`,
-        }
-    ];
-}
-
 const hook = {
     id: "bulkMacros",
     name: "Bulk macros",
@@ -138,7 +127,13 @@ const hook = {
     category: R20Module.category.token,
     gmOnly: true,
 
-    mods: addCategoryElemToCanvasTokenRightClickMenu("Bulk Roll", "r20es-bulk-macro-menu", "handleBulkMacroMenuClick")
+    includes: "/editor/",
+    find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
+    patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
+<li class="head hasSub" data-menuname="${bulkMarcoMenuId}">Bulk Roll »
+<ul class="submenu" id="${bulkMarcoMenuId}" data-menuname="${bulkMarcoMenuId}" style="width: auto;display: none;">
+</ul>`,
+
 };
 
 export { hook as BulkMacroHook }
