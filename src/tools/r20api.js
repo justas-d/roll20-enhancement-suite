@@ -82,7 +82,7 @@ R20.doesTokenContainMouse = function (mouseEvent, token) {
 }
 
 R20.getCurrentPageTokenByUUID = function (uuid) {
-    const tokens = getCurrentPageTokens();
+    const tokens = R20.getCurrentPageTokens();
     for (let obj of tokens) {
         if (!obj.model) continue;
 
@@ -94,7 +94,7 @@ R20.getCurrentPageTokenByUUID = function (uuid) {
 }
 
 R20.moveCameraToTokenByUUID = function (uuid) {
-    const data = getCurrentPageTokenByUUID(uuid);
+    const data = R20.getCurrentPageTokenByUUID(uuid);
     if (!data) return;
 
     var editor = $("#editor-wrapper")[0];

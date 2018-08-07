@@ -19,8 +19,10 @@ console.log("=================");
 // inject global environment
 injectScript("globals");
 
+// TODO : do this automaticall via hooks.js
 // modules
 injectScript("add-duplicate-to-journal-menu");
+injectScript("auto-ping-next-token");
 injectScript("auto-select-next-token");
 injectScript("bulk-macros");
 injectScript("character-io");

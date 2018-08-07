@@ -8,7 +8,7 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
         super(id);
         this.optionId = "window.r20es-duplicate-journal";
     }
-
+    
     setup() {
         let menu = document.getElementById("journalitemmenu");
         if (menu) {

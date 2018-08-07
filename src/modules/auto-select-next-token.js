@@ -25,6 +25,7 @@ const hook = {
     category: R20Module.category.initiative,
     gmOnly: true,
 
+    includes: "assets/app.js",
     find: "e.push(t[0]);",
     patch: "e.push(t[0]);window.r20es.selectInitiativeToken(e[0]);"
 };

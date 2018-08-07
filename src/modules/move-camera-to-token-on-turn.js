@@ -5,7 +5,7 @@ class MoveCameraToTokenModule extends R20Module.SimpleBase {
     setup() {
         console.log("MoveCameraToTokenModule SETUP");
 
-        window.r20es.moveCameraTo = R20.moveCameraTo;
+        window.r20es.moveCameraTo = R20.moveCameraToTokenByUUID;
     }
 }
 
@@ -18,6 +18,7 @@ const hook = {
     category: R20Module.category.initiative,
     gmOnly: true,
 
+    includes: "assets/app.js",
     find: "e.push(t[0]);",
     patch: "e.push(t[0]);window.r20es.moveCameraTo(e[0]);"
 };
