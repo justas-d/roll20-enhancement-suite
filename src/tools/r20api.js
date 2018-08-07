@@ -37,10 +37,6 @@ R20.selectToken = function (token) {
     R20.addTokenToSelection(token);
 }
 
-R20.say = function (what, callbackId) {
-    window.d20.textchat.doChatInput(what, callbackId);
-}
-
 R20.hideTokenRadialMenu = function () {
     window.d20.token_editor.removeRadialMenu();
 }
@@ -103,9 +99,26 @@ R20.moveCameraToTokenByUUID = function (uuid) {
     editor.scrollLeft = Math.floor(data.left * window.d20.engine.canvasZoom) - Math.floor(window.d20.engine.canvasWidth / 2) + 125 * window.d20.engine.canvasZoom;
 }
 
-R20.fancySay = function(asWho, msg, callbackId) {
-    if (!asWho) asWho = "R20ES";
-    R20.sayToSelf(`/w "${window.currentPlayer.get("displayname")}" &{template:default} {{name=${asWho}}} {{${msg}}}`, callbackId);
+
+R20.say = function (what, callback) {
+
+    if(callback) {
+
+        const callbackId = generateUUID();
+        $(document).on(`mancerroll:${callbackId}`, (event, rollData) => {
+            $(document).off(`mancerroll:${callbackId}`);
+            callback(event, rollData);
+        });
+
+        window.d20.textchat.doChatInput(what, callbackId);
+        
+    } else {
+        window.d20.textchat.doChatInput(what);
+    }
+}
+
+R20.sayToSelf = function(what, callbackId) {
+    R20.say(`/w "${R20.getCurrentPlayer().get("displayname")}" ${what}`, callbackId);
 }
 
 R20.ping = function(left, top, playerId, pageId, layer) {
