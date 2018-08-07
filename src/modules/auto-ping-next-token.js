@@ -1,7 +1,7 @@
 import { R20Module } from "../tools/r20Module";
 import { R20 } from "../tools/r20api";
 
-class autoPingNextToken extends R20Module.SimpleBase {
+class AutoPingNextTokenModule extends R20Module.SimpleBase {
     setup() {
         window.r20es.pingInitiativeToken = function (data) {
 
@@ -16,6 +16,8 @@ class autoPingNextToken extends R20Module.SimpleBase {
     }
 }
 
+if(R20Module.canInstall()) new AutoPingNextTokenModule(__filename).isntall();
+
 const hook = {
 
     id: "autoPingNextToken",
@@ -24,9 +26,9 @@ const hook = {
     category: R20Module.category.initiative,
     gmOnly: true,
 
+    includes: "assets/app.js",
     find: "e.push(t[0]);",
     patch: "e.push(t[0]);window.r20es.pingInitiativeToken(e[0]);"
-
 }
 
 export {hook as AutoPingNextTokenHook};
