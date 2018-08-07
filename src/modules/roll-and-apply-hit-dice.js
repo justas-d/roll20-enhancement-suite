@@ -2,70 +2,75 @@ import { R20Module } from "../tools/r20Module";
 import { R20 } from "../tools/r20api";
 
 class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
-    setup() {
-        window.r20es.rollAndApplyHitDice = function (objects) {
+    constructor(id) {
+        super(id);
 
-            // tokens will locally disappear if we do not unselect them here
-            let oldSel = R20.getSelectedTokens();
-            R20.unselectTokens();
+        this.rollAndApplyHitDice = this.rollAndApplyHitDice.bind(this);
+    }
 
-            let numRolled = 0;
+    fancySay(msg, callback) {
+        R20.sayToSelf(`&{template:default} {{name=R20ES Hit Dice}} {{${msg}}}`, callback);
+    }
 
-            for (let token of objects) {
+    rollAndApplyHitDice(objects) {
 
-                if (!token.model || !token.model.character) continue;
+        // tokens will locally disappear if we do not unselect them here
+        let oldSel = R20.getSelectedTokens();
+        R20.unselectTokens();
 
-                let attribs = token.model.character.attribs;
-                let config = window.r20es.hooks.rollAndApplyHitDice.config;
+        let numRolled = 0;
 
-                // find hpForumla
-                let hpFormula = null;
-                for (let attrib of attribs.models) {
-                    if (!hpFormula && attrib.attributes.name === config.diceFormulaAttribute) {
-                        hpFormula = attrib.attributes.current;
-                        break;
-                    }
+        for (let token of objects) {
+
+            if (!token.model || !token.model.character) continue;
+
+            let attribs = token.model.character.attribs;
+            let config = window.r20es.hooks.rollAndApplyHitDice.config;
+
+            // find hpForumla
+            let hpFormula = null;
+            for (let attrib of attribs.models) {
+                if (!hpFormula && attrib.attributes.name === config.diceFormulaAttribute) {
+                    hpFormula = attrib.attributes.current;
+                    break;
                 }
-
-                if (!hpFormula) {
-                    R20.fancySay("r20es_HitDice", `Could not find attribute ${config.diceFormulaAttribute}`);
-
-                    continue;
-                }
-
-                // roll hpForumla
-                let callbackId = generateUUID();
-                R20.say("r20es_HitDice", `${token.model.character.get("name")}: [[${hpFormula}]]`, callbackId);
-
-                // apply hp formula in the roll callback
-                $(document).on(`mancerroll:${callbackId}`, (_, o) => {
-                    $(document).off(`mancerroll:${callbackId}`);
-
-                    if (!o.inlinerolls || o.inlinerolls.length <= 0) return;
-
-                    let hp = o.inlinerolls[0].results.total;
-
-                    let barValue = config.bar + "_value";
-                    let barMax = config.bar + "_max";
-                    let save = {};
-                    save[barValue] = hp;
-                    save[barMax] = hp;
-                    token.model.save(save);
-
-                    // reselect when we're done processing all callbacks.
-                    numRolled++;
-                    if (numRolled >= objects.length) {
-                        for (let sel of oldSel) {
-                            R20.addTokenToSelection(sel);
-                        }
-                    }
-                });
             }
+
+            if (!hpFormula) {
+                this.fancySay(`Could not find attribute ${config.diceFormulaAttribute}`);
+
+                continue;
+            }
+
+            this.fancySay(`${token.model.character.get("name")}: [[${hpFormula}]]`, (_, o) => {
+                if (!o.inlinerolls || o.inlinerolls.length <= 0) return;
+
+                let hp = o.inlinerolls[0].results.total;
+
+                let barValue = config.bar + "_value";
+                let barMax = config.bar + "_max";
+                let save = {};
+                save[barValue] = hp;
+                save[barMax] = hp;
+                token.model.save(save);
+
+                // reselect when we're done processing all callbacks.
+                numRolled++;
+                if (numRolled >= objects.length) {
+                    for (let sel of oldSel) {
+                        R20.addTokenToSelection(sel);
+                    }
+                }
+            });
         }
+    }
+
+    setup() {
+        window.r20es.rollAndApplyHitDice = this.rollAndApplyHitDice;
     }
 }
 
-if(R20Module.canInstall()) new RollAndApplyHitDiceModule(__filename).install();
+if (R20Module.canInstall()) new RollAndApplyHitDiceModule(__filename).install();
 
 function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
     return [
@@ -85,7 +90,7 @@ function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
 }
 
 
-const hook = R20Module.makeHook(__filename,{
+const hook = R20Module.makeHook(__filename, {
     id: "rollAndApplyHitDice",
     name: "Roll and apply hit dice",
     description: `Adds a "Hit Dice" option to the token right click menu which rolls and applies hit dice for the selected tokens.`,
