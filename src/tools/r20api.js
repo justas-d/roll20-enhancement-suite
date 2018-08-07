@@ -143,8 +143,6 @@ R20.ping = function(left, top, playerId, pageId, layer) {
     d20.engine.renderTop();
 }
 
-R20.getHandout
-
 R20.layer = {
     map: "map",
     playerTokens: "objects",
