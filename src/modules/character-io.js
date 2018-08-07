@@ -180,11 +180,11 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new CharacterIOModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "characterImportExport",
     name: "Character Exporter/Importer",
     description: "Provides character importing (in the journal) and exporting (in the journal and on sheets).",
     category: R20Module.category.exportImport,
-};
+});
 
 export { hook as CharacterIOHook };

@@ -18,7 +18,7 @@ class AutoSelectNextTokenModule extends R20Module.SimpleBase {
 
 if (R20Module.canInstall()) new AutoSelectNextTokenModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "autoSelectNextToken",
     name: "Select token on its turn",
     description: "Automatically selects a token on it's turn",
@@ -28,6 +28,6 @@ const hook = {
     includes: "assets/app.js",
     find: "e.push(t[0]);",
     patch: "e.push(t[0]);window.r20es.selectInitiativeToken(e[0]);"
-};
+});
 
 export { hook as AutoSelectNextTokenHook }

@@ -44,7 +44,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new MiddleClickSelectModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "middleClickToTokenLayer",
     name: "Middle click to switch to token layer.",
     description: "When middle clicking (scroll wheel), will set the current layer to the layer of the token underneath the mouse.",
@@ -61,6 +61,6 @@ const hook = {
     config: {
         select: false,
     }
-};
+});
 
 export { hook as MiddleClickSelectHook }

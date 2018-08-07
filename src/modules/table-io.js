@@ -152,7 +152,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new TableIOModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "importExportTable",
     name: "Table Import/export",
     description: "Provides rollable table importing and exporting. Supports TableExport format tables.",
@@ -173,6 +173,6 @@ const hook = {
             patch: `this.el.setAttribute("r20es-table-id", this.model.get("id")),this.$el.on("click",".deleterollabletable"`,
         }
     ]
-};
+});
 
 export { hook as TableIOHook };

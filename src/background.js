@@ -5,7 +5,7 @@ import { IntegrationTesting } from './tools/integrationTesting.js';
 window.integrationTesting = new IntegrationTesting(hooks);
 
 function sendHooksToPort(port) {
-    port.postMessage({ hooks: hooks });
+    let promise = port.postMessage({ hooks: hooks });
     console.log("Background sent hooks to plugin to be sent to page");
 }
 

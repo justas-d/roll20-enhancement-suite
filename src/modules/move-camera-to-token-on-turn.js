@@ -11,7 +11,7 @@ class MoveCameraToTokenModule extends R20Module.SimpleBase {
 
 if(R20Module.canInstall()) new MoveCameraToTokenModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "autoFocusNextToken",
     name: "Move camera to token on its turn",
     description : "Automatically moves the local camera to the token on it's turn. The camera movement is local only, meaning only your camera will move.",
@@ -21,6 +21,6 @@ const hook = {
     includes: "assets/app.js",
     find: "e.push(t[0]);",
     patch: "e.push(t[0]);window.r20es.moveCameraTo(e[0]);"
-};
+});
 
 export {hook as AutoFocusNextToken};

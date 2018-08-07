@@ -16,9 +16,9 @@ class AutoPingNextTokenModule extends R20Module.SimpleBase {
     }
 }
 
-if(R20Module.canInstall()) new AutoPingNextTokenModule(__filename).isntall();
+if(R20Module.canInstall()) new AutoPingNextTokenModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
 
     id: "autoPingNextToken",
     name: "Ping visible token on its turn",
@@ -29,6 +29,6 @@ const hook = {
     includes: "assets/app.js",
     find: "e.push(t[0]);",
     patch: "e.push(t[0]);window.r20es.pingInitiativeToken(e[0]);"
-}
+});
 
 export {hook as AutoPingNextTokenHook};

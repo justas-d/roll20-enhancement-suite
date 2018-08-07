@@ -116,7 +116,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new DrawCurrentLayerModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "activeLayerHud",
     name: "Display active layer",
     description: "Displays the active edit layer as well as whether the select tool is active.",
@@ -127,6 +127,6 @@ const hook = {
     find: "function setMode(e){",
     patch: "function setMode(e){if(window.r20es) window.r20es.setModePrologue(e);",
 
-};
+});
 
 export { hook as DrawCurrentLayerHook };

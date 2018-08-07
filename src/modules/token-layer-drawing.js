@@ -36,7 +36,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
 
 if (R20Module.canInstall()) new TokenLayerDrawing(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "tokenLayerDrawing",
     name: "Token layer drawing",
     description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
@@ -46,6 +46,6 @@ const hook = {
     includes: "assets/app.js",
     find: "this.model.view.updateBackdrops(e),this.active",
     patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es.tokenDrawBg(e, this), this.active"
-};
+});
 
 export { hook as TokenLayerDrawingHook };

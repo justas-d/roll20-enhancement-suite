@@ -1,11 +1,12 @@
 import { Config } from "./tools/config";
+import { hooks } from "./hooks";
 
 function injectScript(name) {
     console.log(`Injecting ${name}`);
 
     var s = document.createElement("script");
     s.async = false;
-    s.src = (chrome || browser).extension.getURL(`js/${name}.js`);
+    s.src = (chrome || browser).extension.getURL(`js/${name}`);
 
     s.onload = () => { s.remove(); };
     document.head.appendChild(s);
@@ -17,21 +18,18 @@ console.log("window.r20es bootstrap");
 console.log("=================");
 
 // inject global environment
-injectScript("globals");
+injectScript("globals.js");
 
-// TODO : do this automaticall via hooks.js
-// modules
-injectScript("add-duplicate-to-journal-menu");
-injectScript("auto-ping-next-token");
-injectScript("auto-select-next-token");
-injectScript("bulk-macros");
-injectScript("character-io");
-injectScript("draw-current-layer");
-injectScript("initiative-shortcuts");
-injectScript("middle-click-select");
-injectScript("move-camera-to-token-on-turn");
-injectScript("table-io");
-injectScript("token-layer-drawing");
+
+for(let hookId in hooks) {
+    const hook = hooks[hookId];
+
+    console.log(hook);
+    if(!("filename" in hook)) continue;
+
+    
+    injectScript(hook.filename);
+}
 
 // setup comms with the backend
 let bgComms = browser.runtime.connect(Config.extentionId);

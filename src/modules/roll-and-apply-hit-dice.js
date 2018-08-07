@@ -85,7 +85,7 @@ function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
 }
 
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "rollAndApplyHitDice",
     name: "Roll and apply hit dice",
     description: `Adds a "Hit Dice" option to the token right click menu which rolls and applies hit dice for the selected tokens.`,
@@ -115,6 +115,6 @@ const hook = {
         diceFormulaAttribute: "npc_hpformula",
         bar: "bar3",
     }
-}
+});
 
 export { hook as rollAndApplyHitDiceHook }

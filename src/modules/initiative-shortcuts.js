@@ -20,13 +20,13 @@ class InitiativeAdvanceShortcutModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new InitiativeAdvanceShortcutModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "initiativeShortcuts",
     name: "Initiative shortcuts",
     description: "Creates a shortcut for advancing (Ctrl+Right Arrow) in the initiative list.",
     category: R20Module.category.initiative,
     gmOnly: true,
 
-};
+});
 
 export { hook as InitiativeAdvanceShortcutHook };

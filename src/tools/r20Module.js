@@ -73,6 +73,33 @@ R20Module.OnAppLoadBase = class OnAppLoadModuleBase extends R20Module.Base {
 
 R20Module.canInstall = _ => window.r20es && "canInstallModules" in window.r20es && window.r20es.canInstallModules;
 
+function reportInvalidFilename(filename, hook, err) {
+    console.error("[R20Module] Invalid filename passed to makeHook:");
+    console.table({
+        "Error": err,
+        "Filename": filename,
+        "Hook name": hook.name,
+        "Hook ID": hook.id
+    });
+}
+
+R20Module.makeHook = function (filename, hook) {
+    let idx = filename.lastIndexOf('/');
+    if (idx === -1) {
+        reportInvalidFilename(filename, hook, "lastIndexOf('/') is -1");
+        return hook;
+    }
+    idx += 1;
+
+    if (idx >= filename.length) {
+        reportInvalidFilename(filename, hook, `lastIndexOf('/')+1 (${idx}) >= filename.length (${filename.length})`);
+        return hook;
+    }
+
+    hook.filename = filename.substr(idx);
+    return hook;
+}
+
 R20Module.category = {
     canvas: "Canvas",
     exportImport: "Exporting/Importing",

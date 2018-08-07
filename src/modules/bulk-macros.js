@@ -120,7 +120,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new BulkMacroModule(__filename).install();
 
-const hook = {
+const hook = R20Module.makeHook(__filename,{
     id: "bulkMacros",
     name: "Bulk macros",
     description: `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
@@ -134,6 +134,6 @@ const hook = {
 <ul class="submenu" id="${bulkMarcoMenuId}" data-menuname="${bulkMarcoMenuId}" style="width: auto;display: none;">
 </ul>`,
 
-};
+});
 
 export { hook as BulkMacroHook }
