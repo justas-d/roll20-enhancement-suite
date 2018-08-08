@@ -21,7 +21,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
                     $(selector).trigger("click");
                 }
 
-                if (window.r20es.hooks.middleClickToTokenLayer.config.select) {
+                if (this.getHook().config.select) {
                     R20.selectToken(obj);
                 }
 

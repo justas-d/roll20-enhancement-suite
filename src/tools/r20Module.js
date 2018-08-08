@@ -1,18 +1,51 @@
 let R20Module = {};
 
+function basename(str) {
+    let idx = str.lastIndexOf('/');
+    if (idx === -1) {
+        return str;
+    }
+    idx += 1;
+
+    if (idx >= str.length) {
+        return "";
+    }
+
+    return str.substr(idx);
+}
+
 R20Module.Base = class ModuleBase {
-    constructor(id) {
-        this.id = id;
+    constructor(filename) {
+        this.filename = basename(filename);
     }
 
     installFirstTime() { }
     installUpdate() { }
     dispose() { }
 
-    install() {
-        console.log(`Installing module ID: ${this.id}`);
+    getHook() {
+        if(!("r20esDisposeTable" in window)) return null;
+        if(!("hooks") in window.r20es) return null;
 
-        let isFirstRun = window.r20esDisposeTable[this.id] === undefined || window.r20esDisposeTable[this.id] === null;
+        console.log(this.filename);
+
+        for(const hookId in window.r20es.hooks) {
+            const hook = window.r20es.hooks[hookId];
+            if(hook.filename && hook.filename === this.filename) {
+                return hook;
+            }
+            
+        }
+
+        return null;
+    }
+
+    install() {
+        if(!("r20esDisposeTable" in window)) return;
+
+        console.log(`Installing module ID: ${this.filename}`);
+
+        let isFirstRun = window.r20esDisposeTable[this.filename] === undefined || window.r20esDisposeTable[this.filename] === null;
 
         if (isFirstRun) {
             console.log(`First run`);
@@ -21,7 +54,7 @@ R20Module.Base = class ModuleBase {
             // dispose
             console.log(`Disposing old`);
             try {
-                const oldDispose = window.r20esDisposeTable[this.id];
+                const oldDispose = window.r20esDisposeTable[this.filename];
                 oldDispose();
             } catch (err) {
                 console.error(`Failed to dispose but still continuing:`);
@@ -32,9 +65,9 @@ R20Module.Base = class ModuleBase {
             this.installUpdate();
         }
 
-        window.r20esDisposeTable[this.id] = _ => { this.dispose(); };
+        window.r20esDisposeTable[this.filename] = _ => { this.dispose(); };
 
-        console.log(`DONE! module ID: ${this.id}`);
+        console.log(`DONE! module ID: ${this.filename}`);
     }
 }
 
@@ -73,30 +106,8 @@ R20Module.OnAppLoadBase = class OnAppLoadModuleBase extends R20Module.Base {
 
 R20Module.canInstall = _ => window.r20es && "canInstallModules" in window.r20es && window.r20es.canInstallModules;
 
-function reportInvalidFilename(filename, hook, err) {
-    console.error("[R20Module] Invalid filename passed to makeHook:");
-    console.table({
-        "Error": err,
-        "Filename": filename,
-        "Hook name": hook.name,
-        "Hook ID": hook.id
-    });
-}
-
 R20Module.makeHook = function (filename, hook) {
-    let idx = filename.lastIndexOf('/');
-    if (idx === -1) {
-        reportInvalidFilename(filename, hook, "lastIndexOf('/') is -1");
-        return hook;
-    }
-    idx += 1;
-
-    if (idx >= filename.length) {
-        reportInvalidFilename(filename, hook, `lastIndexOf('/')+1 (${idx}) >= filename.length (${filename.length})`);
-        return hook;
-    }
-
-    hook.filename = filename.substr(idx);
+    hook.filename = basename(filename);
     return hook;
 }
 
