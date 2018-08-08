@@ -1,5 +1,6 @@
 import { R20Module } from "../tools/r20Module";
 import { R20 } from "../tools/r20api";
+import { OGL5eByRoll20MacroGenerator } from "../macro/OGL5eByRoll20.js";
 
 class MacroGeneratorModule extends R20Module.SimpleBase {
     constructor(id) {
@@ -7,37 +8,17 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         this.getAllActions = this.getAllActions.bind(this);
     }
 
-    getAllActions(pc) {
-        // only finds attack actions currently.
-        const keyword = "repeating_attack";
-        let table = {}
+    getAllActions(char) {
+        
+        const factories = OGL5eByRoll20MacroGenerator.macroFactories;
+        let data = [];
 
-        pc.attribs.models.forEach(a => {
-            const name = a.get("name");
-            if(!name.startsWith(keyword)) return;
-            const words = name.split('_');
-            if(words.length < 2) return;
-
-            const id = words[2];
-            table[id] = true;
-        });
-
-        const ids = pc.repeatingKeyOrder(Object.keys(table), keyword);
-
-        const orderedNames = [];
-        for(let id of ids) {
-            const query = `${keyword}_${id}_atkname`;
-            const name = pc.attribs.models.find(a => a.get("name") === query);
-
-            if(!name) {
-                console.error(`Could not find name for attack id ${id}`);
-                continue;
-            }
-
-            orderedNames.push(name.get("current"));
+        for(let factoryId in factories) {
+            const factory = factories[factoryId];
+            data = data.concat(factory(char));
         }
 
-        return orderedNames;
+        return data;        
     }
 
     setup() {
