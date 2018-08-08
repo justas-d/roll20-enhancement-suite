@@ -45,7 +45,14 @@ window.r20es.onAppLoad.removeEventListener = function (fx) {
     }
 }
 
-window.r20es.onAppLoad.addEventListener(_ => window.r20es.isLoading = false);
+function setIsLoadingToFalse() {
+    window.r20es.isLoading = false
+}
+
+if(window.r20es.isLoading) {
+    window.r20es.onAppLoad.removeEventListener(setIsLoadingToFalse);
+    window.r20es.onAppLoad.addEventListener(setIsLoadingToFalse);
+}
 
 window.r20es.replaceAll = function (where, find, replace) {
     function escapeRegExp(string) {
