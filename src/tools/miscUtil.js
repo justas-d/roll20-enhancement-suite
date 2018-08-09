@@ -1,6 +1,4 @@
-let MiscUtil = {};
-
-MiscUtil.copy = function (what, overrides) {
+function copy(what, overrides) {
     let copy = Object.assign({}, what);
     if (overrides) {
         copy = Object.assign(copy, overrides);
@@ -8,7 +6,7 @@ MiscUtil.copy = function (what, overrides) {
     return copy;
 }
 
-MiscUtil.getTransform = function (ctx) {
+function getTransform(ctx) {
     if ('currentTransform' in ctx) {
         return ctx.currentTransform
     }
@@ -19,8 +17,8 @@ MiscUtil.getTransform = function (ctx) {
     }
 };
 
-MiscUtil.getRotation = function (ctx) {
-    let t = MiscUtil.getTransform(ctx);
+function getRotation(ctx) {
+    let t = getTransform(ctx);
     let rad = Math.atan2(t.b, t.a);
     if (rad < 0) { // angle is > Math.PI
         rad += Math.PI * 2;
@@ -28,4 +26,41 @@ MiscUtil.getRotation = function (ctx) {
     return rad;
 };
 
-export { MiscUtil };
+
+function basename(str) {
+    let idx = str.lastIndexOf('/');
+    if (idx === -1) {
+        return str;
+    }
+    idx += 1;
+
+    if (idx >= str.length) {
+        return "";
+    }
+
+    return str.substr(idx);
+}
+
+function findByIdAndRemove(id) {
+    const elem = document.getElementById(id);
+    if (elem) {
+        elem.remove();
+    }
+}
+
+function safeCall(fx) {
+    try {
+        fx();
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+function removeAllChildren(root) {
+    while (root.firstChild) {
+        root.removeChild(root.firstChild);
+    }
+}
+
+export { findByIdAndRemove, copy, getTransform, getRotation, basename, safeCall, removeAllChildren };
