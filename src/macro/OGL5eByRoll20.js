@@ -20,6 +20,8 @@ const types = {
 };
 
 MacroGenerator.actionTypes = types;
+MacroGenerator.macroFactories = {};
+MacroGenerator.id = "D&D 5e OGL by Roll20";
 
 let dataSet = {
     npcAction: {
@@ -115,13 +117,9 @@ function generateMacroData(char, group, nameAttrib, macroFactory) {
     return orderedNames;
 }
 
-MacroGenerator.macroFactories = {};
-
 for(let actionType in types) {
     const data = dataSet[actionType];
     MacroGenerator.macroFactories[actionType] = char => generateMacroData(char, data.group, data.name, data.macro);
 }
-
-console.log(dataSet);
 
 export { MacroGenerator as OGL5eByRoll20MacroGenerator };
