@@ -301,12 +301,14 @@
       this.openAsModal_ = true;
 
       // Optionally center vertically, relative to the current viewport.
-      if (dialogPolyfill.needsCentering(this.dialog_)) {
+      // Note(Justas): needsCentering takes OVER 1000 MS if we have a sheet open on FF61.
+
+      //if (dialogPolyfill.needsCentering(this.dialog_)) {
         dialogPolyfill.reposition(this.dialog_);
         this.replacedStyleTop_ = true;
-      } else {
-        this.replacedStyleTop_ = false;
-      }
+      //} else {
+//        this.replacedStyleTop_ = false;
+      //}
 
       // Insert backdrop.
       this.dialog_.parentNode.insertBefore(this.backdrop_, this.dialog_.nextSibling);
