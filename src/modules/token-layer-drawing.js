@@ -1,6 +1,6 @@
 import { R20Module } from "../tools/r20Module";
 import { getLayerData } from "../tools/layerData";
-import { MiscUtil } from "../tools/miscUtil";
+import { getRotation } from "../tools/miscUtil";
 
 class TokenLayerDrawing extends R20Module.SimpleBase {
     setup() {
@@ -12,7 +12,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
             ctx.globalAlpha = 1;
             ctx.lineWidth = 2; // TODO : config for this
 
-            ctx.rotate(-MiscUtil.getRotation(ctx));
+            ctx.rotate(-getRotation(ctx));
 
             let sz = 18
             ctx.font = "bold " + sz + "px Arial";

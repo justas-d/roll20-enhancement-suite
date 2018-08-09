@@ -2,7 +2,7 @@ import { R20Module } from '../tools/r20Module'
 import { R20 } from '../tools/r20api.js';
 import { getLayerData } from '../tools/layerData.js';
 import { createElement } from '../tools/createElement.js';
-import { MiscUtil } from '../tools/miscUtil.js';
+import { copy } from '../tools/miscUtil.js';
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     constructor(id) {
@@ -51,7 +51,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
             [
                 createElement("div", {
                     id: this.selectId,
-                    style: MiscUtil.copy(divStyle, { background: "rgba(255,0,0,0.5)" })
+                    style: copy(divStyle, { background: "rgba(255,0,0,0.5)" })
                 },
                     [
                         createElement("p", {

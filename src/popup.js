@@ -1,7 +1,5 @@
-//import React from 'react';
-//import ReactDOM from 'react-dom';
-
 import {createElement} from './tools/createElement.js'
+import { removeAllChildren } from './tools/miscUtil.js';
 
 function notifyBackendOfHookMutation(hook, id) {
     console.log("Popup is notifying backend of hook config mutation!");
@@ -98,9 +96,7 @@ function hideSettings(parent, hook, id) {
 function drawHooks(hooks) {
     let root = document.getElementById("root");
 
-    while (root.firstChild) {
-        root.removeChild(root.firstChild);
-    }
+    removeAllChildren(root);
 
     let byCategory = {};
     for (let key in hooks) {

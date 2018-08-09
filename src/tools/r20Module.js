@@ -1,18 +1,6 @@
+import { basename, safeCall } from "../tools/miscUtil";
+
 let R20Module = {};
-
-function basename(str) {
-    let idx = str.lastIndexOf('/');
-    if (idx === -1) {
-        return str;
-    }
-    idx += 1;
-
-    if (idx >= str.length) {
-        return "";
-    }
-
-    return str.substr(idx);
-}
 
 R20Module.Base = class ModuleBase {
     constructor(filename) {
@@ -49,7 +37,7 @@ R20Module.Base = class ModuleBase {
 
         if (isFirstRun) {
             console.log(`First run`);
-            this.installFirstTime();
+            safeCall(_ => this.installFirstTime());
         } else {
             // dispose
             console.log(`Disposing old`);
@@ -62,7 +50,7 @@ R20Module.Base = class ModuleBase {
             }
 
             console.log(`Calling install update`);
-            this.installUpdate();
+            safeCall(_ => this.installUpdate());
         }
 
         window.r20esDisposeTable[this.filename] = _ => { this.dispose(); };
