@@ -14,7 +14,6 @@
 * Shift + mwheel zoom
 * Local storage -> mark tokens as permenantely GM only.
 * Auto roll initiative for select tokens. (Such as NPCs accompanying the party)
-
 * Auto generate action macros
 * Transluceny on the paper divs.
 * Automatically keep track of spell slots
@@ -23,3 +22,4 @@
 * Export page
 * Export entire journal
 * Export campaign
+* Auto sort initiative

@@ -88,8 +88,10 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
     observerCallback(muts) {
         for (var e of muts) {
+            //console.log(e);
             if (e.target.className && e.target.className === "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") {
 
+                // TODO : buttons aren't properly injected into sheets dragged from the compendium that session
                 // TODO : use jquery for this
                 let pcElem = e.target.parentElement.getElementsByClassName("characterdialog")[0];
                 if (!pcElem) return false;
