@@ -1,3 +1,5 @@
+import { replaceAll } from "../tools/miscUtil";
+
 let MacroGenerator = {};
 
 const types = {
@@ -22,18 +24,19 @@ const types = {
 MacroGenerator.actionTypes = types;
 MacroGenerator.macroFactories = {};
 MacroGenerator.id = "D&D 5e OGL by Roll20";
+MacroGenerator.name = "D&D 5e OGL by Roll20";
 
 let dataSet = {
     npcAction: {
         group: "repeating_npcaction",
         name: "name",
-        macro: idx => `%{selected|repeating_npcaction_$${idx}}_npc_action`
+        macro: idx => `%{selected|repeating_npcaction_$${idx}_npc_action}`
     },
 
     npcLegendaryAction: { 
         group: "repeating_npcaction-l",
          name: "name", 
-         macro: idx => `%{selected|repeating_npcaction-l_$${idx}}_npc_action` 
+         macro: idx => `%{selected|repeating_npcaction-l_$${idx}_npc_action}`
         },
 
     npcTrait: {
@@ -80,7 +83,7 @@ function generateMacroData(char, group, nameAttrib, macroFactory) {
 
     char.attribs.models.forEach(a => {
         const name = a.get("name");
-        if (!name.startsWith(group)) return;
+        if (!name.startsWith(group + "_")) return;
         const words = name.split('_');
         if (words.length < 2) return;
 
@@ -99,6 +102,7 @@ function generateMacroData(char, group, nameAttrib, macroFactory) {
         if (!name) {
             console.error("[Bulk macro generator for 5e OGL R20] Could not find name for repeating section.");
             console.table({
+                "Query": query,
                 "Group name": group,
                 "Name Attribute Name": nameAttrib,
                 "Character name": char.get("name"),
@@ -109,7 +113,7 @@ function generateMacroData(char, group, nameAttrib, macroFactory) {
         }
 
         orderedNames.push({
-            name: name.get("current"),
+            name: replaceAll(name.get("current"), " ", "-"),
             macro: macroFactory(idIdx)
         });
     }
