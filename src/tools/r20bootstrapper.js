@@ -7,6 +7,7 @@ R20Bootstrapper.Base = class BootstrapperBase {
         this.filename = basename(filename);
     }
 
+    setup() {}
     beforeInject() { }
     afterInject() { }
 

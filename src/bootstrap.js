@@ -41,6 +41,10 @@ bgComms.onMessage.addListener(bgListener);
 console.log("requesting hooks from backend");
 bgComms.postMessage({ request: "hooks" });
 
+for(let id in window.bootstrapTable) {
+    window.bootstrapTable[id].setup();
+}
+
 // inject modules
 for(let hookId in hooks) {
     const hook = hooks[hookId];
