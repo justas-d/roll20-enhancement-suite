@@ -40,5 +40,5 @@
      }
   },
 
-  "web_accessible_resources": [ "js/*" ]
+  "web_accessible_resources": [ "js/*", "thirdparty/*" ]
 }
