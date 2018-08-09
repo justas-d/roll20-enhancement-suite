@@ -4,16 +4,23 @@ function createElementJsx(type, attributes, ...children) {
     if (children) {
         let frag = document.createDocumentFragment();
 
-        for (let child of children) {
-            if(child instanceof HTMLElement)  {
-                frag.appendChild(child);
-            } else if(typeof(child) === "string") {
-                frag.appendChild(document.createTextNode(child));
-            } else {
-                console.error(`Unknown child type while proecssing JSX: ${child}`);
+        function recursiveAddChildren(recursiveChildren) {
+            for (let child of recursiveChildren) {
+                if(child instanceof HTMLElement)  {
+                    frag.appendChild(child);
+                } else if(Array.isArray(child)) {
+                    recursiveAddChildren(child);
+                } else if(typeof(child) === "string") {
+                    frag.appendChild(document.createTextNode(child));
+                } else {
+                    // TODO : this returns undefined when opening the macro generator generate dialog box
+                    console.error(`Unknown child type while proecssing JSX: ${child}`);
+                }
             }
         }
 
+        recursiveAddChildren(children);
+        
         elem.appendChild(frag);
     }
 
@@ -25,10 +32,16 @@ function createElementJsx(type, attributes, ...children) {
 
         if (isEvent(attribId)) {
             elem.addEventListener(getEventName(attribId), val);
+        } else if (attribId === "style") {
+            for (let elemId in val) {
+                elem.style[elemId] = val[elemId];
+            }
+        } else {
+            elem[attribId] = val;
         }
     }
 
-    Object.assign(elem, attributes);
+    //Object.assign(elem, attributes);
 
     return elem;
 }
