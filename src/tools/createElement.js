@@ -1,5 +1,11 @@
 function createElementJsx(type, attributes, ...children) {
-    const elem = document.createElement(type);
+
+    let elem = null;
+    if(typeof(type) === "function") {
+        elem = type(attributes);
+    } else {
+        elem = document.createElement(type);
+    }
 
     if (children) {
         let frag = document.createDocumentFragment();
@@ -12,8 +18,11 @@ function createElementJsx(type, attributes, ...children) {
                     recursiveAddChildren(child);
                 } else if(typeof(child) === "string") {
                     frag.appendChild(document.createTextNode(child));
+
+                // values that we assume are control flow related
+                } else if(child === null || child === undefined || typeof(child) === "boolean") {
+                    console.warn(`JSX got an unrenderable child value, assuming it's control flow related: type: ${typeof(child)} value: ${child}.`);
                 } else {
-                    // TODO : this returns undefined when opening the macro generator generate dialog box
                     console.error(`Unknown child type while proecssing JSX: ${child}`);
                 }
             }
@@ -32,8 +41,17 @@ function createElementJsx(type, attributes, ...children) {
 
         if (isEvent(attribId)) {
             elem.addEventListener(getEventName(attribId), val);
+        } else if (attribId === "className") {
+            if (val && Array.isArray(val)) {
+                for (let className of val) {
+                    elem.classList.add(className);
+                }
+            } else {
+                elem.className = val;
+            }
         } else if (attribId === "style") {
             for (let elemId in val) {
+                if(!val) continue;
                 elem.style[elemId] = val[elemId];
             }
         } else {
@@ -79,6 +97,7 @@ function createElement(type, _attributes, children, parent) {
         } else if (attribId === "checked") {
             elem.checked = val;
         } else if (attribId === "style") {
+            if(!val) continue;
             for (let elemId in val) {
                 elem.style[elemId] = val[elemId];
             }
