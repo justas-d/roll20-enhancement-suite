@@ -63,4 +63,12 @@ function removeAllChildren(root) {
     }
 }
 
-export { findByIdAndRemove, copy, getTransform, getRotation, basename, safeCall, removeAllChildren };
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+function replaceAll(where, find, replace) {
+    return where.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
+
+export { replaceAll, escapeRegExp, findByIdAndRemove, copy, getTransform, getRotation, basename, safeCall, removeAllChildren };

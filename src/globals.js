@@ -1,3 +1,5 @@
+import { escapeRegExp, replaceAll } from "./tools/miscUtil";
+
 window.r20es = window.r20es || {};
 window.r20esDisposeTable = window.r20esDisposeTable || {};
 
@@ -54,11 +56,4 @@ if(window.r20es.isLoading) {
     window.r20es.onAppLoad.addEventListener(setIsLoadingToFalse);
 }
 
-window.r20es.replaceAll = function (where, find, replace) {
-    function escapeRegExp(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-    }
-
-    return where.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-
-}
+window.r20es.replaceAll = replaceAll;

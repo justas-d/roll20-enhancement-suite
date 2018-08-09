@@ -1,3 +1,5 @@
+import { replaceAll } from "./miscUtil";
+
 let CharacterIO = {};
 
 CharacterIO.exportSheet = function(sheet, doneCallback) {
@@ -117,20 +119,17 @@ CharacterIO.formatVersions[2] = {
 
     overwrite: function (pc, data) {
 
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-        }
-
         // some attributes store the id of the exported character
         // we replace them here with the new id 
         let jsonData = JSON.stringify(data);
-        let oldIdRegexp = new RegExp(escapeRegExp(data.oldId), 'g');
-        jsonData = jsonData.replace(oldIdRegexp, pc.attributes.id);
+        jsonData = replaceAll(jsonData, oldIdRegexp, pc.attributes.id);
         data = JSON.parse(jsonData);
+
+        
 
         // replace represents id
         if (data.defaulttoken) {
-            data.defaulttoken = data.defaulttoken.replace(oldIdRegexp, pc.attributes.id);
+            data.defaulttoken = replaceAll(data.defaulttoken, oldIdRegexp, pc.attributes.id);
         }
 
         let save = {

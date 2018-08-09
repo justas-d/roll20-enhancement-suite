@@ -1,6 +1,7 @@
 import { hooks } from './hooks.js'
 import { Config } from './tools/config.js';
 import { ModPatchTesting } from './tools/modPatchTesting.js';
+import { escapeRegExp } from './tools/miscUtil.js';
 
 window.modPatchTesting = new ModPatchTesting(hooks);
 
@@ -78,10 +79,6 @@ function updateLocalStorage() {
     }
 
     browser.storage.local.set(save);
-}
-
-function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
 function addModToQueueIfOk(dt, mod, queue, hook) {
