@@ -1,3 +1,38 @@
+function createElementJsx(type, attributes, ...children) {
+    const elem = document.createElement(type);
+
+    if (children) {
+        let frag = document.createDocumentFragment();
+
+        for (let child of children) {
+            if(child instanceof HTMLElement)  {
+                frag.appendChild(child);
+            } else if(typeof(child) === "string") {
+                frag.appendChild(document.createTextNode(child));
+            } else {
+                console.error(`Unknown child type while proecssing JSX: ${child}`);
+            }
+        }
+
+        elem.appendChild(frag);
+    }
+
+    let isEvent = (what) => what.startsWith("on");
+    let getEventName = (what) => what.substring(2).toLowerCase();
+
+    for (let attribId in attributes) {
+        let val = attributes[attribId];
+
+        if (isEvent(attribId)) {
+            elem.addEventListener(getEventName(attribId), val);
+        }
+    }
+
+    Object.assign(elem, attributes);
+
+    return elem;
+}
+
 function createElement(type, _attributes, children, parent) {
     let elem = document.createElement(type);
     const attributes = _attributes || {};
@@ -15,6 +50,7 @@ function createElement(type, _attributes, children, parent) {
             }
         }
     }
+
 
     if (children) {
         recursiveAddChildren(children);
@@ -71,4 +107,4 @@ function createSidebarSeparator() {
 
 }
 
-export { createElement, createSidebarSeparator};
+export { createElementJsx, createElement, createSidebarSeparator };

@@ -10,5 +10,11 @@
         ],
         "stage-2",
         "react"
-    ]
+    ],
+
+    "plugins": [
+        ["transform-react-jsx", {
+          "pragma": "createElementJsx"
+        }]
+      ]
 }
