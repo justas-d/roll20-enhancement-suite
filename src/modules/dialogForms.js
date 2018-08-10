@@ -16,12 +16,11 @@ class DialogFormsBootstrapper extends R20Bootstrapper.Base {
         console.log("before inject");
 
         const isFirefox = typeof InstallTrigger !== 'undefined';
-        if (!isFirefox) {
+        if (isFirefox) {
             console.log("DialogFormsBootstrapper: injecting dialog-polyfill");
-;
-            this.injectCSS(getBrowser().runtime.getURL("thirdparty/dialog-polyfill.css"), document.head, this.polyfillCss);
+
             this.injectScript(getBrowser().runtime.getURL("thirdparty/dialog-polyfill.js"), document.body, this.jsId, false);
-            
+            this.injectCSS(getBrowser().runtime.getURL("thirdparty/dialog-polyfill.css"), document.head, this.polyfillCss);
         }
 
         this.injectCSS(getBrowser().runtime.getURL("css/dialogBase.css"), document.head, this.styleCss);
