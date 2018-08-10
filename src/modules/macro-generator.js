@@ -415,9 +415,9 @@ class MacroGeneratorBootstrapper extends R20Bootstrapper.Base {
 
 const hook = R20Module.makeHook(__filename, {
     id: "macroGeneratorBase",
-    name: "Character Sheet Macro Generator",
-    description: "",
-    category: "Dev",
+    name: "Character Sheet Ability Macro Generator",
+    description: `Places a "Generate" button in the Attributes & Abilities Abilities that will open up the generate ability macros dialog. Only certain character sheets are supported. If you'd like to add your own sheet, submit a GitHub PR.`,
+    category: R20Module.category.journal,
 
     mods: [
         {
