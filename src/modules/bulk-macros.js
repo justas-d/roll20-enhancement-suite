@@ -82,7 +82,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                             return accum;
                         }, { map: {}, arr: [], uniq: 0 });
 
-                    if (chars.uniq === 1) {
+                    if (chars.uniq === 1 && chars.arr.length > 0) {
                         for (let macro of chars.arr[0].abilities.models) {
                             addMacro(macro, macros);
                         }
