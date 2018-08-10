@@ -27,8 +27,8 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
             if (!token.model || !token.model.character) continue;
 
             let attribs = token.model.character.attribs;
-            
-            
+
+
 
             // find hpForumla
             let hpFormula = null;
@@ -101,6 +101,23 @@ const hook = R20Module.makeHook(__filename, {
     gmOnly: true,
 
     mods: addElemToCanvasTokenRightClickMenu("Hit Dice", "r20es-hit-dice", "rollAndApplyHitDice"),
+
+    configView: {
+        diceFormulaAttribute: {
+            display: "Hit dice formula attribute",
+            type: "string",
+        },
+        bar: {
+            display: "HP Bar",
+            type: "dropdown",
+
+            dropdownValues: {
+                bar1: "Bar 1",
+                bar2: "Bar 2",
+                bar3: "Bar 3"
+            },
+        }
+    },
 
     config: {
         diceFormulaAttribute: "npc_hpformula",
