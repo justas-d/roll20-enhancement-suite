@@ -1,28 +1,27 @@
-import { concatClassName, copy } from "./miscUtil";
 import { createElementJsx } from "./createElement";
 
-function DialogHeader(props) {
-    return <div className={concatClassName(props, "dialog-header")}></div>
+function DialogHeader() {
+    return <div className="dialog-header"></div>
 }
 
-function DialogBody(props, ) {
-    return <div className={concatClassName(props, "dialog-body")}></div>
+function DialogBody() {
+    return <div className="dialog-body"></div>
 }
 
-function DialogFooter(props) {
+function DialogFooter() {
     return (
-        <div className={concatClassName(props, "dialog-footer")}>
+        <div className="dialog-footer">
             <hr />
         </div>
     );
 }
 
-function DialogFooterContent(props) {
-    return <div className={concatClassName(props, "dialog-footer-content")}></div>
+function DialogFooterContent() {
+    return <div className="dialog-footer-content"></div>
 }
 
-function Dialog(props) {
-    return <div className={concatClassName(props, "r20es-dialog")}></div>
+function Dialog() {
+    return <div className="r20es-dialog"></div>
 }
 
 function CheckboxWithText(_props) {
