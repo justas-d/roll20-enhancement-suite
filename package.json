@@ -13,12 +13,7 @@
         "babel-core": "6.26.0",
         "babel-loader": "7.1.2",
         "babel-preset-env": "1.6.1",
-        "babel-preset-react": "6.24.1",
-        "babel-preset-stage-2": "6.24.1",
-        "react": "16.2.0",
-        "react-dom": "16.2.0",
-        "web-ext": "2.8.0",
-        "webpack": "3.10.0"
+        "babel-preset-stage-2": "6.24.1"
     },
     "dependencies": {
         "babel-plugin-syntax-jsx": "6.18.0",
