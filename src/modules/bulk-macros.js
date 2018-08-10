@@ -59,31 +59,31 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                         addMacro(macro, macros);
                     }
 
-                    // check if selection contains objects that represent the same char
-                    // TODO : areAllSame is broken right now
-                    let firstId = null;
-                    let selCharacter = null;
-                    let areAllSame = true;
-                    for (let obj of sel) {
-                        firstId = obj.model && obj.model.character ? obj.model.character.get("id") : null;
-                        if (firstId) {
-                            selCharacter = obj.model.character;
-                            break;
-                        }
-                    }
+                    const chars = sel
+                        .reduce((accum, obj) => {
 
-                    if (!selCharacter) return;
+                            if(!obj.model) {
+                                accum.uniq++;
+                                return accum;
+                            }
 
-                    for (let obj of sel) {
-                        if (!obj.model || !obj.model.character) continue;
-                        if (obj.model.character.get("id") !== firstId) {
-                            areAllSame = false;
-                            break;
-                        }
-                    }
+                            const  id = obj.model.character
+                                ? obj.model.character.get("id")
+                                : obj.model.get("id");
+                            
+                            if (!(id in accum.map)) {
+                                accum.uniq++;
+                                accum.map[id] = true;
 
-                    if (areAllSame) {
-                        for (let macro of selCharacter.abilities.models) {
+                                if(obj.model.character) {
+                                    accum.arr.push(obj.model.character);
+                                }
+                            }
+                            return accum;
+                        }, { map: {}, arr: [], uniq: 0 });
+
+                    if (chars.uniq === 1) {
+                        for (let macro of chars.arr[0].abilities.models) {
                             addMacro(macro, macros);
                         }
                     }
@@ -91,9 +91,10 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                     // create menu options
                     for (let id in macros) {
                         let macro = macros[id];
-                        macro.action = macro.action.replace("@{selected|", `@{${selCharacter.get("name")}|`);
+//                        macro.action = macro.action.replace("@{selected|", `@{${selCharacter.get("name")}|`);
 
                         createElement("li", {
+                            style: {whiteSpace: "nowrap"},
                             "data-action-type": bulkMarcoMenuId,
                             [this.actionAttribute]: macro.action,
                             innerHTML: macro.name,
@@ -120,7 +121,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new BulkMacroModule(__filename).install();
 
-const hook = R20Module.makeHook(__filename,{
+const hook = R20Module.makeHook(__filename, {
     id: "bulkMacros",
     name: "Bulk macros",
     description: `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
