@@ -1,6 +1,6 @@
 import { R20Bootstrapper } from "../tools/r20bootstrapper";
 import { getBrowser } from "../tools/webExtHelpers";
-import { removeAllChildren } from "../tools/miscUtil";
+import { findByIdAndRemove } from "../tools/miscUtil";
 
 class DialogFormsBootstrapper extends R20Bootstrapper.Base {
     constructor() {
@@ -28,8 +28,8 @@ class DialogFormsBootstrapper extends R20Bootstrapper.Base {
     }
 
     disposePrevious() {
-        removeAllChildren(this.cssId);
-        removeAllChildren(this.jsId);
+        findByIdAndRemove(this.cssId);
+        findByIdAndRemove(this.jsId);
     }
 }
 
