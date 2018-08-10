@@ -15,8 +15,6 @@ R20Module.Base = class ModuleBase {
         if(!("r20esDisposeTable" in window)) return null;
         if(!("hooks") in window.r20es) return null;
 
-        console.log(this.filename);
-
         for(const hookId in window.r20es.hooks) {
             const hook = window.r20es.hooks[hookId];
             if(hook.filename && hook.filename === this.filename) {

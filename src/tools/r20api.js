@@ -65,6 +65,57 @@ R20.advanceInitiative = function () {
     window.d20.Campaign.initiativewindow.nextTurn();
 }
 
+R20.addTokenToInitiative = function(tokenUUID) {
+    window.d20.Campaign.initiativewindow.addTokenToList(tokenUUID);
+}
+
+R20.addCustomItemToInitiative = function(name, formula) {
+    window.d20.Campaign.initiativewindow.addTokenToList("-1", name, formula);
+}
+
+R20.orderInitiativeBy = function(initiativeOrdering) {
+    const map = {
+        [R20.initiativeOrdering.numericAscending]: ".sortlist_numeric",
+        [R20.initiativeOrdering.numericDescending]: ".sortlist_numericdesc",
+        [R20.initiativeOrdering.alphabetical]: ".sortlist_alpha",
+        [R20.initiativeOrdering.alphabeticalDescending]: ".sortlist_alphadesc",
+        [R20.initiativeOrdering.card]: ".sortlist_card"
+    };
+
+    if(!(initiativeOrdering in map)) {
+        console.error(`Invalid initiative ordering: ${initiativeOrdering}`);
+            return;
+    }
+
+    const selector = map[initiativeOrdering];
+
+    // the buttons that we click have inline logic to close 
+    // this dialog. jquery throws an error when a we try to close 
+    // a dialog dialog that is not open.
+    // so opening this dialog prevents errors.
+    $("#initiativewindow_settings").dialog({
+        modal: false,
+        title: "Turn Order Settings",
+        beforeClose: () => {}
+    });
+
+    $(selector).click();
+}
+
+R20.getInitiativeWindow = function() {
+    return window.d20.Campaign.initiativewindow;
+}
+
+R20.getInitiativeData = function() {
+    return window.d20.Campaign.initiativewindow.cleanList();
+}
+
+R20.setInitiativeData = function(data) {
+    window.d20.Campaign.initiativewindow.model.save({
+        turnorder: JSON.stringify(data)
+    });
+}
+
 R20.getCurrentPage = function () {
     return window.d20.Campaign.activePage();
 }
@@ -90,6 +141,8 @@ R20.getCurrentPageTokenByUUID = function (uuid) {
 }
 
 R20.moveCameraToTokenByUUID = function (uuid) {
+    if(!uuid) return;
+    
     const data = R20.getCurrentPageTokenByUUID(uuid);
     if (!data) return;
 
@@ -146,6 +199,14 @@ R20.layer = {
     map: "map",
     playerTokens: "objects",
     gmTokens: "gmlayer"
+}
+
+R20.initiativeOrdering = {
+    numericAscending: 0,
+    numericDescending: 1,
+    alphabetical: 2,
+    alphabeticalDescending: 3,
+    card: 4,
 }
 
 export { R20 }

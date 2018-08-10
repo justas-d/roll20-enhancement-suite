@@ -13,6 +13,7 @@ import { TableIOHook } from "./modules/table-io";
 import { TokenLayerDrawingHook } from "./modules/token-layer-drawing";
 import { MacroGeneratorHook } from "./modules/macro-generator";
 import { R20Module } from "./tools/r20Module";
+import AutoSortInitiative from "./modules/auto-sort-initiative";
 
 let hooks = {};
 const addHook = hook => hooks[hook.id] = hook;
@@ -48,6 +49,7 @@ addHook({
     patch: 'window.d20ext.seenad = !0, $("#loading-overlay").find("div").hide(), window.currentPlayer && d20.Campaign.pages.length > 0 && d20.Campaign.handlePlayerPageChanges(), void $.get("/editor/startping/true");'
 });
 
+addHook(AutoSortInitiative);
 addHook(DuplicateButtonHook);
 addHook(AutoPingNextTokenHook);
 addHook(AutoSelectNextTokenHook);
