@@ -4,6 +4,7 @@ import { R20 } from "../tools/r20api";
 class AutoPingNextTokenModule extends R20Module.SimpleBase {
     setup() {
         window.r20es.pingInitiativeToken = function (data) {
+            if(!data.id) return;
 
             const obj = R20.getCurrentPageTokenByUUID(data.id)
 

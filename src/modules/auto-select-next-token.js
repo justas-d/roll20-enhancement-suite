@@ -5,6 +5,7 @@ class AutoSelectNextTokenModule extends R20Module.SimpleBase {
     setup() {
 
         window.r20es.selectInitiativeToken = function (data) {
+            if(!data.id) return;
 
             let obj = R20.getCurrentPageTokenByUUID(data.id);
 
