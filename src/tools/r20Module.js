@@ -11,6 +11,7 @@ R20Module.Base = class ModuleBase {
     installUpdate() { }
     dispose() { }
 
+    getAllHooks = _ => window.r20es.hooks;
     getHook() {
         if(!("r20esDisposeTable" in window)) return null;
         if(!("hooks") in window.r20es) return null;
