@@ -71,18 +71,4 @@ function replaceAll(where, find, replace) {
     return where.replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 
-function concatClassName(props, className) {
-    let ret = null;
-    if(props && props.className) {
-        if(Array,isArray(props.className)) {
-            ret = [...props.className, className];
-        } else {
-            ret = `${props.className} ${className}`;
-        }
-    } else {
-        ret = className;
-    }
-    return ret;
-}
-
-export { concatClassName, replaceAll, escapeRegExp, findByIdAndRemove, copy, getTransform, getRotation, basename, safeCall, removeAllChildren };
+export { replaceAll, escapeRegExp, findByIdAndRemove, copy, getTransform, getRotation, basename, safeCall, removeAllChildren };
