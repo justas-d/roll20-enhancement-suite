@@ -3,11 +3,11 @@ import { removeAllChildren, findByIdAndRemove } from "./miscUtil";
 
 
 class DialogBase {
-    constructor() {
+    constructor(className) {
         window.r20esDialogId = "r20esDialogId" in window ? window.r20esDialogId : 0;
         this.numId = window.r20esDialogId++;
         this.id = `r20es-dialog-${this.numId}`;
-        this.root = createElement("dialog", { id: this.id });
+        this.root = createElement("dialog", { className: className, id: this.id });
 
         this.show = this.show.bind(this);
         this.close = this.close.bind(this);
