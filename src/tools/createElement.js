@@ -1,7 +1,31 @@
+
+class ElementBase {
+    render() {}
+
+    rerender() {
+        const nextTo = this.elementRoot.nextSibling;
+        const parent = this.elementRoot.parentNode;
+
+        this.elementRoot.remove();
+        
+        const elem = this.render();
+        this.setRoot(elem);
+        parent.insertBefore(elem, nextTo);
+    }
+
+    setRoot = root => this.elementRoot = root;
+}
+
 function createElementJsx(type, attributes, ...children) {
 
     let elem = null;
-    if(typeof(type) === "function") {
+    const isFunc = typeof(type) === "function";
+
+    if(isFunc && type.name && type.prototype instanceof ElementBase) {
+        let base = new type(attributes);
+        elem = base.render();
+        base.setRoot(elem);
+    } else if(isFunc) {
         elem = type(attributes);
     } else {
         elem = document.createElement(type);
@@ -46,8 +70,10 @@ function createElementJsx(type, attributes, ...children) {
                 for (let className of val) {
                     elem.classList.add(className);
                 }
-            } else {
-                elem.className = val;
+            } else if(typeof(val) === "string" && val.length > 0) {
+                elem.className = (elem.className && elem.classList.length > 0)
+                    ? `${elem.className} ${val}`
+                    : val;
             }
         } else if (attribId === "style") {
             for (let elemId in val) {
@@ -139,4 +165,4 @@ function createSidebarSeparator() {
 
 }
 
-export { createElementJsx, createElement, createSidebarSeparator };
+export { ElementBase, createElementJsx, createElement, createSidebarSeparator };
