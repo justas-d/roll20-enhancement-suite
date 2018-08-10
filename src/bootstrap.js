@@ -3,7 +3,7 @@ import { hooks} from "./hooks";
 import { safeCall } from "./tools/miscUtil";
 import { DialogFormsBootstrapper } from './modules/dialogForms.js';
 import { getBrowser } from "./tools/webExtHelpers";
-import { MacroGeneratorBootstrapper } from "./modules/macro-generator";
+import { SettingsBootstrapper } from "./modules/settings";
 
 console.log("=================");
 console.log("window.r20es bootstrap");
@@ -12,7 +12,7 @@ console.log("=================");
 window.bootstrapTable = {};
 
 new DialogFormsBootstrapper().bootstrap();
-new MacroGeneratorBootstrapper().bootstrap();
+new SettingsBootstrapper().bootstrap();
 
 function injectScript(name) {
     console.log(`Injecting ${name}`);

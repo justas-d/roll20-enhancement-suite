@@ -2,9 +2,6 @@ import { R20Module } from "../tools/r20Module";
 import { R20 } from "../tools/r20api";
 import { OGL5eByRoll20MacroGenerator } from "../macro/OGL5eByRoll20.js";
 import { DialogBase } from "../tools/dialogApi";
-import { getBrowser } from "../tools/webExtHelpers";
-import { findByIdAndRemove } from "../tools/miscUtil";
-import { R20Bootstrapper } from "../tools/r20bootstrapper";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/dialogComponents";
 import { createElementJsx } from "../tools/createElement";
 
@@ -398,21 +395,6 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
 if (R20Module.canInstall()) new MacroGeneratorModule(__filename).install();
 
-class MacroGeneratorBootstrapper extends R20Bootstrapper.Base {
-    constructor() {
-        super(__filename);
-        this.cssId = "r20esmacrogeneratorcss";
-    }
-    setup() {
-        const css = getBrowser().runtime.getURL("css/macro-generator.css");
-        this.injectCSS(css, document.head, this.cssId);
-    }
-
-    disposePrevious() {
-        findByIdAndRemove(this.cssId);
-    }
-}
-
 const hook = R20Module.makeHook(__filename, {
     id: "macroGeneratorBase",
     name: "Character Sheet Ability Macro Generator",
@@ -439,6 +421,5 @@ const hook = R20Module.makeHook(__filename, {
 });
 
 export {
-    hook as MacroGeneratorHook,
-    MacroGeneratorBootstrapper
+    hook as MacroGeneratorHook
 }
