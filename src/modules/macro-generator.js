@@ -74,6 +74,8 @@ class PickMacroGeneratorsDialog extends DialogBase {
                     <h2>Sheet, category selection.</h2>
                 </DialogHeader>
 
+                <hr/>
+
                 <DialogBody>
                     <select value={this.activeGenerator ? this.activeGenerator.id : ""} onChange={this.onSelectChange}>
                         <option value="">Select a sheet</option>
@@ -114,6 +116,8 @@ class NoMacrosDialog extends DialogBase {
                 <DialogHeader>
                     <h2>Notice</h2>
                 </DialogHeader>
+
+                <hr/>
 
                 <DialogBody>
                     <p>We found nothing to make a macro for.</p>
@@ -231,10 +235,12 @@ class VerifyMacrosDialog extends DialogBase {
                 <DialogHeader>
                     <h2>Review Changes</h2>
                 </DialogHeader>
+
+                <hr/>
+
                 <DialogBody>
                     <button onClick={this.onToggleAll}>Toggle All</button>
                     {this.addedMacros.length > 0 && this.generateAdded(this.addedMacros)}
-                    <hr />
                     {this.modifiedMacros.length > 0 && this.generateModified(this.addedMacros)}
 
                 </DialogBody>

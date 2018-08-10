@@ -11,11 +11,11 @@
 }
 
 .r20es-dialog>.dialog-header {
-    margin: 20px;
+    margin: 10px 20px 10px 20px;
 }
 
 .r20es-dialog>.dialog-body {
-    margin: 30px;
+    margin: 10px 30px 10px 30px;
 }
 
 .r20es-dialog>.dialog-footer {
