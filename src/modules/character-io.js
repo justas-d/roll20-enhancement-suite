@@ -1,7 +1,7 @@
 import { R20Module } from '../tools/r20Module'
 import { CharacterIO } from '../tools/character-io.js'
 import { R20 } from '../tools/r20api.js'
-import { createElement, createSidebarSeparator, createElementJsx } from '../tools/createElement.js'
+import { createElementJsx, SidebarSeparator, SidebarCategoryTitle } from '../tools/createElement.js'
 import * as FileUtil from '../tools/fileUtil.js'
 import { saveAs } from 'save-as'
 import { findByIdAndRemove } from '../tools/miscUtil';
@@ -18,6 +18,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         this.onFileChange = this.onFileChange.bind(this);
         this.onExportClick = this.onExportClick.bind(this);
         this.renderWidget = this.renderWidget.bind(this);
+        this.onImportClick = this.onImportClick.bind(this);
+        this.onJournalFileChange = this.onJournalFileChange.bind(this);
     }
 
     processFileReading(fileHandle, customCode) {
@@ -42,55 +44,54 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         });
     };
 
+    onJournalFileChange(e) {
+        const btn = $(e.target.parentNode).find("button")[0];
+        console.log(btn);
+        btn.disabled = !(e.target.files.length > 0);
+    }
+
+    onImportClick(e) {
+        const input = $(e.target.parentNode).find("input")[0];
+
+        this.processFileReading(input.files[0], (version, data) => {
+            let pc = R20.createCharacter();
+            version.overwrite(pc, data);
+        });
+
+        input.value = "";
+        e.target.disabled = true;
+    }
+
     addJournalWidget() {
 
         if (!window.is_gm) return;
 
         let journal = document.getElementById("journal").getElementsByClassName("content")[0];
 
-        createElement("div", { id: this.journalWidgetId }, [
 
-            () => { return createSidebarSeparator(); },
+        const widget = <div id={this.journalWidgetId}>
+            <SidebarSeparator />
 
-            createElement("h3", {
-                innerHTML: "Import Character",
-                style: {
-                    marginBottom: "5px",
-                    marginLeft: "5px",
-                }
-            }),
+            <div>
+                <SidebarCategoryTitle>
+                    Import Character
+            </SidebarCategoryTitle>
 
-            createElement("input", {
-                type: "file",
+                <input
+                    type="file"
+                    onChange={this.onJournalFileChange}
+                />
 
-                onChange: e => {
-                    const btn = $(e.target.parentNode).find("button")[0];
-                    btn.disabled = !(e.target.files.length > 0);
-                }
-            }),
+                <button disabled className="btn" style={{ display: "block", float: "left", marginBottom: "10px" }} onClick={this.onImportClick}>
+                    Import Character
+                </button>
+                
+            </div>
 
-            createElement("button", {
-                innerHTML: "Import Character",
-                disabled: true,
-                className: "btn",
-                style: {
-                    float: "Left",
-                },
-                onClick: e => {
-                    const input = $(e.target.parentNode).find("input")[0];
+            <SidebarSeparator />
+        </div>
 
-                    this.processFileReading(input.files[0], (version, data) => {
-                        let pc = R20.createCharacter();
-                        version.overwrite(pc, data);
-                    });
-
-                    input.value = "";
-                    e.target.disabled = true;
-                }
-            }),
-
-            () => { return createSidebarSeparator(); },
-        ], journal);
+        journal.appendChild(widget);
     };
 
     getPc(target) {
@@ -170,7 +171,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         if (!target.className) return false;
         if (target.className !== "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") return false;
 
-        if(target.getElementsByClassName(this.sheetWidgetClass).length > 0) return;
+        if (target.getElementsByClassName(this.sheetWidgetClass).length > 0) return;
 
         const pc = this.getPc(target);
         if (!pc) return false;
@@ -194,7 +195,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     setup() {
         const existingHeaders = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix");
 
-        for(const header of existingHeaders) {
+        for (const header of existingHeaders) {
             this.tryInjectingWidget(header);
         }
 
@@ -210,7 +211,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         // removing a widget modifies the widgets html element collection 
         // therefore we have to treat this as a stack
         let num = widgets.length;
-        while(num --> 0) {
+        while (num-- > 0) {
             widgets[0].remove();
         }
 
