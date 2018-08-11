@@ -20,7 +20,7 @@ TableIO.importJson = function (json) {
 }
 
 TableIO.exportJson = function(table) {
-    return table.attributes;
+    return JSON.stringify(table.attributes, null, 4);
 }
 
 export { TableIO };

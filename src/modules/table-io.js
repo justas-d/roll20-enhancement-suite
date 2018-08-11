@@ -2,23 +2,25 @@ import { R20Module } from "../tools/r20Module";
 import { R20 } from "../tools/r20api";
 import { TableIO } from "../tools/table-io";
 import { saveAs } from 'save-as'
-import { createSidebarSeparator, createElement } from "../tools/createElement";
+import { createSidebarSeparator, createElement, createElementJsx } from "../tools/createElement";
 import { readFile, safeParseJson } from "../tools/fileUtil";
 import { TableExportLang } from "../tools/table-export-lang";
 import { findByIdAndRemove } from "../tools/miscUtil";
+
+const tableIdAttribute = "data-r20es-table-id";
 
 class TableIOModule extends R20Module.OnAppLoadBase {
     constructor(id) {
         super(id);
 
         this.journalDivId = "r20es-tableio-journal-widget";
+        this.buttonClass = "r20es-export-table-button"
         this.observerCallback = this.observerCallback.bind(this);
         this.onExportButtonClicked = this.onExportButtonClicked.bind(this);
     }
 
     getTable(target) {
-
-        let tableId = $(target).closest("div[window.r20es-table-id]")[0].getAttribute("window.r20es-table-id");
+        let tableId = $(target.parentNode.parentNode).find(`div[${tableIdAttribute}]`)[0].getAttribute(tableIdAttribute);
         if (!tableId) { alert("Failed to get table id."); return null; }
 
         let table = R20.getRollableTable(tableId);
@@ -28,7 +30,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
     }
 
     onExportButtonClicked(e) {
-        let table = getTable(e);
+        let table = this.getTable(e.target);
         if (!table) return;
 
         let data = TableIO.exportJson(table);
@@ -37,20 +39,20 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         saveAs(jsonBlob, table.get("name") + ".json");
     }
 
-    observerCallback(mutationsList) {
-        for (var e of mutationsList) {
-            for (let target of e.addedNodes) {
+    observerCallback(muts) {
+        for (var e of muts) {
+            if (e.target.className && e.target.className === "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") {
 
-                if (target.hasAttribute && !target.hasAttribute("window.r20es-table-id")) continue;
-                const exportButton = $(target).find(".window.r20es-table-export-json")[0];
+                if (e.target.getElementsByClassName(this.buttonClass).length > 0) return;
 
-                if (!exportButton) {
-                    continue; a
-                }
+                const button = <button
+                    style={{marginTop: "8px"}}
+                    onClick={this.onExportButtonClicked}
+                    className={[this.buttonClass, "btn"]}>
+                    Export
+                </button>;
 
-                console.log("registered listener");
-                exportButton.removeEventListener("click", this.onExportButtonClicked);
-                exportButton.addEventListener("click", this.onExportButtonClicked);
+                e.target.appendChild(button);
 
                 return;
             }
@@ -150,7 +152,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new TableIOModule(__filename).install();
 
-const hook = R20Module.makeHook(__filename,{
+const hook = R20Module.makeHook(__filename, {
     id: "importExportTable",
     name: "Table Import/export",
     description: "Provides rollable table importing and exporting. Supports TableExport format tables.",
@@ -158,17 +160,10 @@ const hook = R20Module.makeHook(__filename,{
     gmOnly: true,
 
     mods: [
-        { // export buttons
-            includes: "/editor/",
-            find: "<button class='btn btn-danger deleterollabletable'>Delete Rollable Table</button>",
-            patch: `<button class='btn r20es-table-export-json'>Export</button>
-<button class='btn btn-danger deleterollabletable'>Delete Rollable Table</button>`
-        },
-
         { // add table id to popup
             includes: "assets/app.js",
             find: `this.$el.on("click",".deleterollabletable"`,
-            patch: `this.el.setAttribute("r20es-table-id", this.model.get("id")),this.$el.on("click",".deleterollabletable"`,
+            patch: `this.el.setAttribute("${tableIdAttribute}", this.model.get("id")),this.$el.on("click",".deleterollabletable"`,
         }
     ]
 });
