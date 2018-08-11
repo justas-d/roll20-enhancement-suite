@@ -97,6 +97,8 @@ function createElementJsx(type, attributes, ...children) {
                 if (!val) continue;
                 elem.style[elemId] = val[elemId];
             }
+        } else if(attribId.startsWith("data")) {
+            elem.setAttribute(attribId, val);
         } else {
             elem[attribId] = val;
         }
