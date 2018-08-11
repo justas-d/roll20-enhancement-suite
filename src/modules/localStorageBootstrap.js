@@ -8,25 +8,25 @@ class LocalStorageBootstrapper extends R20Bootstrapper.Base {
         this.recvAppMessage = this.recvAppMessage.bind(this);
     }
 
-    generatePatch() {        
+    generatePatch(ids) {
         return getBrowser().storage.local.get()
             .then(p => {
+                let patch = {};
                 console.log("generating patch, got values:");
                 console.log(p);
 
-                for (var key in p) {
+                for (const key of ids) {
 
-                    if(typeof(p[key]) != "object") {
-                        p[key] = {};
-                    }
-                    
-                    if(!("enabled" in p[key])) {
-                        p[key].enabled = true;
+                    patch[key] = key in p ? p[key] : {};
+
+                    if (!("enabled" in patch[key])) {
+                        patch[key].enabled = true;
                     }
                 }
 
                 console.log("done!");
-                return p;
+                console.log(patch);
+                return patch;
             });
     }
 
@@ -38,7 +38,7 @@ class LocalStorageBootstrapper extends R20Bootstrapper.Base {
         console.log(e);
 
         if (e.data.r20sAppWantsInitialConfigs) {
-            this.generatePatch().then(p => {
+            this.generatePatch(e.data.r20sAppWantsInitialConfigs).then(p => {
                 console.log("Content-script is dispatching a config patch:");
                 console.log(p);
                 window.postMessage({ r20esInitialConfigs: p }, Config.appUrl);
