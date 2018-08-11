@@ -1,7 +1,7 @@
 import { R20Module } from '../tools/r20Module'
 import { CharacterIO } from '../tools/character-io.js'
 import { R20 } from '../tools/r20api.js'
-import { createElement, createSidebarSeparator } from '../tools/createElement.js'
+import { createElement, createSidebarSeparator, createElementJsx } from '../tools/createElement.js'
 import * as FileUtil from '../tools/fileUtil.js'
 import { saveAs } from 'save-as'
 import { findByIdAndRemove } from '../tools/miscUtil';
@@ -10,8 +10,14 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     constructor(id) {
         super(id);
 
-        this.journalWidgetId = "window.r20es-character-io-journal-widget";
+        this.journalWidgetId = "r20es-character-io-journal-widget";
+        this.sheetWidgetClass = "r20es-character-io-sheet-widget";
+
         this.observerCallback = this.observerCallback.bind(this);
+        this.onOverwriteClick = this.onOverwriteClick.bind(this);
+        this.onFileChange = this.onFileChange.bind(this);
+        this.onExportClick = this.onExportClick.bind(this);
+        this.renderWidget = this.renderWidget.bind(this);
     }
 
     processFileReading(fileHandle, customCode) {
@@ -87,87 +93,127 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         ], journal);
     };
 
+    getPc(target) {
+        let pcElem = target.parentElement.getElementsByClassName("characterdialog")[0];
+        if (!pcElem) return null;
+
+        const idAttrib = "data-characterid";
+        if (!pcElem.hasAttribute(idAttrib)) return null;
+
+        const pcId = pcElem.getAttribute(idAttrib);
+        if (!pcId) return null;
+
+        let pc = R20.getCharacter(pcId);
+        if (!pc) return null;
+        return pc;
+    }
+
+    onExportClick(e) {
+        e.stopPropagation();
+        const pc = this.getPc(e.target.parentElement.parentElement);
+        if (!pc) return;
+
+        CharacterIO.exportSheet(pc, data => {
+
+            let jsonData = JSON.stringify(data, null, 4);
+
+            var jsonBlob = new Blob([jsonData], { type: 'data:application/javascript;charset=utf-8' });
+            saveAs(jsonBlob, data.name + ".json");
+
+        })
+    }
+
+    onOverwriteClick(e) {
+        e.stopPropagation();
+
+        const input = $(e.target.parentNode).find("input")[0];
+        const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
+
+        const pc = this.getPc(e.target.parentElement.parentElement);
+        if (!pc) return;
+
+        this.processFileReading(input.files[0], (version, data) => {
+            if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`))
+                version.overwrite(pc, data);
+        });
+
+        input.value = "";
+        overwriteButton.disabled = true;
+    }
+
+    onFileChange(e) {
+        e.stopPropagation();
+
+        const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
+        overwriteButton.disabled = !(e.target.files.length > 0);
+    }
+
+    renderWidget() {
+        const style = { marginRight: "8px" }
+        return (
+            <span className={this.sheetWidgetClass}>
+
+                <button onClick={this.onExportClick} style={style} className="btn">
+                    Export
+                </button>
+
+                <button onClick={this.onOverwriteClick} disabled style={style} className="btn">
+                    Overwrite
+                </button>
+
+                <input type="file" style={{ display: "inline" }} onChange={this.onFileChange} />
+            </span>
+        );
+    }
+
+    tryInjectingWidget(target) {
+        if (!target.className) return false;
+        if (target.className !== "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") return false;
+
+        if(target.getElementsByClassName(this.sheetWidgetClass).length > 0) return;
+
+        const pc = this.getPc(target);
+        if (!pc) return false;
+
+        console.log(target);
+
+        const widget = this.renderWidget();
+        target.appendChild(widget);
+
+        return true;
+    }
+
     observerCallback(muts) {
         for (var e of muts) {
-            //console.log(e);
-            if (e.target.className && e.target.className === "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") {
-
-                // TODO : buttons aren't properly injected into sheets dragged from the compendium that session
-                // TODO : use jquery for this
-                let pcElem = e.target.parentElement.getElementsByClassName("characterdialog")[0];
-                if (!pcElem) return false;
-
-                let pc = R20.getCharacter(pcElem.attributes["data-characterid"].value);
-
-                const exportButtonClass = "window.r20es-export";
-
-                if (e.target.getElementsByClassName(exportButtonClass).length > 0) {
-                    return false;
-                }
-
-                createElement("span", null, [
-                    createElement("button", {
-                        innerHTML: "Export",
-                        className: ["btn", exportButtonClass],
-                        style: {
-                            marginRight: "8px"
-                        },
-                        onClick: () => {
-                            CharacterIO.exportSheet(pc, data => {
-
-                                let jsonData = JSON.stringify(data, null, 4);
-
-                                var jsonBlob = new Blob([jsonData], { type: 'data:application/javascript;charset=utf-8' });
-                                saveAs(jsonBlob, data.name + ".json");
-
-                            })
-                        }
-
-                    }),
-
-                    createElement("button", {
-                        innerHTML: "Overwrite",
-                        className: "btn",
-                        disabled: true,
-                        style: {
-                            marginRight: "8px"
-                        },
-
-                        onClick: e => {
-                            const input = $(e.target.parentNode).find("input")[0];
-                            const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
-
-                            this.processFileReading(input.files[0], (version, data) => {
-                                if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`))
-                                    version.overwrite(pc, data);
-                            });
-
-                            input.value = "";
-                            overwriteButton.disabled = true;
-                        }
-                    }),
-                    createElement("input", {
-                        type: "file",
-                        style: {
-                            display: "inline"
-                        },
-                        onChange: (e) => {
-                            const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
-                            overwriteButton.disabled = !(e.target.files.length > 0);
-                        }
-                    })
-                ], e.target);
+            if (this.tryInjectingWidget(e.target)) {
+                break;
             }
         }
     }
 
     setup() {
+        const existingHeaders = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix");
+
+        for(const header of existingHeaders) {
+            this.tryInjectingWidget(header);
+        }
+
         this.observer = new MutationObserver(this.observerCallback);
         this.observer.observe(document.body, { childList: true, subtree: true });
         this.addJournalWidget();
     }
 
     dispose() {
+
+        const widgets = document.getElementsByClassName(this.sheetWidgetClass);
+
+        // removing a widget modifies the widgets html element collection 
+        // therefore we have to treat this as a stack
+        let num = widgets.length;
+        while(num --> 0) {
+            widgets[0].remove();
+        }
+
         findByIdAndRemove(this.journalWidgetId);
 
         if (this.observer) {
@@ -180,7 +226,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
 if (R20Module.canInstall()) new CharacterIOModule(__filename).install();
 
-const hook = R20Module.makeHook(__filename,{
+const hook = R20Module.makeHook(__filename, {
     id: "characterImportExport",
     name: "Character Exporter/Importer",
     description: "Provides character importing (in the journal) and exporting (in the journal and on sheets).",
