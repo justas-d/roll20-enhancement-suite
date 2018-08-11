@@ -1,4 +1,4 @@
-import { createElement } from '../tools/createElement.js'
+import { createElementJsx } from '../tools/createElement.js'
 import { R20Module } from "../tools/r20Module"
 import { R20 } from '../tools/r20api.js';
 
@@ -9,14 +9,14 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         super(id);
         this.observerCallback = this.observerCallback.bind(this);
         this.menuClick = this.menuClick.bind(this);
-        this.actionAttribute = "r20es-macro-action";
     }
 
     menuClick(obj) {
 
         if (!obj.target) return;
 
-        let action = obj.target.getAttribute(this.actionAttribute);
+        let action = obj.target.getAttribute("data-r20es-macro-action");
+        console.log(action);
         if (!action) return;
 
         const sel = R20.getSelectedTokens();
@@ -62,20 +62,20 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                     const chars = sel
                         .reduce((accum, obj) => {
 
-                            if(!obj.model) {
+                            if (!obj.model) {
                                 accum.uniq++;
                                 return accum;
                             }
 
-                            const  id = obj.model.character
+                            const id = obj.model.character
                                 ? obj.model.character.get("id")
                                 : obj.model.get("id");
-                            
+
                             if (!(id in accum.map)) {
                                 accum.uniq++;
                                 accum.map[id] = true;
 
-                                if(obj.model.character) {
+                                if (obj.model.character) {
                                     accum.arr.push(obj.model.character);
                                 }
                             }
@@ -91,15 +91,12 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                     // create menu options
                     for (let id in macros) {
                         let macro = macros[id];
-//                        macro.action = macro.action.replace("@{selected|", `@{${selCharacter.get("name")}|`);
 
-                        createElement("li", {
-                            style: {whiteSpace: "nowrap"},
-                            "data-action-type": bulkMarcoMenuId,
-                            [this.actionAttribute]: macro.action,
-                            innerHTML: macro.name,
-                            onClick: this.menuClick
-                        }, null, root);
+                        root.appendChild(
+                            <li style={{ whiteSpace: "nowrap" }} data-action-type={bulkMarcoMenuId} data-r20es-macro-action={macro.action} onClick={this.menuClick}>
+                                {macro.name}
+                            </li>
+                        );
                     }
                 }
             }
