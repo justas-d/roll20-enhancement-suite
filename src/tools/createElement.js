@@ -178,6 +178,10 @@ function SidebarSeparator() {
     )
 }
 
+function SidebarCategoryTitle() {
+    return <h3 style={{ marginBottom: "5px", marginLeft: "5px" }}></h3>
+}
+
 
 function createSidebarSeparator() {
     const addClear = _ =>
@@ -194,4 +198,4 @@ function createSidebarSeparator() {
 
 }
 
-export { ElementBase, createElementJsx, createElement, createSidebarSeparator, SidebarSeparator};
+export { ElementBase, createElementJsx, createElement, createSidebarSeparator, SidebarSeparator, SidebarCategoryTitle};

@@ -2,7 +2,7 @@ import { R20Module } from "../tools/r20Module";
 import { R20 } from "../tools/r20api";
 import { TableIO } from "../tools/table-io";
 import { saveAs } from 'save-as'
-import { createElementJsx, SidebarSeparator } from "../tools/createElement";
+import { createElementJsx, SidebarSeparator, SidebarCategoryTitle } from "../tools/createElement";
 import { readFile, safeParseJson } from "../tools/fileUtil";
 import { TableExportLang } from "../tools/table-export-lang";
 import { findByIdAndRemove } from "../tools/miscUtil";
@@ -139,9 +139,11 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         const buttonStyle = { marginBottom: "10px", marginRight: "10px", float: "left" };
         const elem = <div id={this.journalDivId}>
             <SidebarSeparator />
-            <h3 style={{ marginBottom: "5px", marginLeft: "5px" }}>
+            
+            <SidebarCategoryTitle>
                 Import Rollable Table
-            </h3>
+            </SidebarCategoryTitle>
+            
 
             <input onChange={this.onFileChanged} type="file" />
 
