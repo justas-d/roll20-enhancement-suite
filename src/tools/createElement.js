@@ -31,6 +31,19 @@ function createElementJsx(type, attributes, ...children) {
         elem = document.createElement(type);
     }
 
+    if(!(elem instanceof HTMLElement)) {
+        console.error($`JSX Render must return a valid element: elem is not an instance of HTMLElement`);
+
+        console.table({
+            [`"type" argument`]: type,
+            "Type": typeof(elem),
+            "Value": elem
+        });
+
+        console.trace();
+        return null;
+    }
+
     if (children) {
         let frag = document.createDocumentFragment();
 
