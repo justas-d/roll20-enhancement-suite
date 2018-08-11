@@ -1,9 +1,10 @@
 import { Config } from "./tools/config";
-import { hooks} from "./hooks";
+import { hooks } from "./hooks";
 import { safeCall } from "./tools/miscUtil";
 import { DialogFormsBootstrapper } from './modules/dialogForms.js';
 import { getBrowser } from "./tools/webExtHelpers";
 import { SettingsBootstrapper } from "./modules/settings";
+import { LocalStorageBootstrapper } from "./modules/localStorageBootstrap";
 
 console.log("=================");
 console.log("window.r20es bootstrap");
@@ -13,6 +14,7 @@ window.bootstrapTable = {};
 
 new DialogFormsBootstrapper().bootstrap();
 new SettingsBootstrapper().bootstrap();
+new LocalStorageBootstrapper().bootstrap();
 
 function injectScript(name) {
     console.log(`Injecting ${name}`);
@@ -28,43 +30,44 @@ function injectScript(name) {
 // inject global environment
 injectScript("globals.js");
 
-// setup comms with the backend
-let bgComms = browser.runtime.connect(Config.extentionId);
-
-function bgListener(msg) {
-    console.log("Received background message");
-    if (msg.hooks) {
-        window.postMessage({ r20es_hooks: msg.hooks }, "https://app.roll20.net/editor/");
-    }
-}
-
-bgComms.onMessage.addListener(bgListener);
-
-console.log("requesting hooks from backend");
-bgComms.postMessage({ request: "hooks" });
-
-for(let id in window.bootstrapTable) {
+for (let id in window.bootstrapTable) {
     window.bootstrapTable[id].setup();
 }
 
-// inject modules
-for(let hookId in hooks) {
-    const hook = hooks[hookId];
+function recvMsgFromApp(e) {
+    if (e.origin !== Config.appUrl) return;
+    if (e.data.r20esLoadModules) {
+        try {
+            console.log("bootstrap.js is injecting modules.");
 
-    if(!("filename" in hook)) continue;
-    
-    if(hook.filename in window.bootstrapTable) {
-        const boot = window.bootstrapTable[hook.filename];
+            // inject modules
+            for (let hookId in hooks) {
+                const hook = hooks[hookId];
 
-        safeCall(_ => boot.beforeInject());
-        injectScript(hook.filename);
-        safeCall(_ => boot.afterInject());
-        
-    } else {
-        injectScript(hook.filename);
+                if (!("filename" in hook)) continue;
+
+                if (hook.filename in window.bootstrapTable) {
+                    const boot = window.bootstrapTable[hook.filename];
+
+                    safeCall(_ => boot.beforeInject());
+                    injectScript(hook.filename);
+                    safeCall(_ => boot.afterInject());
+
+                } else {
+                    injectScript(hook.filename);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+
+        injectScript("globalsAfter.js");
+        window.bootstrapTable = undefined;
+
+        console.log("bootstrap.js is done!");
     }
-    
 }
 
-window.bootstrapTable = undefined;
-console.log("r20es bootstrap done");
+window.addEventListener("message", recvMsgFromApp);
+
+console.log("bootstrap.js is waiting for an OK from globals.js to inject modules.");

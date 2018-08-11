@@ -1,25 +1,71 @@
-import { escapeRegExp, replaceAll } from "./tools/miscUtil";
+import { replaceAll } from "./tools/miscUtil";
+import { hooks } from "./hooks";
+import { Config } from "./tools/config";
+
+{ // avoid leaking into window.*
+    let ids = [];
+    for(const id in hooks) ids.push(id);
+    window.postMessage({ r20sAppWantsInitialConfigs: ids}, Config.appUrl);
+}
 
 window.r20es = window.r20es || {};
+window.r20es.hooks = hooks;
+
 window.r20esDisposeTable = window.r20esDisposeTable || {};
 
 if (!("isLoading" in window.r20es)) {
     window.r20es.isLoading = true;
 }
 
-window.r20es.canInstallModules = true;
+window.removeEventListener("message", window.r20es.recvPluginMsg);
 
-function recvPluginMsg(e) {
+window.r20es.recvPluginMsg = function(e) {
+    if (e.origin !== Config.appUrl) return;
 
-    if (e.data.r20es_hooks) {
-        e.stopPropagation();
-        console.log("Page received hooks from backend!");
-        window.r20es.hooks = e.data.r20es_hooks;
+    console.log("Injected globals.js received message from content-script with proper origin.");
+
+    if (e.data.r20esInitialConfigs) {
+        const configs = e.data.r20esInitialConfigs;
+        const hooks = window.r20es.hooks;
+        
+        for(var id in configs) {
+            const hook = hooks[id];
+            const cfg = configs[id];
+
+            if(!hook) continue;
+
+            if(hook.config) {
+                configs[id] = Object.assign(hook.config, cfg);// overwrite defaults
+            } else {
+                hook.config = cfg;
+            }
+
+            console.log(id);
+            console.log(hook.config);
+        }
+        
+        console.log("globals.js applied INITIAL configs.");
+        window.postMessage({ r20esLoadModules: true }, Config.appUrl);
+        window.postMessage({ r20esAppWantsSync: configs }, Config.appUrl);
     }
 }
 
-window.removeEventListener("message", recvPluginMsg);
-window.addEventListener("message", recvPluginMsg);
+window.addEventListener("message", window.r20es.recvPluginMsg);
+
+window.r20es.syncConfigs = function() {
+    let patch = {};
+    for(const id in window.r20es.hooks) {
+        const hook = window.r20es.hooks[id];
+
+        patch[id] = hook.config;
+    }
+
+    window.postMessage({ r20esAppWantsSync: patch }, Config.appUrl);
+}
+
+for(const id in window.r20es.hooks) {
+    window.r20es.hooks[id].saveConfig = window.r20es.syncConfigs;
+}
 
 window.r20es.onAppLoad = window.r20es.onAppLoad || { listeners: [] };
 
@@ -39,9 +85,9 @@ window.r20es.onAppLoad.addEventListener = function (fx) {
 window.r20es.onAppLoad.removeEventListener = function (fx) {
     let idx = window.r20es.onAppLoad.listeners.length;
 
-    while(idx --> 0) {
+    while (idx-- > 0) {
         let cur = window.r20es.onAppLoad.listeners[idx];
-        if(cur === fx) {
+        if (cur === fx) {
             window.r20es.onAppLoad.listeners.splice(cur, 1);
         }
     }
@@ -51,9 +97,11 @@ function setIsLoadingToFalse() {
     window.r20es.isLoading = false
 }
 
-if(window.r20es.isLoading) {
+if (window.r20es.isLoading) {
     window.r20es.onAppLoad.removeEventListener(setIsLoadingToFalse);
     window.r20es.onAppLoad.addEventListener(setIsLoadingToFalse);
 }
 
 window.r20es.replaceAll = replaceAll;
+
+window.r20es.canInstallModules = true;
