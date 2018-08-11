@@ -1,5 +1,5 @@
 import { R20Module } from "../tools/r20Module"
-import { createElement } from "../tools/createElement"
+import { createElementJsx } from "../tools/createElement"
 import { R20 } from "../tools/r20api";
 import { findByIdAndRemove } from "../tools/miscUtil";
 
@@ -9,15 +9,15 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
         super(id);
         this.optionId = "window.r20es-duplicate-journal";
     }
-    
+
     setup() {
         let menu = document.getElementById("journalitemmenu");
         if (menu) {
-            createElement("li", {
-                "data-action-type": "r20esduplicate",
-                innerHTML: "Duplicate",
-                id: this.optionId
-            }, null, menu.firstElementChild);
+            menu.firstElementChild.appendChild(
+                <li data-action-type="r20esduplicate" id={this.optionId}>
+                    Duplicate
+                </li>
+            );
         }
 
         window.r20es.onJournalDuplicate = function (id) {
@@ -49,7 +49,7 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
                 }
 
                 let json = noterender;
-                delete json.id;render
+                delete json.id;
 
                 let newNote = note.collection.create(json);
 
