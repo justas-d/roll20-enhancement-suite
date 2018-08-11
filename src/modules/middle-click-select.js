@@ -3,6 +3,11 @@ import { R20 } from "../tools/r20api";
 import { getLayerData } from "../tools/layerData";
 
 class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
+    constructor() {
+        super(__filename);
+        this.onClick = this.onClick.bind(this);
+    }
+
     onClick(e) {
         if (e.button !== 1) return;
 
@@ -42,7 +47,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new MiddleClickSelectModule(__filename).install();
+if (R20Module.canInstall()) new MiddleClickSelectModule().install();
 
 const hook = R20Module.makeHook(__filename,{
     id: "middleClickToTokenLayer",
