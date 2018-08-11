@@ -419,11 +419,7 @@ const hook = R20Module.makeHook(__filename, {
             find: `<button class='btn addabil'>+ Add</button>`,
             patch: `<button class='btn ${generateButtonId}'>Generate</button><button class='btn addabil'>+ Add</button>`,
         }
-    ],
-
-    config: {
-        lastGenerator: OGL5eByRoll20MacroGenerator.id
-    }
+    ]
 });
 
 export {
