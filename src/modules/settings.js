@@ -260,7 +260,6 @@ class SettingsModule extends R20Module.OnAppLoadBase {
 
     setup() {
         this.dialog = new SettingsDialog(this.getAllHooks());
-        this.dialog.show();
 
         const adjacent = document.getElementById("exitroll20game");
 
