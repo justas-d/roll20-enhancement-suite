@@ -34,7 +34,7 @@ class StringEdit extends ConfigEditBase {
     }
 
     render() { 
-        return <input type="text" onChange={this.onChange} value={this.getValue() || ""}/>
+        return <input className="compact" type="text" onChange={this.onChange} value={this.getValue() || ""}/>
     }
 };
 
@@ -59,7 +59,7 @@ class DropdownEdit extends ConfigEditBase {
             vals.push(<option value={key}>{val}</option>);
         }
         return (
-            <select onChange={this.onChange} value={this.getValue()}>
+            <select className="compact" onChange={this.onChange} value={this.getValue()}>
                 {vals}
             </select>
         );
@@ -135,7 +135,7 @@ class HookHeader extends ElementBase {
         super(props);
 
         this.hook = props.hook;
-        this.showConfig = true;
+        this.showConfig = false;
         this.onClick = this.onClick.bind(this);
         this.onCheckboxChange = this.onCheckboxChange.bind(this);
     }
@@ -158,7 +158,7 @@ class HookHeader extends ElementBase {
     render() {
         return (
             <div>
-                <div className="r20es-checkbox" onClick={this.onClick} title={this.hook.id + " " + this.hook.filename}>
+                <div className="r20es-clickable-text" onClick={this.onClick} title={this.hook.id + " " + this.hook.filename}>
                     <input onChange={this.onCheckboxChange} checked={this.hook.config.enabled} type="checkbox" />
                     <span className="text">{this.hook.name}</span>
                     <span className="text" style={{ float: "right" }}>
@@ -178,7 +178,7 @@ function Bucket(props) {
     const bucket = props.bucket
 
     return (
-        <div className="contents">
+        <div>
             <h3>{name}</h3>
             <div className="r20es-indent">
                 {bucket.map(id => <HookHeader hook={hooks[id]} />)}

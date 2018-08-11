@@ -9,25 +9,22 @@
     margin: 4px 0px 4px 0px
 }
 
-.r20es-settings-dialog .more-settings ul > li > .text {
+.r20es-settings-dialog input,
+.r20es-settings-dialog .text {
     vertical-align: middle;
 }
 
-.r20es-settings-dialog .more-settings ul > li > input {
-    float: right;
-    vertical-align: middle;
-}
-
-.r20es-settings-dialog .more-settings ul > li > input[type="checkbox"] {
-    float: left;
+.r20es-settings-dialog input[type="checkbox"] {
     margin-right: 4px;
 }
 
-.r20es-settings-dialog .more-settings ul > li > input,
-.r20es-settings-dialog .more-settings ul > li > select{
+.r20es-settings-dialog .more-settings ul > li > .compact {    
     float: right;
     padding: 0;
     margin: 0;
     height: 100%;
+}
 
+.r20es-clickable-text:hover {
+    background-color: rgb(245,245,245);
 }
