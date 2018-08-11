@@ -166,6 +166,16 @@ function createElement(type, _attributes, children, parent) {
     return elem;
 }
 
+function SidebarSeparator() {
+    return (
+        <span>
+            <div className="style" style={{height: "10px"}}/>
+            <hr/>
+            <div className="style" style={{height: "10px"}}/>
+        </span>
+    )
+}
+
 
 function createSidebarSeparator() {
     const addClear = _ =>
@@ -182,4 +192,4 @@ function createSidebarSeparator() {
 
 }
 
-export { ElementBase, createElementJsx, createElement, createSidebarSeparator };
+export { ElementBase, createElementJsx, createElement, createSidebarSeparator, SidebarSeparator};
