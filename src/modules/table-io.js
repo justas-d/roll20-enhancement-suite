@@ -19,20 +19,22 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         this.onExportButtonClicked = this.onExportButtonClicked.bind(this);
     }
 
-    getTable(target) {
-        let tableId = $(target.parentNode.parentNode).find(`div[${tableIdAttribute}]`)[0].getAttribute(tableIdAttribute);
-        if (!tableId) { alert("Failed to get table id."); return null; }
+    getTableId(target) {
+        const query = $(target.parentNode.parentNode).find(`div[${tableIdAttribute}]`);
+        if(query.length <= 0) return null;
 
-        let table = R20.getRollableTable(tableId);
-        if (!table) { alert(`Failed to get table. Table id: ${tableId}`); return null; }
-
-        return table;
+        const elem = query[0];
+        if(!elem.hasAttribute(tableIdAttribute)) return null;
+        return elem.getAttribute(tableIdAttribute)
     }
 
     onExportButtonClicked(e) {
-        let table = this.getTable(e.target);
-        if (!table) return;
+        let tableId = this.getTableId(e.target);
+        if (!tableId) { alert("Failed to get table id."); return;}
 
+        let table = R20.getRollableTable(tableId);
+        if (!table) { alert(`Failed to get table. Table id: ${tableId}`); return; }
+        
         let data = TableIO.exportJson(table);
 
         let jsonBlob = new Blob([data], { type: 'data:application/javascript;charset=utf-8' });
@@ -44,9 +46,10 @@ class TableIOModule extends R20Module.OnAppLoadBase {
             if (e.target.className && e.target.className === "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") {
 
                 if (e.target.getElementsByClassName(this.buttonClass).length > 0) return;
+                if(!this.getTableId(e.target)) return;
 
                 const button = <button
-                    style={{marginTop: "8px"}}
+                    style={{ marginTop: "8px" }}
                     onClick={this.onExportButtonClicked}
                     className={[this.buttonClass, "btn"]}>
                     Export
