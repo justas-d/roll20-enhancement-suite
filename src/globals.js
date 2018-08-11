@@ -11,6 +11,7 @@ import { Config } from "./tools/config";
 window.r20es = window.r20es || {};
 window.r20es.hooks = hooks;
 
+window.r20esInstalledModuleTable = window.r20esInstalledModuleTable || {};
 window.r20esDisposeTable = window.r20esDisposeTable || {};
 
 if (!("isLoading" in window.r20es)) {

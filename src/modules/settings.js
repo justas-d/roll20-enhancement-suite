@@ -151,8 +151,10 @@ class HookHeader extends ElementBase {
 
     onCheckboxChange(e) {
         e.stopPropagation();
-        this.hook.config.enabled = !this.hook.config.enabled;
-        this.hook.saveConfig();
+
+        const mod = R20Module.getModule(this.hook.filename);
+        console.log(mod);
+        mod.toggleEnabledState();
     }
 
     render() {
@@ -276,7 +278,7 @@ class SettingsModule extends R20Module.OnAppLoadBase {
 
     dispose() {
         findByIdAndRemove(this.buttonId);
-        this.dialog.dispose();
+        if(this.dialog) this.dialog.dispose();
     }
 }
 

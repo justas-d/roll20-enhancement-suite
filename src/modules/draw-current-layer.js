@@ -2,7 +2,7 @@ import { R20Module } from '../tools/r20Module'
 import { R20 } from '../tools/r20api.js';
 import { getLayerData } from '../tools/layerData.js';
 import { createElement } from '../tools/createElement.js';
-import { copy } from '../tools/miscUtil.js';
+import { copy, findByIdAndRemove } from '../tools/miscUtil.js';
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     constructor(id) {
@@ -107,10 +107,8 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
-        let elem = document.getElementById(this.rootId);
-        if (elem) {
-            elem.remove();
-        }
+        window.r20es.setModePrologue= null;
+        findByIdAndRemove(this.rootId);
     }
 }
 
@@ -125,7 +123,7 @@ const hook = R20Module.makeHook(__filename,{
 
     includes: "assets/app.js",
     find: "function setMode(e){",
-    patch: "function setMode(e){if(window.r20es) window.r20es.setModePrologue(e);",
+    patch: "function setMode(e){if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(e);}",
 
 });
 

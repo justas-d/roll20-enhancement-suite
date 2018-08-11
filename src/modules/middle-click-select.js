@@ -37,8 +37,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
 
     setup() {
         if (!R20.isGM()) return;
-        console.log("setup listener");
-
+        
         document.addEventListener("click", this.onClick);
     }
 

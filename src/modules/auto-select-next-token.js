@@ -13,7 +13,10 @@ class AutoSelectNextTokenModule extends R20Module.SimpleBase {
                 R20.selectToken(obj);
             }
         }
+    }
 
+    dispose() {
+        window.r20es.selectInitiativeToken = null;
     }
 }
 
@@ -28,7 +31,7 @@ const hook = R20Module.makeHook(__filename,{
 
     includes: "assets/app.js",
     find: "e.push(t[0]);",
-    patch: "e.push(t[0]);window.r20es.selectInitiativeToken(e[0]);"
+    patch: "e.push(t[0]);if(window.r20es && window.r20es.selectInitiativeToken) { window.r20es.selectInitiativeToken(e[0]);}"
 });
 
 export { hook as AutoSelectNextTokenHook }

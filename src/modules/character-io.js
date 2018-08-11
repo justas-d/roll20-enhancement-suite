@@ -4,6 +4,7 @@ import { R20 } from '../tools/r20api.js'
 import { createElement, createSidebarSeparator } from '../tools/createElement.js'
 import * as FileUtil from '../tools/fileUtil.js'
 import { saveAs } from 'save-as'
+import { findByIdAndRemove } from '../tools/miscUtil';
 
 class CharacterIOModule extends R20Module.OnAppLoadBase {
     constructor(id) {
@@ -167,10 +168,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
-        let existingDiv = document.getElementById(this.journalWidgetId);
-        if (existingDiv) {
-            existingDiv.remove();
-        }
+        findByIdAndRemove(this.journalWidgetId);
 
         if (this.observer) {
             this.observer.disconnect();

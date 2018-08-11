@@ -71,27 +71,13 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     setup() {
         window.r20es.rollAndApplyHitDice = this.rollAndApplyHitDice;
     }
+
+    dispose() {
+        window.r20es.rollAndApplyHitDice = null;
+    }
 }
 
 if (R20Module.canInstall()) new RollAndApplyHitDiceModule(__filename).install();
-
-function addElemToCanvasTokenRightClickMenu(name, actionType, callback) {
-    return [
-        {
-            includes: "/editor/",
-            find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
-            patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
-<li class='head hasSub' data-action-type='${actionType}'>${name}</li>`,
-        },
-
-        {
-            includes: "assets/app.js",
-            find: `else if("toback"==e)`,
-            patch: `else if("${actionType}"==e) window.r20es.${callback}(n), i(), d20.token_editor.removeRadialMenu();else if("toback"==e)`
-        }
-    ];
-}
-
 
 const hook = R20Module.makeHook(__filename, {
     id: "rollAndApplyHitDice",
@@ -100,7 +86,20 @@ const hook = R20Module.makeHook(__filename, {
     category: R20Module.category.token,
     gmOnly: true,
 
-    mods: addElemToCanvasTokenRightClickMenu("Hit Dice", "r20es-hit-dice", "rollAndApplyHitDice"),
+    mods: [
+        {
+            includes: "/editor/",
+            find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
+            patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
+<li class='head hasSub' data-action-type='r20es-hit-dice'>Hit Dice</li>`,
+        },
+
+        {
+            includes: "assets/app.js",
+            find: `else if("toback"==e)`,
+            patch: `else if("r20es-hit-dice"==e && window.r20es && window.r20es.rollAndApplyHitDice) window.r20es.rollAndApplyHitDice(n), i(), d20.token_editor.removeRadialMenu();else if("toback"==e)`
+        }
+    ],
 
     configView: {
         diceFormulaAttribute: {

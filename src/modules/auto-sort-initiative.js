@@ -11,6 +11,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
         this.localInitiativeData = [];
 
         this.debouncedDoSorting = _.debounce(this.doSorting, 500);
+        
     }
 
     getNew(a, b) {
@@ -116,10 +117,8 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
     }
 
     setup() {
-        if (!R20.isGM()) {
-            window.r20es.onTokenAddedToInitiative = () => { };
-            return;
-        }
+        if (!R20.isGM()) return;
+        
 
         R20.getInitiativeWindow().model.on("change:turnorder", this.onTurnOrderChanged);
         this.setLocalInitiative(R20.getInitiativeData());

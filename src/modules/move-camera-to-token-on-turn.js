@@ -10,6 +10,10 @@ class MoveCameraToTokenModule extends R20Module.SimpleBase {
             R20.moveCameraToTokenByUUID(d)
         };
     }
+
+    dispose() {
+        window.r20es.moveCameraTo = null;
+    }
 }
 
 if(R20Module.canInstall()) new MoveCameraToTokenModule(__filename).install();
@@ -23,7 +27,8 @@ const hook = R20Module.makeHook(__filename,{
 
     includes: "assets/app.js",
     find: "e.push(t[0]);",
-    patch: "e.push(t[0]);window.r20es.moveCameraTo(e[0]);"
+    patch: `e.push(t[0]);
+    if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(e[0]); }`
 });
 
 export {hook as AutoFocusNextToken};

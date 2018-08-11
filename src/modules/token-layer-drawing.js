@@ -1,6 +1,7 @@
 import { R20Module } from "../tools/r20Module";
 import { getLayerData } from "../tools/layerData";
 import { getRotation } from "../tools/miscUtil";
+import { R20 } from "../tools/r20api";
 
 class TokenLayerDrawing extends R20Module.SimpleBase {
     setup() {
@@ -31,6 +32,13 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
 
             ctx.restore();
         };
+
+        R20.renderAll();
+    }
+
+    dispose() {
+        R20.renderAll();
+        window.r20es.tokenDrawBg = null;
     }
 }
 
@@ -45,7 +53,7 @@ const hook = R20Module.makeHook(__filename,{
 
     includes: "assets/app.js",
     find: "this.model.view.updateBackdrops(e),this.active",
-    patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es.tokenDrawBg(e, this), this.active"
+    patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this), this.active"
 });
 
 export { hook as TokenLayerDrawingHook };

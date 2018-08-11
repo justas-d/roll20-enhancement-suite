@@ -1,6 +1,7 @@
 import { R20Module } from "../tools/r20Module"
 import { createElement } from "../tools/createElement"
 import { R20 } from "../tools/r20api";
+import { findByIdAndRemove } from "../tools/miscUtil";
 
 class DuplicateButtonModule extends R20Module.SimpleBase {
 
@@ -47,8 +48,8 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
                     note.editview.render();
                 }
 
-                let json = note.toJSON();
-                delete json.id;
+                let json = noterender;
+                delete json.id;render
 
                 let newNote = note.collection.create(json);
 
@@ -60,10 +61,8 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
     }
 
     dispose() {
-        let elem = document.getElementById(this.optionId);
-        if (elem) {
-            elem.remove();
-        }
+        window.r20es.onJournalDuplicate = null;
+        findByIdAndRemove(this.optionId);
     }
 }
 
@@ -79,7 +78,7 @@ const hook = R20Module.makeHook(__filename, {
 
     includes: "assets/app.js",
     find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
-    patch: `$("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]",() => {window.r20es.onJournalDuplicate($currentItemTarget.attr("data-itemid"))}),
+    patch: `$("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]",() => {if(window.r20es && window.r20es.onJournalDuplicate) window.r20es.onJournalDuplicate($currentItemTarget.attr("data-itemid"))}),
 $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
 });
 

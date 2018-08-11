@@ -1,19 +1,67 @@
-import { basename, safeCall } from "../tools/miscUtil";
+import { basename } from "../tools/miscUtil";
 
 let R20Module = {};
 
 R20Module.Base = class ModuleBase {
     constructor(filename) {
         this.filename = basename(filename);
+        this.isDisposed = true;
     }
 
     installFirstTime() { }
     installUpdate() { }
     dispose() { }
 
+    internalCanInstall() {
+        const hook = this.getHook();
+        
+        if(!hook.config.enabled) return false;
+        if (this.isDisposed) return true;
+
+        console.error("Attempted to install module when it's not disposed.")
+        console.table({
+            "Module filename": this.filename
+        });
+        console.trace();
+        return false;
+    }
+
+    internalInstallFirstTime() {
+        if (!this.internalCanInstall()) return;
+        try {
+            this.installFirstTime();
+        } catch (e) { console.error(e) }
+        this.isDisposed = false;
+    }
+
+    internalInstallUpdate() {
+        if (!this.internalCanInstall()) return;
+        try {
+            this.installUpdate();
+        } catch (e) { console.error(e) }
+        this.isDisposed = false;
+    }
+
+    internalDispose() {
+        console.log(this);
+        if (this.isDisposed) {
+            console.error("internalDispose called on module that is already disposed!");
+            console.table({
+                "Module filename": this.filename
+            });
+            console.trace();
+            return;
+        }
+
+        try {
+            this.dispose()
+        } catch (e) { console.error(e) }
+
+        this.isDisposed = true;
+    }
+
     getAllHooks = _ => window.r20es.hooks;
     getHook() {
-        if(!("r20esDisposeTable" in window)) return null;
         if(!("hooks") in window.r20es) return null;
 
         for(const hookId in window.r20es.hooks) {
@@ -25,34 +73,63 @@ R20Module.Base = class ModuleBase {
         }
 
         return null;
+}
+
+    toggleEnabledState(_isEnabled) {
+        const hook = this.getHook();
+
+        const newState = (_isEnabled === undefined || _isEnabled === null)
+            ? !hook.config.enabled
+            : _isEnabled;
+
+        if (hook.config.enabled && newState) return;
+
+        const oldEnabled = hook.config.enabled;
+        hook.config.enabled = newState;
+        hook.saveConfig();
+
+        if (oldEnabled && !newState) {
+            console.log("disabling");
+            // disable
+            this.internalDispose();
+        }
+        else if (!oldEnabled && newState) {
+            console.log("enabling");
+            // enable
+            this.internalInstallUpdate();
+        }
     }
 
     install() {
-        if(!("r20esDisposeTable" in window)) return;
+        if (!("r20esInstalledModuleTable" in window)) return;
+        if (!("r20esDisposeTable" in window)) return;
 
         console.log(`Installing module ID: ${this.filename}`);
 
-        let isFirstRun = window.r20esDisposeTable[this.filename] === undefined || window.r20esDisposeTable[this.filename] === null;
+        let isFirstRun = !(this.filename in window.r20esDisposeTable);
 
         if (isFirstRun) {
             console.log(`First run`);
-            safeCall(_ => this.installFirstTime());
+            this.internalInstallFirstTime();
         } else {
             // dispose
             console.log(`Disposing old`);
             try {
-                const oldDispose = window.r20esDisposeTable[this.filename];
-                oldDispose();
+                const disposeOld = window.r20esDisposeTable[this.filename];
+                disposeOld();
+                window.r20esDisposeTable[this.filename] = undefined;
+                window.r20esInstalledModuleTable[this.filename] = undefined;
             } catch (err) {
                 console.error(`Failed to dispose but still continuing:`);
                 console.error(err);
             }
 
             console.log(`Calling install update`);
-            safeCall(_ => this.installUpdate());
+            this.internalInstallUpdate();
         }
 
-        window.r20esDisposeTable[this.filename] = _ => { this.dispose(); };
+        window.r20esDisposeTable[this.filename] = () => {this.dispose();}
+        window.r20esInstalledModuleTable[this.filename] = this;
 
         console.log(`DONE! module ID: ${this.filename}`);
     }
@@ -96,6 +173,11 @@ R20Module.canInstall = _ => window.r20es && "canInstallModules" in window.r20es 
 R20Module.makeHook = function (filename, hook) {
     hook.filename = basename(filename);
     return hook;
+}
+
+R20Module.getModule = function (filename) {
+    if (!("r20esInstalledModuleTable" in window)) return null;
+    return window.r20esInstalledModuleTable[filename];
 }
 
 R20Module.category = {

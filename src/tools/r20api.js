@@ -195,6 +195,10 @@ R20.ping = function(left, top, playerId, pageId, layer) {
     d20.engine.renderTop();
 }
 
+R20.renderAll = function() {
+    window.d20.engine.renderAll();
+}
+
 R20.layer = {
     map: "map",
     playerTokens: "objects",

@@ -5,6 +5,7 @@ import { saveAs } from 'save-as'
 import { createSidebarSeparator, createElement } from "../tools/createElement";
 import { readFile, safeParseJson } from "../tools/fileUtil";
 import { TableExportLang } from "../tools/table-export-lang";
+import { findByIdAndRemove } from "../tools/miscUtil";
 
 class TableIOModule extends R20Module.OnAppLoadBase {
     constructor(id) {
@@ -143,10 +144,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
             this.observer.disconnect();
         }
 
-        const elem = document.getElementById(this.journalDivId);
-        if (elem) {
-            elem.remove();
-        }
+        findByIdAndRemove(this.journalDivId);
     }
 }
 

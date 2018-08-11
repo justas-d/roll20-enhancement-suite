@@ -40,6 +40,7 @@ addHook({
 
 addHook({
     id: "seenadOverride",
+    force: true,
 
     name: "Skip ad",
     description: "Skips loading ads",

@@ -391,10 +391,11 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
     }
 
     dispose() {
-
-        this.pickerDialog.dispose();
-        this.verifyDialog.dispose();
-        this.noMacrosDialog.dispose();
+        
+        window.r20es.macroGeneratorButtonClick = null;
+        if(this.pickerDialog) this.pickerDialog.dispose();
+        if(this.verifyDialog) this.verifyDialog.dispose();
+        if(this.noMacrosDialog) this.noMacrosDialog.dispose();
 
     }
 }
@@ -411,7 +412,7 @@ const hook = R20Module.makeHook(__filename, {
         {
             includes: "assets/app.js",
             find: `this.$el.on("click",".addabil"`,
-            patch: `this.$el.on("click",".${generateButtonId}", (e) => window.r20es.macroGeneratorButtonClick(e)), this.$el.on("click",".addabil"`
+            patch: `this.$el.on("click",".${generateButtonId}", (e) => {if(window.r20es && window.r20es.macroGeneratorButtonClick) window.r20es.macroGeneratorButtonClick(e)}), this.$el.on("click",".addabil"`
         },
 
         {
