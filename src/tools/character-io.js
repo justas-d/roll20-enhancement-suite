@@ -1,4 +1,5 @@
 import { replaceAll } from "./miscUtil";
+import { R20 } from "./r20api";
 
 let CharacterIO = {};
 
@@ -122,14 +123,14 @@ CharacterIO.formatVersions[2] = {
         // some attributes store the id of the exported character
         // we replace them here with the new id 
         let jsonData = JSON.stringify(data);
-        jsonData = replaceAll(jsonData, oldIdRegexp, pc.attributes.id);
+        jsonData = replaceAll(jsonData, data.oldId, pc.attributes.id);
         data = JSON.parse(jsonData);
 
         
 
         // replace represents id
         if (data.defaulttoken) {
-            data.defaulttoken = replaceAll(data.defaulttoken, oldIdRegexp, pc.attributes.id);
+            data.defaulttoken = replaceAll(data.defaulttoken, data.oldId, pc.attributes.id);
         }
 
         let save = {
@@ -139,18 +140,16 @@ CharacterIO.formatVersions[2] = {
 
         {
             let blobs = {};
-            let shouldUpdate = false;
-            if (data.bio.length > 0) { blobs.bio = data.bio; shouldUpdate = true; }
-            if (data.gmnotes.length > 0) { blobs.gmnotes = data.gmnotes; shouldUpdate = true; }
-            if (data.defaulttoken.length > 0) { blobs.defaulttoken = data.defaulttoken; shouldUpdate = true; }
 
-            if (shouldUpdate) {
-                pc.updateBlobs(blobs);
+            blobs.bio = data.bio;
+            if(R20.isGM())
+                blobs.gmnotes = data.gmnotes
+            
+            // TODO : remove blobs.defaulttoken entirely if data.defaulttoken is ""
+            blobs.defaulttoken = data.defaulttoken;
 
-                if ("defaulttoken" in blobs) {
-                    save.defaulttoken = (new Date).getTime();
-                }
-            }
+            pc.updateBlobs(blobs);
+            save.defaulttoken = (new Date).getTime();
         }
 
         {
