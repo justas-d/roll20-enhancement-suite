@@ -1,4 +1,5 @@
 import { createElementJsx } from "./createElement";
+import { copy } from "./miscUtil";
 
 function DialogHeader() {
     return <div className="dialog-header"></div>
