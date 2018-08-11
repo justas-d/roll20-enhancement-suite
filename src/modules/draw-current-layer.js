@@ -1,7 +1,7 @@
 import { R20Module } from '../tools/r20Module'
 import { R20 } from '../tools/r20api.js';
 import { getLayerData } from '../tools/layerData.js';
-import { createElement } from '../tools/createElement.js';
+import { createElementJsx } from '../tools/createElement.js';
 import { copy, findByIdAndRemove } from '../tools/miscUtil.js';
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
@@ -33,44 +33,30 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
             lineHeight: divStyle.height
         }
 
-        createElement("div", {
-            id: this.rootId,
-            style: {
-                marginBottom: "15px",
-                marginRight: "15px",
-                width: "auto",
-                maxWidth: "100%",
-                overflowX: "hidden",
-                position: "absolute",
-                bottom: "0",
-                right: "0",
-                backgroundClip: "border-box"
-            }
+        const widget = <div id={this.rootId} style={{
+            marginBottom: "15px",
+            marginRight: "15px",
+            width: "auto",
+            maxWidth: "100%",
+            overflowX: "hidden",
+            position: "absolute",
+            bottom: "0",
+            right: "0",
+            backgroundClip: "border-box"
+        }}>
+            <div id={this.selectId} style={copy(divStyle, { background: "rgba(255,0,0,0.5)" })}>
+                <p style={textStyle}>Not selecting!</p>
+            </div>
 
-        },
-            [
-                createElement("div", {
-                    id: this.selectId,
-                    style: copy(divStyle, { background: "rgba(255,0,0,0.5)" })
-                },
-                    [
-                        createElement("p", {
-                            innerHTML: "Not selecting!",
-                            style: textStyle
-                        })
-                    ]
-                ),
-                createElement("div", {
-                    id: this.layerId,
-                    style: divStyle
-                },
-                    [
-                        createElement("p", { style: textStyle })
-                    ]
-                )
+            <div id={this.layerId} style={divStyle}>
+                <p style={textStyle}></p>
+            </div>
+        </div>
 
-            ], document.getElementById("playerzone")
-        );
+        const root = document.getElementById("playerzone");
+        if(!root) return;
+
+        root.appendChild(widget);
 
         $("#editinglayer li.chooseobjects").on("click", this.onToolChange);
         $("#editinglayer li.choosemap").on("click", this.onToolChange);
@@ -107,14 +93,18 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
-        window.r20es.setModePrologue= null;
+        $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
+        $("#editinglayer li.choosemap").off("click", this.onToolChange);
+        $("#editinglayer li.choosegmlayer").off("click", this.onToolChange);
+
+        window.r20es.setModePrologue = null;
         findByIdAndRemove(this.rootId);
     }
 }
 
 if (R20Module.canInstall()) new DrawCurrentLayerModule(__filename).install();
 
-const hook = R20Module.makeHook(__filename,{
+const hook = R20Module.makeHook(__filename, {
     id: "activeLayerHud",
     name: "Display active layer",
     description: "Displays the active edit layer as well as whether the select tool is active.",
