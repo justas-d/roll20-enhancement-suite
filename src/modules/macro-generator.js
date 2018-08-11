@@ -178,7 +178,7 @@ class VerifyMacrosDialog extends DialogBase {
         return (
             <div>
                 <h3>{title}</h3>
-                <table className="indent-2">
+                <table className="r20es-indent">
                     <thead>
                         <tr className="table-head">
                             {head}
