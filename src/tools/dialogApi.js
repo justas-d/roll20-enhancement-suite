@@ -3,34 +3,36 @@ import { removeAllChildren, findByIdAndRemove } from "./miscUtil";
 
 
 class DialogBase {
-    constructor(className) {
+    constructor(className, style) {
         window.r20esDialogId = "r20esDialogId" in window ? window.r20esDialogId : 0;
-        this.numId = window.r20esDialogId++;
-        this.id = `r20es-dialog-${this.numId}`;
-        this.root = <dialog className={className} id={this.id}/>;
+        this._id = `r20es-dialog-${window.r20esDialogId++}`;
+        this._root = <dialog className={className} style={style} id={this.getId()}/>;
 
         this.show = this.show.bind(this);
         this.close = this.close.bind(this);
 
-        document.body.insertBefore(this.root, document.body.firstElementChild);
-        dialogPolyfill.registerDialog(this.root);
+        document.body.insertBefore(this.getRoot(), document.body.firstElementChild);
+        dialogPolyfill.registerDialog(this.getRoot());
     }
+
+    getRoot = _ => this._root;
+    getId = _ => this._id;
 
     render() { }
 
     internalRender() {
-        this.root.appendChild(this.render());
-        dialogPolyfill.reposition(this.root);
+        this.getRoot().appendChild(this.render());
+        dialogPolyfill.reposition(this.getRoot());
     }
 
     rerender() {
-        removeAllChildren(this.root);
+        removeAllChildren(this.getRoot());
         this.internalRender();
     }
 
     show() {
         this.internalRender();
-        this.root.showModal();
+        this.getRoot().showModal();
     }
 
     setData = data => this.returnData = data;
@@ -41,12 +43,12 @@ class DialogBase {
     }
 
     close() {
-        removeAllChildren(this.root);
-        this.root.close();
+        removeAllChildren(this.getRoot());
+        this.getRoot().close();
     }
 
     dispose() {
-        findByIdAndRemove(this.id);
+        findByIdAndRemove(this.getId());
     }
 
 }
