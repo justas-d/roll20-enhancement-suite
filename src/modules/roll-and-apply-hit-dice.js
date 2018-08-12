@@ -2,14 +2,12 @@ import { R20Module } from "../tools/r20Module";
 import { R20 } from "../tools/r20api";
 import { createElementJsx } from "../tools/createElement";
 import { findByIdAndRemove } from "../tools/miscUtil";
+import { TokenContextMenuApi } from "../tools/token-context-menu-module-api";
 
 class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     constructor(id) {
         super(id);
 
-        this.widgetId = "r20es-hit-dice-menu-entry";
-
-        this.observerCallback = this.observerCallback.bind(this);
         this.onClickMenuItem = this.onClickMenuItem.bind(this);
     }
 
@@ -18,11 +16,6 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     }
 
     onClickMenuItem(e) {
-        e.stopPropagation();
-
-        R20.hideTokenRadialMenu(); 
-        R20.hideTokenContextMenu();
-
         const objects = R20.getSelectedTokens();
         const config = this.getHook().config;
 
@@ -36,8 +29,6 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
             if (!token.model || !token.model.character) continue;
 
             let attribs = token.model.character.attribs;
-
-
 
             // find hpForumla
             let hpFormula = null;
@@ -77,35 +68,14 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
         }
     }
 
-    tryInsertMenuWidget(target) {
-        
-        if(!target.className) return false;
-        if(target.className !== "actions_menu d20contextmenu")  return false;
-
-        const widget = <li id={this.widgetId} onClick={this.onClickMenuItem} class='head hasSub' data-action-type='r20es-hit-dice'>Hit Dice</li>;
-
-        target.firstElementChild.appendChild(widget);
-        return true;
-    }
-
-    observerCallback(muts) {
-        for(let e of muts) {
-            for(const added of e.addedNodes) {
-                if(this.tryInsertMenuWidget(added)) {
-                    return;
-                }
-            }            
-        }
-    }
-
     setup() {
-        this.observer = new MutationObserver(this.observerCallback);
-        this.observer.observe(document.body, { childList: true, subtree: true });
+        TokenContextMenuApi.addButton("Hit Dice", this.onClickMenuItem, {
+            mustHaveSelection: true
+        });
     }
 
     dispose() {
-        findByIdAndRemove(this.widgetId);
-        if(this.observer) this.observer.disconnect();
+        TokenContextMenuApi.removeButton("Hit Dice", this.onClickMenuItem);
     }
 }
 
