@@ -146,7 +146,17 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
         this.processFileReading(input.files[0], (version, data) => {
             if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
-                version.overwrite(pc, data);
+
+                const plsWait = <h4>Please wait...</h4>
+                e.target.parentNode.appendChild(plsWait);
+
+                // wait 100ms for the plsWait to render.
+                setTimeout(() => {
+                    try {
+                        version.overwrite(pc, data);
+                    } catch(err) { console.error(err); }
+                    plsWait.remove();
+                }, 100);
             }
         });
 
