@@ -1,22 +1,91 @@
 import { createElementJsx } from '../tools/createElement.js'
 import { R20Module } from "../tools/r20Module"
 import { R20 } from '../tools/r20api.js';
+import { DialogBase } from "../tools/dialogApi";
+import { DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/dialogComponents";
+import { TokenContextMenuApi } from '../tools/token-context-menu-module-api.js';
 
-const bulkMarcoMenuId = "r20es-bulk-macro-menu";
+class MacroSelectDialog extends DialogBase {
+    constructor() {
+        super(undefined, {maxWidth: "20%"});
+        this.buttonClick = this.buttonClick.bind(this);
+    }
+
+    reset() {
+        this.macros = undefined;
+    }
+
+    show(data) {
+        this.macros = data;
+        super.show();
+    }
+
+    buttonClick(e) {
+        e.stopPropagation();
+
+        this.setData(e.target.getAttribute("data-r20es-macro-action"))
+        this.close();
+    }
+
+    render() {
+        console.log(this.macros);
+
+        const elems = [];
+        for (let category in this.macros) {
+            const bucket = this.macros[category];
+
+            const macroElems = []
+            for (const id in bucket) {
+                let macro = bucket[id];
+
+                macroElems.push(
+                    <button data-r20es-macro-action={macro.action} onClick={this.buttonClick}>
+                        {macro.name}
+                    </button>
+                );
+            }
+
+            elems.push(<div>
+                <h3>{category}</h3>
+                <div className="r20es-indent">
+                    {macroElems}
+                </div>
+            </div>);
+        }
+
+        return (
+            <Dialog>
+                <DialogHeader>
+                    <h2>Macro selection</h2>
+                </DialogHeader>
+
+                <hr />
+
+                <DialogBody>
+                    {elems}
+                </DialogBody>
+
+                <DialogFooter>
+                    <DialogFooterContent>
+                        <input type="button" onClick={this.close} value="Close" />
+                    </DialogFooterContent>
+                </DialogFooter>
+            </Dialog>
+
+        );
+    }
+}
 
 class BulkMacroModule extends R20Module.OnAppLoadBase {
     constructor(id) {
         super(id);
-        this.observerCallback = this.observerCallback.bind(this);
-        this.menuClick = this.menuClick.bind(this);
+
+        this.bulkMacroButtonClicked = this.bulkMacroButtonClicked.bind(this);
+        this.onDialogClose = this.onDialogClose.bind(this);
     }
 
-    menuClick(obj) {
-
-        if (!obj.target) return;
-
-        let action = obj.target.getAttribute("data-r20es-macro-action");
-        console.log(action);
+    onDialogClose() {
+        const action = this.selectDialog.getData();
         if (!action) return;
 
         const sel = R20.getSelectedTokens();
@@ -35,84 +104,72 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         }
     }
 
-    observerCallback(muts) {
+    bulkMacroButtonClicked() {
 
-        const sel = R20.getSelectedTokens();
-        if (sel.length <= 0) return;
+        let macros = {};
 
-        const addMacro = (macro, arr) => arr[macro.get("id")] = {
-            name: macro.get("name"),
-            action: macro.get("action")
+        const addMacro = (macro, category) => {
+            if (!(category in macros)) macros[category] = {};
+            let cat = macros[category][macro.get("id")] = {
+                name: macro.get("name"),
+                action: macro.get("action")
+            };
         };
 
-        let root = document.getElementById(bulkMarcoMenuId);
-        if (!root || root.childElementCount > 0) return;
+        const player = R20.getCurrentPlayer();
+        const sel = R20.getSelectedTokens();
 
-        for (var e of muts) {
-            for (let node of e.addedNodes) {
-                if (node.className && node.className === "actions_menu d20contextmenu") {
+        for (let macro of player.macros.models) {
+            addMacro(macro, "Player Macros");
+        }
 
-                    let macros = {};
+        const chars = sel
+            .reduce((accum, obj) => {
 
-                    const player = R20.getCurrentPlayer()
-                    for (let macro of player.macros.models) {
-                        addMacro(macro, macros);
-                    }
+                if (!obj.model) {
+                    accum.uniq++;
+                    return accum;
+                }
 
-                    const chars = sel
-                        .reduce((accum, obj) => {
+                const id = obj.model.character
+                    ? obj.model.character.get("id")
+                    : obj.model.get("id");
 
-                            if (!obj.model) {
-                                accum.uniq++;
-                                return accum;
-                            }
+                if (!(id in accum.map)) {
+                    accum.uniq++;
+                    accum.map[id] = true;
 
-                            const id = obj.model.character
-                                ? obj.model.character.get("id")
-                                : obj.model.get("id");
-
-                            if (!(id in accum.map)) {
-                                accum.uniq++;
-                                accum.map[id] = true;
-
-                                if (obj.model.character) {
-                                    accum.arr.push(obj.model.character);
-                                }
-                            }
-                            return accum;
-                        }, { map: {}, arr: [], uniq: 0 });
-
-                    if (chars.uniq === 1 && chars.arr.length > 0) {
-                        for (let macro of chars.arr[0].abilities.models) {
-                            addMacro(macro, macros);
-                        }
-                    }
-
-                    // create menu options
-                    for (let id in macros) {
-                        let macro = macros[id];
-
-                        root.appendChild(
-                            <li style={{ whiteSpace: "nowrap" }} data-action-type={bulkMarcoMenuId} data-r20es-macro-action={macro.action} onClick={this.menuClick}>
-                                {macro.name}
-                            </li>
-                        );
+                    if (obj.model.character) {
+                        accum.arr.push(obj.model.character);
                     }
                 }
+                return accum;
+            }, { map: {}, arr: [], uniq: 0 });
+
+        if (chars.uniq === 1 && chars.arr.length > 0) {
+            for (let macro of chars.arr[0].abilities.models) {
+                addMacro(macro, "Token Macros");
             }
         }
+
+        console.log(macros);
+        this.selectDialog.show(macros);
     }
 
     setup() {
-        this.observer = new MutationObserver(this.observerCallback);
-        this.observer.observe(document.body, { childList: true, subtree: true });
+        this.selectDialog = new MacroSelectDialog();
+        this.selectDialog.getRoot().addEventListener("close", this.onDialogClose);
+
+        TokenContextMenuApi.addButton("Roll Bulk Macro", this.bulkMacroButtonClicked, {
+            mustHaveSelection: true
+        });
     }
 
     dispose() {
+        if (this.selectDialog) this.selectDialog.dispose();
+
         super.dispose();
-        if (this.observer) {
-            this.observer.disconnect();
-        }
+        TokenContextMenuApi.removeButton("Roll Bulk Macro", this.bulkMacroButtonClicked)
     }
 }
 
@@ -124,14 +181,6 @@ const hook = R20Module.makeHook(__filename, {
     description: `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
     category: R20Module.category.token,
     gmOnly: true,
-
-    includes: "/editor/",
-    find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
-    patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
-<li class="head hasSub" data-menuname="${bulkMarcoMenuId}">Bulk Roll »
-<ul class="submenu" id="${bulkMarcoMenuId}" data-menuname="${bulkMarcoMenuId}" style="width: auto;display: none;">
-</ul>`,
-
 });
 
 export { hook as BulkMacroHook }
