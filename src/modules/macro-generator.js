@@ -378,10 +378,10 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
     setup() {
 
         this.pickerDialog = new PickMacroGeneratorsDialog(this.generators);
-        this.pickerDialog.root.addEventListener("close", this.onPickerDialogClose);
+        this.pickerDialog.getRoot().addEventListener("close", this.onPickerDialogClose);
 
         this.verifyDialog = new VerifyMacrosDialog();
-        this.verifyDialog.root.addEventListener("close", this.onVerifyDialogClose);
+        this.verifyDialog.getRoot().addEventListener("close", this.onVerifyDialogClose);
 
         this.noMacrosDialog = new NoMacrosDialog();
 
