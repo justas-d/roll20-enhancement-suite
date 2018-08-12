@@ -1,23 +1,32 @@
 import { R20Module } from "../tools/r20Module";
 import { R20 } from "../tools/r20api";
+import { createElementJsx } from "../tools/createElement";
+import { findByIdAndRemove } from "../tools/miscUtil";
 
 class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     constructor(id) {
         super(id);
 
-        this.rollAndApplyHitDice = this.rollAndApplyHitDice.bind(this);
+        this.widgetId = "r20es-hit-dice-menu-entry";
+
+        this.observerCallback = this.observerCallback.bind(this);
+        this.onClickMenuItem = this.onClickMenuItem.bind(this);
     }
 
     fancySay(msg, callback) {
         R20.sayToSelf(`&{template:default} {{name=R20ES Hit Dice}} {{${msg}}}`, callback);
     }
 
-    rollAndApplyHitDice(objects) {
+    onClickMenuItem(e) {
+        e.stopPropagation();
 
+        R20.hideTokenRadialMenu(); 
+        R20.hideTokenContextMenu();
+
+        const objects = R20.getSelectedTokens();
         const config = this.getHook().config;
 
         // tokens will locally disappear if we do not unselect them here
-        const oldSel = R20.getSelectedTokens();
         R20.unselectTokens();
 
         let numRolled = 0;
@@ -60,7 +69,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
                 // reselect when we're done processing all callbacks.
                 numRolled++;
                 if (numRolled >= objects.length) {
-                    for (let sel of oldSel) {
+                    for (let sel of objects) {
                         R20.addTokenToSelection(sel);
                     }
                 }
@@ -68,12 +77,35 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
         }
     }
 
+    tryInsertMenuWidget(target) {
+        
+        if(!target.className) return false;
+        if(target.className !== "actions_menu d20contextmenu")  return false;
+
+        const widget = <li id={this.widgetId} onClick={this.onClickMenuItem} class='head hasSub' data-action-type='r20es-hit-dice'>Hit Dice</li>;
+
+        target.firstElementChild.appendChild(widget);
+        return true;
+    }
+
+    observerCallback(muts) {
+        for(let e of muts) {
+            for(const added of e.addedNodes) {
+                if(this.tryInsertMenuWidget(added)) {
+                    return;
+                }
+            }            
+        }
+    }
+
     setup() {
-        window.r20es.rollAndApplyHitDice = this.rollAndApplyHitDice;
+        this.observer = new MutationObserver(this.observerCallback);
+        this.observer.observe(document.body, { childList: true, subtree: true });
     }
 
     dispose() {
-        window.r20es.rollAndApplyHitDice = null;
+        findByIdAndRemove(this.widgetId);
+        if(this.observer) this.observer.disconnect();
     }
 }
 
@@ -85,21 +117,6 @@ const hook = R20Module.makeHook(__filename, {
     description: `Adds a "Hit Dice" option to the token right click menu which rolls and applies hit dice for the selected tokens.`,
     category: R20Module.category.token,
     gmOnly: true,
-
-    mods: [
-        {
-            includes: "/editor/",
-            find: "<li class='head hasSub' data-action-type='addturn'>Add Turn</li>",
-            patch: `<li class='head hasSub' data-action-type='addturn'>Add Turn</li>
-<li class='head hasSub' data-action-type='r20es-hit-dice'>Hit Dice</li>`,
-        },
-
-        {
-            includes: "assets/app.js",
-            find: `else if("toback"==e)`,
-            patch: `else if("r20es-hit-dice"==e && window.r20es && window.r20es.rollAndApplyHitDice) window.r20es.rollAndApplyHitDice(n), i(), d20.token_editor.removeRadialMenu();else if("toback"==e)`
-        }
-    ],
 
     configView: {
         diceFormulaAttribute: {
