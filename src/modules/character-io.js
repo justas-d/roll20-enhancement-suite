@@ -11,7 +11,6 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         super(id);
 
         this.journalWidgetId = "r20es-character-io-journal-widget";
-        this.sheetWidgetClass = "r20es-character-io-sheet-widget";
 
         this.observerCallback = this.observerCallback.bind(this);
         this.onOverwriteClick = this.onOverwriteClick.bind(this);
@@ -20,6 +19,15 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         this.renderWidget = this.renderWidget.bind(this);
         this.onImportClick = this.onImportClick.bind(this);
         this.onJournalFileChange = this.onJournalFileChange.bind(this);
+        this.navOnClick = this.navOnClick.bind(this);
+        this.onClickNormalNavs = this.onClickNormalNavs.bind(this);
+
+        this.tabStyle = "r20es-char-io-data-tab";
+        this.navStyle = "r20es-char-io-export-overwrite-nav";
+
+        // bookkeeping for disposal
+        this.infectedNavs = [];
+        this.injectedElements = [];
     }
 
     processFileReading(fileHandle, customCode) {
@@ -85,7 +93,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
                 <button disabled className="btn" style={{ display: "block", float: "left", marginBottom: "10px" }} onClick={this.onImportClick}>
                     Import Character
                 </button>
-                
+
             </div>
 
             <SidebarSeparator />
@@ -95,13 +103,16 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     };
 
     getPc(target) {
-        let pcElem = target.parentElement.getElementsByClassName("characterdialog")[0];
-        if (!pcElem) return null;
+        let elem = null;
+        if (target.hasAttribute("data-characterid")) {
+            elem = target;
+        } else {
+            let query = $(target).closest("div[data-characterid]");
+            if (!query) return null;
+            elem = query[0];
+        }
 
-        const idAttrib = "data-characterid";
-        if (!pcElem.hasAttribute(idAttrib)) return null;
-
-        const pcId = pcElem.getAttribute(idAttrib);
+        const pcId = elem.getAttribute("data-characterid");
         if (!pcId) return null;
 
         let pc = R20.getCharacter(pcId);
@@ -134,8 +145,9 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         if (!pc) return;
 
         this.processFileReading(input.files[0], (version, data) => {
-            if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`))
+            if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
                 version.overwrite(pc, data);
+            }
         });
 
         input.value = "";
@@ -151,49 +163,113 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
     renderWidget() {
         const style = { marginRight: "8px" }
+        const headerStyle = { marginBottom: "10px", marginTop: "10px" }
         return (
-            <span className={this.sheetWidgetClass}>
-
-                <button onClick={this.onExportClick} style={style} className="btn">
-                    Export
+            <div className={this.sheetWidgetClass}>
+                <h3 style={headerStyle}>Export</h3>
+                <div className="r20es-indent">
+                    <button onClick={this.onExportClick} style={style} className="btn">
+                        Export
                 </button>
+                </div>
 
-                <button onClick={this.onOverwriteClick} disabled style={style} className="btn">
-                    Overwrite
-                </button>
+                <h3 style={headerStyle}>Overwrite</h3>
+                <div className="r20es-indent">
+                    <button onClick={this.onOverwriteClick} disabled style={style} className="btn">
+                        Overwrite
+                    </button>
 
-                <input type="file" style={{ display: "inline" }} onChange={this.onFileChange} />
-            </span>
+                    <input type="file" style={{ display: "inline" }} onChange={this.onFileChange} />
+                </div>
+            </div>
         );
     }
 
-    tryInjectingWidget(target) {
-        if (!target.className) return false;
-        if (target.className !== "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") return false;
+    getWidgetTabRoot(navAElement) {
+        return $(navAElement.parentNode.parentNode.parentNode).find("." + this.tabStyle)[0];
+    }
 
-        if (target.getElementsByClassName(this.sheetWidgetClass).length > 0) return;
+    navOnClick(e) {
+        e.target.parentNode.classList.add("active");
+
+        const root = this.getWidgetTabRoot(e.target);
+        root.style.display = "block";
+    }
+
+    onClickNormalNavs(e) {
+        const navTabsRoot = e.target.parentNode.parentNode;
+
+        $(navTabsRoot).find("a[data-r20es-nav]").each((i, el) => {
+            el.parentNode.classList.remove("active");
+        });
+
+        const root = this.getWidgetTabRoot(e.target);
+        root.style.display = "none";
+    }
+
+    tryInjectingWidget(target) {
+        if(!target) return false;
+        if (!target.className) return false;
+        if (!target.hasAttribute("data-characterid")) return false;
+
+        if (target.getElementsByClassName(this.tabStyle).length > 0) return;
 
         const pc = this.getPc(target);
         if (!pc) return false;
 
+        const nav = (
+            <li className={this.navStyle}>
+                <a data-r20es-nav onClick={this.navOnClick} data-tab={this.tabStyle} href="javascript:void(0);">
+                    Export/Overwrite
+                </a>
+            </li>
+        );
+        this.injectedElements.push(nav);
         console.log(target);
+        target.firstElementChild.firstElementChild.appendChild(nav);
 
-        const widget = this.renderWidget();
-        target.appendChild(widget);
+
+        // register an event handler on the normal navbar tabs
+        // onClickNormalNavs will hide the custom stuff, state active state for the custom nav
+        const navTabsRoot = target.firstElementChild.firstElementChild;
+        $(navTabsRoot).find("a[data-tab]").each((i, el) => {
+            if (el.hasAttribute("data-r20es-nav")) return;
+
+            el.addEventListener("click", this.onClickNormalNavs);
+            this.infectedNavs.push(el);
+        });
+
+
+        const tabroot = $(target.firstElementChild).find(".tab-content")[0];
+        const widget = (
+            <div className={[this.tabStyle, "tab-pane"]} style={{ display: "none" }}>
+                {this.renderWidget()}
+            </div>
+        );
+        this.injectedElements.push(widget);
+        tabroot.appendChild(widget)
 
         return true;
     }
 
     observerCallback(muts) {
         for (var e of muts) {
+            for (const added of e.addedNodes) {
+                if (this.tryInjectingWidget(added)) {
+                    return;
+                }
+            }
+
+
             if (this.tryInjectingWidget(e.target)) {
-                break;
+                return;
             }
         }
     }
 
     setup() {
-        const existingHeaders = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix");
+        const existingHeaders = document.querySelectorAll("div[data-characterid].dialog.characterdialog");
+        
 
         for (const header of existingHeaders) {
             this.tryInjectingWidget(header);
@@ -206,22 +282,16 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
     dispose() {
 
-        const widgets = document.getElementsByClassName(this.sheetWidgetClass);
-
-        // removing a widget modifies the widgets html element collection 
-        // therefore we have to treat this as a stack
-        let num = widgets.length;
-        while (num-- > 0) {
-            widgets[0].remove();
-        }
-
         findByIdAndRemove(this.journalWidgetId);
 
-        if (this.observer) {
-            this.observer.disconnect();
-        }
+        this.infectedNavs.each(el => el.removeEventListener("click", this.onClickNormalNavs));
+        this.injectedElements.each(el => el.remove());
+        this.injectedElements.each(el => el.remove());
 
-        console.log("Disposed!!");
+        this.injectedElements.length = 0;
+        this.infectedNavs.length = 0;
+
+        if (this.observer) this.observer.disconnect();
     }
 }
 
