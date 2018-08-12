@@ -55,8 +55,6 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         if (target.getElementsByClassName(this.tableWidgetClass).length > 0) return false;
 
         const table = this.getTableId(target);
-        console.log(target);
-        console.log(table);
 
         if (!table) return false;
 
