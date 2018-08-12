@@ -126,10 +126,9 @@ CharacterIO.formatVersions[2] = {
         jsonData = replaceAll(jsonData, data.oldId, pc.attributes.id);
         data = JSON.parse(jsonData);
 
-        
-
         // replace represents id
-        if (data.defaulttoken) {
+        const hasToken = data.defaulttoken && data.defaulttoken.length > 0;
+        if (hasToken) {
             data.defaulttoken = replaceAll(data.defaulttoken, data.oldId, pc.attributes.id);
         }
 
@@ -145,11 +144,15 @@ CharacterIO.formatVersions[2] = {
             if(R20.isGM())
                 blobs.gmnotes = data.gmnotes
             
-            // TODO : remove blobs.defaulttoken entirely if data.defaulttoken is ""
-            blobs.defaulttoken = data.defaulttoken;
+            if(hasToken) {
+                blobs.defaulttoken = data.defaulttoken;
+                save.defaulttoken = (new Date).getTime();
+            } else {
+                blobs.defaulttoken = null;
+                save.defaulttoken = "";
+            }
 
             pc.updateBlobs(blobs);
-            save.defaulttoken = (new Date).getTime();
         }
 
         {
@@ -166,8 +169,8 @@ CharacterIO.formatVersions[2] = {
             }
         }
 
-        pc.view.render();
         pc.save(save);
+        pc.view.render();
 
         console.log("Imported v2!");
     }
