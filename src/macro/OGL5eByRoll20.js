@@ -1,4 +1,4 @@
-import { replaceAll } from "../tools/miscUtil";
+import { replaceAll } from "../tools/MiscUtils";
 
 let MacroGenerator = {};
 
