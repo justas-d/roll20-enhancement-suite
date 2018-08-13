@@ -1,4 +1,3 @@
-import { replaceAll } from "./tools/MiscUtils";
 import { hooks } from "./Hooks";
 import { Config } from "./tools/Config";
 
@@ -105,8 +104,6 @@ if (window.r20es.isLoading) {
     window.r20es.onAppLoad.removeEventListener(setIsLoadingToFalse);
     window.r20es.onAppLoad.addEventListener(setIsLoadingToFalse);
 }
-
-window.r20es.replaceAll = replaceAll;
 
 window.r20es.canInstallModules = true;
 
