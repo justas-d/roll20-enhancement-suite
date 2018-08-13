@@ -59,7 +59,7 @@ class PickMacroGeneratorsDialog extends DialogBase {
     }
 
     onToggleAll(e) {
-        $(this.root).find("input").each((_, input) => {if(input.ignoreToggleAll) return; input.checked = !input.checked;});
+        $(this.getRoot()).find("input").each((_, input) => {if(input.ignoreToggleAll) return; input.checked = !input.checked;});
         e.stopPropagation();
     }
 
@@ -155,11 +155,11 @@ class VerifyMacrosDialog extends DialogBase {
             setIsTokenAction: this.otherData.setIsTokenAction,
         };
 
-        $(this.root).find("input").each((_, input) => {
+        $(this.getRoot()).find("input").each((_, input) => {
             if (!input.checked) return;
 
             data.macros.push({
-                name: input["data-name"],
+                name: input.getAttribute("data-name"),
                 macro: input.value,
                 modify: "data-modify" in input,
             });
@@ -225,7 +225,7 @@ class VerifyMacrosDialog extends DialogBase {
     }
 
     onToggleAll(e) {
-        $(this.root).find("input").each((_, input) => {input.checked = !input.checked;});
+        $(this.getRoot()).find("input").each((_, input) => {input.checked = !input.checked;});
         e.stopPropagation();
     }
 
@@ -325,6 +325,8 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
         if (!data) return;
         if (!pc) return;
+
+        console.log(data);
 
         for (let elem of data.macros) {
             if (elem.modify) {
