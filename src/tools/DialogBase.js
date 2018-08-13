@@ -31,6 +31,7 @@ class DialogBase {
     }
 
     show() {
+        removeAllChildren(this.getRoot());
         this.internalRender();
         this.getRoot().showModal();
     }
@@ -43,7 +44,6 @@ class DialogBase {
     }
 
     close() {
-        removeAllChildren(this.getRoot());
         this.getRoot().close();
     }
 
