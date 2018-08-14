@@ -1,5 +1,6 @@
 import { hooks } from "./Hooks";
 import { Config } from "./tools/Config";
+import { safeCall } from "./tools/MiscUtils";
 
 { // avoid leaking into window.*
     let ids = [];
@@ -77,7 +78,7 @@ window.r20es.onAppLoad.fire = function () {
     window.r20es.isWindowLoaded = true;
 
     for (let listener of window.r20es.onAppLoad.listeners) {
-        listener();
+        safeCall(listener);
     }
 }
 
