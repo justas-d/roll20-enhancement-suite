@@ -1,18 +1,24 @@
 import { replaceAll } from "./MiscUtils";
 import { R20 } from "./R20";
+import { NaiveManualResetEvent } from "./NaiveManualResetEvent.js"
 
 let CharacterIO = {};
 
-CharacterIO.exportSheet = function(sheet, doneCallback) {
-    sheet._getLatestBlob("defaulttoken", dt => {
+CharacterIO.exportSheet = function (sheet, doneCallback) {
+    
+    const ev = new NaiveManualResetEvent(1000);
+    sheet._getLatestBlob("defaulttoken", () => ev.set());
+
+    ev.whenDone(didTimeout => {
+    
         let data = {
             schema_version: 2,
-            oldId: sheet.attributes.id,
-            name: sheet.attributes.name,
-            avatar: sheet.attributes.avatar,
-            bio: sheet._blobcache.bio,
-            gmnotes: sheet._blobcache.gmnotes,
-            defaulttoken: dt || "",
+            oldId: sheet.attributes.id || "",
+            name: sheet.attributes.name || "",
+            avatar: sheet.attributes.avatar || "",
+            bio: sheet._blobcache.bio || "",
+            gmnotes: sheet._blobcache.gmnotes || "",
+            defaulttoken: sheet._blobcache.defaulttoken || "",
             attribs: [],
             abilities: []
         };
@@ -141,10 +147,10 @@ CharacterIO.formatVersions[2] = {
             let blobs = {};
 
             blobs.bio = data.bio;
-            if(R20.isGM())
+            if (R20.isGM())
                 blobs.gmnotes = data.gmnotes
-            
-            if(hasToken) {
+
+            if (hasToken) {
                 blobs.defaulttoken = data.defaulttoken;
                 save.defaulttoken = (new Date).getTime();
             } else {
@@ -176,4 +182,4 @@ CharacterIO.formatVersions[2] = {
     }
 };
 
-export {CharacterIO};
+export { CharacterIO };
