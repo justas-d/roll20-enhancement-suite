@@ -5,3 +5,4 @@ selenium-server-standalone-3.9.1.jar
 tests_output/
 dist/zip/
 selenium-debug.log
+selenium-server.log

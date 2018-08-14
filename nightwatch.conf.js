@@ -3,6 +3,11 @@ const fs = require("fs");
 const manifest = require("./src/static/manifest.json");
 const glob = require('glob');
 
+if(!process.env.R20_SESSION) {
+    console.error(`environment variable "R20_SESSION" was either not specified or contained an invalid auth token.`);
+    process.exit(1);
+}
+
 function makeFirefoxProfile() {
 
     const xpi = new JSZip();
