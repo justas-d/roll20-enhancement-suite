@@ -9,26 +9,33 @@ class LocalStorageBootstrapper extends R20Bootstrapper.Base {
         this.recvAppMessage = this.recvAppMessage.bind(this);
     }
 
-    generatePatch(ids) {
-        return getBrowser().storage.local.get()
-            .then(p => {
-                let patch = {};
-                console.log("generating patch, got values:");
-                console.log(p);
+    generatePatch(ids, externalCallback) {
 
-                for (const key of ids) {
+        function callback(p) {
+            let patch = {};
+            console.log("generating patch, got values:");
+            console.log(p);
 
-                    patch[key] = key in p ? p[key] : {};
+            for (const key of ids) {
 
-                    if (!("enabled" in patch[key])) {
-                        patch[key].enabled = true;
-                    }
+                patch[key] = key in p ? p[key] : {};
+
+                if (!("enabled" in patch[key])) {
+                    patch[key].enabled = true;
                 }
+            }
 
-                console.log("done!");
-                console.log(patch);
-                return patch;
-            });
+            console.log("done!");
+            console.log(patch);
+
+            externalCallback(patch);
+        }
+
+        if(chrome) {
+            chrome.storage.local.get({}, callback);
+        } else {
+            browser.storage.local.get().then(callback)
+        }
     }
 
     recvAppMessage(e) {
@@ -39,7 +46,7 @@ class LocalStorageBootstrapper extends R20Bootstrapper.Base {
         console.log(e);
 
         if (e.data.r20sAppWantsInitialConfigs) {
-            this.generatePatch(e.data.r20sAppWantsInitialConfigs).then(p => {
+            this.generatePatch(e.data.r20sAppWantsInitialConfigs, p => {
                 console.log("Content-script is dispatching a config patch:");
                 console.log(p);
                 window.postMessage({ r20esInitialConfigs: p }, Config.appUrl);
