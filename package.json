@@ -7,7 +7,8 @@
     "private": true,
     "scripts": {
         "build": "webpack -w --display-error-details --progress --colors --mode development",
-        "start": "web-ext run -s src/static/ --firefox-profile=r20esdev",
+        "start": "web-ext run -s src/static/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
+        "start-dev": "web-ext run -s src/static/ --firefox-profile=r20esdev --browser-console --firefox=/usr/bin/firefox-developer-edition --start-url https://app.roll20.net/sessions/new",
         "test-firefox": "SALENIUM_PORT=4444 nightwatch --env firefox"
     },
     "devDependencies": {

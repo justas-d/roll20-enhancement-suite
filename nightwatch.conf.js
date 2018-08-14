@@ -26,13 +26,10 @@ function makeFirefoxProfile() {
 
 module.exports = {
     src_folders: [
-        'tests'
+        'nightwatch/tests'
     ],
 
-    custom_commands_path: '',
-    custom_assertions_path: '',
-    page_objects_path: '',
-    globals_path: '',
+    globals_path: "nightwatch/globals.js",
 
     selenium: {
         start_process: true,
