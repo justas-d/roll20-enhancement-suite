@@ -6,7 +6,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "build": "npx webpack -w --display-error-details --progress --colors --mode development",
+        "build": "webpack -w --display-error-details --progress --colors --mode development",
         "start": "web-ext run -s src/static/ --firefox-profile=r20esdev"
     },
     "devDependencies": {
