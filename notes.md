@@ -8,3 +8,5 @@ obfuscated d -> canvas token view with drawing (mutate updateBackdrops for layer
 renderAll() "a" varible stores tokens for rendering
 
 some models can listen for events: .on("change:${attributeName}", (e) =>  ....
+
+Auth cookie: "rack.session"

@@ -17,6 +17,9 @@
         "babel-preset-env": "1.6.1",
         "babel-preset-stage-2": "6.24.1",
         "web-ext": "2.8.0",
+        "glob": "7.1.2",
+        "jszip": "3.1.5",
+        "nightwatch": "0.9.21",
         "webpack": "4.16.5",
         "webpack-cli": "3.1.0",
         "save-as": "0.1.8"

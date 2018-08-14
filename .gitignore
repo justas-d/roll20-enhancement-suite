@@ -1,3 +1,7 @@
 # Ignore build artifacts and other files.
 node_modules
 src/static/js
+selenium-server-standalone-3.9.1.jar
+tests_output/
+dist/zip/
+selenium-debug.log
