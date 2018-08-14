@@ -1,6 +1,6 @@
 import { hooks } from './Hooks.js'
 import { ModPatchTesting } from './tools/ModPatchTesting.js';
-import { escapeRegExp } from './tools/MiscUtils.js';
+import { escapeRegExp, getBrowser } from './tools/MiscUtils.js';
 
 window.modPatchTesting = new ModPatchTesting(hooks);
 
@@ -27,7 +27,7 @@ function requestListener(dt) {
 
     if (hookQueue.length <= 0) return;
 
-    let filter = browser.webRequest.filterResponseData(dt.requestId);
+    let filter = getBrowser().webRequest.filterResponseData(dt.requestId);
     let decoder = new TextDecoder("utf-8");
     let encoder = new TextEncoder();
 
@@ -56,7 +56,7 @@ function requestListener(dt) {
     };
 }
 
-browser.webRequest.onBeforeRequest.addListener(
+getBrowser().webRequest.onBeforeRequest.addListener(
     requestListener,
     { urls: ["*://app.roll20.net/*"] },
     ["blocking"]);
