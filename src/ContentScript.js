@@ -1,6 +1,6 @@
 import { Config } from "./tools/Config";
 import { hooks } from "./Hooks";
-import { getBrowser, safeCall } from "./tools/MiscUtils";
+import { getBrowser, safeCall, injectScript } from "./tools/MiscUtils";
 import { SettingsBootstrapper } from "./modules/SettingsModule";
 import { DialogFormsBootstrapper } from "./bootstrappers/DialogFormsBootstrapper";
 import { LocalStorageBootstrapper } from "./bootstrappers/LocalStorageBootstrapper";
@@ -15,18 +15,6 @@ new DialogFormsBootstrapper().bootstrap();
 new SettingsBootstrapper().bootstrap();
 new LocalStorageBootstrapper().bootstrap();
 
-function injectScript(name) {
-    console.log(`Injecting ${name}`);
-
-    var s = document.createElement("script");
-    s.async = false;
-    s.src = getBrowser().extension.getURL(name);
-
-    s.onload = () => { s.remove(); };
-    document.head.appendChild(s);
-}
-
-// inject global environment
 injectScript("WebsiteBootstrap.js");
 
 for (let id in window.bootstrapTable) {

@@ -96,9 +96,21 @@ function readFile(file, callback) {
 
 const getBrowser = _ => chrome || browser;
 
+function injectScript(name) {
+    console.log(`Injecting ${name}`);
+
+    var s = document.createElement("script");
+    s.async = false;
+    s.src = getBrowser().extension.getURL(name);
+
+    s.onload = () => { s.remove(); };
+    document.head.appendChild(s);
+}
+
 export { getBrowser, readFile, safeParseJson, 
     replaceAll, escapeRegExp, findByIdAndRemove, 
     copy, getTransform, getRotation, 
-    basename, safeCall, removeAllChildren 
+    basename, safeCall, removeAllChildren,
+    injectScript
 };
 

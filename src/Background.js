@@ -1,30 +1,17 @@
 import { hooks } from './Hooks.js'
 import { ModPatchTesting } from './tools/ModPatchTesting.js';
 import { escapeRegExp, getBrowser } from './tools/MiscUtils.js';
+import { Config } from './tools/Config.js';
 
 window.modPatchTesting = new ModPatchTesting(hooks);
 
-let redirectCount = 0;
-let hasBeenRedirected = {};
-let redirectTargets = [
-    "https://app.roll20.net/v2/js/jquery",
-    "https://app.roll20.net/js/featuredetect.js",
-    "https://app.roll20.net/editor/startjs",
-    "https://app.roll20.net/js/jquery",
-    "https://app.roll20.net/js/d20/loading.js",
-    "https://app.roll20.net/assets/firebase",
-    "https://app.roll20.net/assets/base.js",
-    "https://app.roll20.net/assets/app.js",
-    "https://app.roll20.net/js/tutorial_tips.js",
-];
-
-function getHooks(hooks) {
+function getHooks(hooks, url) {
 
     let hookQueue = [];
 
-    function addModToQueueIfOk(dt, mod, hook) {
-        if (mod.includes && dt.url.includes(mod.includes)) {
-            hookQueue.push({ mod: mod, hook: hook });
+    const addModToQueueIfOk = (mod, hook) => {
+        if (mod.includes && url.includes(mod.includes)) {
+            hookQueue.push({ mod, hook });
         }
     }
 
@@ -33,116 +20,150 @@ function getHooks(hooks) {
 
         if (hook.mods) {
             for (let mod of hook.mods) {
-                addModToQueueIfOk(dt, mod, hook);
+                addModToQueueIfOk(mod, hook);
             }
         } else {
-            addModToQueueIfOk(dt, hook, hook);
+            addModToQueueIfOk(hook, hook);
         }
     }
 
     return hookQueue;
 }
 
-function injectHooks(intoWhat, hookQueue) {
+function injectHooks(intoWhat, hookQueue, escapeFunc) {
+    if(hookQueue.length <= 0) return intoWhat;
+    7
     for (let combo of hookQueue) {
         const mod = combo.mod;
         const hook = combo.hook;
 
         if (!mod.find || !mod.patch) continue;
 
-        intoWhat = intoWhat.replace(new RegExp(escapeRegExp(mod.find), 'g'), mod.patch);
-
-        console.log(`[${mod.includes}] [${mod.find}] done!`);
+        const regex = new RegExp(escapeFunc(mod.find), 'g');
+        console.log("===> REPLACING:");
+        console.log(`Regex: ${regex}`);
+        console.log(`Patch: ${mod.patch}`);
+        intoWhat = intoWhat.replace(regex, mod.patch);
     }
+
+    return intoWhat;
 }
 
-function setupEnvironment() {
-    window.r20esChrome = {
-        scriptQueue: [],
-        readyCallbacks: []
-    };
+if (chrome) {
 
-    window.r20esChrome.scriptOrder = [
-        "https://app.roll20.net/v2/js/jquery-1.9.1.js",
-        "https://app.roll20.net/v2/js/jquery.migrate.js",
-        "https://app.roll20.net/js/featuredetect.js?2",
+    window.redirectCount = 0;
+    window.hasBeenRedirected = {};
+    window.redirectTargets = [
+        "https://app.roll20.net/v2/js/jquery",
+        "https://app.roll20.net/js/featuredetect.js",
         "https://app.roll20.net/editor/startjs",
-        "https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js",
+        "https://app.roll20.net/js/jquery",
         "https://app.roll20.net/js/d20/loading.js",
-        "https://app.roll20.net/assets/firebase.2.4.0.js",
+        "https://app.roll20.net/assets/firebase",
         "https://app.roll20.net/assets/base.js",
         "https://app.roll20.net/assets/app.js",
         "https://app.roll20.net/js/tutorial_tips.js",
     ];
 
-    window.r20esChrome.fetchAndInject = function (localUrl) {
-        fetch(localUrl, { method: "GET", mode: "same-origin", headers: { "Accept": "application/javascript" } })
-            .then(response => {
+    function setupEnvironment(appUrl) {
 
-                console.log(response);
+        window.r20esChrome = {
+            scriptQueue: [],
+            readyCallbacks: []
+        };
 
-                response.text().then(text => {
+        window.r20esChrome.scriptOrder = [
+            "https://app.roll20.net/v2/js/jquery-1.9.1.js",
+            "https://app.roll20.net/v2/js/jquery.migrate.js",
+            "https://app.roll20.net/js/featuredetect.js?2",
+            "https://app.roll20.net/editor/startjs",
+            "https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js",
+            "https://app.roll20.net/js/d20/loading.js",
+            "https://app.roll20.net/assets/firebase.2.4.0.js",
+            "https://app.roll20.net/assets/base.js",
+            "https://app.roll20.net/assets/app.js",
+            "https://app.roll20.net/js/tutorial_tips.js",
+        ];
 
-                    text = text.replace(
-                        "jQuery.ready.promise().done( fn );",
-                        "window.r20esChrome.readyCallbacks.push(fn);");
+        window.addEventListener("message", e => {
+            if (e.origin !== appUrl) return;
 
-                    text = text.replace("var d20=d20||{};", "var d20=d20||{};window.d20=d20;");
+            if (e.data.r20esHooksForChrome) {
+                console.log("got hooks: ");
+                console.log(e.data.r20esHooksForChrome);
 
-                    const blob = new Blob([text], { type: "application/json" });
+                window.r20esChrome.hooks = e.data.r20esHooksForChrome;
+            }
+        });
 
-                    const url = window.URL.createObjectURL(blob);
-                    console.log(blob);
+        window.r20esChrome.fetchAndInject = function (localUrl) {
+            fetch(localUrl, { method: "GET", mode: "same-origin", headers: { "Accept": "application/javascript" } })
+                .then(response => {
 
-                    window.r20esChrome.scriptQueue.push({
-                        localUrl,
-                        blobUrl: url
-                    });
+                    console.log(response);
 
-                    console.log(`content script done: ${window.r20esChrome.scriptQueue.length}/${window.r20esChrome.scriptOrder.length}`);
-                    if (window.r20esChrome.scriptQueue.length >= window.r20esChrome.scriptOrder.length) {
-                        console.log("Dumping script queue...");
+                    response.text().then(text => {
 
-                        for (const scriptUrl of window.r20esChrome.scriptOrder) {
+                        text = text.replace(
+                            "jQuery.ready.promise().done( fn );",
+                            "window.r20esChrome.readyCallbacks.push(fn);");
 
-                            for (const queued of window.r20esChrome.scriptQueue) {
+                        const hookQueue = getHooks(window.r20esChrome.hooks, localUrl);
+                        text = injectHooks(text, hookQueue, window["escapeRegExp"]);
 
-                                if (queued.localUrl.startsWith(scriptUrl)) {
+                        const blob = new Blob([text], { type: "application/json" });
 
-                                    let s = document.createElement("script");
-                                    s.src = queued.blobUrl;
-                                    s.async = false;
+                        const url = window.URL.createObjectURL(blob);
+                        console.log(blob);
 
-                                    document.body.appendChild(s);
-                                    break;
+                        window.r20esChrome.scriptQueue.push({
+                            localUrl,
+                            blobUrl: url
+                        });
+
+                        console.log(`content script done: ${window.r20esChrome.scriptQueue.length}/${window.r20esChrome.scriptOrder.length}`);
+                        if (window.r20esChrome.scriptQueue.length >= window.r20esChrome.scriptOrder.length) {
+                            console.log("Dumping script queue...");
+
+                            for (const scriptUrl of window.r20esChrome.scriptOrder) {
+
+                                for (const queued of window.r20esChrome.scriptQueue) {
+
+                                    if (queued.localUrl.startsWith(scriptUrl)) {
+
+                                        let s = document.createElement("script");
+                                        s.src = queued.blobUrl;
+                                        s.async = false;
+
+                                        document.body.appendChild(s);
+                                        break;
+                                    }
                                 }
                             }
+
+                            console.log("scripts injected.");
+
+                            setTimeout(() => {
+                                window.r20esChrome.readyCallbacks.each(f => f());
+
+                                setTimeout(() => $("#loading-overlay").hide(), 10000);
+                            }, 1000);
                         }
+                    })
+                });
+        }
 
-                        console.log("scripts injected.");
-
-                        setTimeout(() => {
-                            window.r20esChrome.readyCallbacks.each(f => f());
-                        }, 1000);
-                    }
-                })
-            });
+        console.log("init environment");
     }
-
-    console.log("init environment");
-}
-
-function requestListener(dt) {
-
-    if (chrome) {
-
+              
+    window.requestListener = function (dt) {
         if (dt.url === "https://app.roll20.net/editor/") {
             console.log("RESET REDIRECT TABLE");
-            hasBeenRedirected = {};
-            redirectCount = 0;
+            window.hasBeenRedirected = {};
+            window.redirectCount = 0;
         }
-        else if (redirectTargets.find(f => dt.url.startsWith(f))) {
-            if (hasBeenRedirected[dt.url]) {
+        else if (window.redirectTargets.find(f => dt.url.startsWith(f))) {
+            if (window.hasBeenRedirected[dt.url]) {
                 console.log(`SKIP ${dt.url}`);
                 return;
             }
@@ -150,67 +171,29 @@ function requestListener(dt) {
             const scriptString = _ => `window.r20esChrome.fetchAndInject("${dt.url}");`;
 
             let payload = null;
-            if (redirectCount <= 0) {
-                payload = setupEnvironment.toString() + ";setupEnvironment();" + scriptString();
+            if (window.redirectCount <= 0) {
+
+                payload = `${setupEnvironment.toString()}
+                setupEnvironment("${Config.appUrl}");
+                
+                ${getHooks.toString()}
+                ${escapeRegExp.toString()}
+                ${injectHooks.toString()}
+                ${scriptString()}
+                `
             } else {
                 payload = scriptString();
             }
 
-            hasBeenRedirected[dt.url] = true;
-            ++redirectCount;
+            window.hasBeenRedirected[dt.url] = true;
+            ++window.redirectCount;
 
             console.log(`redirecting ${dt.url}`);
 
             return { redirectUrl: `data:application/javascript;base64,${btoa(payload)}` };
         }
-    } else {
-        let hookQueue = [];
-        for (let id in hooks) {
-            let hook = hooks[id];
-
-            if (hook.mods) {
-                for (let mod of hook.mods) {
-                    addModToQueueIfOk(dt, mod, hookQueue, hook);
-                }
-            } else {
-                addModToQueueIfOk(dt, hook, hookQueue, hook);
-            }
-        }
-
-        if (hookQueue.length <= 0) return;
-
-
-        let filter = getBrowser().webRequest.filterResponseData(dt.requestId);
-        let decoder = new TextDecoder("utf-8");
-        let encoder = new TextEncoder();
-
-        let str = "";
-        filter.ondata = event => {
-            str += decoder.decode(event.data, { stream: true });
-        };
-
-        filter.onstop = _ => {
-            for (let combo of hookQueue) {
-                const mod = combo.mod;
-                const hook = combo.hook;
-
-                if (!mod.find || !mod.patch) continue;
-
-                str = str.replace(new RegExp(escapeRegExp(mod.find), 'g'), _ => {
-                    window.modPatchTesting.onModHooked(mod, hook);
-                    return mod.patch;
-                });
-                console.log(`[${mod.includes}] [${mod.find}] done!`);
-
-            }
-
-            filter.write(encoder.encode(str));
-            filter.close();
-        };
     }
-}
 
-if (chrome) {
     function headerCallback(req) {
         if (req.url !== "https://app.roll20.net/editor/") return;
 
@@ -233,10 +216,34 @@ if (chrome) {
         headerCallback,
         { urls: ["https://app.roll20.net/editor/"] },
         ["blocking", "responseHeaders"]);
+
+} else {
+
+    // thanks, Firefox.
+    window.requestListener = function (dt) {
+        
+        const hookQueue = getHooks(hooks, dt.url);
+        
+        let filter = getBrowser().webRequest.filterResponseData(dt.requestId);
+        let decoder = new TextDecoder("utf-8");
+        let encoder = new TextEncoder();
+
+        let str = "";
+        filter.ondata = event => {
+            str += decoder.decode(event.data, { stream: true });
+        };
+
+        filter.onstop = _ => {
+            text = injectHooks(text, hookQueue, escapeRegExp);
+            
+            filter.write(encoder.encode(str));
+            filter.close();
+        };
+    }
 }
 
 getBrowser().webRequest.onBeforeRequest.addListener(
-    requestListener,
+    window.requestListener,
     { urls: ["*://app.roll20.net/*"] },
     ["blocking"]);
 
