@@ -9,9 +9,11 @@
         "build": "webpack -w --display-error-details --progress --colors --mode development",
         "start": "web-ext run -s src/static/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
         "start-dev": "web-ext run -s src/static/ --firefox-profile=r20esdev --browser-console --firefox=/usr/bin/firefox-developer-edition --start-url https://app.roll20.net/sessions/new",
-        "test-firefox": "SALENIUM_PORT=4444 nightwatch --env firefox"
+        "test-firefox": "SALENIUM_PORT=4444 nightwatch --env firefox",
+        "test": "ava tests/ava"
     },
     "devDependencies": {
+        "ava": "1.0.0-beta.7",
         "babel-core": "6.26.0",
         "babel-loader": "7.1.2",
         "babel-plugin-syntax-jsx": "6.18.0",
@@ -25,5 +27,14 @@
         "web-ext": "2.8.0",
         "webpack": "4.16.5",
         "webpack-cli": "3.1.0"
-    }
+    },
+
+    "ava": {
+        "require": ["babel-register"],
+		"babel": {
+			"testOptions": {
+				"babelrc": false
+            }
+        }
+	}
 }

@@ -26,7 +26,7 @@ function makeFirefoxProfile() {
 
 module.exports = {
     src_folders: [
-        'nightwatch/tests'
+        'tests/nightwatch/tests'
     ],
 
     globals_path: "nightwatch/globals.js",

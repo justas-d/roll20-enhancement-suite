@@ -104,7 +104,7 @@ class Lexer {
             return ret;
         }
 
-        alert(`Table export lexer matched unknown start of token: ${this.charStream[this.readHead]}`);
+        throw new Error(`Table export lexer matched unknown start of token: ${this.charStream[this.readHead]}`)
         return null;
     }
 }
@@ -119,7 +119,9 @@ class Parser {
 
         for (let i = 0; i < numArgs; i++) {
             tokens[i] = this.lexer.nextToken();
-            if (!tokens[i]) alert(`${who} expected ${numArgs}, got ${i + 1}`);
+            if (!tokens[i]) { 
+                throw new Error(`${who} expected ${numArgs}, got ${i + 1}`);
+            }
         }
 
         return tokens;
@@ -150,15 +152,13 @@ class Parser {
                     return ret;
 
                 } else {
-                    alert(`Unknown TableExport command: ${token.command}`);
-                    return null;
+                    throw new Error(`Unknown TableExport command: ${token.command}`);
                 }
             } else if (token.eof) {
                 ret.eof = true;
                 return ret;
             } else {
-                alert(`Unexpected token: ${token}. Expected a command token.`);
-                return null;
+                throw new Error(`Unexpected token: ${token}. Expected a command token.`);
             }
 
         } while (token.eof === undefined);
@@ -191,7 +191,7 @@ class Runtime {
                     delete statement.item.tableName;
                     table.items[statement.item.name] = statement.item;
                 } else {
-                    alert(`Table not found: ${statement.item.tableName}`);
+                    throw new Error(`Table not found: ${statement.item.tableName}`);
                 }
             }
 
@@ -216,11 +216,6 @@ TableExportLang.naiveVerify = function (charStream) {
     return true;
 }
 
-TableExportLang.parse = c => new Runtime(c).run()
+TableExportLang.parse = c => new Runtime(c).run();
 
-export {
-    Runtime as TokenExportRuntime,
-    Lexer as TokenExportLexer,
-    Parser as TokenExportParser,
-    TableExportLang
-};
+export { TableExportLang };

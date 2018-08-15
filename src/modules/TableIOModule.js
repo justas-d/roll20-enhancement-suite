@@ -86,12 +86,19 @@ class TableIOModule extends R20Module.OnAppLoadBase {
     importTablesTableExport(e) {
         if (!TableExportLang.naiveVerify(e)) return;
 
-        const tables = TableExportLang.parse(e);
-        if (!tables || tables.length <= 0) return;
+        let tables = null;
+        try {
+            tables = TableExportLang.parse(e);
+        } catch(err) {
+            alert(err);
+        }
+        if(!tables) return;
 
+        if (!tables || tables.length <= 0) return;
+    
         for (let tableName in tables) {
             TableIO.importJson(tables[tableName]);
-        }
+        }        
     }
 
     onImportClicked(e) {
