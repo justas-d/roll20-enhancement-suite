@@ -17,6 +17,7 @@ function requestListener(dt) {
 
     if (chrome) {
 
+        // TODO : replace this with a full url match against the editor html when we want to reset the redirect table
         if (dt.url.includes("/editor/")) {
             //hasBeenRedirected = {};
         }
@@ -62,7 +63,9 @@ function requestListener(dt) {
                 
                     response.text().then(text => {
                         
-                        text = text.replace("soundManager.url = '/js/soundmanager/';", "soundManager = {};soundManager.url = '/js/soundmanager/';");
+                        text = text.replace("jQuery.ready.promise().done( fn );", "window.r20esready = window.r20esready || []; window.r20esready.push(fn);");
+                        text = text.replace("var d20=d20||{};", "var d20=d20||{};window.d20=d20;");
+
                         const blob = new Blob([text], {type: "application/json"});
 
                         const url = window.URL.createObjectURL(blob);
@@ -88,6 +91,10 @@ function requestListener(dt) {
                                 }
                             }
                             console.log("the thing happens now");
+
+                            setTimeout(() => {
+                                window.r20esready.each(f => f());
+                            }, 1000);
                         }
                     })
                 })
