@@ -11,127 +11,88 @@ function addModToQueueIfOk(dt, mod, queue, hook) {
     }
 }
 
-let hasBeenRedirected = false;
-let payload = null;
-
-let redirectPayload = btoa(`
-{
-let s = document.createElement("script");
-s.src = "/r20es-chrome-hack";
-document.head.appendChild(s);
-}`
-);
+let hasBeenRedirected = {};
 
 function requestListener(dt) {
 
     if (chrome) {
 
-        if (dt.url.includes("/editor/")) { hasBeenRedirected = false; }
-
-        else if (dt.url.includes("/r20es-chrome-hack")) {
-            console.log("INTERCEPT!");
-            //if (payload === null) {
-                //return { redirectUrl: `data:application/javascript;base64,${redirectPayload}` };
-            //}
-
-          //  console.log(payload);
-            //const url = window.URL.createObjectURL(payload);
-            
-            //console.log("PAYLOAD INTERCEPTED!");
-
-            /*
-                 SOME IDEAS:
-
-                 * Isolate the unsafe script part of the payload
-                    * replace alert with non https:// urls see wot happens
-                 * Inject a script the eval's the code?
-                 * EVAL THE CODE FROM HERE? window.eval?
-            */
-
-            //const wtf = btoa(`eval("${}")`);
-            //return { redirectUrl: `data:application/javascript;base64,${wtf}`};
-
-            /*
-            str = str.replace(new RegExp(escapeRegExp(mod.find), 'g'), _ => {
-                window.modPatchTesting.onModHooked(mod, hook);
-                return mod.patch;
-            });
-            */
-           //window.URL.revokeObjectURL(url);
-
-         //  return { redirectUrl: `data:application/javascript;base64,${btoa("alert('still_going');")}`};
-           //return { redirectUrl: "javascript:"+payload };
-
-            //const b64 = btoa(payload);
-            //console.log(b64.substring(0,5000));
-            //const b64 = btoa("alert('pwd')");
-
-            //return { redirectUrl: `data:application/javascript;base64,${b64}` };
-            return {cancel: true};
+        if (dt.url.includes("/editor/")) {
+            //hasBeenRedirected = {};
         }
 
-        else if (dt.url.includes("app.js")) {
-            
-            if (hasBeenRedirected) return;
-            hasBeenRedirected = true;
+        if (dt.url.includes("js")) {
+            if (hasBeenRedirected[dt.url]) {
+                console.log(`SKIP ${dt.url}`);
+                return;
+            }
+
+            hasBeenRedirected[dt.url] = true;
+
+
+            console.log(`redirecting ${dt.url}`);
 
             /*
-            console.log(dt.url);
-            console.log("dispached fetch");
-            fetch(dt.url).then(response => {
-                console.log("fetch response");
-                /*
-                response.blob().then(data => {
-                    payload = data;
-                });
-                
-                
-                response.text().then(data => {
-                    console.log("text response");
-                    payload = data;
-                });
-                
-            });
-
-       
-            /*
-            let s = document.createElement("script");
-            s.text = "fetch("/r20es-chrome-hack", {mode: 'no-cors'});";
-            document.head.appendChild(s);
+            Note(Justas): so this kinda works but the main problem is that the state of the DOM is not what the scripts were designed for.
+                          I have no idea what that state is and if it's even possible to reset the DOM to that state.
             */
 
-            console.log("redirecting...");
-
             const payload = `
-        
-                fetch("https://app.roll20.net/assets/app.js?1534264843")
+{
+            let order = [
+                "https://app.roll20.net/v2/js/jquery-1.9.1.js",
+                "https://app.roll20.net/v2/js/jquery.migrate.js",
+                "https://app.roll20.net/js/featuredetect.js?2",
+                "https://app.roll20.net/editor/startjs",
+                "https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js",
+                "https://app.roll20.net/js/d20/loading.js",
+                "https://app.roll20.net/assets/firebase.2.4.0.js",
+                "https://app.roll20.net/assets/base.js",
+                "https://app.roll20.net/assets/app.js",
+                "https://app.roll20.net/js/tutorial_tips.js",
+                ];
+
+                const localUrl = "${dt.url}";
+                
+
+                fetch(localUrl, {method: "GET", mode: "same-origin", headers: {"Accept": "application/javascript"}})
                 .then(response => {
                 
                     console.log(response);
                 
-                    response.blob().then(blob => {
-                
+                    response.text().then(text => {
+                        
+                        text = text.replace("soundManager.url = '/js/soundmanager/';", "soundManager = {};soundManager.url = '/js/soundmanager/';");
+                        const blob = new Blob([text], {type: "application/json"});
+
                         const url = window.URL.createObjectURL(blob);
                         console.log(blob);
                 
-                        let s = document.createElement("script");
-                        s.src = url;
-                        s.async = false;
-                        document.head.appendChild(s);
-                        
-                        
+                        window.r20esChrome = window.r20esChrome || [];
+                        window.r20esChrome.push({url: localUrl, elem: url});
+
                         console.log("content script done");
+
+                        if(window.r20esChrome.length >= 10) {
+                            for(const url of order) {
+                                for(const data of window.r20esChrome) {
+                                    if(data.url.startsWith(url)) {
+
+                                        let s = document.createElement("script");
+                                        s.src = data.elem;
+                                        s.async = false;
+                
+                                        document.body.appendChild(s);
+                                        break;
+                                    }
+                                }
+                            }
+                            console.log("the thing happens now");
+                        }
                     })
                 })
-
-                {
-                    let s = document.createElement("script");
-                    s.src = "/r20es-chrome-hack";
-                    s.async = false;
-                    document.head.appendChild(s);
-                    }
-                `
-           return { redirectUrl: `data:application/javascript;base64,${btoa(payload)}` };
+            }`
+            return { redirectUrl: `data:application/javascript;base64,${btoa(payload)}` };
         }
     } else {
         let hookQueue = [];
