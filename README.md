@@ -12,3 +12,23 @@
 </p>
 
 <hr>
+
+## Building
+
+Pull dependencies:
+```
+npm install
+```
+
+Start webpack:
+```
+npm run start
+```
+
+Built extention can be now found in `src/static/`
+
+To start web-ext for automatically install and reloading the extention within Firefox, use:
+```
+npm run start
+```
+This will use the `r20esdev` profile.
