@@ -36,7 +36,7 @@ addHook({
 
     includes: "assets/app.js",
     find: `$("#loading-overlay").hide()`,
-    patch: `$("#loading-overlay").hide();if(window.r20es && window.r20es.onAppLoad) window.r20es.onAppLoad.fire(null); else {alert("R20ES global state is undefined. R20ES will not function properly.");}`
+    patch: `$("#loading-overlay").hide();if(window.r20es && window.r20es.onLoadingOverlayHide) window.r20es.onLoadingOverlayHide(); `
 })
 
 addHook({

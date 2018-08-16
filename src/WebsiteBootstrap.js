@@ -106,6 +106,14 @@ if (window.r20es.isLoading) {
     window.r20es.onAppLoad.addEventListener(setIsLoadingToFalse);
 }
 
+window.r20es.onLoadingOverlayHide = function(){
+    if("r20es" in window) {
+        window.r20es.onAppLoad.fire();
+    } else {
+        alert("R20ES global state is undefined. R20ES will not function properly.");
+    }
+}
+
 window.r20es.canInstallModules = true;
 
 console.log("WebsiteBootstrap.js done.");
