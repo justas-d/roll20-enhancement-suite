@@ -14,6 +14,7 @@ if (isChrome()) {
 }
 
 window.bootstrapTable = {};
+window.hasInjectedModules = false;
 
 new DialogFormsBootstrapper().bootstrap();
 new SettingsBootstrapper().bootstrap();
@@ -26,6 +27,12 @@ for (let id in window.bootstrapTable) {
 }
 
 function injectModules() {
+
+    if(window.hasInjectedModules) {
+        return;
+    }
+    window.hasInjectedModules = true;
+    
     try {
         console.log("ContentScript.js is injecting modules.");
 
