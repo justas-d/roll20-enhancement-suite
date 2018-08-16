@@ -12,7 +12,7 @@ class DialogBase {
         this.close = this.close.bind(this);
 
         document.body.insertBefore(this.getRoot(), document.body.firstElementChild);
-        dialogPolyfill.registerDialog(this.getRoot());
+        if(window.dialogPolyfill) dialogPolyfill.registerDialog(this.getRoot());
     }
 
     getRoot = _ => this._root;
@@ -22,7 +22,7 @@ class DialogBase {
 
     internalRender() {
         this.getRoot().appendChild(this.render());
-        dialogPolyfill.reposition(this.getRoot());
+        if(window.dialogPolyfill) dialogPolyfill.reposition(this.getRoot());
     }
 
     rerender() {
