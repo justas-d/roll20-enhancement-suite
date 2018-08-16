@@ -69,7 +69,8 @@ if (isChrome()) {
 
         window.r20esChrome = {
             scriptQueue: [],
-            readyCallbacks: []
+            readyCallbacks: [],
+            urlsToFree: [],
         };
 
         window.r20esChrome.scriptOrder = [
@@ -114,6 +115,7 @@ if (isChrome()) {
                         const blob = new Blob([text], { type: "application/json" });
 
                         const url = window.URL.createObjectURL(blob);
+                        window.r20esChrome.urlsToFree.push(url);
                         console.log(blob);
 
                         window.r20esChrome.scriptQueue.push({
@@ -140,6 +142,12 @@ if (isChrome()) {
                                     }
                                 }
                             }
+
+                            const cleanupPayload = "window.r20esChrome.urlsToFree.forEach(window.URL.revokeObjectURL); console.log('freed blob URLs')";
+                            let s = document.createElement("script");
+                            s.src = `data:application/javascript;base64,${btoa(cleanupPayload)}`;
+                            s.async = false;
+                            document.body.appendChild(s);
 
                             console.log("scripts injected.");
 
