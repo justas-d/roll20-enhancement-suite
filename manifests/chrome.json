@@ -10,8 +10,7 @@
         "*://app.roll20.net/editor/",
         "webRequest",
         "webRequestBlocking",
-        "storage",
-        "tabs"
+        "storage"
     ],
     "content_scripts": [
         {
@@ -19,24 +18,17 @@
                 "*://app.roll20.net/editor/"
             ],
             "js": [
-                "js/ChromeContent.js"
+                "ContentScript.js"
             ]
         }
     ],
-    
     "background": {
         "scripts": [
-            "js/Background.js"
+            "Background.js"
         ]
     },
-    "applications": {
-        "gecko": {
-            "id": "{ffed5dfa-f0e1-403d-905d-ac3f698660a7}"
-        }
-    },
     "web_accessible_resources": [
-        "css/*",
-        "js/*",
-        "thirdparty/*"
+        "*.js",
+        "*.css"
     ]
 }
