@@ -2,18 +2,18 @@ import { findByIdAndRemove } from "./MiscUtils";
 
 let TokenContextMenu = {}
 
-TokenContextMenu.getInternalData = function() {
+TokenContextMenu.getInternalData = function () {
+    if (!("tokenContextMenu" in window.r20es)) {
+        window.r20es.tokenContextMenu = {
+            widgets: [],
+            idTop: 0,
+        };
+    }
+
     return window.r20es.tokenContextMenu;
 }
 
-TokenContextMenu.setupInternalData = function() {
-    window.r20es.tokenContextMenu = {
-        widgets: [],
-        idTop: 0,
-    };
-}
-
-TokenContextMenu.addButton = function(text, callback, _options) {
+TokenContextMenu.addButton = function (text, callback, _options) {
     /*
         Options:
             mustHaveSelection: boolean -> only add the menu item when there is one or more object selected
@@ -22,26 +22,26 @@ TokenContextMenu.addButton = function(text, callback, _options) {
     const data = TokenContextMenu.getInternalData();
     const id = `r20es-token-ctx-menu-button-${data.idTop++}`
 
-    const payload =  {
+    const payload = {
         id,
-        text, 
+        text,
         callback,
     };
-    
-    if(_options)
+
+    if (_options)
         payload.options = _options;
 
     data.widgets.push(payload);
 }
 
-TokenContextMenu.removeButton = function(text, callback) {
+TokenContextMenu.removeButton = function (text, callback) {
     const all = TokenContextMenu.getInternalData().widgets;
-    let idx = all.length; 
+    let idx = all.length;
 
-    while(idx --> 0) {
+    while (idx-- > 0) {
         const cur = all[idx];
 
-        if(cur.text === text && cur.callback === callback) {
+        if (cur.text === text && cur.callback === callback) {
             findByIdAndRemove(cur.id);
             all.splice(idx, 1);
             return true;
@@ -51,4 +51,4 @@ TokenContextMenu.removeButton = function(text, callback) {
     return false;
 }
 
-export {TokenContextMenu};
+export { TokenContextMenu };

@@ -51,7 +51,6 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
     }
 
     setup() {
-        TokenContextMenu.setupInternalData();
         this.observer = new MutationObserver(this.observerCallback);
         this.observer.observe(document.body, { childList: true, subtree: true });
     }
