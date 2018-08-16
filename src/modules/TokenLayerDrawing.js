@@ -6,31 +6,35 @@ import { R20 } from "../tools/R20";
 class TokenLayerDrawing extends R20Module.SimpleBase {
     setup() {
         window.r20es.tokenDrawBg = function (ctx, graphic) {
+            // careful here: tokenDrawBg will run in the renderer and crash recovery requires a referesh
+            try {
+                const data = getLayerData(graphic.model.get("layer"));
 
-            const data = getLayerData(graphic.model.get("layer"));
+                ctx.save();
+                ctx.globalAlpha = 1;
+                ctx.lineWidth = 2; // TODO : config for this
 
-            ctx.save();
-            ctx.globalAlpha = 1;
-            ctx.lineWidth = 2; // TODO : config for this
+                ctx.rotate(-getRotation(ctx));
 
-            ctx.rotate(-getRotation(ctx));
+                let sz = 18
+                ctx.font = "bold " + sz + "px Arial";
+                let txtSize = ctx.measureText(data.txt);
+                let offX = Math.floor(graphic.get("width") / 2) - txtSize.width;
+                let offY = Math.floor(graphic.get("height") / 2);
 
-            let sz = 18
-            ctx.font = "bold " + sz + "px Arial";
-            let txtSize = ctx.measureText(data.txt);
-            let offX = Math.floor(graphic.get("width") / 2) - txtSize.width;
-            let offY = Math.floor(graphic.get("height") / 2);
+                ctx.fillStyle = data.bg;
+                ctx.fillRect(offX, offY - sz, txtSize.width, sz);
 
-            ctx.fillStyle = data.bg;
-            ctx.fillRect(offX, offY - sz, txtSize.width, sz);
+                ctx.strokeStyle = "rgba(0,0,0, 1)";
+                ctx.fillStyle = "rgba(255,255,255, 1)";
 
-            ctx.strokeStyle = "rgba(0,0,0, 1)";
-            ctx.fillStyle = "rgba(255,255,255, 1)";
+                ctx.strokeText(data.txt, offX, offY);
+                ctx.fillText(data.txt, offX, offY);
 
-            ctx.strokeText(data.txt, offX, offY);
-            ctx.fillText(data.txt, offX, offY);
-
-            ctx.restore();
+                ctx.restore();
+            } catch (err) {
+                console.log(err);
+            }
         };
 
         R20.renderAll();
@@ -44,7 +48,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
 
 if (R20Module.canInstall()) new TokenLayerDrawing(__filename).install();
 
-const hook = R20Module.makeHook(__filename,{
+const hook = R20Module.makeHook(__filename, {
     id: "tokenLayerDrawing",
     name: "Token layer drawing",
     description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
