@@ -1,6 +1,6 @@
 import { hooks } from './Hooks.js'
 import { ModPatchTesting } from './tools/ModPatchTesting.js';
-import { escapeRegExp, getBrowser } from './tools/MiscUtils.js';
+import { escapeRegExp, getBrowser, isChrome } from './tools/MiscUtils.js';
 import { Config } from './tools/Config.js';
 
 window.modPatchTesting = new ModPatchTesting(hooks);
@@ -31,7 +31,7 @@ function getHooks(hooks, url) {
 }
 
 function injectHooks(intoWhat, hookQueue, escapeFunc) {
-    if(hookQueue.length <= 0) return intoWhat;
+    if (hookQueue.length <= 0) return intoWhat;
     7
     for (let combo of hookQueue) {
         const mod = combo.mod;
@@ -49,7 +49,7 @@ function injectHooks(intoWhat, hookQueue, escapeFunc) {
     return intoWhat;
 }
 
-if (chrome) {
+if (isChrome()) {
 
     window.redirectCount = 0;
     window.hasBeenRedirected = {};
@@ -146,8 +146,19 @@ if (chrome) {
                             setTimeout(() => {
                                 window.r20esChrome.readyCallbacks.each(f => f());
 
-                                setTimeout(() => $("#loading-overlay").hide(), 10000);
-                            }, 1000);
+                                setTimeout(() => {
+                                    $("#loading-overlay").hide();
+                                    window.r20es.onLoadingOverlayHide();
+                                }, 10000);
+
+                                /*
+                                    NOTE(Justas):
+                                    This notifies ContentScript.js to inject module scripts.
+                                    Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
+                                    contratry to what happens on Firefox.
+                                */
+                                window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
+                            }, 500);
                         }
                     })
                 });
@@ -155,7 +166,7 @@ if (chrome) {
 
         console.log("init environment");
     }
-              
+
     window.requestListener = function (dt) {
         if (dt.url === "https://app.roll20.net/editor/") {
             console.log("RESET REDIRECT TABLE");
@@ -221,9 +232,10 @@ if (chrome) {
 
     // thanks, Firefox.
     window.requestListener = function (dt) {
-        
+
         const hookQueue = getHooks(hooks, dt.url);
-        
+        if(hookQueue.length <= 0) return;
+
         let filter = getBrowser().webRequest.filterResponseData(dt.requestId);
         let decoder = new TextDecoder("utf-8");
         let encoder = new TextEncoder();
@@ -234,8 +246,8 @@ if (chrome) {
         };
 
         filter.onstop = _ => {
-            text = injectHooks(text, hookQueue, escapeRegExp);
-            
+            str = injectHooks(str, hookQueue, escapeRegExp);
+
             filter.write(encoder.encode(str));
             filter.close();
         };

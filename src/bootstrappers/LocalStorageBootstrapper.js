@@ -1,6 +1,6 @@
 import { R20Bootstrapper } from "../tools/R20Bootstrapper";
 import { Config } from "../tools/Config";
-import { getBrowser } from "../tools/MiscUtils";
+import { getBrowser, isChrome } from "../tools/MiscUtils";
 
 
 class LocalStorageBootstrapper extends R20Bootstrapper.Base {
@@ -31,7 +31,7 @@ class LocalStorageBootstrapper extends R20Bootstrapper.Base {
             externalCallback(patch);
         }
 
-        if(chrome) {
+        if (isChrome()) {
             chrome.storage.local.get({}, callback);
         } else {
             browser.storage.local.get().then(callback)

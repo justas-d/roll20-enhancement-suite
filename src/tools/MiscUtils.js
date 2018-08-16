@@ -1,3 +1,5 @@
+import { detect as detectBrowser } from "detect-browser";
+
 function copy(what, overrides) {
     let copy = Object.assign({}, what);
     if (overrides) {
@@ -107,10 +109,15 @@ function injectScript(name) {
     document.head.appendChild(s);
 }
 
-export { getBrowser, readFile, safeParseJson, 
-    replaceAll, escapeRegExp, findByIdAndRemove, 
-    copy, getTransform, getRotation, 
+function isChrome() {
+    return detectBrowser().name === "chrome";
+}
+
+export {
+    getBrowser, readFile, safeParseJson,
+    replaceAll, escapeRegExp, findByIdAndRemove,
+    copy, getTransform, getRotation,
     basename, safeCall, removeAllChildren,
-    injectScript
+    injectScript, isChrome
 };
 
