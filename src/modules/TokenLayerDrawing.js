@@ -33,7 +33,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
 
                 ctx.restore();
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
         };
 

@@ -11,10 +11,11 @@ function copy(what, overrides) {
 function getTransform(ctx) {
     if ('currentTransform' in ctx) {
         return ctx.currentTransform
-    }
-    // restructure FF's array to an Matrix like object
-    else if (ctx.mozCurrentTransform) {
+    } else if("getTransform" in ctx) {
+        return ctx.getTransform();
+    } else if (ctx.mozCurrentTransform) {
         let a = ctx.mozCurrentTransform;
+        // restructure FF's array to an Matrix like object
         return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] };
     }
 };
