@@ -31,16 +31,23 @@ const addStaticFolder = folder => {
 addSourceFolder("./src/");
 addSourceFolder("./src/modules/");
 
-addStaticFolder("./thirdparty/");
 addStaticFolder("./css/");
-
 addStaticFile("icon.svg", "./assets/icon.svg");
 
 const browserData = {
     "firefox": {
         target: "firefox",
-        manifest: "./manifests/firefox.json"
+        manifest: "./manifests/firefox.json",
+        extraFiles: [
+            "./thirdparty/dialog-polyfill/dialog-polyfill.css",
+            "./thirdparty/dialog-polyfill/dialog-polyfill.js"
+        ]
     },
+    
+    "chrome": {
+        target: "chrome",
+        manifest: "./manifests/chrome.json"
+    }
 }
 
 module.exports = (_env, argv) => {
@@ -63,6 +70,12 @@ module.exports = (_env, argv) => {
         const packageOutputPath = path.join(path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev");
 
         addStaticFile("manifest.json", browser.manifest);
+
+        if(browser.extraFiles) {
+            for(const file of browser.extraFiles) {
+                addStaticFile(path.basename(file), file);
+            }
+        }
 
         let config = {
             context: __dirname,
