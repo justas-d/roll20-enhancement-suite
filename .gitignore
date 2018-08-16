@@ -6,3 +6,5 @@ tests_output/
 dist/zip/
 selenium-debug.log
 selenium-server.log
+builds/
+dist/

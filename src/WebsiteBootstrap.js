@@ -26,7 +26,7 @@ if(window.r20es.recvPluginMsg) {
 window.r20es.recvPluginMsg = function(e) {
     if (e.origin !== Config.appUrl) return;
 
-    console.log("Injected globals.js received message from content-script with proper origin.");
+    console.log("Injected WebsiteBootstrap.js received message from content-script with proper origin.");
 
     if (e.data.r20esInitialConfigs) {
         const configs = e.data.r20esInitialConfigs;
@@ -48,7 +48,7 @@ window.r20es.recvPluginMsg = function(e) {
             console.log(hook.config);
         }
         
-        console.log("globals.js applied INITIAL configs.");
+        console.log("WebsiteBootstrap.js applied INITIAL configs.");
         window.postMessage({ r20esLoadModules: true }, Config.appUrl);
         window.postMessage({ r20esAppWantsSync: configs }, Config.appUrl);
     }
@@ -108,4 +108,4 @@ if (window.r20es.isLoading) {
 
 window.r20es.canInstallModules = true;
 
-console.log("r20es website bootstrap done.");
+console.log("WebsiteBootstrap.js done.");

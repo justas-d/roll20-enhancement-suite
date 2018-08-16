@@ -1,57 +1,125 @@
 const path = require('path');
 const webpack = require('webpack');
 const fs = require('fs');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const ZipPlugin = require('zip-webpack-plugin');
 
 let entry = {};
+let staticFiles = {};
 
-function registerFolder(folder) {
+const addSourceFolder = folder => {
     fs.readdirSync(folder).forEach(f => {
-        if(!f.endsWith(".js")) return;
-        const name = f.slice(0, -3);
+        if (fs.lstatSync(folder + f).isDirectory()) return;
 
-        entry[name] = folder + f;
+        entry[f] = folder + f;
     });
 }
 
-registerFolder("./src/");
-registerFolder("./src/modules/");
+const addStaticFile = (mappedName, sourcePath) => {
+    staticFiles[mappedName] = sourcePath;
+}
 
-module.exports = {
-    context: __dirname,
-    node: { __filename: true},
-    
-    entry: entry,
-    output: {
-        // This copies each source entry into the extension dist folder named
-        // after its entry config key.
-        path: path.join(path.resolve(__dirname), 'src', 'static', 'js'),
-        filename: '[name].js',
+const addStaticFolder = folder => {
+    fs.readdirSync(folder).forEach(f => {
+        const path = folder + f;
+        if (fs.lstatSync(path).isDirectory()) return;
+        addStaticFile(f, path);
+    });
+}
+
+
+addSourceFolder("./src/");
+addSourceFolder("./src/modules/");
+
+addStaticFolder("./thirdparty/");
+addStaticFolder("./css/");
+
+addStaticFile("icon.svg", "./assets/icon.svg");
+
+const browserData = {
+    "firefox": {
+        target: "firefox",
+        manifest: "./manifests/firefox.json"
     },
-    module: {
-        // This transpiles all code (except for third party modules) using Babel.
-        rules: [{
-            exclude: /node_modules/,
-            test: /\.js$/,
-            // Babel options are in .babelrc
-            use: ['babel-loader'],
-        }],
-    },
-    resolve: {
-        // This allows you to import modules just like you would in a NodeJS app.
-        extensions: ['.js', '.jsx'],
-        modules: [
-            'src',
-            'node_modules',
-        ],
-    },
-    plugins: [
-        // Since some NodeJS modules expect to be running in Node, it is helpful
-        // to set this environment var to avoid reference errors.
-        new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('production'),
-        }),
-    ],
-    // This will expose source map files so that errors will point to your
-    // original source files instead of the transpiled files.
-    devtool: 'sourcemap',
-};
+}
+
+module.exports = (_env, argv) => {
+    let env = _env || {};
+
+    const browsers = env.browsers && env.browsers.split(',');
+    if (!browsers || browsers.length <= 0) {
+        console.error("CLI arg --env.browsers with valid values expected but not found.");
+        process.exit(1);
+    }
+
+    const isProd = argv.mode === "production";
+    const wantsZip = "zip" in env && env.zip;
+
+    console.log(browsers);
+    return browsers.map(b => {
+        const browser = browserData[b];
+
+        const sourceOutputPath = path.join(path.resolve(__dirname), "builds", browser.target, isProd ? "prod" : "dev");
+        const packageOutputPath = path.join(path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev");
+
+        addStaticFile("manifest.json", browser.manifest);
+
+        let config = {
+            context: __dirname,
+            node: { __filename: true },
+            target: "web",
+
+            entry: entry,
+
+            output: {
+                path: sourceOutputPath,
+                filename: '[name]',
+            },
+
+            module: {
+                rules: [
+                    {
+                        test: /\.js$/,
+                        exclude: /node_modules/,
+                        use: [{
+                            loader: 'babel-loader',
+                            options: {
+                                plugins: [
+                                    ['transform-define', {
+                                        'process.env.BUILD_TARGET': browser.target,
+                                        'process.env.NODE_ENV': argv.mode,
+                                    }],
+                                ]
+                            }
+                        }],
+                    },
+                ],
+            },
+
+            resolve: {
+                extensions: ['.js', '.jsx'],
+                modules: [
+                    'src',
+                    'node_modules',
+                ],
+            },
+
+            plugins: [
+                new CopyWebpackPlugin(Object.keys(staticFiles).reduce((accum, mappedName) => {
+                    const sourcePath = staticFiles[mappedName];
+                    accum.push({ from: sourcePath, to: path.join(sourceOutputPath, mappedName) });
+                    return accum;
+                }, [])),
+                new webpack.DefinePlugin({ 'process.env.NODE_ENV': JSON.stringify('production'), }),
+            ],
+
+            devtool: 'sourcemap',
+        };
+
+        if (wantsZip) {
+            config.plugins.push(new ZipPlugin({ path: packageOutputPath, filename: "r20es.zip" }))
+        }
+
+        return config;
+    });
+}

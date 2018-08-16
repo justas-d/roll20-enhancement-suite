@@ -289,7 +289,7 @@ class SettingsBootstrapper extends R20Bootstrapper.Base {
     }
 
     setup() {
-        this.injectCSS(getBrowser().runtime.getURL("css/settings.css"), document.head, this.cssId);
+        this.injectCSS(getBrowser().runtime.getURL("settings.css"), document.head, this.cssId);
 
     }
 

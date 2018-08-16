@@ -20,7 +20,7 @@ function injectScript(name) {
 
     var s = document.createElement("script");
     s.async = false;
-    s.src = getBrowser().extension.getURL(`js/${name}`);
+    s.src = getBrowser().extension.getURL(name);
 
     s.onload = () => { s.remove(); };
     document.head.appendChild(s);
@@ -37,7 +37,7 @@ function recvMsgFromApp(e) {
     if (e.origin !== Config.appUrl) return;
     if (e.data.r20esLoadModules) {
         try {
-            console.log("bootstrap.js is injecting modules.");
+            console.log("ContentScript.js is injecting modules.");
 
             // inject modules
             for (let hookId in hooks) {
@@ -63,10 +63,10 @@ function recvMsgFromApp(e) {
         injectScript("WebsiteBootstrapAfter.js");
         window.bootstrapTable = undefined;
 
-        console.log("bootstrap.js is done!");
+        console.log("ContentScript.js is done!");
     }
 }
 
 window.addEventListener("message", recvMsgFromApp);
 
-console.log("bootstrap.js is waiting for an OK from globals.js to inject modules.");
+console.log("ContentScript.js is waiting for an OK from globals.js to inject modules.");

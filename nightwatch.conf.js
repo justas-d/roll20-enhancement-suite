@@ -1,7 +1,6 @@
-const JSZip = require("jszip");
 const fs = require("fs");
-const manifest = require("./src/static/manifest.json");
-const glob = require('glob');
+const firefoxManifest = require("./manifests/firefox.json");
+const JSZip = require("jszip");
 
 if(!process.env.R20_SESSION) {
     console.error(`environment variable "R20_SESSION" was either not specified or contained an invalid auth token.`);
@@ -10,16 +9,8 @@ if(!process.env.R20_SESSION) {
 
 function makeFirefoxProfile() {
 
-    const xpi = new JSZip();
-
-    glob.sync("./src/static/**/*.*").forEach(f => {
-        if (fs.lstatSync(f).isDirectory()) return;
-
-        xpi.file(f.replace("./src/static/", ""), fs.readFileSync(f));
-    });
-
-    const zip = new JSZip();
-    zip.file(`extensions/${manifest.applications.gecko.id}.xpi`, xpi.generate({ type: 'uint8array' }));
+    let zip = new JSZip();
+    zip.file(`extensions/${firefoxManifest.applications.gecko.id}.xpi`, fs.readFileSync("dist/firefox/prod/r20es.zip"));
     zip.file('prefs.js', 'user_pref("xpinstall.signatures.required", false);');
     return zip.generate({ type: 'base64' });
 }
@@ -29,7 +20,7 @@ module.exports = {
         'tests/nightwatch/tests'
     ],
 
-    globals_path: "nightwatch/globals.js",
+    globals_path: "tests/nightwatch/globals.js",
 
     selenium: {
         start_process: true,

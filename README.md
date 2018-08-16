@@ -20,15 +20,27 @@ Pull dependencies:
 npm install
 ```
 
-Start webpack:
+Start the webpack build process for Firefox:
 ```
-npm run start
+npm run build -- --env.browsers=firefox --mode development
 ```
 
-Built extention can be now found in `src/static/`
+Or for Chrome:
+```
+npm run build -- --env.browsers=chrome --mode development
+```
+The built extention can be found in `builds/(firefox|chome)/(dev|prod)/`.
 
-To start web-ext for automatically install and reloading the extention within Firefox, use:
+
+When devloping with firefox, use web-ext to automatically install and reload the extention:
 ```
 npm run start
 ```
 This will use the `r20esdev` profile.
+
+Packaging:
+```
+npm run build -- --env.browsers=chrome,firefox --mode production --env.zip
+```
+Extention packages can be found in `dist/(firefox|chome)/(dev|prod)/`.
+
