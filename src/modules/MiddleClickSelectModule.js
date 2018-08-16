@@ -9,6 +9,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     }
 
     onClick(e) {
+        console.log(e);
         if (e.button !== 1) return;
 
         const objs = R20.getCurrentPageTokens();
@@ -38,11 +39,11 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     setup() {
         if (!R20.isGM()) return;
         
-        document.addEventListener("click", this.onClick);
+        document.addEventListener("mouseup", this.onClick);
     }
 
     dispose() {
-        document.removeEventListener("click", this.onClick);
+        document.removeEventListener("mouseup", this.onClick);
     }
 }
 
