@@ -4,6 +4,7 @@ import { findByIdAndRemove, getBrowser } from "../tools/MiscUtils";
 import { DialogBase } from "../tools/DialogBase";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";
 import { R20Bootstrapper } from "../tools/R20Bootstrapper";
+import { R20 } from "../tools/R20";
 
 class ConfigEditBase extends DOM.ElementBase {
     constructor(props) {
@@ -121,8 +122,21 @@ class HookConfig extends DOM.ElementBase {
         }
 
         return (
-            <div className="r20es-indent more-settings">
-                <p>{this.hook.description}</p>
+            <div className="more-settings">
+
+                <h3 title={this.hook.id + " " + this.hook.filename}>{this.hook.name}</h3>
+                <hr />
+
+                <section className="r20es-indent description">
+                    <p>{this.hook.description}</p>
+                    
+                    {this.hook.gmOnly &&
+                        <p>This module is only usable by GMs (which you are)</p>
+                    }
+                </section>
+
+                <h3>Options</h3>
+                <hr />
 
                 <ul className="r20es-indent">
                     {elems}
@@ -163,19 +177,24 @@ class HookHeader extends DOM.ElementBase {
     }
 
     render() {
-        const style = this.selected ? { backgroundColor: "rgb(240,240,240)" } : {};
+        let style = {};
+        const isDisabled = !R20.isGM() && this.hook.gmOnly;
+        
+        console.log(isDisabled);
+        
+        if(isDisabled) {
+            style.color = "rgb(200,200,200)";
+        }
+        
+        if(this.selected) {
+            style.backgroundColor = "rgb(240,240,240)";
+        }
 
         return (
             <div>
-                <div style={style} className="r20es-clickable-text" onClick={this.onClick} title={this.hook.id + " " + this.hook.filename}>
+                <div style={style} className="r20es-clickable-text" onClick={this.onClick} title={isDisabled ? "This module is GM only." : ""}>
                     <input onChange={this.onCheckboxChange} checked={this.hook.config.enabled} type="checkbox" />
                     <span className="text">{this.hook.name}</span>
-
-                    {this.hook.gmOnly &&
-                        <span className="text" style={{ float: "right" }}>
-                            GM Only
-                        </span>
-                    }
                 </div>
             </div>
         );
@@ -250,13 +269,12 @@ class SettingsDialog extends DialogBase {
                         )}
                     </div>
 
-                    {this.activeModule &&
-                        <div className="right">
-                            <HookConfig
-                                hook={this.activeModule}
-                            />
-                        </div>
-                    }
+                    <div className="r20es-indent right">
+                        {this.activeModule
+                            ? <HookConfig hook={this.activeModule} />
+                            : <p>Select a module from the left to see it's description and options.</p>
+                        }
+                    </div>
 
                 </DialogBody>
 

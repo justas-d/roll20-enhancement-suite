@@ -25,6 +25,15 @@
     height: 100%;
 }
 
+.r20es-settings-dialog .more-settings > hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.r20es-settings-dialog .more-settings > .description {
+    margin-bottom: 30px;
+}
+
 .r20es-clickable-text:hover {
     background-color: rgb(245,245,245);
 }
