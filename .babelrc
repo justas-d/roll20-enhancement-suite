@@ -12,7 +12,7 @@
     ],
 
     "plugins": [
-        ["transform-react-jsx", { "pragma": "createElementJsx"}],
+        ["transform-react-jsx", { "pragma": "DOM.createElement"}],
         "transform-class-properties"
       ]
 }

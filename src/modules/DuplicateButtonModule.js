@@ -1,5 +1,5 @@
 import { R20Module } from "../tools/R20Module"
-import { createElementJsx } from "../tools/DOM"
+import { DOM } from "../tools/DOM"
 import { R20 } from "../tools/R20";
 import { findByIdAndRemove } from "../tools/MiscUtils";
 

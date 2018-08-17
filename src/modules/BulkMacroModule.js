@@ -1,4 +1,4 @@
-import { createElementJsx } from '../tools/DOM.js'
+import { DOM } from '../tools/DOM.js'
 import { R20Module } from "../tools/R20Module"
 import { R20 } from '../tools/R20.js';
 import { DialogBase } from "../tools/DialogBase";

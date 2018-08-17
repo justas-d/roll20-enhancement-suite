@@ -1,11 +1,11 @@
 import { R20Module } from "../tools/R20Module";
-import { createElementJsx, ElementBase } from "../tools/DOM";
+import { DOM } from "../tools/DOM";
 import { findByIdAndRemove, getBrowser } from "../tools/MiscUtils";
 import { DialogBase } from "../tools/DialogBase";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";
 import { R20Bootstrapper } from "../tools/R20Bootstrapper";
 
-class ConfigEditBase extends ElementBase {
+class ConfigEditBase extends DOM.ElementBase {
     constructor(props) {
         super(props);        
         this.hook = props.hook;
@@ -83,7 +83,7 @@ class CheckboxEdit extends ConfigEditBase {
     }
 }
 
-class HookConfig extends ElementBase {
+class HookConfig extends DOM.ElementBase {
 
     constructor(props) {
         super(props);
@@ -129,7 +129,7 @@ class HookConfig extends ElementBase {
     }
 }
 
-class HookHeader extends ElementBase {
+class HookHeader extends DOM.ElementBase {
     constructor(props) {
         super(props);
 

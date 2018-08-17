@@ -1,31 +1,27 @@
-class ElementBase {
-    render() { }
+function rerender(root, renderFx) {
 
-    rerender() {
+    const nextTo = this.root.nextSibling;
+    const parent = this.root.parentNode;
 
-        const nextTo = this.elementRoot.nextSibling;
-        const parent = this.elementRoot.parentNode;
+    this.root.remove();
 
-        this.elementRoot.remove();
+    const elem = renderFx();
 
-        const elem = this.render();
-        if (nextTo) {
-            parent.insertBefore(elem, nextTo);
-        } else {
-            parent.appendChild(elem);
-        }
-        this.setRoot(elem);
+    if (nextTo) {
+        parent.insertBefore(elem, nextTo);
+    } else {
+        parent.appendChild(elem);
     }
 
-    setRoot = root => this.elementRoot = root;
+    return elem;
 }
 
-function createElementJsx(type, attributes, ...children) {
+function createElement(type, attributes, ...children) {
 
     let elem = null;
     const isFunc = typeof (type) === "function";
 
-    if (isFunc && type.name && type.prototype instanceof ElementBase) {
+    if (isFunc && type.name && type.prototype instanceof DOM.ElementBase) {
         let base = new type(attributes);
         elem = base.render();
         base.setRoot(elem);
@@ -97,24 +93,40 @@ function createElementJsx(type, attributes, ...children) {
                 if (!val) continue;
                 elem.style[elemId] = val[elemId];
             }
-        } else if(attribId.startsWith("data")) {
+        } else if (attribId.startsWith("data")) {
             elem.setAttribute(attribId, val);
         } else {
             elem[attribId] = val;
         }
     }
 
-    //Object.assign(elem, attributes);
-
     return elem;
 }
+
+class ElementBase {
+    render() { }
+
+    rerender() {
+        const elem = rerender(this.elementRoot, () => { return this.render() });
+        this.setRoot(elem);
+    }
+
+    setRoot = root => this.elementRoot = root;
+    getRoot = () => this.elementRoot;
+}
+
+const DOM = {
+    ElementBase,
+    rerender,
+    createElement
+};
 
 function SidebarSeparator() {
     return (
         <span>
-            <div className="style" style={{height: "10px"}}/>
-            <hr/>
-            <div className="style" style={{height: "10px"}}/>
+            <div className="style" style={{ height: "10px" }} />
+            <hr />
+            <div className="style" style={{ height: "10px" }} />
         </span>
     )
 }
@@ -123,4 +135,4 @@ function SidebarCategoryTitle() {
     return <h3 style={{ marginBottom: "5px", marginLeft: "5px" }}></h3>
 }
 
-export { ElementBase, createElementJsx, SidebarSeparator, SidebarCategoryTitle};
+export { DOM, SidebarSeparator, SidebarCategoryTitle };

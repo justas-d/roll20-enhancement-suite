@@ -27,14 +27,18 @@ class SheetTab {
         const data = SheetTab._getInternalData();
         let tab = new SheetTab(name, renderFx, `r20es-character-sheet-tab-${data.idTop++}`);
         data.tabs.push(tab);
-        data.rescanFunc();
+
+        if (typeof(data.rescanFunc) === "function") {
+            data.rescanFunc();
+        }
+        
         return tab;
     }
 
     dispose() {
         this._elements.forEach(el => el.remove());
         this._elements = [];
-        
+
         const data = SheetTab._getInternalData();
         let idx = data.tabs.length;
 

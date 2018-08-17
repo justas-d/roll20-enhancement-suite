@@ -1,4 +1,4 @@
-import { createElementJsx } from "./DOM";
+import { DOM } from "./DOM";
 import { copy } from "./MiscUtils";
 
 function DialogHeader() {
@@ -31,7 +31,7 @@ function CheckboxWithText(_props) {
         type: "checkbox"
     });
 
-    const checkbox = createElementJsx("input", props);
+    const checkbox = DOM.createElement("input", props);
     const Component = props && props.component || "div";
 
     return (<Component>

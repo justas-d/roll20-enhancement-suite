@@ -1,7 +1,7 @@
 import { R20Module } from '../tools/R20Module'
 import { R20 } from '../tools/R20.js';
 import { getLayerData } from '../tools/LayerData.js';
-import { createElementJsx } from '../tools/DOM.js';
+import { DOM } from '../tools/DOM.js';
 import { copy, findByIdAndRemove } from '../tools/MiscUtils.js';
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {

@@ -1,6 +1,6 @@
 import { R20Module } from "../tools/R20Module";
 import { R20 } from "../tools/R20";
-import { createElementJsx } from "../tools/DOM";
+import { DOM } from "../tools/DOM";
 import { findByIdAndRemove } from "../tools/MiscUtils";
 import { TokenContextMenu } from "../tools/TokenContextMenu";
 

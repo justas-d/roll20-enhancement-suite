@@ -1,4 +1,4 @@
-import { createElementJsx } from "./DOM";
+import { DOM } from "./DOM";
 import { removeAllChildren, findByIdAndRemove } from "./MiscUtils";
 
 

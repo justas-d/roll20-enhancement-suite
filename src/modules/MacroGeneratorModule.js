@@ -3,7 +3,7 @@ import { R20 } from "../tools/R20";
 import { OGL5eByRoll20MacroGenerator } from "../macro/OGL5eByRoll20.js";
 import { DialogBase } from "../tools/DialogBase";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";
-import { createElementJsx } from "../tools/DOM";
+import { DOM } from "../tools/DOM";
 import { SheetTab } from "../tools/SheetTab";
 
 const generateButtonId = "r20esgenerate"

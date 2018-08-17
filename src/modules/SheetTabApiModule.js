@@ -1,5 +1,5 @@
 import { R20Module } from '../tools/R20Module'
-import { createElementJsx } from '../tools/DOM.js'
+import { DOM } from '../tools/DOM.js'
 import { SheetTab } from '../tools/SheetTab';
 
 
@@ -143,6 +143,8 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        SheetTab._getInternalData().rescanFunc = null;
+
         const data = SheetTab._getInternalData();
         for(const tab of data.tabs) {
             tab.dispose();

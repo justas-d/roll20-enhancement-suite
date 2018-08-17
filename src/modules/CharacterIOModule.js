@@ -1,7 +1,7 @@
 import { R20Module } from '../tools/R20Module'
 import { CharacterIO } from '../tools/CharacterIO.js'
 import { R20 } from '../tools/R20.js'
-import { createElementJsx, SidebarSeparator, SidebarCategoryTitle } from '../tools/DOM.js'
+import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../tools/DOM.js'
 import { saveAs } from 'save-as'
 import { findByIdAndRemove, readFile, safeParseJson } from '../tools/MiscUtils';
 import { SheetTab } from '../tools/SheetTab';

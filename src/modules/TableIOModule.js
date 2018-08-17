@@ -2,7 +2,7 @@ import { R20Module } from "../tools/R20Module";
 import { R20 } from "../tools/R20";
 import { TableIO } from "../tools/TableIO";
 import { saveAs } from 'save-as'
-import { createElementJsx, SidebarSeparator, SidebarCategoryTitle } from "../tools/DOM";
+import { DOM, SidebarSeparator, SidebarCategoryTitle } from "../tools/DOM";
 import { TableExportLang } from "../tools/TableExportLang";
 import { readFile, safeParseJson, findByIdAndRemove } from "../tools/MiscUtils";
 
