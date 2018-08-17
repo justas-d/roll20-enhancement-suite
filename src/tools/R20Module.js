@@ -173,6 +173,11 @@ R20Module.canInstall = _ => window.r20es && "canInstallModules" in window.r20es 
 
 R20Module.makeHook = function (filename, hook) {
     hook.filename = basename(filename);
+    
+    if(!("gmOnly" in hook)) {
+        hook.gmOnly = false;
+    }
+
     return hook;
 }
 
