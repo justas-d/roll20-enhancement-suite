@@ -1,9 +1,9 @@
 function rerender(root, renderFx) {
 
-    const nextTo = this.root.nextSibling;
-    const parent = this.root.parentNode;
+    const nextTo = root.nextSibling;
+    const parent = root.parentNode;
 
-    this.root.remove();
+    root.remove();
 
     const elem = renderFx();
 
