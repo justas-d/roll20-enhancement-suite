@@ -1,5 +1,5 @@
 .r20es-settings-dialog {
-    width: 30%;
+    width: 50%;
     max-height: 70%;
 
 }
@@ -28,3 +28,17 @@
 .r20es-clickable-text:hover {
     background-color: rgb(245,245,245);
 }
+
+.r20es-dialog>.dialog-body {
+    display: flex;
+}
+
+.dialog-body > .left {
+    white-space: nowrap;
+    flex: 0 2 100%;
+}
+
+.dialog-body > .right {
+    flex: 1 0 50%;
+}
+

@@ -7,7 +7,7 @@ import { R20Bootstrapper } from "../tools/R20Bootstrapper";
 
 class ConfigEditBase extends DOM.ElementBase {
     constructor(props) {
-        super(props);        
+        super(props);
         this.hook = props.hook;
         this.configName = props.configName;
         this.configView = this.hook.configView[this.configName];
@@ -22,8 +22,8 @@ class ConfigEditBase extends DOM.ElementBase {
 }
 
 class StringEdit extends ConfigEditBase {
-    constructor(props) { 
-        super(props); 
+    constructor(props) {
+        super(props);
         this.onChange = this.onChange.bind(this);
     }
 
@@ -32,14 +32,14 @@ class StringEdit extends ConfigEditBase {
         this.setValue(e.target.value);
     }
 
-    render() { 
-        return <input className="compact" type="text" onChange={this.onChange} value={this.getValue() || ""}/>
+    render() {
+        return <input className="compact" type="text" onChange={this.onChange} value={this.getValue() || ""} />
     }
 };
 
 class DropdownEdit extends ConfigEditBase {
-    constructor(props) { 
-        super(props); 
+    constructor(props) {
+        super(props);
         this.onChange = this.onChange.bind(this);
     }
 
@@ -48,11 +48,11 @@ class DropdownEdit extends ConfigEditBase {
         this.setValue(e.target.value);
     }
 
-    render() { 
-        
+    render() {
+
         const vals = [];
 
-        for(const key in this.configView.dropdownValues){
+        for (const key in this.configView.dropdownValues) {
             const val = this.configView.dropdownValues[key];
 
             vals.push(<option value={key}>{val}</option>);
@@ -100,21 +100,24 @@ class HookConfig extends DOM.ElementBase {
         };
 
         let elems = [];
-        for (let cfgId in this.hook.configView) {
-            const cfg = this.hook.configView[cfgId];
-            if (!(cfg.type in elemMap)) {
-                alert(`Unknown config type: ${cfg.type}`);
-                continue;
+
+        if (this.hook.configView) {
+            for (let cfgId in this.hook.configView) {
+                const cfg = this.hook.configView[cfgId];
+                if (!(cfg.type in elemMap)) {
+                    alert(`Unknown config type: ${cfg.type}`);
+                    continue;
+                }
+
+                const Component = elemMap[cfg.type];
+                elems.push(
+                    <li>
+                        <Component configName={cfgId} hook={this.hook} />
+                        <span title={cfgId} className="text">{cfg.display}</span>
+                    </li>
+
+                );
             }
-
-            const Component = elemMap[cfg.type];
-            elems.push(
-                <li>
-                    <Component configName={cfgId} hook={this.hook} />
-                    <span title={cfgId} className="text">{cfg.display}</span>
-                </li>
-
-            );
         }
 
         return (
@@ -134,9 +137,13 @@ class HookHeader extends DOM.ElementBase {
         super(props);
 
         this.hook = props.hook;
+        this.onSelect = props.onSelect;
+        this.selected = props.selected;
+
         this.showConfig = false;
         this.onClick = this.onClick.bind(this);
         this.onCheckboxChange = this.onCheckboxChange.bind(this);
+
     }
 
     onClick(e) {
@@ -144,8 +151,7 @@ class HookHeader extends DOM.ElementBase {
 
         if (e.target.tagName.toLowerCase() === "input") return; // ignore if clicked on the checkbox
 
-        this.showConfig = !this.showConfig;
-        this.rerender();
+        this.onSelect(this.hook);
     }
 
     onCheckboxChange(e) {
@@ -157,36 +163,25 @@ class HookHeader extends DOM.ElementBase {
     }
 
     render() {
+        const style = this.selected ? { backgroundColor: "rgb(240,240,240)" } : {};
+
         return (
             <div>
-                <div className="r20es-clickable-text" onClick={this.onClick} title={this.hook.id + " " + this.hook.filename}>
+                <div style={style} className="r20es-clickable-text" onClick={this.onClick} title={this.hook.id + " " + this.hook.filename}>
                     <input onChange={this.onCheckboxChange} checked={this.hook.config.enabled} type="checkbox" />
                     <span className="text">{this.hook.name}</span>
-                    <span className="text" style={{ float: "right" }}>
-                        {this.hook.gmOnly ? "GM Only ▼" : "▼"}
-                    </span>
-                </div>
 
-                {this.showConfig && <HookConfig hook={this.hook} />}
+                    {this.hook.gmOnly &&
+                        <span className="text" style={{ float: "right" }}>
+                            GM Only
+                        </span>
+                    }
+                </div>
             </div>
         );
     }
 }
 
-function Bucket(props) {
-    const hooks = props.hooks;
-    const name = props.name;
-    const bucket = props.bucket
-
-    return (
-        <div>
-            <h3>{name}</h3>
-            <div className="r20es-indent">
-                {bucket.map(id => <HookHeader hook={hooks[id]} />)}
-            </div>
-        </div>
-    );
-}
 
 function mapObj(obj, fx) {
     return Object.keys(obj).reduce((accum, curVal) => {
@@ -204,10 +199,19 @@ class SettingsDialog extends DialogBase {
     constructor(hooks) {
         super("r20es-settings-dialog");
         this.hooks = hooks;
+
+        this.activeModule = null;
+        this.onSelect = this.onSelect.bind(this);
+        this.prevModuleElem = null;
+    }
+
+    onSelect(selectedModule) {
+        this.activeModule = _.isEqual(this.activeModule, selectedModule) ? null : selectedModule;
+        this.rerender();
     }
 
     render() {
-    
+
         let byCategory = {};
 
         for (let key in this.hooks) {
@@ -229,9 +233,31 @@ class SettingsDialog extends DialogBase {
                 <hr />
 
                 <DialogBody>
-                    {mapObj(byCategory, (bucket, categoryName) =>
-                        <Bucket hooks={this.hooks} bucket={bucket} name={categoryName} />
-                    )}
+                    <div className="left">
+                        {mapObj(byCategory, (bucket, categoryName) =>
+                            <div>
+                                <h3>{categoryName}</h3>
+                                <div className="r20es-indent">
+                                    {bucket.map(id =>
+                                        <HookHeader
+                                            selected={this.activeModule && this.activeModule.id === id}
+                                            onSelect={this.onSelect}
+                                            hook={this.hooks[id]}
+                                        />)
+                                    }
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {this.activeModule &&
+                        <div className="right">
+                            <HookConfig
+                                hook={this.activeModule}
+                            />
+                        </div>
+                    }
+
                 </DialogBody>
 
                 <DialogFooter>
@@ -272,11 +298,13 @@ class SettingsModule extends R20Module.OnAppLoadBase {
         />;
 
         adjacent.parentNode.parentNode.insertBefore(button, adjacent.parentNode);
+
+        this.dialog.show();
     }
 
     dispose() {
         findByIdAndRemove(this.buttonId);
-        if(this.dialog) this.dialog.dispose();
+        if (this.dialog) this.dialog.dispose();
     }
 }
 
