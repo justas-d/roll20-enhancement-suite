@@ -9,7 +9,6 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     }
 
     onClick(e) {
-        console.log(e);
         if (e.button !== 1) return;
 
         const objs = R20.getCurrentPageTokens();
