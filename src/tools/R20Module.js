@@ -14,8 +14,8 @@ R20Module.Base = class ModuleBase {
 
     internalCanInstall() {
         const hook = this.getHook();
-        
-        if(!hook.config.enabled) return false;
+
+        if (!hook.config.enabled) return false;
         if (this.isDisposed) return true;
 
         console.error("Attempted to install module when it's not disposed.")
@@ -62,18 +62,18 @@ R20Module.Base = class ModuleBase {
 
     getAllHooks = _ => window.r20es.hooks;
     getHook() {
-        if(!("hooks") in window.r20es) return null;
+        if (!("hooks") in window.r20es) return null;
 
-        for(const hookId in window.r20es.hooks) {
+        for (const hookId in window.r20es.hooks) {
             const hook = window.r20es.hooks[hookId];
-            if(hook.filename && hook.filename === this.filename) {
+            if (hook.filename && hook.filename === this.filename) {
                 return hook;
             }
-            
+
         }
 
         return null;
-}
+    }
 
     toggleEnabledState(_isEnabled) {
         const hook = this.getHook();
@@ -106,29 +106,30 @@ R20Module.Base = class ModuleBase {
 
         console.log(`Installing module ID: ${this.filename}`);
 
-        let isFirstRun = !(this.filename in window.r20esDisposeTable);
+        let isFirstRun = !(this.filename in window.r20esInstalledModuleTable);
 
         if (isFirstRun) {
             console.log(`First run`);
             this.internalInstallFirstTime();
         } else {
-            // dispose
-            console.log(`Disposing old`);
-            try {
-                const disposeOld = window.r20esDisposeTable[this.filename];
-                disposeOld();
-                window.r20esDisposeTable[this.filename] = undefined;
-                window.r20esInstalledModuleTable[this.filename] = undefined;
-            } catch (err) {
-                console.error(`Failed to dispose but still continuing:`);
-                console.error(err);
+
+            if (this.filename in window.r20esDisposeTable) {
+                // dispose
+                console.log(`Disposing old`);
+                try {
+                    const disposeOld = window.r20esDisposeTable[this.filename];
+                    disposeOld();
+                } catch (err) {
+                    console.error(`Failed to dispose but still continuing:`);
+                    console.error(err);
+                }
             }
 
             console.log(`Calling install update`);
             this.internalInstallUpdate();
         }
 
-        window.r20esDisposeTable[this.filename] = () => {this.dispose();}
+        window.r20esDisposeTable[this.filename] = () => { this.dispose(); }
         window.r20esInstalledModuleTable[this.filename] = this;
 
         console.log(`DONE! module ID: ${this.filename}`);

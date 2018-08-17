@@ -4,13 +4,21 @@ import { safeCall } from "./tools/MiscUtils";
 
 { // avoid leaking into window.*
     let ids = [];
-    for(const id in hooks) ids.push(id);
-    window.postMessage({ r20sAppWantsInitialConfigs: ids}, Config.appUrl);
+    for (const id in hooks) ids.push(id);
+    window.postMessage({ r20sAppWantsInitialConfigs: ids }, Config.appUrl);
 }
 
 window.r20es = window.r20es || {};
-
 window.r20es.hooks = hooks;
+
+// dispose modules
+if ("r20esDisposeTable" in window) {
+    for (const key in window.r20esDisposeTable) {
+        const fx = window.r20esDisposeTable[key];
+        fx();
+        delete window.r20esDisposeTable[key];
+    }
+}
 
 window.r20esInstalledModuleTable = window.r20esInstalledModuleTable || {};
 window.r20esDisposeTable = window.r20esDisposeTable || {};
@@ -19,11 +27,11 @@ if (!("isLoading" in window.r20es)) {
     window.r20es.isLoading = true;
 }
 
-if(window.r20es.recvPluginMsg) {
+if (window.r20es.recvPluginMsg) {
     window.removeEventListener("message", window.r20es.recvPluginMsg);
 }
 
-window.r20es.recvPluginMsg = function(e) {
+window.r20es.recvPluginMsg = function (e) {
     if (e.origin !== Config.appUrl) return;
 
     console.log("Injected WebsiteBootstrap.js received message from content-script with proper origin.");
@@ -31,14 +39,14 @@ window.r20es.recvPluginMsg = function(e) {
     if (e.data.r20esInitialConfigs) {
         const configs = e.data.r20esInitialConfigs;
         const hooks = window.r20es.hooks;
-        
-        for(var id in configs) {
+
+        for (var id in configs) {
             const hook = hooks[id];
             const cfg = configs[id];
 
-            if(!hook) continue;
+            if (!hook) continue;
 
-            if(hook.config) {
+            if (hook.config) {
                 configs[id] = Object.assign(hook.config, cfg);// overwrite defaults
             } else {
                 hook.config = cfg;
@@ -47,7 +55,7 @@ window.r20es.recvPluginMsg = function(e) {
             console.log(id);
             console.log(hook.config);
         }
-        
+
         console.log("WebsiteBootstrap.js applied INITIAL configs.");
         window.postMessage({ r20esLoadModules: true }, Config.appUrl);
         window.postMessage({ r20esAppWantsSync: configs }, Config.appUrl);
@@ -56,9 +64,9 @@ window.r20es.recvPluginMsg = function(e) {
 
 window.addEventListener("message", window.r20es.recvPluginMsg);
 
-window.r20es.syncConfigs = function() {
+window.r20es.syncConfigs = function () {
     let patch = {};
-    for(const id in window.r20es.hooks) {
+    for (const id in window.r20es.hooks) {
         const hook = window.r20es.hooks[id];
 
         patch[id] = hook.config;
@@ -67,7 +75,7 @@ window.r20es.syncConfigs = function() {
     window.postMessage({ r20esAppWantsSync: patch }, Config.appUrl);
 }
 
-for(const id in window.r20es.hooks) {
+for (const id in window.r20es.hooks) {
     window.r20es.hooks[id].saveConfig = window.r20es.syncConfigs;
 }
 
@@ -106,8 +114,8 @@ if (window.r20es.isLoading) {
     window.r20es.onAppLoad.addEventListener(setIsLoadingToFalse);
 }
 
-window.r20es.onLoadingOverlayHide = function(){
-    if("r20es" in window) {
+window.r20es.onLoadingOverlayHide = function () {
+    if ("r20es" in window) {
         window.r20es.onAppLoad.fire();
     } else {
         alert("R20ES global state is undefined. R20ES will not function properly.");
