@@ -26,27 +26,32 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         return $(navAElement.parentNode.parentNode.parentNode).find("." + this.tabStyle);
     }
 
-    onClickNormalNavs(e) {
+    unselectSyntheticNavs(e) {
         const navTabsRoot = e.target.parentNode.parentNode;
-
-        console.log("normal nav");
-        console.log(navTabsRoot);
         $(navTabsRoot).find("a[data-r20es-nav]").each((i, el) => {
             el.parentNode.classList.remove("active");
         });
+    }
 
+    onClickNormalNavs(e) {
+
+        this.unselectSyntheticNavs(e);
         this.getWidgetTabRoots(e.target).each((i, obj) => {
             obj.style.display = "none";
         });
     }
 
     navOnClick(e) {
-        console.log("nav click")
-
+    
+        this.unselectSyntheticNavs(e);
         e.target.parentNode.classList.add("active");
 
+        const targetTabClass = e.target.getAttribute("data-tab");
+
         this.getWidgetTabRoots(e.target).each((i, obj) => {
-            obj.style.display = "block";
+            obj.style.display = obj.classList.contains(targetTabClass) 
+                ? "block"
+                : "none";
         });
     }
 

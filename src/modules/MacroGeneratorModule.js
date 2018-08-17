@@ -4,6 +4,7 @@ import { OGL5eByRoll20MacroGenerator } from "../macro/OGL5eByRoll20.js";
 import { DialogBase } from "../tools/DialogBase";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";
 import { createElementJsx } from "../tools/DOM";
+import { SheetTab } from "../tools/SheetTab";
 
 const generateButtonId = "r20esgenerate"
 
@@ -59,7 +60,7 @@ class PickMacroGeneratorsDialog extends DialogBase {
     }
 
     onToggleAll(e) {
-        $(this.getRoot()).find("input").each((_, input) => {if(input.ignoreToggleAll) return; input.checked = !input.checked;});
+        $(this.getRoot()).find("input").each((_, input) => { if (input.ignoreToggleAll) return; input.checked = !input.checked; });
         e.stopPropagation();
     }
 
@@ -74,7 +75,7 @@ class PickMacroGeneratorsDialog extends DialogBase {
                     <h2>Sheet, category selection.</h2>
                 </DialogHeader>
 
-                <hr/>
+                <hr />
 
                 <DialogBody>
                     <select value={this.activeGenerator ? this.activeGenerator.id : ""} onChange={this.onSelectChange}>
@@ -86,15 +87,15 @@ class PickMacroGeneratorsDialog extends DialogBase {
                         <div style={{ paddingLeft: "12px", paddingBottom: "12px" }}>
                             <button onClick={this.onToggleAll}>Toggle All</button>
                             {checkboxDivs}
-                            <hr/>
-                            <CheckboxWithText 
+                            <hr />
+                            <CheckboxWithText
                                 ignoreToggleAll
-                                checked={this.setIsTokenAction} 
-                                onChecked={this.onTokenActionChecked} 
-                                checkboxText={"Show as Token Action"} 
+                                checked={this.setIsTokenAction}
+                                onChecked={this.onTokenActionChecked}
+                                checkboxText={"Show as Token Action"}
                             />
                         </div>
-                    
+
                     }
                 </DialogBody>
 
@@ -117,7 +118,7 @@ class NoMacrosDialog extends DialogBase {
                     <h2>Notice</h2>
                 </DialogHeader>
 
-                <hr/>
+                <hr />
 
                 <DialogBody>
                     <p>We found nothing to make a macro for.</p>
@@ -225,7 +226,7 @@ class VerifyMacrosDialog extends DialogBase {
     }
 
     onToggleAll(e) {
-        $(this.getRoot()).find("input").each((_, input) => {input.checked = !input.checked;});
+        $(this.getRoot()).find("input").each((_, input) => { input.checked = !input.checked; });
         e.stopPropagation();
     }
 
@@ -236,7 +237,7 @@ class VerifyMacrosDialog extends DialogBase {
                     <h2>Review Changes</h2>
                 </DialogHeader>
 
-                <hr/>
+                <hr />
 
                 <DialogBody>
                     <button onClick={this.onToggleAll}>Toggle All</button>
@@ -267,6 +268,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onPickerDialogClose = this.onPickerDialogClose.bind(this);
         this.onVerifyDialogClose = this.onVerifyDialogClose.bind(this);
+        this.renderSheet = this.renderSheet.bind(this);
     }
 
     onPickerDialogClose(e) {
@@ -289,7 +291,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
             data = data.concat(factory(pc));
         }
 
-        data.sort((a,b) => a.name > b.name);
+        data.sort((a, b) => a.name > b.name);
 
         let added = [];
         let modified = [];
@@ -303,7 +305,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         data.forEach(elem => {
             if (elem.name in existingNames) {
                 elem.oldMacro = existingNames[elem.name].get("action");
-                if(elem.oldMacro === elem.macro) return;
+                if (elem.oldMacro === elem.macro) return;
 
                 modified.push(elem);
             } else {
@@ -342,7 +344,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
                     continue;
                 }
 
-                existing.save({ action: elem.macro, istokenaction: data.setIsTokenAction});
+                existing.save({ action: elem.macro, istokenaction: data.setIsTokenAction });
             } else {
                 pc.abilities.create({
                     name: elem.name,
@@ -360,7 +362,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         e.stopPropagation();
 
         const attrib = "data-characterid";
-        const elem = $(e.target.parentNode).find(`[${attrib}]`)[0];
+        const elem = $(e.target).closest(`[${attrib}]`)[0];
         if (!elem) {
             console.error("Failed to find character id for macro generation");
             return;
@@ -377,6 +379,14 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         this.pickerDialog.show();
     }
 
+    renderSheet() {
+        return (
+            <button onClick={this.onButtonClick}>
+                Generate Macros
+            </button>
+        );
+    }
+
     setup() {
 
         this.pickerDialog = new PickMacroGeneratorsDialog(this.generators);
@@ -387,17 +397,16 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
         this.noMacrosDialog = new NoMacrosDialog();
 
-        window.r20es.macroGeneratorButtonClick = this.onButtonClick;
-
-
+        this.sheetTab = SheetTab.add("Macro Generator", this.renderSheet);
     }
 
     dispose() {
-        
+        if (this.sheetTab) this.sheetTab.dispose();
+
         window.r20es.macroGeneratorButtonClick = null;
-        if(this.pickerDialog) this.pickerDialog.dispose();
-        if(this.verifyDialog) this.verifyDialog.dispose();
-        if(this.noMacrosDialog) this.noMacrosDialog.dispose();
+        if (this.pickerDialog) this.pickerDialog.dispose();
+        if (this.verifyDialog) this.verifyDialog.dispose();
+        if (this.noMacrosDialog) this.noMacrosDialog.dispose();
 
     }
 }
@@ -410,19 +419,6 @@ const hook = R20Module.makeHook(__filename, {
     description: `Places a "Generate" button in the Attributes & Abilities Abilities that will open up the generate ability macros dialog. Only certain character sheets are supported. If you'd like to add your own sheet, submit a GitHub PR.`,
     category: R20Module.category.journal,
 
-    mods: [
-        {
-            includes: "assets/app.js",
-            find: `this.$el.on("click",".addabil"`,
-            patch: `this.$el.on("click",".${generateButtonId}", (e) => {if(window.r20es && window.r20es.macroGeneratorButtonClick) window.r20es.macroGeneratorButtonClick(e)}), this.$el.on("click",".addabil"`
-        },
-
-        {
-            includes: "/editor/",
-            find: `<button class='btn addabil'>+ Add</button>`,
-            patch: `<button class='btn ${generateButtonId}'>Generate</button><button class='btn addabil'>+ Add</button>`,
-        }
-    ]
 });
 
 export {
