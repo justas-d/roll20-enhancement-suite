@@ -16,6 +16,7 @@ import AutoSortInitiative from "./modules/AutoSortInitiativeModule";
 import { SettingsHook } from "./modules/SettingsModule";
 import { TokenContextMenuApiModule } from "./modules/TokenContextMenuApiModule";
 import { MiddleClickSelectHook } from "./modules/MiddleClickSelectModule";
+import { SheetTabApiHook } from "./modules/SheetTabApiModule";
 
 let hooks = {};
 const addHook = hook => hooks[hook.id] = hook;
@@ -69,5 +70,7 @@ addHook(rollAndApplyHitDiceHook);
 addHook(TableIOHook);
 addHook(TokenLayerDrawingHook);
 addHook(MacroGeneratorHook);
+addHook(SheetTabApiHook);
+
 
 export { hooks };

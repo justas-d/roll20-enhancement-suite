@@ -4,6 +4,7 @@ import { R20 } from '../tools/R20.js'
 import { createElementJsx, SidebarSeparator, SidebarCategoryTitle } from '../tools/DOM.js'
 import { saveAs } from 'save-as'
 import { findByIdAndRemove, readFile, safeParseJson } from '../tools/MiscUtils';
+import { SheetTab } from '../tools/SheetTab';
 
 
 class CharacterIOModule extends R20Module.OnAppLoadBase {
@@ -12,22 +13,12 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
         this.journalWidgetId = "r20es-character-io-journal-widget";
 
-        this.observerCallback = this.observerCallback.bind(this);
         this.onOverwriteClick = this.onOverwriteClick.bind(this);
         this.onFileChange = this.onFileChange.bind(this);
         this.onExportClick = this.onExportClick.bind(this);
         this.renderWidget = this.renderWidget.bind(this);
         this.onImportClick = this.onImportClick.bind(this);
         this.onJournalFileChange = this.onJournalFileChange.bind(this);
-        this.navOnClick = this.navOnClick.bind(this);
-        this.onClickNormalNavs = this.onClickNormalNavs.bind(this);
-
-        this.tabStyle = "r20es-char-io-data-tab";
-        this.navStyle = "r20es-char-io-export-overwrite-nav";
-
-        // bookkeeping for disposal
-        this.infectedNavs = [];
-        this.injectedElements = [];
     }
 
     processFileReading(fileHandle, customCode) {
@@ -195,113 +186,15 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         );
     }
 
-    getWidgetTabRoot(navAElement) {
-        return $(navAElement.parentNode.parentNode.parentNode).find("." + this.tabStyle)[0];
-    }
-
-    navOnClick(e) {
-        e.target.parentNode.classList.add("active");
-
-        const root = this.getWidgetTabRoot(e.target);
-        root.style.display = "block";
-    }
-
-    onClickNormalNavs(e) {
-        const navTabsRoot = e.target.parentNode.parentNode;
-
-        $(navTabsRoot).find("a[data-r20es-nav]").each((i, el) => {
-            el.parentNode.classList.remove("active");
-        });
-
-        const root = this.getWidgetTabRoot(e.target);
-        root.style.display = "none";
-    }
-
-    tryInjectingWidget(target) {
-        if(!target) return false;
-        if (!target.className) return false;
-        if (!target.hasAttribute("data-characterid")) return false;
-
-        if (target.getElementsByClassName(this.tabStyle).length > 0) return;
-
-        const pc = this.getPc(target);
-        if (!pc) return false;
-
-        const nav = (
-            <li className={this.navStyle}>
-                <a data-r20es-nav onClick={this.navOnClick} data-tab={this.tabStyle} href="javascript:void(0);">
-                    Export/Overwrite
-                </a>
-            </li>
-        );
-        this.injectedElements.push(nav);
-        console.log(target);
-        target.firstElementChild.firstElementChild.appendChild(nav);
-
-
-        // register an event handler on the normal navbar tabs
-        // onClickNormalNavs will hide the custom stuff, state active state for the custom nav
-        const navTabsRoot = target.firstElementChild.firstElementChild;
-        $(navTabsRoot).find("a[data-tab]").each((i, el) => {
-            if (el.hasAttribute("data-r20es-nav")) return;
-
-            el.addEventListener("click", this.onClickNormalNavs);
-            this.infectedNavs.push(el);
-        });
-
-
-        const tabroot = $(target.firstElementChild).find(".tab-content")[0];
-        const widget = (
-            <div className={[this.tabStyle, "tab-pane"]} style={{ display: "none" }}>
-                {this.renderWidget()}
-            </div>
-        );
-        this.injectedElements.push(widget);
-        tabroot.appendChild(widget)
-
-        return true;
-    }
-
-    observerCallback(muts) {
-        for (var e of muts) {
-            for (const added of e.addedNodes) {
-                if (this.tryInjectingWidget(added)) {
-                    return;
-                }
-            }
-
-
-            if (this.tryInjectingWidget(e.target)) {
-                return;
-            }
-        }
-    }
-
+  
     setup() {
-        const existingHeaders = document.querySelectorAll("div[data-characterid].dialog.characterdialog");
-        
-
-        for (const header of existingHeaders) {
-            this.tryInjectingWidget(header);
-        }
-
-        this.observer = new MutationObserver(this.observerCallback);
-        this.observer.observe(document.body, { childList: true, subtree: true });
+        this.sheetTab = SheetTab.add("Export & Overwrite", this.renderWidget);
         this.addJournalWidget();
     }
 
     dispose() {
-
+        this.sheetTab.dispose();
         findByIdAndRemove(this.journalWidgetId);
-
-        this.infectedNavs.each(el => el.removeEventListener("click", this.onClickNormalNavs));
-        this.injectedElements.each(el => el.remove());
-        this.injectedElements.each(el => el.remove());
-
-        this.injectedElements.length = 0;
-        this.infectedNavs.length = 0;
-
-        if (this.observer) this.observer.disconnect();
     }
 }
 
