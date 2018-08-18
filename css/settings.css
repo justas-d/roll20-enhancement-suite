@@ -38,7 +38,7 @@
     background-color: rgb(245,245,245);
 }
 
-.r20es-dialog>.dialog-body {
+.r20es-settings-dialog .dialog-body {
     display: flex;
 }
 

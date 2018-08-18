@@ -316,8 +316,6 @@ class SettingsModule extends R20Module.OnAppLoadBase {
         />;
 
         adjacent.parentNode.parentNode.insertBefore(button, adjacent.parentNode);
-
-        this.dialog.show();
     }
 
     dispose() {
