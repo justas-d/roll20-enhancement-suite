@@ -381,9 +381,11 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
     renderSheet() {
         return (
-            <button onClick={this.onButtonClick}>
-                Generate Macros
+            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <button style={{ width: "50%", height: "30px", display: "flex", justifyContent: "center" }} className="btn" onClick={this.onButtonClick}>
+                    Open Generate Macros Dialog
             </button>
+            </div>
         );
     }
 
