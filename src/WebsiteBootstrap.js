@@ -15,7 +15,11 @@ window.r20es.hooks = hooks;
 if ("r20esDisposeTable" in window) {
     for (const key in window.r20esDisposeTable) {
         const fx = window.r20esDisposeTable[key];
-        fx();
+        try {
+            fx();
+        } catch (err) {
+            console.error(err);
+        }
         delete window.r20esDisposeTable[key];
     }
 }
