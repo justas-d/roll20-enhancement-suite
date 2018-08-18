@@ -1,5 +1,5 @@
 import { DOM } from "./DOM";
-import { removeAllChildren, findByIdAndRemove } from "./MiscUtils";
+import { removeAllChildren, findByIdAndRemove, safeCall } from "./MiscUtils";
 
 
 class DialogBase {
@@ -44,13 +44,17 @@ class DialogBase {
     }
 
     close() {
-        this.getRoot().close();
+        const dialog = this.getRoot();
+        if(dialog.open) {
+            this.getRoot().close();
+        }
+        
     }
 
     dispose() {
+        //this.close();
         findByIdAndRemove(this.getId());
     }
-
 }
 
 export { DialogBase }

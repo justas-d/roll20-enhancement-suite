@@ -2,9 +2,10 @@ import { R20Module } from "../tools/R20Module";
 import { R20 } from "../tools/R20";
 import { OGL5eByRoll20MacroGenerator } from "../macro/OGL5eByRoll20.js";
 import { DialogBase } from "../tools/DialogBase";
-import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";
+import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent, LoadingDialog } from "../tools/DialogComponents";
 import { DOM } from "../tools/DOM";
 import { SheetTab } from "../tools/SheetTab";
+
 
 const generateButtonId = "r20esgenerate"
 
@@ -328,34 +329,46 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         if (!data) return;
         if (!pc) return;
 
-        console.log(data);
+        let plsWait = new LoadingDialog("Generating");
+        plsWait.show();
 
-        for (let elem of data.macros) {
-            if (elem.modify) {
-                const existing = pc.abilities.find(f => f.get("name") === elem.name);
-                if (!existing) {
-                    console.error("Tried to modify existing ability but could not find it.");
-                    console.table({
-                        "Query": elem.name,
-                        "Macro": elem.macro,
-                        "Char Name": pc.get("name"),
-                        "Char UUID": pc.get("id")
-                    });
-                    continue;
+        // wait for plsWait to render.
+        setTimeout(() => {
+            try {
+                console.log(data);
+
+                for (let elem of data.macros) {
+                    if (elem.modify) {
+                        const existing = pc.abilities.find(f => f.get("name") === elem.name);
+                        if (!existing) {
+                            console.error("Tried to modify existing ability but could not find it.");
+                            console.table({
+                                "Query": elem.name,
+                                "Macro": elem.macro,
+                                "Char Name": pc.get("name"),
+                                "Char UUID": pc.get("id")
+                            });
+                            continue;
+                        }
+
+                        existing.save({ action: elem.macro, istokenaction: data.setIsTokenAction });
+                    } else {
+                        pc.abilities.create({
+                            name: elem.name,
+                            action: elem.macro,
+                            istokenaction: data.setIsTokenAction
+                        });
+                    }
                 }
 
-                existing.save({ action: elem.macro, istokenaction: data.setIsTokenAction });
-            } else {
-                pc.abilities.create({
-                    name: elem.name,
-                    action: elem.macro,
-                    istokenaction: data.setIsTokenAction
-                });
+                pc.view.render();
+                e.stopPropagation();
+            } catch (err) {
+                console.error(err);
             }
-        }
 
-        pc.view.render();
-        e.stopPropagation();
+            plsWait.dispose();
+        }, 100);
     }
 
     onButtonClick(e) {
@@ -381,7 +394,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
     renderSheet() {
         return (
-            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <button style={{ width: "50%", height: "30px", display: "flex", justifyContent: "center" }} className="btn" onClick={this.onButtonClick}>
                     Open Generate Macros Dialog
             </button>
@@ -390,6 +403,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
     }
 
     setup() {
+
 
         this.pickerDialog = new PickMacroGeneratorsDialog(this.generators);
         this.pickerDialog.getRoot().addEventListener("close", this.onPickerDialogClose);

@@ -5,6 +5,7 @@ import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../tools/DOM.js'
 import { saveAs } from 'save-as'
 import { findByIdAndRemove, readFile, safeParseJson } from '../tools/MiscUtils';
 import { SheetTab } from '../tools/SheetTab';
+import { LoadingDialog } from '../tools/DialogComponents';
 
 
 class CharacterIOModule extends R20Module.OnAppLoadBase {
@@ -53,10 +54,25 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     onImportClick(e) {
         const input = $(e.target.parentNode).find("input")[0];
 
-        this.processFileReading(input.files[0], (version, data) => {
-            let pc = R20.createCharacter();
-            version.overwrite(pc, data);
-        });
+        let plsWait = new LoadingDialog("Importing");
+        plsWait.show();
+
+        try {
+            this.processFileReading(input.files[0], (version, data) => {
+                try {
+                    let pc = R20.createCharacter();
+                    version.overwrite(pc, data);
+                } catch (err) {
+                    console.log(err);
+                }
+
+                plsWait.dispose();
+            });
+        } catch (err) {
+            console.error(err);
+            plsWait.dispose();
+        }
+
 
         input.value = "";
         e.target.disabled = true;
@@ -139,15 +155,16 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         this.processFileReading(input.files[0], (version, data) => {
             if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
 
-                const plsWait = <h4>Please wait...</h4>
-                e.target.parentNode.appendChild(plsWait);
+                let plsWait = new LoadingDialog("Overwriting");
+                plsWait.show();
 
                 // wait 100ms for the plsWait to render.
                 setTimeout(() => {
                     try {
                         version.overwrite(pc, data);
-                    } catch(err) { console.error(err); }
-                    plsWait.remove();
+                    } catch (err) { console.error(err); }
+
+                    plsWait.dispose();
                 }, 100);
             }
         });
@@ -187,14 +204,14 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         );
     }
 
-  
+
     setup() {
         this.sheetTab = SheetTab.add("Export & Overwrite", this.renderWidget);
         this.addJournalWidget();
     }
 
     dispose() {
-        if(this.sheetTab) this.sheetTab.dispose();
+        if (this.sheetTab) this.sheetTab.dispose();
         findByIdAndRemove(this.journalWidgetId);
     }
 }

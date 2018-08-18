@@ -1,5 +1,26 @@
 import { DOM } from "./DOM";
 import { copy } from "./MiscUtils";
+import { DialogBase } from "./DialogBase";
+
+class LoadingDialog extends DialogBase {
+    constructor(action, className, style) {
+        console.log("ctoring");
+        super(className, style);
+
+        this.action =action;
+    }
+
+    render() {
+        return (
+            <Dialog>
+                <DialogBody>
+                    <h3>{this.action}, please wait...</h3>
+                </DialogBody>
+            </Dialog>
+        )
+    }
+}
+
 
 function DialogHeader() {
     return <div className="dialog-header"></div>
@@ -41,4 +62,6 @@ function CheckboxWithText(_props) {
     );
 }
 
-export { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent }
+export { CheckboxWithText, DialogHeader, DialogBody, 
+    DialogFooter, Dialog, DialogFooterContent,
+    LoadingDialog }
