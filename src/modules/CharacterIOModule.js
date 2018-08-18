@@ -12,6 +12,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         super(id);
 
         this.journalWidgetId = "r20es-character-io-journal-widget";
+        this.overwriteButtonClass = "r20es-sheet-overwrite-button";
 
         this.onOverwriteClick = this.onOverwriteClick.bind(this);
         this.onFileChange = this.onFileChange.bind(this);
@@ -158,7 +159,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     onFileChange(e) {
         e.stopPropagation();
 
-        const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
+        const overwriteButton = $(e.target.parentNode).find("." + this.overwriteButtonClass)[0];
         overwriteButton.disabled = !(e.target.files.length > 0);
     }
 
@@ -176,8 +177,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
                 <h3 style={headerStyle}>Overwrite</h3>
                 <div className="r20es-indent">
-                    <button onClick={this.onOverwriteClick} disabled style={style} className="btn">
-                        Overwrite
+                    <button onClick={this.onOverwriteClick} disabled style={style} className={["btn", this.overwriteButtonClass]}>
+                        Overwrite this Character with:
                     </button>
 
                     <input type="file" style={{ display: "inline" }} onChange={this.onFileChange} />
