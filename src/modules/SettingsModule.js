@@ -33,7 +33,7 @@ class StringEdit extends ConfigEditBase {
         this.setValue(e.target.value);
     }
 
-    render() {
+    internalRender() {
         return <input className="compact" type="text" onChange={this.onChange} value={this.getValue() || ""} />
     }
 };
@@ -49,7 +49,7 @@ class DropdownEdit extends ConfigEditBase {
         this.setValue(e.target.value);
     }
 
-    render() {
+    internalRender() {
 
         const vals = [];
 
@@ -79,7 +79,7 @@ class CheckboxEdit extends ConfigEditBase {
         this.setValue(e.target.checked);
     }
 
-    render() {
+    internalRender() {
         return <input checked={this.getValue()} type="checkbox" className="r20es-checkbox" onChange={this.onChange} />
     }
 }
@@ -92,7 +92,7 @@ class HookConfig extends DOM.ElementBase {
         this.hook = props.hook;
     }
 
-    render() {
+    internalRender() {
 
         const elemMap = {
             "string": StringEdit,
@@ -176,7 +176,7 @@ class HookHeader extends DOM.ElementBase {
         mod.toggleEnabledState();
     }
 
-    render() {
+    internalRender() {
         let style = {};
         const isDisabled = !R20.isGM() && this.hook.gmOnly;
         

@@ -24,7 +24,6 @@ function createElement(type, attributes, ...children) {
     if (isFunc && type.name && type.prototype instanceof DOM.ElementBase) {
         let base = new type(attributes);
         elem = base.render();
-        base.setRoot(elem);
     } else if (isFunc) {
         elem = type(attributes);
     } else {
@@ -104,15 +103,25 @@ function createElement(type, attributes, ...children) {
 }
 
 class ElementBase {
-    render() { }
+    
+    render() {
+        const elem = this.internalRender();
+        this.setRoot(elem);
+        return elem;
+    }
+
+    internalRender() {}
 
     rerender() {
-        const elem = rerender(this.elementRoot, () => { return this.render() });
-        this.setRoot(elem);
+        const elem = rerender(this.getRoot(), () => { return this.render() });        
     }
 
     setRoot = root => this.elementRoot = root;
     getRoot = () => this.elementRoot;
+
+    dispose() {
+        this.getRoot().remove();
+    }
 }
 
 const DOM = {
