@@ -114,11 +114,15 @@ function isChrome() {
     return detectBrowser().name === "chrome";
 }
 
+function strIsNullOrEmpty(str) {
+    return str === null || str === undefined || str.length <= 0 || str.trim().length <= 0;
+}
+
 export {
     getBrowser, readFile, safeParseJson,
     replaceAll, escapeRegExp, findByIdAndRemove,
     copy, getTransform, getRotation,
     basename, safeCall, removeAllChildren,
-    injectScript, isChrome
+    injectScript, isChrome, strIsNullOrEmpty
 };
 
