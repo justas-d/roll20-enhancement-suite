@@ -11,7 +11,6 @@ import { rollAndApplyHitDiceHook } from "./modules/RollAndApplyHitDiceModule";
 import { TableIOHook } from "./modules/TableIOModule";
 import { TokenLayerDrawingHook } from "./modules/TokenLayerDrawing";
 import { MacroGeneratorHook } from "./modules/MacroGeneratorModule";
-import { R20Module } from "./tools/R20Module";
 import AutoSortInitiative from "./modules/AutoSortInitiativeModule";
 import { SettingsHook } from "./modules/SettingsModule";
 import { TokenContextMenuApiModule } from "./modules/TokenContextMenuApiModule";
@@ -41,19 +40,6 @@ addHook({
     find: `$("#loading-overlay").hide()`,
     patch: `$("#loading-overlay").hide();if(window.r20es && window.r20es.onLoadingOverlayHide) window.r20es.onLoadingOverlayHide(); `
 })
-
-addHook({
-    id: "seenadOverride",
-    force: true,
-
-    name: "Skip ad",
-    description: "Skips loading ads",
-    category: R20Module.category.canvas,
-
-    includes: "/editor/startjs/",
-    find: "d20ext.showGoogleAd();",
-    patch: 'window.d20ext.seenad = !0, $("#loading-overlay").find("div").hide(), window.currentPlayer && d20.Campaign.pages.length > 0 && d20.Campaign.handlePlayerPageChanges(), void $.get("/editor/startping/true");'
-});
 
 addHook(WelcomeModule);
 addHook(TokenContextMenuApiModule);
