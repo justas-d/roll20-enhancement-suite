@@ -1,6 +1,6 @@
 import { R20Module } from "../tools/R20Module";
 import { DOM } from "../tools/DOM";
-import { findByIdAndRemove, getBrowser } from "../tools/MiscUtils";
+import { findByIdAndRemove, getBrowser, strIsNullOrEmpty } from "../tools/MiscUtils";
 import { DialogBase } from "../tools/DialogBase";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";
 import { R20Bootstrapper } from "../tools/R20Bootstrapper";
@@ -124,23 +124,30 @@ class HookConfig extends DOM.ElementBase {
         return (
             <div className="more-settings">
 
-                <h3 title={this.hook.id + " " + this.hook.filename}>{this.hook.name}</h3>
-                <hr />
+                {!strIsNullOrEmpty(this.hook.description) &&
+                    <section>
+                        <h3 title={this.hook.id + " " + this.hook.filename}>{this.hook.name}</h3>
+                        <hr />
+                        <section className="r20es-indent description">
+                            <p>{this.hook.description}</p>
 
-                <section className="r20es-indent description">
-                    <p>{this.hook.description}</p>
-                    
-                    {this.hook.gmOnly &&
-                        <p>This module is only usable by GMs (which you are)</p>
-                    }
-                </section>
+                            {this.hook.gmOnly &&
+                                <p>This module is only usable by GMs (which you {R20.isGM() ? "are" : "aren't"})</p>
+                            }
+                        </section>
+                    </section>
+                }
 
-                <h3>Options</h3>
-                <hr />
+                {elems.length > 0 &&
+                    <section>
+                        <h3>Options</h3>
+                        <hr />
 
-                <ul className="r20es-indent">
-                    {elems}
-                </ul>
+                        <ul className="r20es-indent">
+                            {elems}
+                        </ul>
+                    </section>
+                }
             </div>
         );
     }
@@ -171,29 +178,31 @@ class HookHeader extends DOM.ElementBase {
     onCheckboxChange(e) {
         e.stopPropagation();
 
-        const mod = R20Module.getModule(this.hook.filename);
+        const mod = R20Module.getpluginSettingsle(this.hook.filename);
         console.log(mod);
-        mod.toggleEnabledState();
+        mod.toggleEnabledState(); pluginSettings
     }
 
     internalRender() {
         let style = {};
         const isDisabled = !R20.isGM() && this.hook.gmOnly;
-        
+
         console.log(isDisabled);
-        
-        if(isDisabled) {
+
+        if (isDisabled) {
             style.color = "rgb(200,200,200)";
         }
-        
-        if(this.selected) {
+
+        if (this.selected) {
             style.backgroundColor = "rgb(240,240,240)";
         }
 
         return (
             <div>
                 <div style={style} className="r20es-clickable-text" onClick={this.onClick} title={isDisabled ? "This module is GM only." : ""}>
-                    <input onChange={this.onCheckboxChange} checked={this.hook.config.enabled} type="checkbox" />
+                    {!this.hook.force &&
+                        <input onChange={this.onCheckboxChange} checked={this.hook.config.enabled} type="checkbox" />
+                    }
                     <span className="text">{this.hook.name}</span>
                 </div>
             </div>
@@ -229,13 +238,18 @@ class SettingsDialog extends DialogBase {
         this.rerender();
     }
 
+    openGithub() {
+        var redir = window.open("https://github.com/SSStormy/roll20-enhancement-suite/", "_blank");
+        redir.location;
+    }
+
     render() {
 
         let byCategory = {};
 
         for (let key in this.hooks) {
             let hook = this.hooks[key];
-            if (hook.force) continue;
+            if (hook.force && !hook.forceShowConfig) continue;
 
             if (!(hook.category in byCategory))
                 byCategory[hook.category] = [];
@@ -247,7 +261,7 @@ class SettingsDialog extends DialogBase {
         return (
             <Dialog>
                 <DialogHeader>
-                    <h2>Roll20 Enhancement Suite Settings</h2>
+                    <h2>Roll20 Enhancement Suite Module Settings</h2>
                 </DialogHeader>
                 <hr />
 
@@ -280,7 +294,9 @@ class SettingsDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <input type="button" onClick={this.close} value="Close" />
+                    <input className="btn" type="button" onClick={this.openGithub} value="GitHub (Opens in a new window)" />
+                    <input className="btn" style={{float: "right"}} type="button" onClick={this.close} value="Apply & Close" />
+                        
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
@@ -292,7 +308,10 @@ class SettingsDialog extends DialogBase {
 class SettingsModule extends R20Module.OnAppLoadBase {
     constructor() {
         super(__filename);
+
+        // referenced by WelcomeModule.js
         this.buttonId = "r20es-settings-button";
+
         this.onButtonClick = this.onButtonClick.bind(this);
     }
 
