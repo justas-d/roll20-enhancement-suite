@@ -15,6 +15,8 @@ class InitiativeAdvanceShortcutModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        super.dispose();
+        
         if (this.wasBound) {
             this.wasBound = false;
             Mousetrap.unbind("ctrl+right");

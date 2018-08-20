@@ -167,6 +167,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        super.dispose();
         if (this.observer) {
             this.observer.disconnect();
         }

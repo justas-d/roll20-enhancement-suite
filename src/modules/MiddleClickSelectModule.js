@@ -42,6 +42,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        super.dispose();
         document.removeEventListener("mouseup", this.onClick);
     }
 }

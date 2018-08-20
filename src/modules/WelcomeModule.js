@@ -148,6 +148,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        super.dispose();
         if (this.welcome) this.welcome.dispose();
         if (this.popup) this.popup.dispose();
     }

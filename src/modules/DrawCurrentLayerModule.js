@@ -93,6 +93,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        super.dispose();
         $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
         $("#editinglayer li.choosemap").off("click", this.onToolChange);
         $("#editinglayer li.choosegmlayer").off("click", this.onToolChange);

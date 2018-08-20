@@ -211,6 +211,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        super.dispose();
+        
         if (this.sheetTab) this.sheetTab.dispose();
         findByIdAndRemove(this.journalWidgetId);
     }

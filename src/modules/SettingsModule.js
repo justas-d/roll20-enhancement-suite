@@ -338,6 +338,7 @@ class SettingsModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        super.dispose();
         findByIdAndRemove(this.buttonId);
         if (this.dialog) this.dialog.dispose();
     }

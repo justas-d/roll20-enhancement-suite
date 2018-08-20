@@ -125,6 +125,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
     }
 
     dispose() {
+        super.dispose();
         R20.getInitiativeWindow().model.off("change:turnorder", this.onTurnOrderChanged);
     }
 }
