@@ -186,12 +186,18 @@ R20Module.getModule = function (filename) {
     return window.r20esInstalledModuleTable[filename];
 }
 
+R20Module.getModuleById = function (id) {
+    if (!("r20esInstalledModuleTable" in window)) return null;
+    return R20Module.getModule(window.r20es.hooks[id].filename);
+}
+
 R20Module.category = {
     canvas: "Canvas",
     exportImport: "Exporting/Importing",
     initiative: "Initiative",
     token: "Token",
     journal: "Journal",
+    misc: "Misc."
 }
 
 export { R20Module };
