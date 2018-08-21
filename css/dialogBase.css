@@ -28,6 +28,12 @@
 
 .dialog-footer>.dialog-footer-content {
     padding: 20px;
+    box-sizing: border-box;
+}
+
+.dialog-footer>.dialog-footer-content .btn {
+    width: auto;
+    height: auto;
 }
 
 .r20es-dialog h3 {
@@ -79,10 +85,6 @@
     font-size: 0.85em;
     padding: 4px;
     padding-left: 8px;
-}
-
-.r20btn {
-    width: auto;
 }
 
 dialog::backdrop {

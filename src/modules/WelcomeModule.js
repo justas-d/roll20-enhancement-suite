@@ -65,6 +65,7 @@ class Welcome extends DOM.ElementBase {
 
             <div style={welcomeStyle}>
                 <h3>Welcome to Roll20 Enhancement Suite!</h3>
+                <hr style={{margin: "5px 0 15px 0"}}/>
 
                 <p>To get started, we recommend taking a look at the settings menu. There you can discover, learn and configure the modules this plugin provides.</p>
                 <p>It can be found underneath the "My Settings" tab in the sidebar.</p>

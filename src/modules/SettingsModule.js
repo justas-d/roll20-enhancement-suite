@@ -398,7 +398,6 @@ class SettingsDialog extends DialogBase {
                     <DialogFooterContent>
                         <input className="btn" type="button" onClick={this.openGithub} value="GitHub (Opens in a new window)" />
                         <input className="btn" style={{ float: "right" }} type="button" onClick={this.close} value="Apply & Close" />
-
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>

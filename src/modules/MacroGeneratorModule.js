@@ -101,7 +101,7 @@ class PickMacroGeneratorsDialog extends DialogBase {
                 <DialogFooter>
                     <DialogFooterContent>
                         <button className="btn" onClick={this.close}>Close</button>
-                        <button className="btn" disabled={!("elems" in data)} onClick={e => this.submit(e, checkboxes)}>OK</button>
+                        <button className="btn" style={{float: "right"}}disabled={!("elems" in data)} onClick={e => this.submit(e, checkboxes)}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
@@ -125,7 +125,7 @@ class NoMacrosDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button className="btn" onClick={this.close}>OK</button>
+                        <button style={{boxSizing: "border-box", width: "100%"}} className="btn" onClick={this.close}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
 
@@ -247,7 +247,7 @@ class VerifyMacrosDialog extends DialogBase {
                 <DialogFooter>
                     <DialogFooterContent>
                         <button className="btn" onClick={this.close}>Close</button>
-                        <button className="btn" onClick={this.submit}>OK</button>
+                        <button className="btn" style={{float: "right"}}onClick={this.submit}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
@@ -385,7 +385,7 @@ class DuplicateResolveDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button className="btn" onClick={this.submit}>Done</button>
+                        <button style={{boxSizing: "border-box", width: "100%"}} className="btn" onClick={this.submit}>Done</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>

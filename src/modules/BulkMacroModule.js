@@ -66,8 +66,8 @@ class MacroSelectDialog extends DialogBase {
                 </DialogBody>
 
                 <DialogFooter>
-                    <DialogFooterContent>
-                        <input className="r20btn btn" type="button" onClick={this.close} value="Close" />
+                    <DialogFooterContent >
+                        <input style={{boxSizing: "border-box", width: "100%"}} className="r20btn btn" type="button" onClick={this.close} value="Close" />
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
