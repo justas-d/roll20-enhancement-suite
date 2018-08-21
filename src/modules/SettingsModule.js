@@ -15,11 +15,82 @@ class ConfigEditBase extends DOM.ElementBase {
     }
 
     setValue(val) {
+        const oldVal = this.hook.config[this.configName];
+
         this.hook.config[this.configName] = val;
         this.hook.saveConfig();
+
+        const mod = R20Module.getModule(this.hook.filename);
+        if ("onSettingChange" in mod && typeof (mod.onSettingChange) === "function") {
+            mod.onSettingChange(this.configName, oldVal, val);
+        }
     }
 
     getValue = _ => this.hook.config[this.configName];
+
+    getConfigView = _ => this.hook.configView[this.configName];
+}
+
+class ColorEdit extends ConfigEditBase {
+    constructor(props) {
+        super(props);
+        this.onChange = this.onChange.bind(this);
+    }
+
+    onChange(e) {
+        e.stopPropagation();
+        const val = e.target.value;
+        const newCols = [
+            parseInt(val.charAt(1) + val.charAt(2), 16),
+            parseInt(val.charAt(3) + val.charAt(4), 16),
+            parseInt(val.charAt(5) + val.charAt(6), 16),
+        ];
+
+        this.setValue(newCols);
+    }
+
+    internalRender() {
+        const cols = this.getValue();
+        const val = `#${cols[0].toString(16)}${cols[1].toString(16)}${cols[2].toString(16)}`;
+        
+        return (
+            <input onChange={this.onChange}
+                type="color"
+                className="compact"
+                value={val}
+            />
+        )
+    }
+}
+
+class NumberEdit extends ConfigEditBase {
+    constructor(props) {
+        super(props);
+        this.onChange = this.onChange.bind(this);
+    }
+
+    onChange(e) {
+        e.stopPropagation();
+        this.setValue(parseFloat(e.target.value));
+    }
+
+    internalRender() {
+        const val = (
+            <input onChange={this.onChange}
+                className="compact"
+                type="number"
+                value={this.getValue()}
+            />
+        );
+        console.log(this.getConfigView());
+        const min = this.getConfigView().numberMin;
+        const max = this.getConfigView().numberMax;
+
+        if(min !== undefined) val.min = min;
+        if(max !== undefined) val.max = max;
+
+        return val;
+    }
 }
 
 class StringEdit extends ConfigEditBase {
@@ -37,6 +108,40 @@ class StringEdit extends ConfigEditBase {
         return <input className="compact" type="text" onChange={this.onChange} value={this.getValue() || ""} />
     }
 };
+
+class SliderEdit extends ConfigEditBase {
+    constructor(props) {
+        super(props);
+        this.onChange = this.onChange.bind(this);
+
+        this.min = props.min;
+        this.max = props.max;
+    }
+
+    onChange(e) {
+        e.stopPropagation();
+        const val = parseFloat(e.target.value);
+        console.log(val);
+        this.setValue(val);
+    }
+
+    internalRender() {
+
+        const min = this.getConfigView().sliderMin;
+        const max = this.getConfigView().sliderMax;
+
+        return (
+            <input onChange={this.onChange}
+                className="compact"
+                type="range"
+                min={min}
+                max={max}
+                step="any"
+                value={this.getValue()}
+            />
+        );
+    }
+}
 
 class DropdownEdit extends ConfigEditBase {
     constructor(props) {
@@ -80,7 +185,13 @@ class CheckboxEdit extends ConfigEditBase {
     }
 
     internalRender() {
-        return <input checked={this.getValue()} type="checkbox" className="r20es-checkbox" onChange={this.onChange} />
+        return (
+            <input onChange={this.onChange} 
+                checked={this.getValue()} 
+                type="checkbox" 
+                className="r20es-checkbox" 
+            />
+        );
     }
 }
 
@@ -97,13 +208,17 @@ class HookConfig extends DOM.ElementBase {
         const elemMap = {
             "string": StringEdit,
             "dropdown": DropdownEdit,
-            "checkbox": CheckboxEdit
+            "checkbox": CheckboxEdit,
+            "slider": SliderEdit,
+            "number": NumberEdit,
+            "color": ColorEdit
         };
 
         let elems = [];
 
         if (this.hook.configView) {
             for (let cfgId in this.hook.configView) {
+
                 const cfg = this.hook.configView[cfgId];
                 if (!(cfg.type in elemMap)) {
                     alert(`Unknown config type: ${cfg.type}`);
@@ -178,9 +293,9 @@ class HookHeader extends DOM.ElementBase {
     onCheckboxChange(e) {
         e.stopPropagation();
 
-        const mod = R20Module.getpluginSettingsle(this.hook.filename);
+        const mod = R20Module.getModule(this.hook.filename);
         console.log(mod);
-        mod.toggleEnabledState(); pluginSettings
+        mod.toggleEnabledState();
     }
 
     internalRender() {
@@ -281,9 +396,9 @@ class SettingsDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                    <input className="btn" type="button" onClick={this.openGithub} value="GitHub (Opens in a new window)" />
-                    <input className="btn" style={{float: "right"}} type="button" onClick={this.close} value="Apply & Close" />
-                        
+                        <input className="btn" type="button" onClick={this.openGithub} value="GitHub (Opens in a new window)" />
+                        <input className="btn" style={{ float: "right" }} type="button" onClick={this.close} value="Apply & Close" />
+
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
