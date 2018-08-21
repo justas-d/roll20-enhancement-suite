@@ -15,7 +15,11 @@
 }
 
 .r20es-dialog>.dialog-footer {
+    position: relative;
     background-color: #f5f5f5;
+    right: 0;
+    bottom: 0;
+    left: 0;
 }
 
 .r20es-dialog>.dialog-footer>hr {
@@ -75,6 +79,10 @@
     font-size: 0.85em;
     padding: 4px;
     padding-left: 8px;
+}
+
+.r20btn {
+    width: auto;
 }
 
 dialog::backdrop {

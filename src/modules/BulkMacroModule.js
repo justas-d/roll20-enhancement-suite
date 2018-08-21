@@ -39,7 +39,7 @@ class MacroSelectDialog extends DialogBase {
                 let macro = bucket[id];
 
                 macroElems.push(
-                    <button data-r20es-macro-action={macro.action} onClick={this.buttonClick}>
+                    <button className="r20btn btn" data-r20es-macro-action={macro.action} onClick={this.buttonClick}>
                         {macro.name}
                     </button>
                 );
@@ -67,7 +67,7 @@ class MacroSelectDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <input type="button" onClick={this.close} value="Close" />
+                        <input className="r20btn btn" type="button" onClick={this.close} value="Close" />
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
