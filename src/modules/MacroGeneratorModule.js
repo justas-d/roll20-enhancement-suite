@@ -84,7 +84,7 @@ class PickMacroGeneratorsDialog extends DialogBase {
 
                     {checkboxDivs &&
                         <div style={{ paddingLeft: "12px", paddingBottom: "12px" }}>
-                            <button onClick={this.onToggleAll}>Toggle All</button>
+                            <button className="btn" onClick={this.onToggleAll}>Toggle All</button>
                             {checkboxDivs}
                             <hr />
                             <CheckboxWithText
@@ -100,8 +100,8 @@ class PickMacroGeneratorsDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button onClick={this.close}>Close</button>
-                        <button disabled={!("elems" in data)} onClick={e => this.submit(e, checkboxes)}>OK</button>
+                        <button className="btn" onClick={this.close}>Close</button>
+                        <button className="btn" disabled={!("elems" in data)} onClick={e => this.submit(e, checkboxes)}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
@@ -125,7 +125,7 @@ class NoMacrosDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button onClick={this.close}>OK</button>
+                        <button className="btn" onClick={this.close}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
 
@@ -238,7 +238,7 @@ class VerifyMacrosDialog extends DialogBase {
                 <hr />
 
                 <DialogBody>
-                    <button onClick={this.onToggleAll}>Toggle All</button>
+                    <button className="btn" onClick={this.onToggleAll}>Toggle All</button>
                     {this.addedMacros.length > 0 && this.generateAdded(this.addedMacros)}
                     {this.modifiedMacros.length > 0 && this.generateModified(this.addedMacros)}
 
@@ -246,8 +246,8 @@ class VerifyMacrosDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button onClick={this.close}>Close</button>
-                        <button onClick={this.submit}>OK</button>
+                        <button className="btn" onClick={this.close}>Close</button>
+                        <button className="btn" onClick={this.submit}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
@@ -337,6 +337,7 @@ class DuplicateResolveDialog extends DialogBase {
 
                     <div style={{ paddingTop: "0px", paddingBottom: "0px" }} onClick={this.onTextClick} className="r20es-code">
                         <input
+                            className="btn"
                             style={{ verticalAlign: "middle", marginRight: "4px" }}
                             data-data-index={dataIndex}
                             data-obj-index={objIndex}
@@ -384,7 +385,7 @@ class DuplicateResolveDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button onClick={this.submit}>Done</button>
+                        <button className="btn" onClick={this.submit}>Done</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
