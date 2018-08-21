@@ -88,7 +88,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         const div = $(`#${this.layerId}`)[0];
         const text = $(div).find("p")[0];
 
-        div.style.backgroundColor = data.bg;
+        div.style.backgroundColor = data.makeBgStyle(0.5);
         text.innerHTML = data.bigTxt;
     }
 
