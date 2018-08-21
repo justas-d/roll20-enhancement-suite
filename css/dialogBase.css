@@ -44,13 +44,6 @@
     white-space: nowrap;
 }
 
-.r20es-dialog td {
-    font-family: monospace;
-    font-size: 0.85em;
-    padding: 4px;
-    padding-left: 8px;
-}
-
 .r20es-dialog th {
     padding: 4px;
     padding-left: 8px;
@@ -75,6 +68,13 @@
 .r20es-dialog table caption {
     font-weight: bold;
     font-size: 1.25em;
+}
+
+.r20es-code {
+    font-family: monospace;
+    font-size: 0.85em;
+    padding: 4px;
+    padding-left: 8px;
 }
 
 dialog::backdrop {

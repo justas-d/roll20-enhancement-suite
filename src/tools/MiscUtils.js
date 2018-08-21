@@ -51,6 +51,18 @@ function findByIdAndRemove(id) {
     }
 }
 
+function mapObj(obj, fx) {
+    return Object.keys(obj).reduce((accum, curVal) => {
+        let val = fx(obj[curVal], curVal);
+
+        if (val !== undefined && val !== null) {
+            accum.push(val);
+        }
+
+        return accum;
+    }, []);
+}
+
 function safeCall(fx) {
     try {
         fx();
@@ -123,6 +135,7 @@ export {
     replaceAll, escapeRegExp, findByIdAndRemove,
     copy, getTransform, getRotation,
     basename, safeCall, removeAllChildren,
-    injectScript, isChrome, strIsNullOrEmpty
+    injectScript, isChrome, strIsNullOrEmpty,
+    mapObj
 };
 

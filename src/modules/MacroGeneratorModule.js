@@ -5,9 +5,7 @@ import { DialogBase } from "../tools/DialogBase";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent, LoadingDialog } from "../tools/DialogComponents";
 import { DOM } from "../tools/DOM";
 import { SheetTab } from "../tools/SheetTab";
-
-
-const generateButtonId = "r20esgenerate"
+import { replaceAll, mapObj } from "../tools/MiscUtils";
 
 class PickMacroGeneratorsDialog extends DialogBase {
     constructor(generators) {
@@ -163,7 +161,7 @@ class VerifyMacrosDialog extends DialogBase {
             data.macros.push({
                 name: input.getAttribute("data-name"),
                 macro: input.value,
-                modify: "data-modify" in input,
+                modify: input.hasAttribute("data-modify"),
             });
         });
 
@@ -171,12 +169,11 @@ class VerifyMacrosDialog extends DialogBase {
         this.addedMacros = null;
         this.modifiedMacros = null;
 
-        console.log("closing");
         this.close();
         e.stopPropagation();
     }
 
-    generateTable(title, head, body) {
+    mkTable(title, head, body) {
         return (
             <div>
                 <h3>{title}</h3>
@@ -196,7 +193,7 @@ class VerifyMacrosDialog extends DialogBase {
     }
 
     generateAdded() {
-        return this.generateTable("Macros To Be Added", [
+        return this.mkTable("Macros To Be Added", [
             <th scope="col">Name</th>,
             <th scope="col">Action</th>
         ], this.addedMacros.map(obj =>
@@ -204,13 +201,13 @@ class VerifyMacrosDialog extends DialogBase {
                 <th scope="row">
                     <CheckboxWithText data-name={obj.name} value={obj.macro} checkboxText={obj.name} checked />
                 </th>
-                <td>{obj.macro}</td>
+                <td className="r20es-code" >{obj.macro}</td>
             </tr>
         ));
     }
 
     generateModified() {
-        return this.generateTable("Macros To Be Changed", [
+        return this.mkTable("Macros To Be Changed", [
             <th scope="col">Name</th>,
             <th scope="col">Old Action</th>,
             <th scope="col">New Action</th>,
@@ -219,8 +216,8 @@ class VerifyMacrosDialog extends DialogBase {
                 <th scope="row">
                     <CheckboxWithText data-modify data-name={obj.name} value={obj.macro} checkboxText={obj.name} checked />
                 </th>
-                <td>{obj.oldMacro}</td>
-                <td>{obj.macro}</td>
+                <td className="r20es-code">{obj.oldMacro}</td>
+                <td className="r20es-code">{obj.macro}</td>
             </tr>
         ));
 
@@ -258,6 +255,143 @@ class VerifyMacrosDialog extends DialogBase {
     }
 }
 
+class DuplicateResolveDialog extends DialogBase {
+    constructor() {
+        super();
+
+        this.submit = this.submit.bind(this);
+        this.checkboxCheck = this.checkboxCheck.bind(this);
+        this.onTextClick = this.onTextClick.bind(this);
+    }
+
+    show(data, _dupes) {
+
+        this.data = data;
+        this.dupes = mapObj(_dupes, (objs, name) => {
+            return {
+                name,
+                objs,
+                selectedIndex: 0
+            };
+        });
+
+        super.show();
+    }
+
+    submit() {
+        // remove dupes from data
+        let idx = this.data.length;
+        while (idx-- > 0) {
+            const cur = this.data[idx];
+
+            if (this.dupes.find(e => e.name === cur.name)) {
+                this.data.splice(idx, 1);
+            }
+        }
+
+        // insert resolved dupes
+        for (const data of this.dupes) {
+            const obj = data.objs[data.selectedIndex];
+            this.data.push({
+                modify: obj.modify,
+                name: data.name,
+                macro: obj.macro
+            });
+        }
+
+        this.setData(this.data);
+        this.close();
+    }
+
+    checkboxLogic(target) {
+        const dataIndex = parseInt(target.getAttribute("data-data-index"));
+        const objIndex = parseInt(target.getAttribute("data-obj-index"));
+
+        const data = this.dupes[dataIndex];
+        data.selectedIndex = objIndex;
+
+        this.rerender();
+    }
+
+    checkboxCheck(e) {
+        this.checkboxLogic(e.target);
+    }
+
+    onTextClick(e) {
+        const cb = $(e.target).find("input[data-data-index]")[0];
+        if (!cb) return;
+
+        this.checkboxLogic(cb);
+    }
+
+    genDiffs() {
+        let diffs = [];
+
+        for (let dataIndex = 0; dataIndex < this.dupes.length; dataIndex++) {
+            const data = this.dupes[dataIndex];
+
+            const divs = [];
+            for (let objIndex = 0; objIndex < data.objs.length; objIndex++) {
+                const obj = data.objs[objIndex];
+                divs.push(
+
+                    <div style={{ paddingTop: "0px", paddingBottom: "0px" }} onClick={this.onTextClick} className="r20es-code">
+                        <input
+                            style={{ verticalAlign: "middle", marginRight: "4px" }}
+                            data-data-index={dataIndex}
+                            data-obj-index={objIndex}
+                            onChange={this.checkboxCheck}
+                            type="radio"
+                            checked={data.selectedIndex === objIndex}
+                        />
+                        {obj.macro}
+                    </div>
+                );
+            }
+
+            diffs.push(
+                <div>
+                    <h4>{data.name}</h4>
+                    {divs}
+                    <hr />
+                </div>
+            );
+        }
+
+        return diffs;
+
+    }
+
+    render() {
+        return (
+            <Dialog>
+                <DialogHeader>
+                    <h2>Duplicates</h2>
+                </DialogHeader>
+
+                <hr />
+
+                <DialogBody>
+                    <p>Abilities with duplicate names were generated.</p>
+                    <p>Choose which duplicate ability should be kept.</p>
+                </DialogBody>
+
+                <hr />
+
+                <DialogBody>
+                    {this.genDiffs()}
+                </DialogBody>
+
+                <DialogFooter>
+                    <DialogFooterContent>
+                        <button onClick={this.submit}>Done</button>
+                    </DialogFooterContent>
+                </DialogFooter>
+            </Dialog>
+        );
+    }
+}
+
 class MacroGeneratorModule extends R20Module.SimpleBase {
     constructor(id) {
         super(id);
@@ -269,30 +403,14 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onPickerDialogClose = this.onPickerDialogClose.bind(this);
         this.onVerifyDialogClose = this.onVerifyDialogClose.bind(this);
+        this.onDupeDialogClose = this.onDupeDialogClose.bind(this);
         this.renderSheet = this.renderSheet.bind(this);
     }
 
-    onPickerDialogClose(e) {
-        e.stopPropagation();
+    genAddedAndModAndShowVerify(data) {
 
-        const dialogData = this.pickerDialog.getData();
-        if (!dialogData) return;
-        if (!this.activePc) return;
-
-        const generator = dialogData.generator;
-        const checked = dialogData.checked;
         const pc = this.activePc;
-
-        let data = [];
-
-        for (let factoryId in generator.macroFactories) {
-            if (!checked[factoryId]) continue;
-
-            const factory = generator.macroFactories[factoryId];
-            data = data.concat(factory(pc));
-        }
-
-        data.sort((a, b) => a.name > b.name);
+        
 
         let added = [];
         let modified = [];
@@ -314,61 +432,80 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
             }
         });
 
+        console.log(added);
+        console.log(modified);
+        console.log(data);
+
         if (added.length <= 0 && modified.length <= 0) {
             this.noMacrosDialog.show();
         } else {
-            this.verifyDialog.show(added, modified, dialogData);
+            this.verifyDialog.show(added, modified, data);
+        }
+    }
+
+    onPickerDialogClose(e) {
+
+        e.stopPropagation();
+
+        const dialogData = this.pickerDialog.getData();
+        if (!dialogData) return;
+        if (!this.activePc) return;
+
+        const generator = dialogData.generator;
+        const checked = dialogData.checked;
+        const pc = this.activePc;
+
+        let data = [];
+
+        for (let factoryId in generator.macroFactories) {
+            if (!checked[factoryId]) continue;
+
+            const factory = generator.macroFactories[factoryId];
+            data = data.concat(factory(pc));
+        }
+
+        // r20 forbids spaces in abilities
+        for (let obj of data) {
+            obj.name = replaceAll(obj.name, " ", "-");
+        }
+
+        data.sort((a, b) => a.name > b.name);
+
+        const names = {};
+        const duplicateLists = {};
+        let hasDupes = false;
+
+        // populate duplicateLists
+        for (const obj of data) {
+            if (obj.name in names) {
+                hasDupes = true;
+                duplicateLists[obj.name] = duplicateLists[obj.name] || [];
+                const list = duplicateLists[obj.name]
+                const prev = names[obj.name];
+
+                list.push(obj);
+                if (prev !== null) {
+                    list.push(prev);
+                    names[obj.name] = null;
+                }
+
+            } else {
+                names[obj.name] = obj;
+            }
+        }
+
+        if (hasDupes) {
+            this.dupeDialog.show(data, duplicateLists);
+        } else {
+            this.genAddedAndModAndShowVerify(data);
         }
     }
 
     onVerifyDialogClose(e) {
+        e.stopPropagation();
+
         const data = this.verifyDialog.getData();
-        const pc = this.activePc;
-        this.activePc = null;
-
-        if (!data) return;
-        if (!pc) return;
-
-        let plsWait = new LoadingDialog("Generating");
-        plsWait.show();
-
-        // wait for plsWait to render.
-        setTimeout(() => {
-            try {
-                console.log(data);
-
-                for (let elem of data.macros) {
-                    if (elem.modify) {
-                        const existing = pc.abilities.find(f => f.get("name") === elem.name);
-                        if (!existing) {
-                            console.error("Tried to modify existing ability but could not find it.");
-                            console.table({
-                                "Query": elem.name,
-                                "Macro": elem.macro,
-                                "Char Name": pc.get("name"),
-                                "Char UUID": pc.get("id")
-                            });
-                            continue;
-                        }
-
-                        existing.save({ action: elem.macro, istokenaction: data.setIsTokenAction });
-                    } else {
-                        pc.abilities.create({
-                            name: elem.name,
-                            action: elem.macro,
-                            istokenaction: data.setIsTokenAction
-                        });
-                    }
-                }
-
-                pc.view.render();
-                e.stopPropagation();
-            } catch (err) {
-                console.error(err);
-            }
-
-            plsWait.dispose();
-        }, 100);
+        this.generateMacros(data);
     }
 
     onButtonClick(e) {
@@ -402,6 +539,62 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         );
     }
 
+    onDupeDialogClose(e) {
+        e.stopPropagation();
+
+        const data = this.dupeDialog.getData();
+        this.genAddedAndModAndShowVerify(data);
+    }
+
+    generateMacros(data) {
+        const pc = this.activePc;
+        this.activePc = null;
+
+        if (!data) return;
+        if (!pc) return;
+
+        let plsWait = new LoadingDialog("Generating");
+        plsWait.show();
+
+        // wait for plsWait to render.
+        setTimeout(() => {
+            try {
+                for (let elem of data.macros) {
+                    if (elem.modify) {
+                        const existing = pc.abilities.find(f => f.get("name") === elem.name);
+                        if (!existing) {
+                            console.error("Tried to modify existing ability but could not find it.");
+                            console.table({
+                                "Query": elem.name,
+                                "Macro": elem.macro,
+                                "Char Name": pc.get("name"),
+                                "Char UUID": pc.get("id")
+                            });
+                            continue;
+                        }
+
+                        existing.save({
+                            action: elem.macro,
+                            istokenaction: data.setIsTokenAction
+                        });
+                    } else {
+                        pc.abilities.create({
+                            name: elem.name,
+                            action: elem.macro,
+                            istokenaction: data.setIsTokenAction
+                        });
+                    }
+                }
+
+                pc.view.render();
+            } catch (err) {
+                console.error(err);
+            }
+
+            plsWait.dispose();
+        }, 100);
+    }
+
     setup() {
 
 
@@ -410,6 +603,9 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
         this.verifyDialog = new VerifyMacrosDialog();
         this.verifyDialog.getRoot().addEventListener("close", this.onVerifyDialogClose);
+
+        this.dupeDialog = new DuplicateResolveDialog();
+        this.dupeDialog.getRoot().addEventListener("close", this.onDupeDialogClose);
 
         this.noMacrosDialog = new NoMacrosDialog();
 
@@ -422,6 +618,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         window.r20es.macroGeneratorButtonClick = null;
         if (this.pickerDialog) this.pickerDialog.dispose();
         if (this.verifyDialog) this.verifyDialog.dispose();
+        if (this.dupeDialog) this.dupeDialog.dispose();
         if (this.noMacrosDialog) this.noMacrosDialog.dispose();
 
     }

@@ -1,5 +1,3 @@
-import { replaceAll } from "../tools/MiscUtils";
-
 let MacroGenerator = {};
 
 const types = {
@@ -113,7 +111,7 @@ function generateMacroData(char, group, nameAttrib, macroFactory) {
         }
 
         orderedNames.push({
-            name: replaceAll(name.get("current"), " ", "-"),
+            name: name.get("current"),
             macro: macroFactory(idIdx)
         });
     }

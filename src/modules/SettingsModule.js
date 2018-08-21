@@ -1,6 +1,6 @@
 import { R20Module } from "../tools/R20Module";
 import { DOM } from "../tools/DOM";
-import { findByIdAndRemove, getBrowser, strIsNullOrEmpty } from "../tools/MiscUtils";
+import { findByIdAndRemove, getBrowser, strIsNullOrEmpty, mapObj } from "../tools/MiscUtils";
 import { DialogBase } from "../tools/DialogBase";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";
 import { R20Bootstrapper } from "../tools/R20Bootstrapper";
@@ -208,19 +208,6 @@ class HookHeader extends DOM.ElementBase {
             </div>
         );
     }
-}
-
-
-function mapObj(obj, fx) {
-    return Object.keys(obj).reduce((accum, curVal) => {
-        let val = fx(obj[curVal], curVal);
-
-        if (val !== undefined && val !== null) {
-            accum.push(val);
-        }
-
-        return accum;
-    }, []);
 }
 
 class SettingsDialog extends DialogBase {
