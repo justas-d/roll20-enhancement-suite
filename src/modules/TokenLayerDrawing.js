@@ -4,49 +4,69 @@ import { getRotation } from "../tools/MiscUtils";
 import { R20 } from "../tools/R20";
 
 class TokenLayerDrawing extends R20Module.SimpleBase {
-    setup() {
-        window.r20es.tokenDrawBg = function (ctx, graphic) {
-            // careful here: tokenDrawBg will run in the renderer and crash recovery requires a referesh
-            try {
-                const data = getLayerData(graphic.model.get("layer"));
+    constructor() {
+        super(__filename);
+        this.drawOverlay = this.drawOverlay.bind(this);
+    }
 
-                ctx.save();
-                ctx.globalAlpha = 1;
-                ctx.lineWidth = 2; // TODO : config for this
+    drawOverlay(ctx, graphic) {
+        // careful here: tokenDrawBg will run in the renderer and crash recovery requires a referesh
+        try {
+            const config = this.getHook().config;
+            const data = getLayerData(graphic.model.get("layer"));
 
+            ctx.save();
+            ctx.globalAlpha = config.globalAlpha;
+            ctx.lineWidth = config.textStrokeWidth;
+
+            if (!config.rotateAlongWithToken) {
                 ctx.rotate(-getRotation(ctx));
-
-                let sz = 18
-                ctx.font = "bold " + sz + "px Arial";
-                let txtSize = ctx.measureText(data.txt);
-                let offX = Math.floor(graphic.get("width") / 2) - txtSize.width;
-                let offY = Math.floor(graphic.get("height") / 2);
-
-                ctx.fillStyle = data.bg;
-                ctx.fillRect(offX, offY - sz, txtSize.width, sz);
-
-                ctx.strokeStyle = "rgba(0,0,0, 1)";
-                ctx.fillStyle = "rgba(255,255,255, 1)";
-
-                ctx.strokeText(data.txt, offX, offY);
-                ctx.fillText(data.txt, offX, offY);
-
-                ctx.restore();
-            } catch (err) {
-                console.error(err);
             }
-        };
 
+            let sz = config.textFontSize;
+            ctx.font = "bold " + sz + "px Arial";
+            
+            let txtWidth = ctx.measureText(data.txt).width;
+
+            const pxOffsetFromFloor = txtWidth * 0.08;
+            const pxWallPadding = txtWidth * 0.18;
+
+            let offX = Math.floor(graphic.get("width") / 2) - txtWidth;
+            let offY = Math.floor(graphic.get("height") / 2);
+
+            ctx.fillStyle = data.makeBgStyle(config.backgroundOpacity);
+            ctx.fillRect(offX - (pxWallPadding * 0.5), offY - sz, txtWidth + pxWallPadding , sz);
+
+            ctx.strokeStyle = `rgba(${config.textStrokeColor[0]}, ${config.textStrokeColor[1]}, ${config.textStrokeColor[2]}, ${config.textStrokeOpacity})`;
+            
+            ctx.fillStyle = `rgba(${config.textFillColor[0]},${config.textFillColor[1]},${config.textFillColor[2]}, ${config.textFillOpacity})`;
+
+            ctx.strokeText(data.txt, offX, offY - pxOffsetFromFloor);
+            ctx.fillText(data.txt, offX, offY - pxOffsetFromFloor);
+
+            ctx.restore();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    onSettingChange(name, oldVal, newVal) {
+        console.log("change found");
+        R20.renderAll();
+    }
+
+    setup() {
+        window.r20es.tokenDrawBg = this.drawOverlay;
         R20.renderAll();
     }
 
     dispose() {
-        R20.renderAll();
         window.r20es.tokenDrawBg = null;
+        R20.renderAll();
     }
 }
 
-if (R20Module.canInstall()) new TokenLayerDrawing(__filename).install();
+if (R20Module.canInstall()) new TokenLayerDrawing().install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "tokenLayerDrawing",
@@ -57,7 +77,78 @@ const hook = R20Module.makeHook(__filename, {
 
     includes: "assets/app.js",
     find: "this.model.view.updateBackdrops(e),this.active",
-    patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this), this.active"
+    patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this), this.active",
+
+    configView: {
+        globalAlpha: {
+            display: "Global alpha",
+            type: "slider",
+
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+        backgroundOpacity: {
+            display: "Background opacity",
+            type: "slider",
+
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+
+        rotateAlongWithToken: {
+            display: "Rotate overlay along with token",
+            type: "checkbox"
+        },
+
+        textStrokeWidth: {
+            display: "Text outline width",
+            type: "number",
+
+            numberMin: 0,
+        },
+        textStrokeOpacity: {
+            display: "Text stroke opacity",
+            type: "slider",
+
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+        textStrokeColor: {
+            display: "Text stroke color",
+            type: "color"
+        },
+
+        textFillOpacity: {
+            display: "Text fill opacity",
+            type: "slider",
+
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+        textFontSize: {
+            display: "Font size",
+            type: "number",
+
+            numberMin: 0,
+        },
+        textFillColor: {
+            display: "Text fill color",
+            type: "color"
+        },
+
+    },
+
+    config: {
+        globalAlpha: 1,
+        backgroundOpacity: 0.5,
+        textStrokeWidth: 2,
+        textStrokeOpacity: 1,
+        textStrokeColor: [0, 0, 0],
+        textFillOpacity: 1,
+        textFillColor: [255, 255, 255],
+        textFontSize: 18,
+        rotateAlongWithToken: false,
+    },
 });
 
 export { hook as TokenLayerDrawingHook };
