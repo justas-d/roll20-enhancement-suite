@@ -13,7 +13,7 @@ R20.getCharacter = function (uuid) {
 }
 
 R20.createRollableTable = function (initialAttributes) {
-    return window.d20.Campaign.rollabletables.create();
+    return window.d20.Campaign.rollabletables.create(initialAttributes);
 }
 
 R20.getRollableTable = function (uuid) {
