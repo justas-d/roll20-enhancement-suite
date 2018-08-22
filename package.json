@@ -24,6 +24,7 @@
         "babel-preset-stage-2": "6.24.1",
         "copy-webpack-plugin": "4.5.2",
         "detect-browser": "3.0.0",
+        "git-revision-webpack-plugin": "3.0.3",
         "glob": "7.1.2",
         "jszip": "2.6.1",
         "nightwatch": "1.0.8",

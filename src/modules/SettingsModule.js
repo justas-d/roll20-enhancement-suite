@@ -52,7 +52,7 @@ class ColorEdit extends ConfigEditBase {
     internalRender() {
         const cols = this.getValue();
         const val = `#${cols[0].toString(16)}${cols[1].toString(16)}${cols[2].toString(16)}`;
-        
+
         return (
             <input onChange={this.onChange}
                 type="color"
@@ -86,8 +86,8 @@ class NumberEdit extends ConfigEditBase {
         const min = this.getConfigView().numberMin;
         const max = this.getConfigView().numberMax;
 
-        if(min !== undefined) val.min = min;
-        if(max !== undefined) val.max = max;
+        if (min !== undefined) val.min = min;
+        if (max !== undefined) val.max = max;
 
         return val;
     }
@@ -186,10 +186,10 @@ class CheckboxEdit extends ConfigEditBase {
 
     internalRender() {
         return (
-            <input onChange={this.onChange} 
-                checked={this.getValue()} 
-                type="checkbox" 
-                className="r20es-checkbox" 
+            <input onChange={this.onChange}
+                checked={this.getValue()}
+                type="checkbox"
+                className="r20es-checkbox"
             />
         );
     }
@@ -325,6 +325,68 @@ class HookHeader extends DOM.ElementBase {
     }
 }
 
+class AboutDialog extends DialogBase {
+    constructor() {
+        super();
+        this.githubUrl = "https://github.com/SSStormy/roll20-enhancement-suite/";
+    }
+
+    openGithub() {
+        var redir = window.open(this.githubUrl, "_blank");
+        redir.location;
+    }
+
+    render() {
+        const mkEntry = (what, data) =>
+            <div>
+                {what}
+                <span style={{ float: "right" }}>{data}</span>
+            </div>
+
+        return (
+            <Dialog>
+                <DialogHeader style={{ textAlign: "center" }}>
+                    <h1>Roll20 Enhancement Suite</h1>
+                    <h2>Version {R20ES_VERSION}</h2>
+                    <h3>Built for {R20ES_BROWSER}</h3>
+                </DialogHeader>
+
+
+                <DialogBody>
+                    <a href="javascript:void(0)" onClick={this.openGithub}>
+                        <img style={{ width: "60%", display: "block", marginLeft: "auto", marginRight: "auto" }} src={window.r20esLogoUrl} alt="Logo" />
+                    </a>
+
+                    <section style={{ marginTop: "16px", marginBottom: "16px", textAlign: "center" }}>
+                        <a href={this.githubUrl}>
+                            <img height="32" width="32" src="https://unpkg.com/simple-icons@latest/icons/github.svg" />
+                        </a>
+                    </section>
+
+                    <section>
+                        <table>
+                            {mkEntry("Git Branch", R20ES_BRANCH)}
+                            {mkEntry("Commit", R20ES_COMMIT)}
+                        </table>
+                    </section>
+
+
+                </DialogBody>
+
+                <section style={{ margin: "20px"}}>
+                    <input
+                        className="btn"
+                        style={{ width: "100%", height: "auto", boxSizing: "border-box"}}
+                        type="button"
+                        onClick={this.close}
+                        value="OK" />
+                </section>
+
+            </Dialog>
+        )
+    }
+}
+
 class SettingsDialog extends DialogBase {
     constructor(hooks) {
         super("r20es-settings-dialog");
@@ -333,6 +395,9 @@ class SettingsDialog extends DialogBase {
         this.activeModule = null;
         this.onSelect = this.onSelect.bind(this);
         this.prevModuleElem = null;
+        this.openAbout = this.openAbout.bind(this);
+
+        this.about = new AboutDialog();
     }
 
     onSelect(selectedModule) {
@@ -340,9 +405,8 @@ class SettingsDialog extends DialogBase {
         this.rerender();
     }
 
-    openGithub() {
-        var redir = window.open("https://github.com/SSStormy/roll20-enhancement-suite/", "_blank");
-        redir.location;
+    openAbout() {
+        this.about.show();
     }
 
     render() {
@@ -396,13 +460,18 @@ class SettingsDialog extends DialogBase {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <input className="btn" type="button" onClick={this.openGithub} value="GitHub (Opens in a new window)" />
+                        <input className="btn" type="button" onClick={this.openAbout} value="About" />
                         <input className="btn" style={{ float: "right" }} type="button" onClick={this.close} value="Apply & Close" />
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
 
         );
+    }
+
+    dispose() {
+        super.dispose();
+        this.about.dispose();
     }
 }
 
@@ -455,6 +524,7 @@ class SettingsBootstrapper extends R20Bootstrapper.Base {
 
     setup() {
         this.injectCSS(getBrowser().runtime.getURL("settings.css"), document.head, this.cssId);
+        window.wrappedJSObject.r20esLogoUrl = getBrowser().runtime.getURL("logo.svg");
 
     }
 

@@ -3,6 +3,9 @@ const webpack = require('webpack');
 const fs = require('fs');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ZipPlugin = require('zip-webpack-plugin');
+const GitRevisionPlugin = require('git-revision-webpack-plugin')
+
+const gitRevision = new GitRevisionPlugin();
 
 let entry = {};
 let staticFiles = {};
@@ -123,7 +126,19 @@ module.exports = (_env, argv) => {
                     accum.push({ from: sourcePath, to: path.join(sourceOutputPath, mappedName) });
                     return accum;
                 }, [])),
-                new webpack.DefinePlugin({ 'process.env.NODE_ENV': JSON.stringify('production'), }),
+
+                new GitRevisionPlugin({
+                    branch: true,
+                    lightweightTags: true
+                }),
+
+                new webpack.DefinePlugin({ 
+                    R20ES_VERSION: JSON.stringify(gitRevision.version()),
+                    R20ES_COMMIT: JSON.stringify(gitRevision.commithash()),
+                    R20ES_BRANCH: JSON.stringify(gitRevision.branch()),
+                    R20ES_BROWSER: JSON.stringify(browser.target),
+                    'process.env.NODE_ENV': JSON.stringify('production'), 
+                }),
             ],
 
             devtool: 'sourcemap',
