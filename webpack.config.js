@@ -32,7 +32,7 @@ addSourceFolder("./src/");
 addSourceFolder("./src/modules/");
 
 addStaticFolder("./css/");
-addStaticFile("icon.svg", "./assets/icon.svg");
+addStaticFile("logo.svg", "./assets/logo.svg");
 
 const browserData = {
     "firefox": {
