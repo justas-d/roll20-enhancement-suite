@@ -20,3 +20,9 @@ class MySimpleModule extends R20Module.SimpleBase {
         // called when the module is being disabled (i.e user disabled the module, ext is reloading)
     }
 }
+
+if(R20Module.canInstall()) new MySimpleModule().install();
+
+/* See Hook.js */
+const hook = {};
+export { hook as MySimpleModuleHook}

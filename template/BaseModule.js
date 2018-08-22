@@ -12,15 +12,21 @@ class MyBaseModule extends R20Module.Base {
         // ctor
     }
 
-    installFirstTime() { 
+    installFirstTime() {
         // called when installed for the first time (i.e the VTT is loading)
     }
 
-    installUpdate() { 
+    installUpdate() {
         // called when installed for the second and every other time (i.e after reloading, disabling and reenabling)
     }
 
-    dispose() { 
+    dispose() {
         // called when the module is being disabled (i.e user disabled the module, ext is reloading)
     }
 }
+
+if (R20Module.canInstall()) new MyBaseModule().install();
+
+/* See Hook.js */
+const hook = {};
+export { hook as MyBaseModuleHook}

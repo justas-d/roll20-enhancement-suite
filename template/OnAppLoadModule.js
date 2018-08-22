@@ -22,3 +22,9 @@ class MyOnAppLoadModule extends R20Module.OnAppLoadBase {
         // called when the module is being disabled (i.e user disabled the module, ext is reloading)
     }
 }
+
+if(R20Module.canInstall()) new MyOnAppLoadModule().install();
+
+/* See Hook.js */
+const hook = {};
+export { hook as MyOnAppLoadModuleHook}
