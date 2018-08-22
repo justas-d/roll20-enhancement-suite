@@ -17,6 +17,8 @@ import { TokenContextMenuApiModule } from "./modules/TokenContextMenuApiModule";
 import { MiddleClickSelectHook } from "./modules/MiddleClickSelectModule";
 import { SheetTabApiHook } from "./modules/SheetTabApiModule";
 import { WelcomeModule } from "./modules/WelcomeModule";
+import { TransparentPaperModuleHook } from "./modules/TransparentPaperModule";
+
 
 
 let hooks = {};
@@ -42,6 +44,7 @@ addHook({
 })
 
 addHook(WelcomeModule);
+addHook(TransparentPaperModuleHook);
 addHook(TokenContextMenuApiModule);
 addHook(SettingsHook);
 addHook(AutoSortInitiative);
