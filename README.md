@@ -3,6 +3,10 @@
 </h1>
 
 <p align="center">
+    <img src="assets/logo.svg">
+</p>
+
+<p align="center">
     <b>A browser plugin that provides quality-of-life and workflow speed improvements to Roll20.</b>
 </p>
 
@@ -12,6 +16,7 @@
 </p>
 
 <hr>
+
 
 ## Building
 

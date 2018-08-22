@@ -19,7 +19,7 @@ function getHooks(hooks, url) {
         let hook = hooks[id];
 
         if (hook.mods) {
-            for (let mod of hook.mods) {
+            for (let mod of hook.mods) {``
                 addModToQueueIfOk(mod, hook);
             }
         } else {
