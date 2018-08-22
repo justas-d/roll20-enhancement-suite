@@ -49,3 +49,9 @@ npm run build -- --env.browsers=chrome,firefox --mode production --env.zip
 ```
 Extention packages can be found in `dist/(firefox|chome)/(dev|prod)/`.
 
+## License
+The source code is licensed under GPL-3.0.
+
+The logo is licensed under CC BY-SA 4.0.
+
+[dialog-polyfill](https://github.com/GoogleChrome/dialog-polyfill) is copyright The Chromium Authors. See LICENSE.
