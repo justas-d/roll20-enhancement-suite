@@ -157,6 +157,8 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
     }
 
     setup() {
+        if(!R20.isGM()) return;
+        
         this.selectDialog = new MacroSelectDialog();
         this.selectDialog.getRoot().addEventListener("close", this.onDialogClose);
 

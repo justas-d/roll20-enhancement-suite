@@ -69,6 +69,8 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     }
 
     setup() {
+        if(!R20.isGM()) return;
+
         TokenContextMenu.addButton("Hit Dice", this.onClickMenuItem, {
             mustHaveSelection: true
         });

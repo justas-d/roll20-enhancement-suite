@@ -1,5 +1,6 @@
 import { R20Module } from "../tools/R20Module";
 import { replaceAll } from "../tools/MiscUtils";
+import { R20 } from "../tools/R20";
 
 class ChangeIdWhenDuplicatingModule extends R20Module.SimpleBase {
     constructor() {
@@ -11,6 +12,8 @@ class ChangeIdWhenDuplicatingModule extends R20Module.SimpleBase {
     }
 
     setup() {
+        if(!R20.isGM()) return;
+        
         window.r20es.replaceIdOnDupe = this.doReplace;
     }
 

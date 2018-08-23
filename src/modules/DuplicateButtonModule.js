@@ -11,6 +11,9 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
     }
 
     setup() {
+
+        if(!R20.isGM()) return;
+
         let menu = document.getElementById("journalitemmenu");
         if (menu) {
             menu.firstElementChild.appendChild(

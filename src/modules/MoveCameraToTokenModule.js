@@ -3,7 +3,7 @@ import { R20 } from "../tools/R20";
 
 class MoveCameraToTokenModule extends R20Module.SimpleBase {
     setup() {
-        console.log("MoveCameraToTokenModule SETUP");
+        if(!R20.isGM()) return;
 
         window.r20es.moveCameraTo = (d) => { 
             if(!d) return; 

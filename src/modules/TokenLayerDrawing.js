@@ -56,6 +56,8 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
     }
 
     setup() {
+        if(!R20.isGM()) return;
+        
         window.r20es.tokenDrawBg = this.drawOverlay;
         R20.renderAll();
     }
