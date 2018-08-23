@@ -157,7 +157,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         const pc = this.getPc(e.target.parentElement.parentElement);
         if (!pc) return;
 
-        const fileHandle = input.value[0];
+        const fileHandle = input.files[0];
         input.value = "";
         overwriteButton.disabled = true;
 
