@@ -19,6 +19,9 @@ CharacterIO.exportSheet = function (sheet, doneCallback) {
             bio: sheet._blobcache.bio || "",
             gmnotes: sheet._blobcache.gmnotes || "",
             defaulttoken: sheet._blobcache.defaulttoken || "",
+            tags: sheet.attributes.tags || "",
+            controlledby: sheet.attributes.controlledby || "",
+            inplayerjournals: sheet.attributes.inplayerjournals || "",
             attribs: [],
             abilities: []
         };
@@ -96,14 +99,18 @@ CharacterIO.formatVersions[2] = {
 
         let hasNot = what => !(what in data);
 
-        if (hasNot("name")) return fmtInvalid("name not found");
         if (hasNot("oldId")) return fmtInvalid("oldId not found");
+        if (hasNot("name")) return fmtInvalid("name not found");
         if (hasNot("avatar")) return fmtInvalid("avatar not found");
         if (hasNot("bio")) return fmtInvalid("bio not found");
         if (hasNot("gmnotes")) return fmtInvalid("gmnotes not found");
+        if (hasNot("defaulttoken")) return fmtInvalid("defaulttoken not found");
+        if (hasNot("tags")) return fmtInvalid("tags not found");
+        if (hasNot("controlledby")) return fmtInvalid("controlledby not found");
+        if (hasNot("inplayerjournals")) return fmtInvalid("inplayerjournals not found");
         if (hasNot("attribs")) return fmtInvalid("attribs not found");
-        if (hasNot("defaulttoken")) return fmtInvalid("attribs not found");
-
+        if (hasNot("abilities")) return fmtInvalid("abilities not found");
+    
         let idx = 0;
         for (let el of data.attribs) {
             if (!("name" in el)) return fmtInvalid(`Attribute index ${idx} doesn't have name`);
@@ -141,6 +148,9 @@ CharacterIO.formatVersions[2] = {
         let save = {
             name: data.name,
             avatar: data.avatar,
+            tags: data.tags,
+            controlledby: data.controlledby,
+            inplayerjournals: data.inplayerjournals
         };
 
         {
