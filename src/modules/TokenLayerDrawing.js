@@ -83,7 +83,7 @@ const hook = R20Module.makeHook(__filename, {
 
     configView: {
         globalAlpha: {
-            display: "Global alpha",
+            display: "Global opacity",
             type: "slider",
 
             sliderMin: 0,
