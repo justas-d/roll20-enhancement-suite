@@ -5,6 +5,7 @@ import { saveAs } from 'save-as'
 import { DOM, SidebarSeparator, SidebarCategoryTitle } from "../tools/DOM";
 import { TableExportLang } from "../tools/TableExportLang";
 import { readFile, safeParseJson, findByIdAndRemove } from "../tools/MiscUtils";
+import { LoadingDialog } from "../tools/DialogComponents";
 
 const tableIdAttribute = "data-r20es-table-id";
 
@@ -109,9 +110,15 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
         const input = $(e.target.parentNode).find("input")[0];
 
-        readFile(input.files[0], (e2) => {
-            cb(e2.target.result);
-        });
+        const plsWait = new LoadingDialog("Importing");
+        plsWait.show()
+
+        const handle = input.files[0];
+        
+        readFile(handle)
+            .then(cb)
+            .catch(alert)
+            .finally(plsWait.dispose);
 
         input.value = "";
         this.setButtonDisabled(e.target.parentNode, true);

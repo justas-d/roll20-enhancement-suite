@@ -96,17 +96,20 @@ function safeParseJson(str) {
     return null;
 }
 
-function readFile(file, callback) {
-    if (!file) {
-        alert("No file given.");
-        return false;
-    }
-
-    let reader = new FileReader();
-    reader.readAsText(file);
-
-    reader.onload = callback;
-    return true;
+function readFile(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            reject("No file given.");
+            return;
+        }
+    
+        let reader = new FileReader();
+        reader.readAsText(file);
+    
+        reader.onload = e => {
+            resolve(e.target.result, e);
+        };
+    });
 }
 
 const getBrowser = _ => chrome || browser;

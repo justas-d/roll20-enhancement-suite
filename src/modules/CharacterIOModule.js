@@ -23,27 +23,39 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         this.onJournalFileChange = this.onJournalFileChange.bind(this);
     }
 
-    processFileReading(fileHandle, customCode) {
-        return readFile(fileHandle, (e) => {
-            let data = safeParseJson(e.target.result);
-            if (!data) return;
+    static processData(input) {
+        return new Promise((resolve, reject) => {
+            let data = null;
+
+            try {
+                data = JSON.parse(input);
+            } catch (err) {
+                reject("File is not a valid JSON file.");
+                return;
+            }
+
+            if (!data) {
+                reject("Data is null.");
+                return;
+            }
 
             let version = CharacterIO.formatVersions[data.schema_version];
             if (!version) {
-                alert(`Unknown schema version: ${data.schema_version}`);
+                reject(`Unknown schema version: ${data.schema_version}`);
                 return;
             }
 
             let validity = version.isValidData(data);
 
             if (!validity.isValid) {
-                alert(`Character data does not adhere to the schema version (${data.schema_version}). Reason: ${validity.reason}`);
+                reject(`Character data does not adhere to the schema version (${data.schema_version}). Reason: ${validity.reason}`);
+
                 return;
             }
 
-            customCode(version, data);
+            resolve({ version, data });
         });
-    };
+    }
 
     onJournalFileChange(e) {
         const btn = $(e.target.parentNode).find("button")[0];
@@ -57,22 +69,15 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         let plsWait = new LoadingDialog("Importing");
         plsWait.show();
 
-        try {
-            this.processFileReading(input.files[0], (version, data) => {
-                try {
-                    let pc = R20.createCharacter();
-                    version.overwrite(pc, data);
-                } catch (err) {
-                    console.log(err);
-                }
-
-                plsWait.dispose();
-            });
-        } catch (err) {
-            console.error(err);
-            plsWait.dispose();
-        }
-
+        const handle = input.files[0];
+        readFile(handle)
+            .then(CharacterIOModule.processData)
+            .then(payload => {
+                let pc = R20.createCharacter();
+                payload.version.overwrite(pc, payload.data);
+            })
+            .catch( alert)
+            .finally(plsWait.dispose)
 
         input.value = "";
         e.target.disabled = true;
@@ -152,25 +157,22 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         const pc = this.getPc(e.target.parentElement.parentElement);
         if (!pc) return;
 
-        this.processFileReading(input.files[0], (version, data) => {
-            if (window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
-
-                let plsWait = new LoadingDialog("Overwriting");
-                plsWait.show();
-
-                // wait 100ms for the plsWait to render.
-                setTimeout(() => {
-                    try {
-                        version.overwrite(pc, data);
-                    } catch (err) { console.error(err); }
-
-                    plsWait.dispose();
-                }, 100);
-            }
-        });
-
+        const fileHandle = input.value[0];
         input.value = "";
         overwriteButton.disabled = true;
+
+        if (!window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
+            return;
+        }
+
+        let plsWait = new LoadingDialog("Overwriting");
+        plsWait.show();
+        
+        readFile(fileHandle)
+            .then(CharacterIOModule.processData)
+            .then(payload => payload.version.overwrite(pc, payload.data))
+            .catch(alert)
+            .finally(plsWait.dispose);
     }
 
     onFileChange(e) {
@@ -212,7 +214,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
     dispose() {
         super.dispose();
-        
+
         if (this.sheetTab) this.sheetTab.dispose();
         findByIdAndRemove(this.journalWidgetId);
     }
