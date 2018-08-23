@@ -14,58 +14,106 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
         this.onToolChange = this.onToolChange.bind(this);
         this.updateModeIndicator = this.updateModeIndicator.bind(this);
+        this.render = this.render.bind(this);
     }
 
-    setup() {
-        if (!R20.isGM) return;
+    createWidget() {
+
+        const root = document.getElementById("playerzone");
+        if (!root) return;
+
+        const cfg = this.getHook().config;
 
         const divStyle = {
-            padding: "4px",
-            height: "30px",
+            height: `${cfg.size}px`,
+            
+            whiteSpace: "nowrap",
+            overflow: "hidden visible"
         }
 
         const textStyle = {
             fontFamily: "Helvetica",
-            fontSize: "26px",
-            display: "inline-block",
-            verticalAlign: "middle",
-            margin: "0px",
-            lineHeight: divStyle.height
+            fontSize: `${cfg.size}px`,
+            
+            color: `rgba(${cfg.textFillColor[0]}, ${cfg.textFillColor[1]}, ${cfg.textFillColor[2]}, ${cfg.textFillOpacity})`,
+            textShadow: `2px 2px 0px rgba(${cfg.textOutlineColor[0]}, ${cfg.textOutlineColor[1]}, ${cfg.textOutlineColor[2]}, ${cfg.textOutlineOpacity})`
         }
 
-        const widget = <div id={this.rootId} style={{
+        let rootStyle = {
+            height: "auto",
+            opacity: cfg.globalOpacity,
             marginBottom: "15px",
             marginRight: "15px",
             width: "auto",
             maxWidth: "100%",
             overflowX: "hidden",
             position: "absolute",
-            bottom: "0",
-            right: "0",
-            backgroundClip: "border-box"
-        }}>
-            <div id={this.selectId} style={copy(divStyle, { background: "rgba(255,0,0,0.5)" })}>
-                <p style={textStyle}>Not selecting!</p>
-            </div>
+        };
+
+        switch (cfg.corner) {
+            case ("bottomRight"): {
+                rootStyle.bottom = "0";
+                rootStyle.right = "0";
+                break;
+            } case ("bottomLeft"): {
+                rootStyle.bottom = "0";
+                rootStyle.left = "0";
+                break;
+            } case ("topRight"): {
+                rootStyle.top= "0";
+                rootStyle.right = "0";
+                break;
+            } case ("topLeft"): {
+                rootStyle.top = "0";
+                rootStyle.left = "0";
+                break;
+            } default: {
+                console.error(`Unknown DCL module corner: ${cfg.corner}`);
+            }
+        }
+
+        const widget = <div id={this.rootId} style={rootStyle}>
+
+            {cfg.showNotSelecting &&
+                <div id={this.selectId} style={copy(divStyle, { background: `rgba(255,0,0,${cfg.notSelectingOpacity})` })}>
+                    <p style={textStyle}>Not selecting!</p>
+                </div>
+            }
 
             <div id={this.layerId} style={divStyle}>
                 <p style={textStyle}></p>
             </div>
         </div>
 
-        const root = document.getElementById("playerzone");
-        if(!root) return;
-
         root.appendChild(widget);
+
+        this.render(R20.getCurrentLayer());
+        this.updateModeIndicator(R20.getCurrentToolName());
+    }
+
+    removeWidget() {
+        $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
+        $("#editinglayer li.choosemap").off("click", this.onToolChange);
+        $("#editinglayer li.choosegmlayer").off("click", this.onToolChange);
+
+        findByIdAndRemove(this.rootId);
+    }
+
+    onSettingChange(name, oldVal, newVal) {
+        this.removeWidget();
+        this.createWidget();
+    }
+
+    setup() {
+        if (!R20.isGM) return;
+
+        this.createWidget();
 
         $("#editinglayer li.chooseobjects").on("click", this.onToolChange);
         $("#editinglayer li.choosemap").on("click", this.onToolChange);
         $("#editinglayer li.choosegmlayer").on("click", this.onToolChange);
 
         window.r20es.setModePrologue = this.updateModeIndicator;
-
-        this.render(R20.getCurrentLayer());
-        this.updateModeIndicator(R20.getCurrentToolName());
     }
 
     onToolChange(e) {
@@ -79,27 +127,26 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     }
 
     updateModeIndicator(mode) {
-        const div = $(`#${this.selectId}`)[0];
+        const div = document.getElementById(this.selectId);
+        if(!div) return;
+
         div.style.display = (mode === "select" ? "none" : "block");
     }
 
     render(layer) {
         const data = getLayerData(layer);
-        const div = $(`#${this.layerId}`)[0];
+        const div = document.getElementById(this.layerId);
         const text = $(div).find("p")[0];
 
-        div.style.backgroundColor = data.makeBgStyle(0.5);
+        div.style.backgroundColor = data.makeBgStyle(this.getHook().config.backgroundOpacity);
         text.innerHTML = data.bigTxt;
     }
 
     dispose() {
         super.dispose();
-        $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
-        $("#editinglayer li.choosemap").off("click", this.onToolChange);
-        $("#editinglayer li.choosegmlayer").off("click", this.onToolChange);
-
         window.r20es.setModePrologue = null;
-        findByIdAndRemove(this.rootId);
+        this.removeWidget();
+        
     }
 }
 
@@ -111,6 +158,88 @@ const hook = R20Module.makeHook(__filename, {
     description: "Displays the active edit layer as well as whether the select tool is active.",
     category: R20Module.category.canvas,
     gmOnly: true,
+
+    configView: {
+        size: {
+            type: "number",
+            display: "Size"
+        },
+        showNotSelecting: {
+            type: "checkbox",
+            display: "Show \"Not selecting!\" when the current tool is not the select tool?"
+        },
+        notSelectingOpacity: {
+            type: "slider",
+            display: "\"Not selecting\" box opacity",
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+
+        globalOpacity: {
+            type: "slider",
+            display: "Global opacity",
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+
+        backgroundOpacity: {
+            type: "slider",
+            display: "Background opacity",
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+
+        textFillOpacity: {
+            type: "slider",
+            display: "Text fill opacity",
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+
+        textFillColor: {
+            type: "color",
+            display: "Text fill color"
+        },
+
+        textOutlineOpacity: {
+            type: "slider",
+            display: "Text outline opacity",
+
+            sliderMin: 0,
+            sliderMax: 1,
+        },
+
+        textOutlineColor: {
+            type: "color",
+            display: "Text outline color"
+        },
+
+        corner: {
+            type: "dropdown",
+            display: "Position",
+
+            dropdownValues: {
+                bottomRight: "Bottom Right",
+                bottomLeft: "Bottom Left",
+                topRight: "Top Right",
+                topLeft: "Top Left"
+            }
+        }
+
+    },
+
+    config: {
+        size: 26,
+        showNotSelecting: true,
+        notSelectingOpacity: 1,
+        globalOpacity: 1,
+        backgroundOpacity: 1,
+        textFillOpacity: 1,
+        textFillColor: [255, 255, 255],
+        textOutlineOpacity: 1,
+        textOutlineColor: [0, 0, 0],
+        corner: "bottomRight"
+    },
 
     includes: "assets/app.js",
     find: "function setMode(e){",
