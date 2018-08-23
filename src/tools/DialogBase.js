@@ -10,6 +10,9 @@ class DialogBase {
 
         this.show = this.show.bind(this);
         this.close = this.close.bind(this);
+        this.setData = this.setData.bind(this);
+        this.getData = this.getData.bind(this);
+        this.dispose = this.dispose.bind(this);
 
         document.body.insertBefore(this.getRoot(), document.body.firstElementChild);
         if(window.dialogPolyfill) dialogPolyfill.registerDialog(this.getRoot());
@@ -52,7 +55,7 @@ class DialogBase {
     }
 
     dispose() {
-        //this.close();
+        this.close();
         findByIdAndRemove(this.getId());
     }
 }
