@@ -13,7 +13,7 @@ let staticFiles = {};
 const addSourceFolder = folder => {
     fs.readdirSync(folder).forEach(f => {
         if (fs.lstatSync(folder + f).isDirectory()) return;
-
+        
         entry[f] = folder + f;
     });
 }
@@ -46,7 +46,7 @@ const browserData = {
             "./thirdparty/dialog-polyfill/dialog-polyfill.js"
         ]
     },
-    
+
     "chrome": {
         target: "chrome",
         manifest: "./manifests/chrome.json"
@@ -74,8 +74,8 @@ module.exports = (_env, argv) => {
 
         addStaticFile("manifest.json", browser.manifest);
 
-        if(browser.extraFiles) {
-            for(const file of browser.extraFiles) {
+        if (browser.extraFiles) {
+            for (const file of browser.extraFiles) {
                 addStaticFile(path.basename(file), file);
             }
         }
@@ -109,11 +109,15 @@ module.exports = (_env, argv) => {
                             }
                         }],
                     },
+                    {
+                        test: /\.ts?$/,
+                        use: { loader: 'awesome-typescript-loader' }
+                    },
                 ],
             },
 
             resolve: {
-                extensions: ['.js', '.jsx'],
+                extensions: ['.tx', '.js'],
                 modules: [
                     'src',
                     'node_modules',
@@ -132,12 +136,12 @@ module.exports = (_env, argv) => {
                     lightweightTags: true
                 }),
 
-                new webpack.DefinePlugin({ 
+                new webpack.DefinePlugin({
                     R20ES_VERSION: JSON.stringify(gitRevision.version()),
                     R20ES_COMMIT: JSON.stringify(gitRevision.commithash()),
                     R20ES_BRANCH: JSON.stringify(gitRevision.branch()),
                     R20ES_BROWSER: JSON.stringify(browser.target),
-                    'process.env.NODE_ENV': JSON.stringify('production'), 
+                    'process.env.NODE_ENV': JSON.stringify('production'),
                 }),
             ],
 

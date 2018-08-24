@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "sourceMap": true,
+        "module": "commonjs",
+        "types": [
+            "node"
+        ],
+        "lib": ["es6", "dom"],
+        "typeRoots": ["node_modules/@types"],
+    },
+    "exclude": [
+        "*"
+    ],
+    "include": [
+        "src/**/*",
+        "node_modules/@types/**/*"
+    ],
+    "types": [
+        "chrome",
+        "firefox"
+    ]
+}
