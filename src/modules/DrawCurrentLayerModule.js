@@ -24,29 +24,28 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
         const cfg = this.getHook().config;
 
+        const padCoef = 9.375;
+        const bottomPadCoef = 3.75;
+        const pad = `${cfg.size/padCoef}px`;
+
         const divStyle = {
             height: `${cfg.size}px`,
-            
-            whiteSpace: "nowrap",
-            overflow: "hidden visible"
+            padding: `${pad} ${pad} ${cfg.size/bottomPadCoef}px ${pad}`,
         }
-
+    
         const textStyle = {
             fontFamily: "Helvetica",
             fontSize: `${cfg.size}px`,
-            
+            //lineHeight: "0.67em",
+            lineHeight: "1em",
             color: `rgba(${cfg.textFillColor[0]}, ${cfg.textFillColor[1]}, ${cfg.textFillColor[2]}, ${cfg.textFillOpacity})`,
             textShadow: `2px 2px 0px rgba(${cfg.textOutlineColor[0]}, ${cfg.textOutlineColor[1]}, ${cfg.textOutlineColor[2]}, ${cfg.textOutlineOpacity})`
         }
 
         let rootStyle = {
-            height: "auto",
             opacity: cfg.globalOpacity,
             marginBottom: "15px",
             marginRight: "15px",
-            width: "auto",
-            maxWidth: "100%",
-            overflowX: "hidden",
             position: "absolute",
         };
 
@@ -164,6 +163,12 @@ const hook = R20Module.makeHook(__filename, {
             type: "number",
             display: "Size"
         },
+        globalOpacity: {
+            type: "slider",
+            display: "Global opacity",
+            sliderMin: 0,
+            sliderMax: 1,
+        },
         showNotSelecting: {
             type: "checkbox",
             display: "Show \"Not selecting!\" when the current tool is not the select tool?"
@@ -174,14 +179,6 @@ const hook = R20Module.makeHook(__filename, {
             sliderMin: 0,
             sliderMax: 1,
         },
-
-        globalOpacity: {
-            type: "slider",
-            display: "Global opacity",
-            sliderMin: 0,
-            sliderMax: 1,
-        },
-
         backgroundOpacity: {
             type: "slider",
             display: "Background opacity",
@@ -191,14 +188,14 @@ const hook = R20Module.makeHook(__filename, {
 
         textFillOpacity: {
             type: "slider",
-            display: "Text fill opacity",
+            display: "Text shadow opacity",
             sliderMin: 0,
             sliderMax: 1,
         },
 
         textFillColor: {
             type: "color",
-            display: "Text fill color"
+            display: "Text shadow color"
         },
 
         textOutlineOpacity: {
