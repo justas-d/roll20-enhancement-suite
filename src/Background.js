@@ -1,6 +1,6 @@
 import { hooks } from './Hooks.js'
 import { ModPatchTesting } from './tools/ModPatchTesting.js';
-import { escapeRegExp, getBrowser, isChrome } from './tools/MiscUtils.js';
+import { escapeRegExp, getBrowser, isChrome, replaceAll } from './tools/MiscUtils.js';
 import { Config } from './tools/Config.js';
 
 window.modPatchTesting = new ModPatchTesting(hooks);
@@ -32,18 +32,17 @@ function getHooks(hooks, url) {
 
 function injectHooks(intoWhat, hookQueue, escapeFunc) {
     if (hookQueue.length <= 0) return intoWhat;
-    7
+    
     for (let combo of hookQueue) {
         const mod = combo.mod;
-        const hook = combo.hook;
 
         if (!mod.find || !mod.patch) continue;
+        const patch = replaceAll(mod.patch, ">>R20ES_MOD_FIND>>", mod.find);
 
-        const regex = new RegExp(escapeFunc(mod.find), 'g');
         console.log("===> REPLACING:");
-        console.log(`Regex: ${regex}`);
-        console.log(`Patch: ${mod.patch}`);
-        intoWhat = intoWhat.replace(regex, mod.patch);
+        console.log(`Find: ${mod.find}`);
+        console.log(`Patch: ${patch}`);
+        intoWhat = replaceAll(intoWhat, mod.find, patch);
     }
 
     return intoWhat;
