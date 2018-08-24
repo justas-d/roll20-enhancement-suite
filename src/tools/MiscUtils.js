@@ -11,7 +11,7 @@ function copy(what, overrides) {
 function getTransform(ctx) {
     if ('currentTransform' in ctx) {
         return ctx.currentTransform
-    } else if("getTransform" in ctx) {
+    } else if ("getTransform" in ctx) {
         return ctx.getTransform();
     } else if (ctx.mozCurrentTransform) {
         let a = ctx.mozCurrentTransform;
@@ -102,10 +102,10 @@ function readFile(file) {
             reject("No file given.");
             return;
         }
-    
+
         let reader = new FileReader();
         reader.readAsText(file);
-    
+
         reader.onload = e => {
             resolve(e.target.result, e);
         };
@@ -133,12 +133,19 @@ function strIsNullOrEmpty(str) {
     return str === null || str === undefined || str.length <= 0 || str.trim().length <= 0;
 }
 
+function createCSSElement(css, id) {
+    const el = document.createElement("style");
+    el.innerHTML = css;
+    el.id = id;
+    return el;
+}
+
 export {
     getBrowser, readFile, safeParseJson,
     replaceAll, escapeRegExp, findByIdAndRemove,
     copy, getTransform, getRotation,
     basename, safeCall, removeAllChildren,
     injectScript, isChrome, strIsNullOrEmpty,
-    mapObj
+    mapObj, createCSSElement
 };
 

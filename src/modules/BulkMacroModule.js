@@ -1,5 +1,5 @@
 import { DOM } from '../tools/DOM.js'
-import { R20Module } from "../tools/R20Module"
+import { R20Module } from "../tools/R20Module.js"
 import { R20 } from '../tools/R20.js';
 import { DialogBase } from "../tools/DialogBase";
 import { DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";

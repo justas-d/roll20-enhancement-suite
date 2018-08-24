@@ -18,8 +18,7 @@ import { MiddleClickSelectHook } from "./modules/MiddleClickSelectModule";
 import { SheetTabApiHook } from "./modules/SheetTabApiModule";
 import { WelcomeModule } from "./modules/WelcomeModule";
 import { TransparentPaperModuleHook } from "./modules/TransparentPaperModule";
-
-
+import { AnimationDisableHook } from "./modules/AnimationDisableModule.ts";
 
 let hooks = {};
 const addHook = hook => hooks[hook.id] = hook;
@@ -41,8 +40,9 @@ addHook({
     includes: "assets/app.js",
     find: `$("#loading-overlay").hide()`,
     patch: `$("#loading-overlay").hide();if(window.r20es && window.r20es.onLoadingOverlayHide) window.r20es.onLoadingOverlayHide(); `
-})
+});
 
+addHook(AnimationDisableHook);
 addHook(WelcomeModule);
 addHook(TransparentPaperModuleHook);
 addHook(TokenContextMenuApiModule);
@@ -63,6 +63,5 @@ addHook(TableIOHook);
 addHook(TokenLayerDrawingHook);
 addHook(MacroGeneratorHook);
 addHook(SheetTabApiHook);
-
 
 export { hooks };

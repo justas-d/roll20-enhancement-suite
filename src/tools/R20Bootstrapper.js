@@ -1,4 +1,4 @@
-import { basename } from "../tools/MiscUtils";
+import { basename } from "./MiscUtils";
 
 let R20Bootstrapper = {};
 
