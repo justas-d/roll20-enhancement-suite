@@ -120,7 +120,7 @@ const hook = R20Module.makeHook(__filename, {
     category: R20Module.category.canvas,
 
     mods: [
-        {
+        { // radial button proportionally timed animation
             includes: "assets/app.js",
             find: `setTimeout(function(){$(e).addClass("open"),o.find(".button div.hasnumber").textfill(20)},30*a),a++`,
             patch: `;
@@ -128,12 +128,28 @@ const hook = R20Module.makeHook(__filename, {
             else { >>R20ES_MOD_FIND>>; }`,
         },
 
-        {
+        { // radial final
             includes: "assets/app.js",
             find: `setTimeout(function(){o.find(".button").addClass("animcomplete")},250)`,
             patch: `1;
             if(window.r20esanims && window.r20esanims.disableRadial) { o.find(".button").addClass("animcomplete");}
             else { >>R20ES_MOD_FIND>>; }`,
+        },
+
+        { // marker menu hide
+            includes: "assets/app.js",
+            find: `setTimeout(function(){p&&p.remove()},300)`,
+            patch: `1;
+            if(window.r20esanims && window.r20esanims.disableRadial) { p && p.remove(); }
+            else { >>R20ES_MOD_FIND>>; }`,
+        },
+
+        { // marker menu show
+            includes: "assets/app.js",
+            find: `_.delay(function(){d.addClass("open")})`,
+            patch: `1;
+            if(window.r20esanims && window.r20esanims.disableRadial) { d.addClass("open"); }
+            else { >>R20ES_MOD_FIND>>; }`
         }
     ],
 
