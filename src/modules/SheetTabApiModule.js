@@ -42,14 +42,14 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
     }
 
     navOnClick(e) {
-    
+
         this.unselectSyntheticNavs(e);
         e.target.parentNode.classList.add("active");
 
         const targetTabClass = e.target.getAttribute("data-tab");
 
         this.getWidgetTabRoots(e.target).each((i, obj) => {
-            obj.style.display = obj.classList.contains(targetTabClass) 
+            obj.style.display = obj.classList.contains(targetTabClass)
                 ? "block"
                 : "none";
         });
@@ -57,20 +57,19 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
 
     tryInjectingWidget(target) {
         const data = SheetTab._getInternalData();
-        
-        for(const tab of data.tabs) {
+
+        for (const tab of data.tabs) {
             this.tryInjectingSingleWidget(target, tab);
         }
     }
 
     tryInjectingSingleWidget(target, tab) {
 
-        if(!target) return false;
+        if (!target) return false;
         if (!target.className) return false;
         if (!target.hasAttribute("data-characterid")) return false;
-
         if (target.getElementsByClassName(tab.id).length > 0) return;
-
+        if ($(target).find(".charactereditor").length > 0) return;
 
         const nav = (
             <li>
@@ -127,7 +126,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
 
     rescan() {
         const existingHeaders = document.querySelectorAll("div[data-characterid].dialog.characterdialog");
-        
+
         for (const header of existingHeaders) {
             console.log(header);
             this.tryInjectingWidget(header);
@@ -137,7 +136,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
     setup() {
         this.rescan();
         SheetTab._getInternalData().rescanFunc = this.rescan;
-        
+
         this.observer = new MutationObserver(this.observerCallback);
         this.observer.observe(document.body, { childList: true, subtree: true });
     }
@@ -146,12 +145,12 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         SheetTab._getInternalData().rescanFunc = null;
 
         const data = SheetTab._getInternalData();
-        for(const tab of data.tabs) {
+        for (const tab of data.tabs) {
             tab.dispose();
         }
         data.tabs = [];
 
-        this.infectedNavs.each(el => { 
+        this.infectedNavs.each(el => {
             el.removeEventListener("click", this.onClickNormalNavs);
             el.removeAttribute(this.attribNavHasListener);
         });
