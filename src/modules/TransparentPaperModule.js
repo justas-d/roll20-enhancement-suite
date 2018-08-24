@@ -1,5 +1,5 @@
 import { R20Module } from "../tools/R20Module"
-import { findByIdAndRemove } from "../tools/MiscUtils";
+import { findByIdAndRemove, createCSSElement } from "../tools/MiscUtils";
 
 class TransparentPaperModule extends R20Module.OnAppLoadBase {
     constructor() {
@@ -15,8 +15,7 @@ class TransparentPaperModule extends R20Module.OnAppLoadBase {
     injectStyle() {
         const cfg = this.getHook().config;
 
-        const el = document.createElement("style");
-        el.innerHTML = `.ui-dialog { opacity: ${cfg.opacity}; }`;
+        const el = createCSSElement(`.ui-dialog { opacity: ${cfg.opacity}; }`, this.styleId);
         document.body.appendChild(el);
     }
 
