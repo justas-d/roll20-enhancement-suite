@@ -4,7 +4,13 @@
     "version": "1.0",
     "description": "Bunch of improvements to roll20.",
     "icons": {
-        "48": "icon.svg"
+        "48": "logo.svg",
+        "96": "logo.svg",
+        "128": "logo.svg",
+        "256": "logo.svg",
+        "512": "logo.svg",
+        "1024": "logo.svg",
+        "2048": "logo.svg"
     },
     "permissions": [
         "*://app.roll20.net/editor/",
