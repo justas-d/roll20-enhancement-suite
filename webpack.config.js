@@ -3,7 +3,9 @@ const webpack = require('webpack');
 const fs = require('fs');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ZipPlugin = require('zip-webpack-plugin');
-const GitRevisionPlugin = require('git-revision-webpack-plugin')
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const shell = require("shelljs");
+const tmp = require('tmp');
 
 const gitRevision = new GitRevisionPlugin();
 
@@ -73,6 +75,21 @@ module.exports = (_env, argv) => {
         const packageOutputPath = path.join(path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev");
 
         addStaticFile("manifest.json", browser.manifest);
+
+        if(b === "chrome") {
+            const makePng = size =>  {
+                const tempFile = tmp.fileSync();
+                shell.exec(`inkscape -z --export-png ${tempFile.name} -h ${size} ./assets/logo.svg`);
+                shell.exec(`magick convert ${tempFile.name} -background none -gravity center -extent ${size}x${size} ${tempFile.name}`);
+                
+                addStaticFile(`logo${size}.png`, tempFile.name);
+            }
+
+            makePng(16);
+            makePng(48);
+            makePng(96);
+            makePng(128);
+        }
 
         if (browser.extraFiles) {
             for (const file of browser.extraFiles) {
