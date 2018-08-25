@@ -82,7 +82,6 @@ class NumberEdit extends ConfigEditBase {
                 value={this.getValue()}
             />
         );
-        console.log(this.getConfigView());
         const min = this.getConfigView().numberMin;
         const max = this.getConfigView().numberMax;
 
@@ -121,7 +120,6 @@ class SliderEdit extends ConfigEditBase {
     onChange(e) {
         e.stopPropagation();
         const val = parseFloat(e.target.value);
-        console.log(val);
         this.setValue(val);
     }
 
@@ -179,8 +177,6 @@ class CheckboxEdit extends ConfigEditBase {
 
     onChange(e) {
         e.stopPropagation();
-        console.log(e.target);
-        console.log(e.target.checked);
         this.setValue(e.target.checked);
     }
 
@@ -294,15 +290,12 @@ class HookHeader extends DOM.ElementBase {
         e.stopPropagation();
 
         const mod = R20Module.getModule(this.hook.filename);
-        console.log(mod);
         mod.toggleEnabledState();
     }
 
     internalRender() {
         let style = {};
         const isDisabled = !R20.isGM() && this.hook.gmOnly;
-
-        console.log(isDisabled);
 
         if (isDisabled) {
             style.color = "rgb(200,200,200)";
@@ -331,7 +324,6 @@ class AboutDialog extends DialogBase {
         this.githubUrl = "https://github.com/SSStormy/roll20-enhancement-suite/";
         this.openGithub = this.openGithub.bind(this);
 
-        console.log("CTORING ABOUT DIALOG");
         getExtUrlFromPage("logo.svg", 5000)
             .then(url => this.logoUrl = url)
             .catch(err => console.error(`Failed to get logo.svg: ${err}`));
