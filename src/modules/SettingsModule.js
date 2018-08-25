@@ -320,7 +320,7 @@ class HookHeader extends DOM.ElementBase {
 
 class AboutDialog extends DialogBase {
     constructor() {
-        super(null, null, true); // static
+        super(null, null, true); // recenter workaround
         this.githubUrl = "https://github.com/SSStormy/roll20-enhancement-suite/";
         this.openGithub = this.openGithub.bind(this);
 
