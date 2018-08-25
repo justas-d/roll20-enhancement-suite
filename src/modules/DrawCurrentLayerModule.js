@@ -91,10 +91,6 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     }
 
     removeWidget() {
-        $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
-        $("#editinglayer li.choosemap").off("click", this.onToolChange);
-        $("#editinglayer li.choosegmlayer").off("click", this.onToolChange);
-
         findByIdAndRemove(this.rootId);
     }
 
@@ -143,6 +139,11 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
     dispose() {
         super.dispose();
+
+        $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
+        $("#editinglayer li.choosemap").off("click", this.onToolChange);
+        $("#editinglayer li.choosegmlayer").off("click", this.onToolChange);
+        
         window.r20es.setModePrologue = null;
         this.removeWidget();
         
