@@ -97,8 +97,11 @@ class AnimationDisableModule extends R20Module.OnAppLoadBase {
     }
 
     setup() {
+        const cfg = this.getHook().config;
+
         window["r20esanims"] = window["r20esanims"] || {};
         for (const key in this.animModTable) {
+            if(!cfg[key]) continue;
             this.installAnimMod(key);
         }
     }
