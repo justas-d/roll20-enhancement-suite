@@ -19,6 +19,7 @@ import { SheetTabApiHook } from "./modules/SheetTabApiModule";
 import { WelcomeModule } from "./modules/WelcomeModule";
 import { TransparentPaperModuleHook } from "./modules/TransparentPaperModule";
 import { AnimationDisableHook } from "./modules/AnimationDisableModule.ts";
+import { AlternativeRadialMenuHook } from "./modules/AlternativeRadialMenuModule.ts";
 
 let hooks = {};
 const addHook = hook => hooks[hook.id] = hook;
@@ -42,6 +43,7 @@ addHook({
     patch: `$("#loading-overlay").hide();if(window.r20es && window.r20es.onLoadingOverlayHide) window.r20es.onLoadingOverlayHide(); `
 });
 
+addHook(AlternativeRadialMenuHook);
 addHook(AnimationDisableHook);
 addHook(WelcomeModule);
 addHook(TransparentPaperModuleHook);
