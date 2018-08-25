@@ -88,7 +88,7 @@ class AnimationDisableModule extends R20Module.OnAppLoadBase {
         }
     }
 
-    onSettingChange(name: string, oldVal, newVal) {
+    onSettingChange(name: string, oldVal: any, newVal: any) {
         if (oldVal === newVal) return;
 
         newVal
@@ -161,7 +161,7 @@ const hook = R20Module.makeHook(__filename, {
     },
 
     config: {
-        disableRadial: true,
+        disableRadial: false,
     },
 });
 
