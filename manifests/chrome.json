@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Roll20 Enhancement Suite",
-    "version": "1.0",
+    "version": ">>VERSION>>",
     "description": "Bunch of improvements to roll20.",
     "icons": {
         "16": "logo16.png",

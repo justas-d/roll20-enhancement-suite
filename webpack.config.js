@@ -9,19 +9,33 @@ const tmp = require('tmp');
 
 const gitRevision = new GitRevisionPlugin();
 
+let manifestVersion = null;
+{
+    const manifestGit = new GitRevisionPlugin({
+        versionCommand: "describe --abbrev=0"
+    });
+
+    manifestVersion = manifestGit.version().replace(/v/g, "");
+}
+
+
 let entry = {};
 let staticFiles = {};
 
 const addSourceFolder = folder => {
     fs.readdirSync(folder).forEach(f => {
         if (fs.lstatSync(folder + f).isDirectory()) return;
-        
+
         entry[f] = folder + f;
     });
 }
 
-const addStaticFile = (mappedName, sourcePath) => {
-    staticFiles[mappedName] = sourcePath;
+const addStaticFile = (mappedName, sourcePath, transform) => {
+    if (transform) {
+        staticFiles[mappedName] = { sourcePath, transform };
+    } else {
+        staticFiles[mappedName] = sourcePath;
+    }
 }
 
 const addStaticFolder = folder => {
@@ -55,6 +69,11 @@ const browserData = {
     }
 }
 
+function processManfiest(content) {
+    return content.toString()
+        .replace(/>>VERSION>>/g, manifestVersion);
+}
+
 module.exports = (_env, argv) => {
     let env = _env || {};
 
@@ -74,14 +93,14 @@ module.exports = (_env, argv) => {
         const sourceOutputPath = path.join(path.resolve(__dirname), "builds", browser.target, isProd ? "prod" : "dev");
         const packageOutputPath = path.join(path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev");
 
-        addStaticFile("manifest.json", browser.manifest);
+        addStaticFile("manifest.json", browser.manifest, processManfiest);
 
-        if(b === "chrome") {
-            const makePng = size =>  {
+        if (b === "chrome") {
+            const makePng = size => {
                 const tempFile = tmp.fileSync();
                 shell.exec(`inkscape -z --export-png ${tempFile.name} -h ${size} ./assets/logo.svg`);
                 shell.exec(`magick convert ${tempFile.name} -background none -gravity center -extent ${size}x${size} ${tempFile.name}`);
-                
+
                 addStaticFile(`logo${size}.png`, tempFile.name);
             }
 
@@ -143,8 +162,16 @@ module.exports = (_env, argv) => {
 
             plugins: [
                 new CopyWebpackPlugin(Object.keys(staticFiles).reduce((accum, mappedName) => {
-                    const sourcePath = staticFiles[mappedName];
-                    accum.push({ from: sourcePath, to: path.join(sourceOutputPath, mappedName) });
+                    const data = staticFiles[mappedName];
+                    let transform = null;
+                    let sourcePath = null;
+                    if (typeof (data) === "object") {
+                        sourcePath = data.sourcePath;
+                        transform = data.transform;
+                    } else {
+                        sourcePath = data;
+                    }
+                    accum.push({ transform, from: sourcePath, to: path.join(sourceOutputPath, mappedName) });
                     return accum;
                 }, [])),
 
