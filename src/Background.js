@@ -154,11 +154,6 @@ if (isChrome()) {
                             setTimeout(() => {
                                 window.r20esChrome.readyCallbacks.each(f => f());
 
-                                setTimeout(() => {
-                                    $("#loading-overlay").hide();
-                                    window.r20es.onLoadingOverlayHide();
-                                }, 10000);
-
                                 /*
                                     NOTE(Justas):
                                     This notifies ContentScript.js to inject module scripts.

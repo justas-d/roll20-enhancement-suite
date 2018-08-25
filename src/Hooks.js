@@ -20,6 +20,7 @@ import { WelcomeModule } from "./modules/WelcomeModule";
 import { TransparentPaperModuleHook } from "./modules/TransparentPaperModule";
 import { AnimationDisableHook } from "./modules/AnimationDisableModule.ts";
 import { AlternativeRadialMenuHook } from "./modules/AlternativeRadialMenuModule.ts";
+import { isChrome } from "./tools/MiscUtils";
 
 let hooks = {};
 const addHook = hook => hooks[hook.id] = hook;
@@ -42,6 +43,17 @@ addHook({
     find: `$("#loading-overlay").hide()`,
     patch: `$("#loading-overlay").hide();if(window.r20es && window.r20es.onLoadingOverlayHide) window.r20es.onLoadingOverlayHide(); `
 });
+
+if(isChrome()) {
+    addHook({
+        id: "chromePageLoadFix",
+        force: true,
+
+        includes: "assets/app.js",
+        find: `"You will join the game shortly..."),i=6e4)`,
+        patch: `"You will join the game shortly..."),i=250)`,
+    })
+}
 
 addHook(AlternativeRadialMenuHook);
 addHook(AnimationDisableHook);
