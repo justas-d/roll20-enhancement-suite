@@ -32,7 +32,7 @@ class LocalStorageBootstrapper extends R20Bootstrapper.Base {
         }
 
         if (isChrome()) {
-            chrome.storage.local.get({}, callback);
+            chrome.storage.local.get(callback);
         } else {
             browser.storage.local.get().then(callback)
         }
