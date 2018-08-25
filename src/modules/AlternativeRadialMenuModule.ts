@@ -47,11 +47,27 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
     margin: 0px;
     border-radius: 0px;
 }
+
+#radial-menu .markermenu.open {
+    border-radius: 0;
+    top: 47px;
+    padding-left: 0;
+    left: -80px;
+    width: 375px;
+    height: auto;
+}
+
 `;
 
         if (cfg.superMinimal) {
             style += `
             
+
+
+#radial-menu .markermenu.open {
+    left: -55px;
+    width: 260px;
+}
 #radial-menu .button div.inner {
     background: rgba(0,0,0,0);
 }
@@ -62,12 +78,28 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
 #radial-menu .button-1, 
 #radial-menu .button-2 {
     transform: translateX(-35px);
-    z-index: 5;
 }
 
 #radial-menu .button div.inner.hasnumber span {
     text-shadow: 0px 0px 3px rgba(0,0,0,1);
     text-shadow: 1px 1px 0px rgba(0,0,0,1);
+}
+
+#radial-menu .markermenu .markercolor {
+    width: 20px;
+    height: 20px;
+}
+
+#radial-menu .markermenu .markercolor,
+#radial-menu .markermenu .markericon {
+    margin: 0;
+    border: 2px solid white;
+}
+
+#radial-menu .markermenu .markercolor.active,
+#radial-menu .markermenu .markericon.active {
+    border: 2px solid black;
+
 }
 
 `
