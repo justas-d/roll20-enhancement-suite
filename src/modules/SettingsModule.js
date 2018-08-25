@@ -1,6 +1,6 @@
 import { R20Module } from "../tools/R20Module";
 import { DOM } from "../tools/DOM";
-import { findByIdAndRemove, getBrowser, strIsNullOrEmpty, mapObj } from "../tools/MiscUtils";
+import { findByIdAndRemove, getBrowser, strIsNullOrEmpty, mapObj, getExtUrlFromPage } from "../tools/MiscUtils";
 import { DialogBase } from "../tools/DialogBase";
 import { CheckboxWithText, DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../tools/DialogComponents";
 import { R20Bootstrapper } from "../tools/R20Bootstrapper";
@@ -327,8 +327,14 @@ class HookHeader extends DOM.ElementBase {
 
 class AboutDialog extends DialogBase {
     constructor() {
-        super();
+        super(null, null, true); // static
         this.githubUrl = "https://github.com/SSStormy/roll20-enhancement-suite/";
+        this.openGithub = this.openGithub.bind(this);
+
+        console.log("CTORING ABOUT DIALOG");
+        getExtUrlFromPage("logo.svg", 5000)
+            .then(url => this.logoUrl = url)
+            .catch(err => console.error(`Failed to get logo.svg: ${err}`));
     }
 
     openGithub() {
@@ -353,12 +359,12 @@ class AboutDialog extends DialogBase {
 
 
                 <DialogBody>
-                    <a href="javascript:void(0)" onClick={this.openGithub}>
-                        <img style={{ width: "60%", display: "block", marginLeft: "auto", marginRight: "auto" }} src={window.r20esLogoUrl} alt="Logo" />
-                    </a>
+                    
+                    <img style={{ width: "60%", display: "block", marginLeft: "auto", marginRight: "auto" }} src={this.logoUrl} alt="Logo" />
+                    
 
                     <section style={{ marginTop: "16px", marginBottom: "16px", textAlign: "center" }}>
-                        <a href={this.githubUrl}>
+                        <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"} onClick={this.openGithub}> 
                             <img height="32" width="32" src="https://unpkg.com/simple-icons@latest/icons/github.svg" />
                         </a>
                     </section>
@@ -524,8 +530,6 @@ class SettingsBootstrapper extends R20Bootstrapper.Base {
 
     setup() {
         this.injectCSS(getBrowser().runtime.getURL("settings.css"), document.head, this.cssId);
-        window.wrappedJSObject.r20esLogoUrl = getBrowser().runtime.getURL("logo.svg");
-
     }
 
     disposePrevious() {

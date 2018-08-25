@@ -4,6 +4,7 @@
     "version": "1.0",
     "description": "Bunch of improvements to roll20.",
     "icons": {
+        "16": "logo.svg",
         "48": "logo.svg",
         "96": "logo.svg",
         "128": "logo.svg",
@@ -34,7 +35,9 @@
         ]
     },
     "web_accessible_resources": [
+        "*.ts",
         "*.js",
-        "*.css"
+        "*.css",
+        "logo.svg"
     ]
 }

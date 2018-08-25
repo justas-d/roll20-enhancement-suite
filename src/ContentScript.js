@@ -1,6 +1,6 @@
 import { Config } from "./tools/Config";
 import { hooks } from "./Hooks";
-import { safeCall, injectScript, isChrome } from "./tools/MiscUtils";
+import { safeCall, injectScript, isChrome, getBrowser } from "./tools/MiscUtils";
 import { SettingsBootstrapper } from "./modules/SettingsModule";
 import { DialogFormsBootstrapper } from "./bootstrappers/DialogFormsBootstrapper";
 import { LocalStorageBootstrapper } from "./bootstrappers/LocalStorageBootstrapper";
@@ -28,11 +28,11 @@ for (let id in window.bootstrapTable) {
 
 function injectModules() {
 
-    if(window.hasInjectedModules) {
+    if (window.hasInjectedModules) {
         return;
     }
     window.hasInjectedModules = true;
-    
+
     try {
         console.log("ContentScript.js is injecting modules.");
 
@@ -66,22 +66,31 @@ function injectModules() {
 function recvMsgFromApp(e) {
     if (e.origin !== Config.appUrl) return;
 
-    if (isChrome()) {
-
-        if (e.data.r20esLoadModules) {
-            window.injectWebsiteOK = true;
-        }
-
-        if(e.data.r20esChromeInjectionDone) {
-            window.injectBackgroundOK = true;
-        }
-
-        if(window.injectBackgroundOK && window.injectWebsiteOK) {
-            injectModules();
-        }
+    if (e.data.r20esWantsResourceUrl) {
+        
+        const payload = getBrowser().extension.getURL(e.data.r20esWantsResourceUrl);
+        console.log(payload);
+        
+        window.postMessage({ r20esGivesResourceUrl: payload }, Config.appUrl);
     } else {
-        if (e.data.r20esLoadModules) {
-            injectModules();
+
+        if (isChrome()) {
+
+            if (e.data.r20esLoadModules) {
+                window.injectWebsiteOK = true;
+            }
+
+            if (e.data.r20esChromeInjectionDone) {
+                window.injectBackgroundOK = true;
+            }
+
+            if (window.injectBackgroundOK && window.injectWebsiteOK) {
+                injectModules();
+            }
+        } else {
+            if (e.data.r20esLoadModules) {
+                injectModules();
+            }
         }
     }
 }

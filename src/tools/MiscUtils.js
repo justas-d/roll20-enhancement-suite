@@ -1,4 +1,5 @@
 import { detect as detectBrowser } from "detect-browser";
+import { Config } from "./Config";
 
 function copy(what, overrides) {
     let copy = Object.assign({}, what);
@@ -140,12 +141,50 @@ function createCSSElement(css, id) {
     return el;
 }
 
+function getExtUrlFromPage(resource, _waitMs) {
+    const waitMs = (_waitMs === undefined || _waitMs === null) ? 1000 : _waitMs;
+
+    return new Promise((ok, err) => {
+        try {
+            let worked = false;
+
+            function removeCb() { window.removeEventListener("message", callback); }
+
+            function callback(e) {
+                if (e.origin !== Config.appUrl) return;
+
+                if (e.data.r20esGivesResourceUrl) {
+                    console.log(removeCb);
+                    console.log(worked);
+                    worked = true;
+                    
+                    removeCb();
+                    ok(e.data.r20esGivesResourceUrl);
+                }
+            };
+
+            window.addEventListener("message", callback);
+            window.postMessage({ r20esWantsResourceUrl: resource }, Config.appUrl);
+
+            setTimeout(() => {
+                try {
+                    if (!worked) {
+                        removeCb();
+                        err(`Timed out after ${waitMs}ms`);
+                    }
+                } catch (ex) { err(ex); }
+
+            }, waitMs);
+        } catch (ex) { err(ex); }
+    });
+}
+
 export {
     getBrowser, readFile, safeParseJson,
     replaceAll, escapeRegExp, findByIdAndRemove,
     copy, getTransform, getRotation,
     basename, safeCall, removeAllChildren,
     injectScript, isChrome, strIsNullOrEmpty,
-    mapObj, createCSSElement
+    mapObj, createCSSElement, getExtUrlFromPage
 };
 

@@ -30,19 +30,19 @@ function getHooks(hooks, url) {
     return hookQueue;
 }
 
-function injectHooks(intoWhat, hookQueue, escapeFunc) {
+function injectHooks(intoWhat, hookQueue, replaceFunc) {
     if (hookQueue.length <= 0) return intoWhat;
     
     for (let combo of hookQueue) {
         const mod = combo.mod;
 
         if (!mod.find || !mod.patch) continue;
-        const patch = replaceAll(mod.patch, ">>R20ES_MOD_FIND>>", mod.find);
+        const patch = replaceFunc(mod.patch, ">>R20ES_MOD_FIND>>", mod.find);
 
         console.log("===> REPLACING:");
         console.log(`Find: ${mod.find}`);
         console.log(`Patch: ${patch}`);
-        intoWhat = replaceAll(intoWhat, mod.find, patch);
+        intoWhat = replaceFunc(intoWhat, mod.find, patch);
     }
 
     return intoWhat;
@@ -109,7 +109,7 @@ if (isChrome()) {
                             "window.r20esChrome.readyCallbacks.push(fn);");
 
                         const hookQueue = getHooks(window.r20esChrome.hooks, localUrl);
-                        text = injectHooks(text, hookQueue, window["escapeRegExp"]);
+                        text = injectHooks(text, hookQueue, window["replaceAll"]);
 
                         const blob = new Blob([text], { type: "application/json" });
 
@@ -150,6 +150,7 @@ if (isChrome()) {
 
                             console.log("scripts injected.");
 
+                            
                             setTimeout(() => {
                                 window.r20esChrome.readyCallbacks.each(f => f());
 
@@ -164,6 +165,7 @@ if (isChrome()) {
                                     Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
                                     contratry to what happens on Firefox.
                                 */
+                                
                                 window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
                             }, 500);
                         }
@@ -197,6 +199,7 @@ if (isChrome()) {
                 ${getHooks.toString()}
                 ${escapeRegExp.toString()}
                 ${injectHooks.toString()}
+                ${replaceAll.toString()}
                 ${scriptString()}
                 `
             } else {
@@ -253,7 +256,7 @@ if (isChrome()) {
         };
 
         filter.onstop = _ => {
-            str = injectHooks(str, hookQueue, escapeRegExp);
+            str = injectHooks(str, hookQueue, replaceAll);
 
             filter.write(encoder.encode(str));
             filter.close();

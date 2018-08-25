@@ -3,7 +3,7 @@ import { removeAllChildren, findByIdAndRemove, safeCall } from "./MiscUtils";
 
 
 class DialogBase {
-    constructor(className, style) {
+    constructor(className, style, isStatic) {
         window.r20esDialogId = "r20esDialogId" in window ? window.r20esDialogId : 0;
         this._id = `r20es-dialog-${window.r20esDialogId++}`;
         this._root = <dialog className={className} style={style} id={this.getId()}/>;
@@ -13,6 +13,11 @@ class DialogBase {
         this.setData = this.setData.bind(this);
         this.getData = this.getData.bind(this);
         this.dispose = this.dispose.bind(this);
+        this.isStatic = (isStatic === null ||isStatic === undefined) ? false : isStatic;
+
+        if(this.isStatic) {
+            this.internalRender();
+        }
 
         document.body.insertBefore(this.getRoot(), document.body.firstElementChild);
         if(window.dialogPolyfill) dialogPolyfill.registerDialog(this.getRoot());
@@ -29,6 +34,10 @@ class DialogBase {
     }
 
     rerender() {
+        if(this.isStatic) {
+            console.error("Tried to rerender static dialog! Dialog cannot be static if it is to be redrawn.");
+            return;
+        }
         removeAllChildren(this.getRoot());
         this.internalRender();
     }
