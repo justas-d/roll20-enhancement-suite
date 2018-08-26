@@ -130,18 +130,21 @@ const DOM = {
     createElement
 };
 
-function SidebarSeparator() {
+function SidebarSeparator(props) {
+    const big = props && props.big;
     return (
-        <span>
-            <div className="style" style={{ height: "10px" }} />
+        <div>
+            {big && <div className="clear" style={{ height: big }} />}
             <hr />
-            <div className="style" style={{ height: "10px" }} />
-        </span>
+            {big && <div className="clear" style={{ height: big }} />}
+        </div>
     )
 }
 
 function SidebarCategoryTitle() {
     return <h3 style={{ marginBottom: "5px", marginLeft: "5px" }}></h3>
 }
+
+
 
 export { DOM, SidebarSeparator, SidebarCategoryTitle };

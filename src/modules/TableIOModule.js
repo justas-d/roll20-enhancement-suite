@@ -37,7 +37,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
     }
 
     onExportButtonClicked(e) {
-        let tableId = this.getTableId(e.target.parentNode); 
+        let tableId = this.getTableId(e.target.parentNode);
         if (!tableId) { alert("Failed to get table id."); return; }
 
         let table = R20.getRollableTable(tableId);
@@ -71,7 +71,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
     observerCallback(muts) {
         for (var e of muts) {
-            if(this.tryInsertTableWidget(e.target)) {
+            if (this.tryInsertTableWidget(e.target)) {
                 break;
             }
         }
@@ -90,16 +90,16 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         let tables = null;
         try {
             tables = TableExportLang.parse(e);
-        } catch(err) {
+        } catch (err) {
             alert(err);
         }
-        if(!tables) return;
+        if (!tables) return;
 
         if (!tables || tables.length <= 0) return;
-    
+
         for (let tableName in tables) {
             TableIO.importJson(tables[tableName]);
-        }        
+        }
     }
 
     onImportClicked(e) {
@@ -114,7 +114,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         plsWait.show()
 
         const handle = input.files[0];
-        
+
         readFile(handle)
             .then(cb)
             .catch(alert)
@@ -141,30 +141,36 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         // @COPYPASTE from CharacterIOModule
         const existingHeaders = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix");
 
-        for(const header of existingHeaders) {
+        for (const header of existingHeaders) {
             this.tryInsertTableWidget(header);
         }
-    
+
         let root = document.getElementById("deckstables").getElementsByClassName("content")[0];
 
-        const buttonStyle = { marginBottom: "10px", marginRight: "10px", float: "left" };
+        const buttonStyle = { width: "100%", marginBottom: "20px", marginRight: "8px" };
         const elem = <div id={this.journalDivId}>
             <SidebarSeparator />
-            
+
             <SidebarCategoryTitle>
                 Import Rollable Table
             </SidebarCategoryTitle>
-            
 
-            <input onChange={this.onFileChanged} type="file" />
 
-            <button id={this.normalImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
-                Import
+            <input 
+                onChange={this.onFileChanged} 
+                type="file" 
+                style={{width: "95%"}}
+            />
+
+            <div style={{ display: "flex", justifyContent: "space-between"}}>
+                <button id={this.normalImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
+                    Import
             </button>
 
-            <button id={this.tableExportImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
-                Import (TableExport)
+                <button id={this.tableExportImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
+                    Import (TableExport)
             </button>
+            </div>
         </div >
 
         root.appendChild(elem);
@@ -182,11 +188,11 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         // @COPYPASTE from CharacterIOModule
         const widgets = document.getElementsByClassName(this.tableWidgetClass);
 
-        
+
         // removing a widget modifies the widgets html element collection 
         // therefore we have to treat this as a stack
         let num = widgets.length;
-        while(num --> 0) {
+        while (num-- > 0) {
             widgets[0].remove();
         }
 

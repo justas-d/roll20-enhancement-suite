@@ -91,25 +91,26 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
 
         const widget = <div id={this.journalWidgetId}>
-            <SidebarSeparator />
+            <SidebarSeparator/>
 
             <div>
                 <SidebarCategoryTitle>
                     Import Character
-            </SidebarCategoryTitle>
+                </SidebarCategoryTitle>
 
                 <input
                     type="file"
+                    style={{width: "95%"}}
                     onChange={this.onJournalFileChange}
                 />
 
-                <button disabled className="btn" style={{ display: "block", float: "left", marginBottom: "10px" }} onClick={this.onImportClick}>
+                <button disabled className="btn" style={{ display: "block", float: "left", width: "90%", marginBottom: "10px" }} onClick={this.onImportClick}>
                     Import Character
                 </button>
 
             </div>
 
-            <SidebarSeparator />
+            <SidebarSeparator big="1px"/>
         </div>
 
         journal.appendChild(widget);
