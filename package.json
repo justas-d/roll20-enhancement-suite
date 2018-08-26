@@ -28,6 +28,7 @@
         "@babel/plugin-transform-react-jsx": "7.0.0-beta.54",
         "@babel/preset-env": "7.0.0-beta.54",
         "@babel/preset-typescript": "7.0.0-rc.3",
+        "@types/jquery": "3.3.6",
         "ava": "1.0.0-beta.7",
         "awesome-typescript-loader": "5.2.0",
         "babel-loader": "^8.0.0-beta.0",

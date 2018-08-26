@@ -131,7 +131,7 @@ module.exports = (_env, argv) => {
             module: {
                 rules: [
                     {
-                        test: /\.js$/,
+                        test: /(\.js|\.jsx)$/,
                         exclude: /node_modules/,
                         use: [{
                             loader: 'babel-loader',
@@ -146,14 +146,14 @@ module.exports = (_env, argv) => {
                         }],
                     },
                     {
-                        test: /\.ts?$/,
-                        use: { loader: 'awesome-typescript-loader' }
+                        test: /(\.ts|\.tsx)$/,
+                        loaders: ['awesome-typescript-loader']
                     },
                 ],
             },
 
             resolve: {
-                extensions: ['.tx', '.js'],
+                extensions: ['.tsx', '.ts', '.js', '.jsx'],
                 modules: [
                     'src',
                     'node_modules',
