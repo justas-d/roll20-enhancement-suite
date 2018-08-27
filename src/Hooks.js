@@ -18,8 +18,8 @@ import { MiddleClickSelectHook } from "./modules/MiddleClickSelectModule";
 import { SheetTabApiHook } from "./modules/SheetTabApiModule";
 import { WelcomeModule } from "./modules/WelcomeModule";
 import { TransparentPaperModuleHook } from "./modules/TransparentPaperModule";
-import { AnimationDisableHook } from "./modules/AnimationDisableModule.ts";
-import { AlternativeRadialMenuHook } from "./modules/AlternativeRadialMenuModule.ts";
+import { AnimationDisableHook } from "./modules/AnimationDisableModule";
+import { AlternativeRadialMenuHook } from "./modules/AlternativeRadialMenuModule";
 import { isChrome } from "./tools/MiscUtils";
 
 let hooks = {};
