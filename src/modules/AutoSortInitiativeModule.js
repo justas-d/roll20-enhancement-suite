@@ -134,7 +134,7 @@ if (R20Module.canInstall()) new AutoSortInitiativeModule().install();
 
 export default R20Module.makeHook(__filename, {
     id: "autoSortInitiative",
-    name: "Auto-Sort Initiative",
+    name: "Automatically Sort Initiative",
     description: "Automatically sorts initiative order when a new token has been added to it by any player. After the list has been sorted, it is reorganized so that the token that was first in the list before the sort is still the first in the list after the sort.",
     category: R20Module.category.initiative,
     gmOnly: true,

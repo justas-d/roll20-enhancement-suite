@@ -225,7 +225,7 @@ if (R20Module.canInstall()) new CharacterIOModule(__filename).install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "characterImportExport",
-    name: "Character Exporter/Importer",
+    name: "Character Importer/Exporter",
     description: "Provides character importing (in the journal) and exporting (in the journal and on sheets).",
     category: R20Module.category.exportImport,
 });

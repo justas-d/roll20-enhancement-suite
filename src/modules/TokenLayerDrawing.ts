@@ -73,7 +73,7 @@ if (R20Module.canInstall()) new TokenLayerDrawing().install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "tokenLayerDrawing",
-    name: "Token layer drawing",
+    name: "Draw Token Layer on Tokens",
     description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
     category: R20Module.category.canvas,
     gmOnly: true,

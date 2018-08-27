@@ -85,8 +85,8 @@ if (R20Module.canInstall()) new RollAndApplyHitDiceModule(__filename).install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "rollAndApplyHitDice",
-    name: "Roll and apply hit dice",
-    description: `Adds a "Hit Dice" option to the token right click menu which rolls and applies hit dice for the selected tokens.`,
+    name: "Roll & Apply Hit Dice",
+    description: `Adds a "Hit Dice" option to the canvas token context menu which will roll and apply hit dice for the selected group of tokens.`,
     category: R20Module.category.token,
     gmOnly: true,
 

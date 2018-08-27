@@ -51,8 +51,8 @@ if (R20Module.canInstall()) new MiddleClickSelectModule().install();
 
 const hook = R20Module.makeHook(__filename,{
     id: "middleClickToTokenLayer",
-    name: "Middle click to switch to token layer.",
-    description: "When middle clicking (scroll wheel), will set the current layer to the layer of the token underneath the mouse.",
+    name: "Middle Click to Switch to Token Layer.",
+    description: "This module allows the use of middle clicking (mouse3/scroll wheel) on a token. Doing so will switch the current edit layer to the layer of the token.",
     category: R20Module.category.canvas,
     gmOnly: true,
 

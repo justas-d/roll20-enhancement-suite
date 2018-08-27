@@ -27,7 +27,7 @@ if(R20Module.canInstall()) new ChangeIdWhenDuplicatingModule().install();
 const hook = R20Module.makeHook(__filename, {
     id: "changeRepresentsIdWhenDuplicating",
     name: `Reassign "Represents" when duplicating`,
-    description: `This will make sure that if a character, who we want to duplicate, has default token, the character that he default token represents will be set to the duplicated character.`,
+    description: "When duplicating a character in the journal and if that character has a default token, this module will reassign the \"Represents\" value of that default token to the newly duplicated character.",
     category: R20Module.category.token,
     gmOnly: true,
 

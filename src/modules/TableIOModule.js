@@ -204,8 +204,8 @@ if (R20Module.canInstall()) new TableIOModule(__filename).install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "importExportTable",
-    name: "Table Import/export",
-    description: "Provides rollable table importing and exporting. Supports TableExport format tables.",
+    name: "Table Importer/Exporter",
+    description: "Provides rollable table importing and exporting. Supports TableExport format tables. Controls can be found in the \"Collection\" sidebar tab.",
     category: R20Module.category.exportImport,
     gmOnly: true,
 

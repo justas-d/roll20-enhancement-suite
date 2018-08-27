@@ -100,8 +100,8 @@ if (R20Module.canInstall()) new MacroIOModule().install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "macroIO",
-    name: "Player Macro Import/Export",
-    description: "Allows exporting and importing of player macros and the macro bar.",
+    name: "Player Macro Importer/Exporter",
+    description: "Allows exporting and importing of player macros and the macro bar. Controls can be found in the \"Collection\" sidebar tab.",
     category: R20Module.category.exportImport,
 });
 

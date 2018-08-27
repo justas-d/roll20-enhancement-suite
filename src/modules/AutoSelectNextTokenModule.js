@@ -28,8 +28,8 @@ if (R20Module.canInstall()) new AutoSelectNextTokenModule(__filename).install();
 
 const hook = R20Module.makeHook(__filename,{
     id: "autoSelectNextToken",
-    name: "Select token on its turn",
-    description: "Automatically selects a token on it's turn",
+    name: "Select Token",
+    description: "When advancing initiative, this module will automatically select the next token in the initiative order.",
     category: R20Module.category.initiative,
     gmOnly: true,
 

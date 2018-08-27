@@ -55,11 +55,8 @@ if(isChrome()) {
         patch: `"You will join the game shortly..."),i=250)`,
     })
 }
-
-addHook(MacroIOHook);
 addHook(AlternativeRadialMenuHook);
 addHook(AnimationDisableHook);
-addHook(WelcomeModule);
 addHook(TransparentPaperModuleHook);
 addHook(TokenContextMenuApiModule);
 addHook(SettingsHook);
@@ -79,5 +76,7 @@ addHook(TableIOHook);
 addHook(TokenLayerDrawingHook);
 addHook(MacroGeneratorHook);
 addHook(SheetTabApiHook);
+addHook(MacroIOHook);
+addHook(WelcomeModule);
 
 export { hooks };

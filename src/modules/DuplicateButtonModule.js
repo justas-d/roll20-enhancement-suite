@@ -74,8 +74,8 @@ if (R20Module.canInstall()) new DuplicateButtonModule(__filename).install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "duplicateInJournalContextMenu",
-    name: `"Duplicate" in journal context menu`,
-    description: `Adds a "Duplicate" entry to the context menu of items found in the journal.`,
+    name: `"Duplicate" in the Journal Context Menu`,
+    description: `Adds a "Duplicate" entry, functioning as a shortcut to duplicate button found in the edit page of sheets, to the context menu of items found in the journal.`,
     category: R20Module.category.journal,
     gmOnly: true,
 

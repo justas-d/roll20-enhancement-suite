@@ -179,7 +179,7 @@ if (R20Module.canInstall()) new BulkMacroModule(__filename).install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "bulkMacros",
-    name: "Bulk macros",
+    name: "Bulk Macros",
     description: `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
     category: R20Module.category.token,
     gmOnly: true,

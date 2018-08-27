@@ -30,8 +30,8 @@ if(R20Module.canInstall()) new AutoPingNextTokenModule(__filename).install();
 const hook = R20Module.makeHook(__filename,{
 
     id: "autoPingNextToken",
-    name: "Ping visible token on its turn",
-    description: "Automatically pings a token on it's turn only if that token is on the player token layer.",
+    name: "Ping Visible Token",
+    description: "When advancing initiative, this module will automatically ping the next token only if it is in the player token layer.",
     category: R20Module.category.initiative,
     gmOnly: true,
 

@@ -151,8 +151,8 @@ if (R20Module.canInstall()) new DrawCurrentLayerModule().install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "activeLayerHud",
-    name: "Display active layer",
-    description: "Displays the active edit layer as well as whether the select tool is active.",
+    name: "Display Current Layer on Canvas",
+    description: "Displays the current edit layer and whether the select tool is active.",
     category: R20Module.category.canvas,
     gmOnly: true,
 

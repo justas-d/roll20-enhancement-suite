@@ -29,7 +29,7 @@ if (R20Module.canInstall()) new InitiativeAdvanceShortcutModule(__filename).inst
 
 const hook = R20Module.makeHook(__filename, {
     id: "initiativeShortcuts",
-    name: "Initiative shortcuts",
+    name: "Advance Initiative Shortcut",
     description: "Creates a shortcut for advancing (Ctrl+Right Arrow) in the initiative list.",
     category: R20Module.category.initiative,
     gmOnly: true,

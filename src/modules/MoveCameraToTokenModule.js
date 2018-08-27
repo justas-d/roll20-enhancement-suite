@@ -20,8 +20,8 @@ if(R20Module.canInstall()) new MoveCameraToTokenModule(__filename).install();
 
 const hook = R20Module.makeHook(__filename,{
     id: "autoFocusNextToken",
-    name: "Move camera to token on its turn",
-    description : "Automatically moves the local camera to the token on it's turn. The camera movement is local only, meaning only your camera will move.",
+    name: "Move Camera to Token",
+    description : "When advancing initiative, this module will move your camera to the next token in the initiative order. This camera movement is local, meaning other players will not have their camera moved.",
     category: R20Module.category.initiative,
     gmOnly: true,
 
