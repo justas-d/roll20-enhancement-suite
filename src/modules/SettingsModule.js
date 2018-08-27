@@ -111,32 +111,37 @@ class StringEdit extends ConfigEditBase {
 class SliderEdit extends ConfigEditBase {
     constructor(props) {
         super(props);
-        this.onChange = this.onChange.bind(this);
-
-        this.min = props.min;
-        this.max = props.max;
     }
 
-    onChange(e) {
+    onChange = (e) => {
         e.stopPropagation();
         const val = parseFloat(e.target.value);
         this.setValue(val);
+
+        $(e.target.parentNode).find("input")[0].title = val.toString();
     }
 
     internalRender() {
-
         const min = this.getConfigView().sliderMin;
         const max = this.getConfigView().sliderMax;
-
+        const val = this.getValue();
+        
         return (
-            <input onChange={this.onChange}
-                className="compact"
-                type="range"
-                min={min}
-                max={max}
-                step="any"
-                value={this.getValue()}
-            />
+            <section className="compact">
+
+                <span>{min}</span>
+                <input onChange={this.onChange}
+                    style={{ height: "auto", width: "80%", margin: "0 8px 0 8px", border: "none" }}
+                    type="range"
+                    min={min}
+                    max={max}
+                    step="any"
+                    value={val}
+                    title={val}
+                />
+                <span>{max}</span>
+
+            </section>
         );
     }
 }
@@ -223,9 +228,9 @@ class HookConfig extends DOM.ElementBase {
 
                 const Component = elemMap[cfg.type];
                 elems.push(
-                    <li>
-                        <Component configName={cfgId} hook={this.hook} />
+                    <li style={{ display: "flex", justifyContent: "space-between" }}>
                         <span title={cfgId} className="text">{cfg.display}</span>
+                        <Component configName={cfgId} hook={this.hook} />
                     </li>
 
                 );
@@ -351,12 +356,12 @@ class AboutDialog extends DialogBase {
 
 
                 <DialogBody>
-                    
+
                     <img style={{ width: "60%", display: "block", marginLeft: "auto", marginRight: "auto" }} src={this.logoUrl} alt="Logo" />
-                    
+
 
                     <section style={{ marginTop: "16px", marginBottom: "16px", textAlign: "center" }}>
-                        <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"} onClick={this.openGithub}> 
+                        <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"} onClick={this.openGithub}>
                             <img height="32" width="32" src="https://unpkg.com/simple-icons@latest/icons/github.svg" />
                         </a>
                     </section>
@@ -371,10 +376,10 @@ class AboutDialog extends DialogBase {
 
                 </DialogBody>
 
-                <section style={{ margin: "20px"}}>
+                <section style={{ margin: "20px" }}>
                     <input
                         className="btn"
-                        style={{ width: "100%", height: "auto", boxSizing: "border-box"}}
+                        style={{ width: "100%", height: "auto", boxSizing: "border-box" }}
                         type="button"
                         onClick={this.close}
                         value="OK" />
