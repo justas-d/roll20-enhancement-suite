@@ -131,7 +131,7 @@ class SliderEdit extends ConfigEditBase {
 
                 <span>{min}</span>
                 <input onChange={this.onChange}
-                    style={{ height: "auto", width: "80%", margin: "0 8px 0 8px", border: "none" }}
+                    style={{ display: "inline-block", height: "auto", width: "80%", margin: "0 8px 0 8px", border: "none" }}
                     type="range"
                     min={min}
                     max={max}
