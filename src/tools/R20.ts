@@ -183,7 +183,10 @@ namespace R20 {
         window.d20.textchat.doChatInput(what, callbackId);
     }
 
-    export function say(what: string, callback?: (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData) => void) {
+    export function say(
+        what: string, 
+        callback?: (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData) 
+        => void) {
         if (callback) {
 
             const callbackId = window.generateUUID();
@@ -200,9 +203,11 @@ namespace R20 {
 
     }
 
-    export function sayToSelf(what: string, callbackId: string) {
-        primitiveSay(`/w "${getCurrentPlayer().get("displayname")}" ${what}`, callbackId);
-        // TODO : try out d20.textchat.incoming
+    export function sayToSelf(
+        what: string, 
+        callback?: (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData) 
+        => void) {
+        say(`/w "${getCurrentPlayer().get("displayname")}" ${what}`, callback);
     }
 
     export function ping(left: number, top: number, playerId?: string, pageId?: string, layer?: CanvasLayer) {
