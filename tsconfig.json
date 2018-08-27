@@ -7,16 +7,18 @@
         "module": "commonjs",
         "types": [
             "node",
-            "jquery"
+            "jquery",
+            "roll20"
         ],
         "lib": ["es6", "dom"],
-        "typeRoots": ["node_modules/@types"],
+        "typeRoots": ["node_modules/@types", "./typings"],
     },
     "exclude": [
         "*"
     ],
     "include": [
         "src/**/*",
-        "node_modules/@types/**/*"
+        "node_modules/@types/**/*",
+        "typings/**/*"
     ]
 }
