@@ -19,7 +19,7 @@ declare namespace Roll20 {
     export function generateUUID(): string;
 
     export class SyncObject<TAttribs> {
-        save: (data: any) => TAttribs;
+        save: (data: TAttribs|any) => TAttribs;
         get: <T>(attrib: string) => T;
 
         id: string;
@@ -36,7 +36,9 @@ declare namespace Roll20 {
     }
 
     export class PlayerAttributes {
-
+        macrobar: string;
+        
+        displayname: string;
     }
 
     export class MacroAttributes {
@@ -52,7 +54,7 @@ declare namespace Roll20 {
     }
 
     export class Player extends SyncObject<PlayerAttributes> {
-        marcos: ObjectStorage<Macro>
+        macros: ObjectStorage<Macro>
     }
 
     export class HandoutAttributes {
@@ -97,6 +99,11 @@ declare namespace Roll20 {
         model?: Character;
         top: number;
         left: number;
+    }
+
+    export class PlayerSettings {
+        refreshMacroBar: () => void;
+        refreshRollsList: () => void;
     }
 
     export class InitiativeData {
@@ -166,7 +173,7 @@ declare namespace Roll20 {
 
     }
 
-    export class Canvas {
+    export class Canvas {macros
         getObjects: () => CanvasObject[];
         containsPoint: (e: MouseEvent, obj: CanvasObject) => boolean;
     }
@@ -176,6 +183,7 @@ declare namespace Roll20 {
         engine: Engine;
         token_editor: TokenEditor;
         textchat: Chat;
+        player_settings: PlayerSettings;
     }
 
     export class ObjectStorage<T> {
@@ -183,7 +191,8 @@ declare namespace Roll20 {
         models: T[];
         get: (uuid: string) => T;
         getByCid: (cid: string) => T;
-        create: (initialState: T) => T;
+        create: (initialState: T|any) => T;
+        reset: () => ObjectStorage<T>;
     }
 
     export class R20ES {

@@ -90,6 +90,14 @@ namespace R20 {
         window.d20.Campaign.initiativewindow.addTokenToList("-1", name, formula);
     }
 
+    export function rerenderMacroBar() {
+        window.d20.player_settings.refreshMacroBar();
+    }
+
+    export function rerenderJournalMacros() {
+        window.d20.player_settings.refreshRollsList();
+    }
+
     
     export function orderInitiativeBy(order: InitiativeOrdering) {
         

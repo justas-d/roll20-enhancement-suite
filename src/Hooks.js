@@ -21,6 +21,7 @@ import { TransparentPaperModuleHook } from "./modules/TransparentPaperModule";
 import { AnimationDisableHook } from "./modules/AnimationDisableModule";
 import { AlternativeRadialMenuHook } from "./modules/AlternativeRadialMenuModule";
 import { isChrome } from "./tools/MiscUtils";
+import { MacroIOHook } from "./modules/MacroIOModule";
 
 let hooks = {};
 const addHook = hook => hooks[hook.id] = hook;
@@ -55,6 +56,7 @@ if(isChrome()) {
     })
 }
 
+addHook(MacroIOHook);
 addHook(AlternativeRadialMenuHook);
 addHook(AnimationDisableHook);
 addHook(WelcomeModule);

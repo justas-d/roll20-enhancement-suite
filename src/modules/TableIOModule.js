@@ -45,7 +45,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
         let data = TableIO.exportJson(table);
 
-        let jsonBlob = new Blob([data], { type: 'data:application/javascript;charset=utf-8' });
+        let jsonBlob = new Blob([data], { type: 'data:application/json;charset=utf-8' });
         saveAs(jsonBlob, table.get("name") + ".json");
     }
 
