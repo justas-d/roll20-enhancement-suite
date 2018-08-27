@@ -1,6 +1,6 @@
 import { R20Module } from "../tools/R20Module";
 import { R20 } from "../tools/R20";
-import { getLayerData } from "../tools/LayerData";
+import {LayerData } from "../tools/LayerData";
 
 class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     constructor() {
@@ -18,11 +18,11 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
             const obj = objs[idx];
 
             if (R20.doesTokenContainMouse(e, obj) && obj.model) {
-                let layer = obj.model.get("layer");
+                let layer = obj.model.get<R20.CanvasLayer>("layer");
 
                 if (R20.getCurrentLayer() !== layer) {
 
-                    const selector = getLayerData(layer).selector;
+                    const selector = LayerData.getLayerData(layer).selector;
                     $(selector).trigger("click");
                 }
 
