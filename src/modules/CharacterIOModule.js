@@ -1,6 +1,6 @@
 import { R20Module } from '../tools/R20Module'
 import { CharacterIO } from '../tools/CharacterIO.js'
-import { R20 } from '../tools/R20.js'
+import { R20 } from '../tools/R20'
 import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../tools/DOM.js'
 import { saveAs } from 'save-as'
 import { findByIdAndRemove, readFile, safeParseJson } from '../tools/MiscUtils';
