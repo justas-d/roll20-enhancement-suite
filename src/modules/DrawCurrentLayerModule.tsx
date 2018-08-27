@@ -2,7 +2,7 @@ import { R20Module } from '../tools/R20Module'
 import { R20 } from '../tools/R20';
 import { LayerData } from '../tools/LayerData';
 import { DOM } from '../tools/DOM.js';
-import { copy, findByIdAndRemove } from '../tools/MiscUtils.js';
+import { copy, findByIdAndRemove } from '../tools/MiscUtils';
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     private static readonly selectId = "r20es-select";

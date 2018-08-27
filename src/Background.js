@@ -1,6 +1,6 @@
 import { hooks } from './Hooks.js'
 import { ModPatchTesting } from './tools/ModPatchTesting.js';
-import { escapeRegExp, getBrowser, isChrome, replaceAll } from './tools/MiscUtils.js';
+import { escapeRegExp, getBrowser, isChrome, replaceAll } from './tools/MiscUtils';
 import { Config } from './tools/Config.js';
 
 window.modPatchTesting = new ModPatchTesting(hooks);

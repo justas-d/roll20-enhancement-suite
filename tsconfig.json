@@ -8,7 +8,9 @@
         "types": [
             "node",
             "jquery",
-            "roll20"
+            "roll20",
+            "chrome",
+            "firefox-webext-browser"
         ],
         "lib": ["es6", "dom"],
         "typeRoots": ["node_modules/@types", "./typings"],

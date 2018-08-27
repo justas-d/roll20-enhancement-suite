@@ -1,7 +1,7 @@
 import { detect as detectBrowser } from "detect-browser";
 import { Config } from "./Config";
 
-function copy(what, overrides) {
+const copy = function(what, overrides) {
     let copy = Object.assign({}, what);
     if (overrides) {
         copy = Object.assign(copy, overrides);
@@ -9,7 +9,7 @@ function copy(what, overrides) {
     return copy;
 }
 
-function getTransform(ctx) {
+const getTransform = function(ctx) {
     if ('currentTransform' in ctx) {
         return ctx.currentTransform
     } else if ("getTransform" in ctx) {
@@ -21,7 +21,7 @@ function getTransform(ctx) {
     }
 };
 
-function getRotation(ctx) {
+const getRotation = function(ctx) {
     let t = getTransform(ctx);
     let rad = Math.atan2(t.b, t.a);
     if (rad < 0) { // angle is > Math.PI
@@ -31,7 +31,7 @@ function getRotation(ctx) {
 };
 
 
-function basename(str) {
+const basename = function(str) {
     let idx = str.lastIndexOf('/');
     if (idx === -1) {
         return str;
@@ -45,14 +45,14 @@ function basename(str) {
     return str.substr(idx);
 }
 
-function findByIdAndRemove(id) {
+const findByIdAndRemove = function(id) {
     const elem = document.getElementById(id);
     if (elem) {
         elem.remove();
     }
 }
 
-function mapObj(obj, fx) {
+const mapObj = function(obj, fx) {
     return Object.keys(obj).reduce((accum, curVal) => {
         let val = fx(obj[curVal], curVal);
 
@@ -64,7 +64,7 @@ function mapObj(obj, fx) {
     }, []);
 }
 
-function safeCall(fx) {
+const safeCall = function(fx) {
     try {
         fx();
     }
@@ -73,21 +73,21 @@ function safeCall(fx) {
     }
 }
 
-function removeAllChildren(root) {
+const removeAllChildren = function(root) {
     while (root.firstChild) {
         root.removeChild(root.firstChild);
     }
 }
 
-function escapeRegExp(string) {
+const escapeRegExp = function(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-function replaceAll(where, find, replace) {
+const replaceAll = function(where, find, replace) {
     return where.replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 
-function safeParseJson(str) {
+const safeParseJson = function(str) {
 
     try {
         return JSON.parse(str);
@@ -97,7 +97,7 @@ function safeParseJson(str) {
     return null;
 }
 
-function readFile(file) {
+const readFile = function(file) {
     return new Promise((resolve, reject) => {
         if (!file) {
             reject("No file given.");
@@ -108,14 +108,14 @@ function readFile(file) {
         reader.readAsText(file);
 
         reader.onload = e => {
-            resolve(e.target.result, e);
+            resolve((<any>e.target).result);
         };
     });
 }
 
-const getBrowser = _ => chrome || browser;
+const getBrowser = () => chrome || browser;
 
-function injectScript(name) {
+const injectScript = function(name) {
     console.log(`Injecting ${name}`);
 
     var s = document.createElement("script");
@@ -126,31 +126,31 @@ function injectScript(name) {
     document.head.appendChild(s);
 }
 
-function isChrome() {
+const isChrome = function() {
     return detectBrowser().name === "chrome";
 }
 
-function strIsNullOrEmpty(str) {
+const strIsNullOrEmpty = function(str) {
     return str === null || str === undefined || str.length <= 0 || str.trim().length <= 0;
 }
 
-function createCSSElement(css, id) {
+const createCSSElement = function(css, id) {
     const el = document.createElement("style");
     el.innerHTML = css;
     el.id = id;
     return el;
 }
 
-function getExtUrlFromPage(resource, _waitMs) {
+const getExtUrlFromPage = function(resource, _waitMs) {
     const waitMs = (_waitMs === undefined || _waitMs === null) ? 1000 : _waitMs;
 
     return new Promise((ok, err) => {
         try {
             let worked = false;
 
-            function removeCb() { window.removeEventListener("message", callback); }
+            const removeCb = function() { window.removeEventListener("message", callback); }
 
-            function callback(e) {
+            const callback = function(e) {
                 if (e.origin !== Config.appUrl) return;
 
                 if (e.data.r20esGivesResourceUrl) {
