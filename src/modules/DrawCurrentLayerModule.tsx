@@ -1,23 +1,19 @@
 import { R20Module } from '../tools/R20Module'
-import { R20 } from '../tools/R20.js';
-import { getLayerData } from '../tools/LayerData.js';
+import { R20 } from '../tools/R20';
+import { LayerData } from '../tools/LayerData';
 import { DOM } from '../tools/DOM.js';
 import { copy, findByIdAndRemove } from '../tools/MiscUtils.js';
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
-    constructor(id) {
-        super(id);
+    private static readonly selectId = "r20es-select";
+    private static readonly layerId = "r20es-layer";
+    private static readonly rootId = "r20es-drawCurrentLayer-root";
 
-        this.selectId = "r20es-select";
-        this.layerId = "r20es-layer";
-        this.rootId = "r20es-drawCurrentLayer-root";
-
-        this.onToolChange = this.onToolChange.bind(this);
-        this.updateModeIndicator = this.updateModeIndicator.bind(this);
-        this.render = this.render.bind(this);
+    constructor() {
+        super(__filename);
     }
 
-    createWidget() {
+    private createWidget() {
 
         const root = document.getElementById("playerzone");
         if (!root) return;
@@ -26,13 +22,13 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
         const padCoef = 9.375;
         const bottomPadCoef = 3.75;
-        const pad = `${cfg.size/padCoef}px`;
+        const pad = `${cfg.size / padCoef}px`; document
 
         const divStyle = {
             height: `${cfg.size}px`,
-            padding: `${pad} ${pad} ${cfg.size/bottomPadCoef}px ${pad}`,
+            padding: `${pad} ${pad} ${cfg.size / bottomPadCoef}px ${pad}`,
         }
-    
+
         const textStyle = {
             fontFamily: "Helvetica",
             fontSize: `${cfg.size}px`,
@@ -42,7 +38,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
             textShadow: `2px 2px 0px rgba(${cfg.textOutlineColor[0]}, ${cfg.textOutlineColor[1]}, ${cfg.textOutlineColor[2]}, ${cfg.textOutlineOpacity})`
         }
 
-        let rootStyle = {
+        let rootStyle: any = {
             opacity: cfg.globalOpacity,
             marginBottom: "15px",
             marginRight: "15px",
@@ -59,7 +55,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
                 rootStyle.left = "0";
                 break;
             } case ("topRight"): {
-                rootStyle.top= "0";
+                rootStyle.top = "0";
                 rootStyle.right = "0";
                 break;
             } case ("topLeft"): {
@@ -71,27 +67,28 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
             }
         }
 
-        const widget = <div id={this.rootId} style={rootStyle}>
+        const widget = <div id={DrawCurrentLayerModule.rootId} style={rootStyle}>
 
             {cfg.showNotSelecting &&
-                <div id={this.selectId} style={copy(divStyle, { background: `rgba(255,0,0,${cfg.notSelectingOpacity})` })}>
+                <div id={DrawCurrentLayerModule.selectId} style={copy(divStyle, { background: `rgba(255,0,0,${cfg.notSelectingOpacity})` })}>
                     <p style={textStyle}>Not selecting!</p>
                 </div>
             }
 
-            <div id={this.layerId} style={divStyle}>
+            <div id={DrawCurrentLayerModule.layerId} style={divStyle}>
                 <p style={textStyle}></p>
             </div>
         </div>
 
         root.appendChild(widget);
 
+
         this.render(R20.getCurrentLayer());
         this.updateModeIndicator(R20.getCurrentToolName());
     }
 
-    removeWidget() {
-        findByIdAndRemove(this.rootId);
+    private removeWidget() {
+        findByIdAndRemove(DrawCurrentLayerModule.rootId);
     }
 
     onSettingChange(name, oldVal, newVal) {
@@ -111,7 +108,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         window.r20es.setModePrologue = this.updateModeIndicator;
     }
 
-    onToolChange(e) {
+    private onToolChange = (e) => {
         let l = null;
 
         if (e.target.className === "choosegmlayer") { l = "gmlayer"; }
@@ -121,16 +118,16 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         this.render(l);
     }
 
-    updateModeIndicator(mode) {
-        const div = document.getElementById(this.selectId);
-        if(!div) return;
+    private updateModeIndicator = (mode: string) => {
+        const div = document.getElementById(DrawCurrentLayerModule.selectId);
+        if (!div) return;
 
         div.style.display = (mode === "select" ? "none" : "block");
     }
 
-    render(layer) {
-        const data = getLayerData(layer);
-        const div = document.getElementById(this.layerId);
+    private render = (layer: R20.CanvasLayer) => {
+        const data = LayerData.getLayerData(layer);
+        const div = document.getElementById(DrawCurrentLayerModule.layerId);
         const text = $(div).find("p")[0];
 
         div.style.backgroundColor = data.makeBgStyle(this.getHook().config.backgroundOpacity);
@@ -143,14 +140,14 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
         $("#editinglayer li.choosemap").off("click", this.onToolChange);
         $("#editinglayer li.choosegmlayer").off("click", this.onToolChange);
-        
+
         window.r20es.setModePrologue = null;
         this.removeWidget();
-        
+
     }
 }
 
-if (R20Module.canInstall()) new DrawCurrentLayerModule(__filename).install();
+if (R20Module.canInstall()) new DrawCurrentLayerModule().install();
 
 const hook = R20Module.makeHook(__filename, {
     id: "activeLayerHud",
