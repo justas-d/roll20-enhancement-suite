@@ -52,9 +52,10 @@ function createElement(type, attributes, ...children) {
                     frag.appendChild(child);
                 } else if (Array.isArray(child)) {
                     recursiveAddChildren(child);
+                } else if (typeof (child) === "number") {
+                    frag.appendChild(document.createTextNode(child.toString()));
                 } else if (typeof (child) === "string") {
                     frag.appendChild(document.createTextNode(child));
-
                     // values that we assume are control flow related
                 } else if (child === null || child === undefined || typeof (child) === "boolean") {
                     console.warn(`JSX got an unrenderable child value, assuming it's control flow related: type: ${typeof (child)} value: ${child}.`);
@@ -103,17 +104,17 @@ function createElement(type, attributes, ...children) {
 }
 
 class ElementBase {
-    
+
     render() {
         const elem = this.internalRender();
         this.setRoot(elem);
         return elem;
     }
 
-    internalRender() {}
+    internalRender() { }
 
     rerender() {
-        const elem = rerender(this.getRoot(), () => { return this.render() });        
+        const elem = rerender(this.getRoot(), () => { return this.render() });
     }
 
     setRoot = root => this.elementRoot = root;
