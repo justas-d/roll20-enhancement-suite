@@ -1,5 +1,5 @@
 <h1 align="center">
-    <a href="https://github.com/SSStormy/roll20-enhancement-suite">Roll20 Enhancement Suite</a>
+    <a href="https://ssstormy.github.io/roll20-enhancement-suite/">Roll20 Enhancement Suite</a>
 </h1>
 
 <p align="center">
@@ -7,16 +7,31 @@
 </p>
 
 <p align="center">
-    <b>A browser plugin that provides quality-of-life and workflow speed improvements to Roll20.</b>
+    <b>A browser extention containing quality of life and workflow improvements for Roll20.</b>
 </p>
-
 
 <p align="center">
-  Currently under construction.
+    <a href="https://addons.mozilla.org/en-US/firefox/addon/roll20-enhancement-suite/" target="_blank">
+    <img src="assets/readme/firefox.png" alt="| for Firefox |"/>
+  </a>
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/roll20-enhancement-suite/" target="_blank">
+    <img src="assets/readme/chrome.png" alt="| for Chrome |"/>
+  </a>
 </p>
+
+
 
 <hr>
 
+
+## Contributing
+Awesome, contributing is always welcome and appretiatied!
+
+ If you'd like to contribute code please first start a discussion by opening an issue.
+
+If there are any questions regarding the codebase - open an issue.
+
+If you want to suggest a feature or report a bug - open an issue.
 
 ## Building
 
