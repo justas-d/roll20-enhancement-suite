@@ -20,6 +20,8 @@
 
 ## Building
 
+### For Development
+
 Pull dependencies:
 ```
 npm install
@@ -34,6 +36,12 @@ Or for Chrome:
 ```
 npm run build -- --env.browsers=chrome --mode development
 ```
+
+Or both:
+```
+npm run build -- --env.browsers=firefox,chrome --mode development
+```
+
 The built extention can be found in `builds/(firefox|chome)/(dev|prod)/`.
 
 
@@ -43,11 +51,13 @@ npm run start
 ```
 This will use the `r20esdev` profile.
 
-Packaging:
+### Packaging
 ```
-npm run build -- --env.browsers=chrome,firefox --mode production --env.zip
+npm run package
 ```
-Extention packages can be found in `dist/(firefox|chome)/(dev|prod)/`.
+This will build prod .zip packages and place them in `dist/(firefox|chome)/prod`.
+
+---
 
 ## License
 The source code is licensed under GPL-3.0.
