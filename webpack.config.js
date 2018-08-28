@@ -7,7 +7,7 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const shell = require("shelljs");
 const tmp = require('tmp');
 const GenerateJsonPlugin = require('generate-json-webpack-plugin');
-const manifestGen = require('./browsers/ManfiestGenerator');
+const manifestGen = require('./browsers/ManifestGenerator');
 const browserDefinitions = require('./browsers/BrowserDefinitions');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 

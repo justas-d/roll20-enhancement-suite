@@ -20,7 +20,7 @@ const gen = (browser) => {
         name: 'Roll20 Enhancement Suite',
         version,
         version_name: versionName,
-        description: 'Bunch of improvements to roll20.',
+        description: 'A provides quality-of-life and workflow speed improvements to Roll20.',
 
         permissions: [
             '*://app.roll20.net/editor/',
