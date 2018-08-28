@@ -23,6 +23,11 @@ module.exports = (_env, argv) => {
     const isProd = argv.mode === "production";
     const wantsZip = "zip" in env && env.zip;
 
+    // make zip of source code
+    if(isProd && wantsZip) {
+        shell.exec(`git archive -o r20es_${new GitRevisionPlugin().version()}_source.zip HEAD`);
+    }
+
     console.log(browsers);
 
     return browsers.map((b) => {
