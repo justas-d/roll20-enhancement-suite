@@ -1,14 +1,22 @@
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
-const gen = (extra) => {
+const gen = (browser) => {
 
     const manifestGit = new GitRevisionPlugin({
         versionCommand: "describe --abbrev=0"
     });
 
-    const version = manifestGit.version().replace(/v/g, "");
+    let version = manifestGit.version().replace(/v/g, "");
 
-    let manifest ={
+    if (browser.id === "chrome") {
+
+        const rcIndex = version.indexOf("-rc");
+        if(rcIndex !== -1 ){
+            version = version.substring(0, rcIndex);
+        }
+    }
+
+    let manifest = {
         manifest_version: 2,
         name: 'Roll20 Enhancement Suite',
         version: version,
@@ -47,7 +55,7 @@ const gen = (extra) => {
         ]
     }
 
-    return Object.assign(manifest, extra);
+    return Object.assign(manifest, browser.manifest);
 }
 
 module.exports = gen;
