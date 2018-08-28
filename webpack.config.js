@@ -53,6 +53,11 @@ addSourceFolder("./src/modules/");
 addStaticFolder("./css/");
 addStaticFile("logo.svg", "./assets/logo.svg");
 
+const settingsAssets = "./assets/settings/";
+fs.readdirSync(settingsAssets).forEach(f => {
+    addStaticFile(f, settingsAssets + f);
+});
+
 const browserData = {
     "firefox": {
         target: "firefox",

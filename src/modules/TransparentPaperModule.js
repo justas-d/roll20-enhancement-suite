@@ -41,6 +41,9 @@ const hook = R20Module.makeHook(__filename, {
     name: "Transparent Canvas UI Dialogs",
     description: "Provides a way to set the opacity of floating UI dialogs.",
     category: R20Module.category.canvas,
+    media: {
+        "transparent_dialog.png": "A transparent edit token dialog."
+    },
 
     configView: {
         opacity: {

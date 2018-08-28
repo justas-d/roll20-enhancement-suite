@@ -228,6 +228,10 @@ const hook = R20Module.makeHook(__filename, {
     name: "Character Importer/Exporter",
     description: "Provides character importing (in the journal) and exporting (in the journal and on sheets).",
     category: R20Module.category.exportImport,
+    media: {
+        "char_import.png": "Journal widget",
+        "sheet_export.png": "Sheet tab",
+    }
 });
 
 export { hook as CharacterIOHook };

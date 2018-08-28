@@ -129,6 +129,11 @@ if (R20Module.canInstall()) new AlternativeRadialMenuModule().install();
 const hook = R20Module.makeHook(__filename, {
     id: "alternativeRadialMenu",
     name: "Alternative Token Radial Menu",
+    media: {
+        "radial.png": "Reworked radial menu", 
+        "radial_min.png": 
+        "Compact version"
+    },
     description: "Replaces the default token radial token menu with a more compact and simplistic one.",
     category: R20Module.category.canvas,
 

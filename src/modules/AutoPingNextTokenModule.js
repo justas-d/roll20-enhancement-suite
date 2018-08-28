@@ -11,7 +11,7 @@ class AutoPingNextTokenModule extends R20Module.SimpleBase {
         if (!obj) return;
 
         if (obj.model.get("layer") !== "objects") return;
-        R20.ping(obj.left, obj.top, null, null, R20.layer.playerTokens);
+        R20.ping(obj.left, obj.top, null, null, R20.CanvasLayer.PlayerTokens);
     }
 
     setup() {
@@ -34,6 +34,9 @@ const hook = R20Module.makeHook(__filename,{
     description: "When advancing initiative, this module will automatically ping the next token only if it is in the player token layer.",
     category: R20Module.category.initiative,
     gmOnly: true,
+    media: {
+        "ping_token.webm": "Automated pinging"
+    },
 
     includes: "assets/app.js",
     find: "e.push(t[0]);",

@@ -77,6 +77,11 @@ const hook = R20Module.makeHook(__filename, {
     description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
     category: R20Module.category.canvas,
     gmOnly: true,
+    media: {
+        "token_mp.png": "A token in the map layer",
+        "token_tk.png": "A token in the player token layer",
+        "token_gm.png": "A token in the GM layer"
+    },
 
     includes: "assets/app.js",
     find: "this.model.view.updateBackdrops(e),this.active",

@@ -105,7 +105,7 @@ function createElement(type, attributes, ...children) {
 
 class ElementBase {
 
-    render() {
+    render = () => {
         const elem = this.internalRender();
         this.setRoot(elem);
         return elem;
@@ -113,14 +113,14 @@ class ElementBase {
 
     internalRender() { }
 
-    rerender() {
+    rerender = () => {
         const elem = rerender(this.getRoot(), () => { return this.render() });
     }
 
     setRoot = root => this.elementRoot = root;
     getRoot = () => this.elementRoot;
 
-    dispose() {
+    dispose = () =>  {
         this.getRoot().remove();
     }
 }

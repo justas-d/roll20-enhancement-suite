@@ -61,7 +61,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
                 // therefore we just sort the whole list.
 
                 const hook = this.getHook();
-                const ordering = R20.initiativeOrdering[hook.config.sortBy];
+                const ordering = hook.config.sortBy;
 
                 R20.orderInitiativeBy(ordering);
             } else {
@@ -72,7 +72,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
 
                 const firstToken = initiative[0];
                 const hook = this.getHook();
-                const ordering = R20.initiativeOrdering[hook.config.sortBy];
+                const ordering = hook.config.sortBy;
 
                 R20.orderInitiativeBy(ordering);
 
@@ -138,6 +138,9 @@ export default R20Module.makeHook(__filename, {
     description: "Automatically sorts initiative order when a new token has been added to it by any player. After the list has been sorted, it is reorganized so that the token that was first in the list before the sort is still the first in the list after the sort.",
     category: R20Module.category.initiative,
     gmOnly: true,
+    media: {
+        "sort_init.webm": "Initiative being sorted automatically."
+    },
 
     configView: {
         sortBy: {
@@ -145,16 +148,16 @@ export default R20Module.makeHook(__filename, {
             type: "dropdown",
 
             dropdownValues: {
-                numericAscending: "Numerically: Ascending",
-                numericDescending: "Numerically: Descending",
-                alphabetical: "Alphabetically: A-Z",
-                alphabeticalDescending: "Alphabetically: Z-A",
+                0: "Numerically: Ascending",
+                1: "Numerically: Descending",
+                2: "Alphabetically: A-Z",
+                3: "Alphabetically: Z-A",
                 card: "By Card/Suit"
             }
         }
     },
 
     config: {
-        sortBy: "numericDescending"
+       sortBy: 1
     },
 });

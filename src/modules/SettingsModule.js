@@ -125,10 +125,9 @@ class SliderEdit extends ConfigEditBase {
         const min = this.getConfigView().sliderMin;
         const max = this.getConfigView().sliderMax;
         const val = this.getValue();
-        
+
         return (
             <section className="compact">
-
                 <span>{min}</span>
                 <input onChange={this.onChange}
                     style={{ display: "inline-block", height: "auto", width: "80%", margin: "0 8px 0 8px", border: "none" }}
@@ -202,6 +201,20 @@ class HookConfig extends DOM.ElementBase {
         super(props);
 
         this.hook = props.hook;
+        if (this.hook.media) {
+            this.media = [];
+
+            for (const url in this.hook.media) {
+                console.log(url);
+                getExtUrlFromPage(url, 5000)
+                    .then(e => {
+                        const isVid = e.endsWith(".webm");
+                        this.media.push({ url: e, isVid, description: this.hook.media[url] });
+                        this.rerender();
+                    })
+                    .catch(err => console.error(`Failed to get ${url}: ${err}`));
+            }
+        }
     }
 
     internalRender() {
@@ -243,13 +256,15 @@ class HookConfig extends DOM.ElementBase {
                 {!strIsNullOrEmpty(this.hook.description) &&
                     <section>
                         <h3 title={this.hook.id + " " + this.hook.filename}>{this.hook.name}</h3>
-                        <hr />
+                        <hr style={{ marginTop: "4px" }} />
+
                         <section className="r20es-indent description">
                             <p>{this.hook.description}</p>
 
                             {this.hook.gmOnly &&
                                 <p>This module is only usable by GMs (which you {R20.isGM() ? "are" : "aren't"})</p>
                             }
+
                         </section>
                     </section>
                 }
@@ -257,11 +272,30 @@ class HookConfig extends DOM.ElementBase {
                 {elems.length > 0 &&
                     <section>
                         <h3>Options</h3>
-                        <hr />
+                        <hr style={{ marginTop: "4px" }} />
 
                         <ul className="r20es-indent">
                             {elems}
                         </ul>
+                    </section>
+                }
+
+                {this.media &&
+
+                    <section>
+                        <h3>Media</h3>
+                        <hr style={{ marginTop: "4px" }} />
+
+                        {this.media.map(data =>
+                            <section>
+                                {data.isVid
+                                    ? <video autoplay loop style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "cover", display: "block", margin: "auto" }} src={data.url}></video>
+                                    : <img style={{ display: "block", margin: "auto" }} src={data.url} alt={data.url} />
+                                }
+                                <p style={{ textAlign: "center" }}>{data.description}</p>
+                            </section>
+                        )
+                        }
                     </section>
                 }
             </div>

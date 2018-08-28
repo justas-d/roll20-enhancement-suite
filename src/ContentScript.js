@@ -68,8 +68,11 @@ function recvMsgFromApp(e) {
 
     if (e.data.r20esWantsResourceUrl) {
         
-        const payload = getBrowser().extension.getURL(e.data.r20esWantsResourceUrl);
-        console.log(payload);
+        const url = getBrowser().extension.getURL(e.data.r20esWantsResourceUrl.resource);
+        const payload = {
+            url,
+            id: e.data.r20esWantsResourceUrl.id
+        }
         
         window.postMessage({ r20esGivesResourceUrl: payload }, Config.appUrl);
     } else {

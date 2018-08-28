@@ -208,6 +208,9 @@ const hook = R20Module.makeHook(__filename, {
     description: "Provides rollable table importing and exporting. Supports TableExport format tables. Controls can be found in the \"Collection\" sidebar tab.",
     category: R20Module.category.exportImport,
     gmOnly: true,
+    media: {
+        "table_io.png": "Collection sidebar widget."
+    },
 
     mods: [
         { // add table id to popup

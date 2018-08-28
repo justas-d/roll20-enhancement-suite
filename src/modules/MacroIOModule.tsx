@@ -103,6 +103,9 @@ const hook = R20Module.makeHook(__filename, {
     name: "Player Macro Importer/Exporter",
     description: "Allows exporting and importing of player macros and the macro bar. Controls can be found in the \"Collection\" sidebar tab.",
     category: R20Module.category.exportImport,
+    media: {
+        "macro_io.png": "Collection sidebar widget"
+    }
 });
 
 export { hook as MacroIOHook };

@@ -183,6 +183,9 @@ const hook = R20Module.makeHook(__filename, {
     description: `Adds a "Bulk Macros" option to the token right click menu which lists macros that can be rolled for the whole selection in bulk.`,
     category: R20Module.category.token,
     gmOnly: true,
+    media: {
+        "bulk_macro.webm": "Rolling initiative for 3 tokens at once"
+    }
 });
 
 export { hook as BulkMacroHook }

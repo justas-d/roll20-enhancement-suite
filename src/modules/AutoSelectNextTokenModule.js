@@ -32,6 +32,9 @@ const hook = R20Module.makeHook(__filename,{
     description: "When advancing initiative, this module will automatically select the next token in the initiative order.",
     category: R20Module.category.initiative,
     gmOnly: true,
+    media: {
+        "select_token.webm": "Automated token selection"
+    },
 
     includes: "assets/app.js",
     find: "e.push(t[0]);",

@@ -78,6 +78,9 @@ const hook = R20Module.makeHook(__filename, {
     description: `Adds a "Duplicate" entry, functioning as a shortcut to duplicate button found in the edit page of sheets, to the context menu of items found in the journal.`,
     category: R20Module.category.journal,
     gmOnly: true,
+    media: {
+        "duplicate.png": "The duplicate button"
+    },
 
     includes: "assets/app.js",
     find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,

@@ -121,6 +121,9 @@ const hook = R20Module.makeHook(__filename, {
     name: "Disable Animations",
     description: "Disables animations that can be configured in the options section.",
     category: R20Module.category.canvas,
+    media: {
+        "no_radial_anim.webm": "No token radial menu animation"
+    },
 
     mods: [
         { // radial button proportionally timed animation

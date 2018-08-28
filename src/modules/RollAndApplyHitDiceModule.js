@@ -89,6 +89,9 @@ const hook = R20Module.makeHook(__filename, {
     description: `Adds a "Hit Dice" option to the canvas token context menu which will roll and apply hit dice for the selected group of tokens.`,
     category: R20Module.category.token,
     gmOnly: true,
+    media: {
+        "hit_dice.webm": "Rolling & Applying hit dice for a single token then a group of 3."
+    },
 
     configView: {
         diceFormulaAttribute: {

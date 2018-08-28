@@ -34,6 +34,8 @@
         "*.ts",
         "*.js",
         "*.css",
-        "logo.svg"
+        "logo.svg",
+        "*.png",
+        "*.webm"
     ]
 }

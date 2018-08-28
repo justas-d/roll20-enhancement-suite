@@ -24,6 +24,9 @@ const hook = R20Module.makeHook(__filename,{
     description : "When advancing initiative, this module will move your camera to the next token in the initiative order. This camera movement is local, meaning other players will not have their camera moved.",
     category: R20Module.category.initiative,
     gmOnly: true,
+    media: {
+        "move_cam.webm": "Camera moving between 4 tokens"
+    },
 
     includes: "assets/app.js",
     find: "e.push(t[0]);",

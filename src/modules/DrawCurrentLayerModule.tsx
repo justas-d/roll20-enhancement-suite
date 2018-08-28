@@ -14,8 +14,11 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     }
 
     private createWidget() {
-
+        console.log("Creating widget");
+        
         const root = document.getElementById("playerzone");
+        console.log(root);
+
         if (!root) return;
 
         const cfg = this.getHook().config;
@@ -91,12 +94,12 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         findByIdAndRemove(DrawCurrentLayerModule.rootId);
     }
 
-    onSettingChange(name, oldVal, newVal) {
+    public onSettingChange(name, oldVal, newVal) {
         this.removeWidget();
         this.createWidget();
     }
 
-    setup() {
+    public setup() {
         if (!R20.isGM) return;
 
         this.createWidget();
@@ -134,7 +137,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         text.innerHTML = data.bigTxt;
     }
 
-    dispose() {
+    public dispose() {
         super.dispose();
 
         $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
@@ -153,6 +156,11 @@ const hook = R20Module.makeHook(__filename, {
     id: "activeLayerHud",
     name: "Display Current Layer on Canvas",
     description: "Displays the current edit layer and whether the select tool is active.",
+    media: {
+        "gm_bg.png": "GM layer identifier", 
+        "map_bg.png": "Map layer identitifer", 
+        "tokens_bg.png": "Player token layer identifier"
+    },
     category: R20Module.category.canvas,
     gmOnly: true,
 
@@ -227,7 +235,7 @@ const hook = R20Module.makeHook(__filename, {
         size: 26,
         showNotSelecting: true,
         notSelectingOpacity: 1,
-        globalOpacity: 1,
+        globalOpacity: 0.75,
         backgroundOpacity: 1,
         textFillOpacity: 1,
         textFillColor: [255, 255, 255],

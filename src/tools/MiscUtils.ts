@@ -149,22 +149,27 @@ const getExtUrlFromPage = function(resource, _waitMs) {
             let worked = false;
 
             const removeCb = function() { window.removeEventListener("message", callback); }
+            const reqId = window.generateUUID();
 
             const callback = function(e) {
                 if (e.origin !== Config.appUrl) return;
 
-                if (e.data.r20esGivesResourceUrl) {
-                    console.log(removeCb);
-                    console.log(worked);
+                if (e.data.r20esGivesResourceUrl && e.data.r20esGivesResourceUrl.id === reqId) {
                     worked = true;
                     
                     removeCb();
-                    ok(e.data.r20esGivesResourceUrl);
+                    ok(e.data.r20esGivesResourceUrl.url);
                 }
             };
 
             window.addEventListener("message", callback);
-            window.postMessage({ r20esWantsResourceUrl: resource }, Config.appUrl);
+
+            const payload = {
+                resource,
+                id: reqId
+            };
+
+            window.postMessage({ r20esWantsResourceUrl: payload }, Config.appUrl);
 
             setTimeout(() => {
                 try {
