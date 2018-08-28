@@ -1,5 +1,6 @@
 import { R20Module } from "../tools/R20Module";
 import { DOM } from "../tools/DOM";
+import { getExtUrlFromPage } from "../tools/MiscUtils";
 
 const welcomeStyle = {
     backgroundColor: "#ffffff",
@@ -8,7 +9,8 @@ const welcomeStyle = {
     top: "5%",
     position: "absolute",
     padding: "10px",
-    zIndex: "10000"
+    zIndex: "10000",
+    border: "1px solid black"
 };
 
 class Welcome extends DOM.ElementBase {
@@ -16,9 +18,13 @@ class Welcome extends DOM.ElementBase {
         super();
 
         this.mod = mod;
-        this.onClickClose = this.onClickClose.bind(this);
-        this.onClickLater = this.onClickLater.bind(this);
-        this.onClickNext = this.onClickNext.bind(this);
+
+        getExtUrlFromPage("logo.svg", 5000)
+            .then(url => {
+                this.logoUrl = url;
+                this.rerender();
+            })
+            .catch(err => console.error(`Failed to get logo.svg: ${err}`));
     }
 
     close() {
@@ -32,15 +38,15 @@ class Welcome extends DOM.ElementBase {
         this.close();
     }
 
-    onClickClose() {
+    onClickClose = () => {
         this.finish();
     }
 
-    onClickLater() {
+    onClickLater = () => {
         this.close();
     }
 
-    onClickNext() {
+    onClickNext = () => {
         this.finish();
 
         $("a[href='#mysettings']").click();
@@ -64,18 +70,28 @@ class Welcome extends DOM.ElementBase {
         return (
 
             <div style={welcomeStyle}>
-                <h3>Welcome to Roll20 Enhancement Suite!</h3>
-                <hr style={{margin: "5px 0 15px 0"}}/>
+                <section style={{ display: "flex", justifyContent: "space-between" }}>
+                    <section>
+                        <h3>Welcome to the Roll20 Enhancement Suite!</h3>
+                        <hr style={{ margin: "5px 0 15px 0" }} />
 
-                <p>To get started, we recommend taking a look at the settings menu. There you can discover, learn and configure the modules this plugin provides.</p>
-                <p>It can be found underneath the "My Settings" tab in the sidebar.</p>
-                <p>Would you like us to take you there?</p>
+                        <p>To get started, we recommend taking a look at the settings menu. There you can discover, learn and configure the modules this plugin provides.</p>
+                        <p>It can be found underneath the "My Settings" tab in the sidebar.</p>
+                        <p>Would you like us to take you there?</p>
+                    </section>
 
-                <div style={{float: "right"}}>
+                    <section>
+                        <img style={{ height: "100%" }} src={this.logoUrl} alt="Logo" />
+                    </section>
+
+                </section>
+
+
+
+                <div style={{ float: "right" }}>
                     <button className="btn" style={buttonStyle} onClick={this.onClickClose}>I'll figure it out</button>
                     <button className="btn" style={buttonStyle} onClick={this.onClickLater}>Later</button>
                     <button className="btn" style={buttonStyle} onClick={this.onClickNext}>Let's go!</button>
-
                 </div>
             </div>
         );
@@ -145,7 +161,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 
         if (elem) {
             root.parentElement.insertBefore(elem, root);
-        } 
+        }
     }
 
     dispose() {
