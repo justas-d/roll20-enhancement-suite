@@ -1,0 +1,16 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: rgba(6, 26, 45, 255);
+    color: whitesmoke;
+}
+
+.navbar {
+    background-color: rgba(224, 141, 65, 255);
+    width: 100%;
+    height: 4%
+}
+
+.navbar-nav {
+    margin-left: auto;
+    margin-right: auto;
+}

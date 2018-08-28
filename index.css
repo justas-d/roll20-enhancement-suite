@@ -1,0 +1,39 @@
+.page-body {
+    min-height: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 25%;
+    display: block;
+    margin-bottom: 32px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.browser-icons {
+    margin: auto;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.browser-icons img {
+    margin: 0 8px 0 8px;
+}
+
+.invert {
+    -webkit-filter: invert(1);
+    filter: invert(1);
+}
+
+.content {
+    width: 100%;
+}
+
+.centered-text {
+    text-align: center;
+}
