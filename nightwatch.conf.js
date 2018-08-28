@@ -1,6 +1,6 @@
 const fs = require("fs");
-const firefoxManifest = require("./manifests/firefox.json");
 const JSZip = require("jszip");
+import { Firefox} from "./manifests/firefox";
 
 if(!process.env.R20_SESSION) {
     console.error(`environment variable "R20_SESSION" was either not specified or contained an invalid auth token.`);
@@ -10,7 +10,7 @@ if(!process.env.R20_SESSION) {
 function makeFirefoxProfile() {
 
     let zip = new JSZip();
-    zip.file(`extensions/${firefoxManifest.applications.gecko.id}.xpi`, fs.readFileSync("dist/firefox/prod/r20es.zip"));
+    zip.file(`extensions/${Firefox.manifest.applications.gecko.id}.xpi`, fs.readFileSync("dist/firefox/prod/r20es.zip"));
     zip.file('prefs.js', 'user_pref("xpinstall.signatures.required", false);');
     return zip.generate({ type: 'base64' });
 }

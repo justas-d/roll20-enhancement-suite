@@ -6,21 +6,12 @@ const ZipPlugin = require('zip-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const shell = require("shelljs");
 const tmp = require('tmp');
+const GenerateJsonPlugin = require('generate-json-webpack-plugin');
+const manifestGen = require('./browsers/ManfiestGenerator');
+const browserDefinitions = require('./browsers/BrowserDefinitions');
 
-const gitRevision = new GitRevisionPlugin();
-
-let manifestVersion = null;
-{
-    const manifestGit = new GitRevisionPlugin({
-        versionCommand: "describe --abbrev=0"
-    });
-
-    manifestVersion = manifestGit.version().replace(/v/g, "");
-}
-
-
-let entry = {};
-let staticFiles = {};
+const entry = {};
+const staticFiles = {};
 
 const addSourceFolder = folder => {
     fs.readdirSync(folder).forEach(f => {
@@ -30,13 +21,7 @@ const addSourceFolder = folder => {
     });
 }
 
-const addStaticFile = (mappedName, sourcePath, transform) => {
-    if (transform) {
-        staticFiles[mappedName] = { sourcePath, transform };
-    } else {
-        staticFiles[mappedName] = sourcePath;
-    }
-}
+const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
 
 const addStaticFolder = folder => {
     fs.readdirSync(folder).forEach(f => {
@@ -58,27 +43,6 @@ fs.readdirSync(settingsAssets).forEach(f => {
     addStaticFile(f, settingsAssets + f);
 });
 
-const browserData = {
-    "firefox": {
-        target: "firefox",
-        manifest: "./manifests/firefox.json",
-        extraFiles: [
-            "./thirdparty/dialog-polyfill/dialog-polyfill.css",
-            "./thirdparty/dialog-polyfill/dialog-polyfill.js"
-        ]
-    },
-
-    "chrome": {
-        target: "chrome",
-        manifest: "./manifests/chrome.json"
-    }
-}
-
-function processManfiest(content) {
-    return content.toString()
-        .replace(/>>VERSION>>/g, manifestVersion);
-}
-
 module.exports = (_env, argv) => {
     let env = _env || {};
 
@@ -92,15 +56,13 @@ module.exports = (_env, argv) => {
     const wantsZip = "zip" in env && env.zip;
 
     console.log(browsers);
-    return browsers.map(b => {
-        const browser = browserData[b];
 
+    return browsers.map(b => {
+        const browser = browserDefinitions[b];
         const sourceOutputPath = path.join(path.resolve(__dirname), "builds", browser.target, isProd ? "prod" : "dev");
         const packageOutputPath = path.join(path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev");
 
-        addStaticFile("manifest.json", browser.manifest, processManfiest);
-
-        if (b === "chrome") {
+        if (browser.id === "chrome") {
             const makePng = size => {
                 const tempFile = tmp.fileSync();
                 shell.exec(`inkscape -z --export-png ${tempFile.name} -h ${size} ./assets/logo.svg`);
@@ -120,6 +82,12 @@ module.exports = (_env, argv) => {
                 addStaticFile(path.basename(file), file);
             }
         }
+
+        const finalManifest = manifestGen(browser.manifest);
+        const gitRevision = new GitRevisionPlugin({
+                branch: true,
+                lightweightTags: true
+            });
 
         let config = {
             context: __dirname,
@@ -167,23 +135,14 @@ module.exports = (_env, argv) => {
 
             plugins: [
                 new CopyWebpackPlugin(Object.keys(staticFiles).reduce((accum, mappedName) => {
-                    const data = staticFiles[mappedName];
-                    let transform = null;
-                    let sourcePath = null;
-                    if (typeof (data) === "object") {
-                        sourcePath = data.sourcePath;
-                        transform = data.transform;
-                    } else {
-                        sourcePath = data;
-                    }
-                    accum.push({ transform, from: sourcePath, to: path.join(sourceOutputPath, mappedName) });
+                    accum.push({
+                        from: staticFiles[mappedName],
+                        to: path.join(sourceOutputPath, mappedName)
+                    });
                     return accum;
                 }, [])),
 
-                new GitRevisionPlugin({
-                    branch: true,
-                    lightweightTags: true
-                }),
+                gitRevision,
 
                 new webpack.DefinePlugin({
                     R20ES_VERSION: JSON.stringify(gitRevision.version()),
@@ -192,6 +151,7 @@ module.exports = (_env, argv) => {
                     R20ES_BROWSER: JSON.stringify(browser.target),
                     'process.env.NODE_ENV': JSON.stringify('production'),
                 }),
+                new GenerateJsonPlugin("manifest.json", finalManifest),
             ],
 
             devtool: 'sourcemap',
