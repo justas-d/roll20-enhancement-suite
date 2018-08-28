@@ -10,38 +10,7 @@ const GenerateJsonPlugin = require('generate-json-webpack-plugin');
 const manifestGen = require('./browsers/ManfiestGenerator');
 const browserDefinitions = require('./browsers/BrowserDefinitions');
 
-const entry = {};
-const staticFiles = {};
 
-const addSourceFolder = folder => {
-    fs.readdirSync(folder).forEach(f => {
-        if (fs.lstatSync(folder + f).isDirectory()) return;
-
-        entry[f] = folder + f;
-    });
-}
-
-const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
-
-const addStaticFolder = folder => {
-    fs.readdirSync(folder).forEach(f => {
-        const path = folder + f;
-        if (fs.lstatSync(path).isDirectory()) return;
-        addStaticFile(f, path);
-    });
-}
-
-
-addSourceFolder("./src/");
-addSourceFolder("./src/modules/");
-
-addStaticFolder("./css/");
-addStaticFile("logo.svg", "./assets/logo.svg");
-
-const settingsAssets = "./assets/settings/";
-fs.readdirSync(settingsAssets).forEach(f => {
-    addStaticFile(f, settingsAssets + f);
-});
 
 module.exports = (_env, argv) => {
     let env = _env || {};
@@ -58,6 +27,39 @@ module.exports = (_env, argv) => {
     console.log(browsers);
 
     return browsers.map(b => {
+
+        const entry = {};
+        const staticFiles = {};
+
+        const addSourceFolder = folder => {
+            fs.readdirSync(folder).forEach(f => {
+                if (fs.lstatSync(folder + f).isDirectory()) return;
+
+                entry[f] = folder + f;
+            });
+        }
+
+        const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
+
+        const addStaticFolder = folder => {
+            fs.readdirSync(folder).forEach(f => {
+                const path = folder + f;
+                if (fs.lstatSync(path).isDirectory()) return;
+                addStaticFile(f, path);
+            });
+        }
+
+        addSourceFolder("./src/");
+        addSourceFolder("./src/modules/");
+
+        addStaticFolder("./css/");
+        addStaticFile("logo.svg", "./assets/logo.svg");
+
+        const settingsAssets = "./assets/settings/";
+        fs.readdirSync(settingsAssets).forEach(f => {
+            addStaticFile(f, settingsAssets + f);
+        });
+
         const browser = browserDefinitions[b];
         const sourceOutputPath = path.join(path.resolve(__dirname), "builds", browser.target, isProd ? "prod" : "dev");
         const packageOutputPath = path.join(path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev");
@@ -83,13 +85,20 @@ module.exports = (_env, argv) => {
             }
         }
 
-        const finalManifest = manifestGen(browser.manifest);
+        const finalManifest = manifestGen(browser);
         const gitRevision = new GitRevisionPlugin({
-                branch: true,
-                lightweightTags: true
-            });
+            branch: true,
+            lightweightTags: true
+        });
+
+        console.log(entry);
+        console.log(staticFiles);
 
         let config = {
+            performance: {
+                hints: false
+            },
+
             context: __dirname,
             node: { __filename: true },
             target: "web",
@@ -154,7 +163,10 @@ module.exports = (_env, argv) => {
                 new GenerateJsonPlugin("manifest.json", finalManifest),
             ],
 
-            devtool: 'sourcemap',
+            devtool: (() => {
+                if (isProd) return false;
+                return 'sourcemap';
+            })(),
         };
 
         if (wantsZip) {
