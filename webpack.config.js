@@ -9,8 +9,7 @@ const tmp = require('tmp');
 const GenerateJsonPlugin = require('generate-json-webpack-plugin');
 const manifestGen = require('./browsers/ManfiestGenerator');
 const browserDefinitions = require('./browsers/BrowserDefinitions');
-
-
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = (_env, argv) => {
     let env = _env || {};
@@ -26,7 +25,7 @@ module.exports = (_env, argv) => {
 
     console.log(browsers);
 
-    return browsers.map(b => {
+    return browsers.map((b)  => {
 
         const entry = {};
         const staticFiles = {};
@@ -66,12 +65,14 @@ module.exports = (_env, argv) => {
 
         if (browser.id === "chrome") {
             const makePng = size => {
-                const tempFile = tmp.fileSync();
-                shell.exec(`inkscape -z --export-png ${tempFile.name} -h ${size} ./assets/logo.svg`);
-                shell.exec(`magick convert ${tempFile.name} -background none -gravity center -extent ${size}x${size} ${tempFile.name}`);
+                const tmpHandle = tmp.fileSync();
+                const tempFile = tmpHandle.name;
 
-                addStaticFile(`logo${size}.png`, tempFile.name);
-            }
+                shell.exec(`inkscape -z --export-png ${tempFile} -h ${size} ./assets/logo.svg`);
+                shell.exec(`magick convert ${tempFile} -background none -gravity center -extent ${size}x${size} ${tempFile}`);
+
+                addStaticFile(`logo${size}.png`, tempFile);
+            };
 
             makePng(16);
             makePng(48);
@@ -163,11 +164,13 @@ module.exports = (_env, argv) => {
                 new GenerateJsonPlugin("manifest.json", finalManifest),
             ],
 
-            devtool: (() => {
-                if (isProd) return false;
-                return 'sourcemap';
-            })(),
+            devtool: "sourcemap"
         };
+
+        if(isProd) {
+            delete config.devtool;
+            config.optimization = {minimizer: [new UglifyJsPlugin({test: /\.js$|\.jsx$|\.ts$|\.tsx$/i, parallel: true})]};
+        }
 
         if (wantsZip) {
             config.plugins.push(new ZipPlugin({ path: packageOutputPath, filename: "r20es.zip" }))

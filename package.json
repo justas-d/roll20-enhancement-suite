@@ -7,6 +7,8 @@
     "private": true,
     "scripts": {
         "build": "webpack -w --display-error-details --progress --colors",
+        "clean": "rm -rf builds dist",
+        "package": "webpack --display-error-details --progress --colors --env.zip --env.browsers=chrome,firefox --mode production",
         "start": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
         "start-dev": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --browser-console --firefox=/usr/bin/firefox-developer-edition --start-url https://app.roll20.net/sessions/new",
         "test-firefox": "SALENIUM_PORT=4444 nightwatch --env firefox",
@@ -47,6 +49,7 @@
         "source-map-loader": "0.2.4",
         "tmp": "0.0.33",
         "typescript": "3.0.1",
+        "uglifyjs-webpack-plugin": "1.3.0",
         "web-ext": "2.8.0",
         "webpack": "4.16.5",
         "webpack-cli": "3.1.0",
