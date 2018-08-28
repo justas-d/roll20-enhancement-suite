@@ -6,20 +6,20 @@ const gen = (browser) => {
         versionCommand: "describe --abbrev=0"
     });
 
-    let version = manifestGit.version().replace(/v/g, "");
-
-    if (browser.id === "chrome") {
-
-        const rcIndex = version.indexOf("-rc");
-        if(rcIndex !== -1 ){
-            version = version.substring(0, rcIndex);
-        }
+    let versionName = manifestGit.version();
+    let version = versionName.replace(/v/g, "");
+    
+    const rcIndex = version.indexOf("-rc");
+    if (rcIndex !== -1) {
+        version = version.substring(0, rcIndex);
     }
+
 
     let manifest = {
         manifest_version: 2,
         name: 'Roll20 Enhancement Suite',
-        version: version,
+        version,
+        version_name: versionName,
         description: 'Bunch of improvements to roll20.',
 
         permissions: [
@@ -28,6 +28,12 @@ const gen = (browser) => {
             'webRequestBlocking',
             'storage'
         ],
+        icons: {
+            "16": "logo16.png",
+            "48": "logo48.png",
+            "96": "logo96.png",
+            "128": "logo128.png"
+        },
         content_scripts: [
             {
                 matches: [

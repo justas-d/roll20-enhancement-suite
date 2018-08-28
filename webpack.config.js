@@ -25,7 +25,7 @@ module.exports = (_env, argv) => {
 
     console.log(browsers);
 
-    return browsers.map((b)  => {
+    return browsers.map((b) => {
 
         const entry = {};
         const staticFiles = {};
@@ -63,22 +63,20 @@ module.exports = (_env, argv) => {
         const sourceOutputPath = path.join(path.resolve(__dirname), "builds", browser.target, isProd ? "prod" : "dev");
         const packageOutputPath = path.join(path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev");
 
-        if (browser.id === "chrome") {
-            const makePng = size => {
-                const tmpHandle = tmp.fileSync();
-                const tempFile = tmpHandle.name;
+        const makePng = size => {
+            const tmpHandle = tmp.fileSync();
+            const tempFile = tmpHandle.name;
 
-                shell.exec(`inkscape -z --export-png ${tempFile} -h ${size} ./assets/logo.svg`);
-                shell.exec(`magick convert ${tempFile} -background none -gravity center -extent ${size}x${size} ${tempFile}`);
+            shell.exec(`inkscape -z --export-png ${tempFile} -h ${size} ./assets/logo.svg`);
+            shell.exec(`magick convert ${tempFile} -background none -gravity center -extent ${size}x${size} ${tempFile}`);
 
-                addStaticFile(`logo${size}.png`, tempFile);
-            };
+            addStaticFile(`logo${size}.png`, tempFile);
+        };
 
-            makePng(16);
-            makePng(48);
-            makePng(96);
-            makePng(128);
-        }
+        makePng(16);
+        makePng(48);
+        makePng(96);
+        makePng(128);
 
         if (browser.extraFiles) {
             for (const file of browser.extraFiles) {
@@ -167,13 +165,13 @@ module.exports = (_env, argv) => {
             devtool: "sourcemap"
         };
 
-        if(isProd) {
+        if (isProd) {
             delete config.devtool;
-            config.optimization = {minimizer: [new UglifyJsPlugin({test: /\.js$|\.jsx$|\.ts$|\.tsx$/i, parallel: true})]};
+            config.optimization = { minimizer: [new UglifyJsPlugin({ test: /\.js$|\.jsx$|\.ts$|\.tsx$/i, parallel: true })] };
         }
 
         if (wantsZip) {
-            config.plugins.push(new ZipPlugin({ path: packageOutputPath, filename: "r20es.zip" }))
+            config.plugins.push(new ZipPlugin({ path: packageOutputPath, filename: `r20es_${gitRevision.version()}_${browser.id}.zip` }))
         }
 
         return config;
