@@ -79,11 +79,12 @@ const removeAllChildren = function(root) {
     }
 }
 
-const escapeRegExp = function(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-}
-
 const replaceAll = function(where, find, replace) {
+
+    const escapeRegExp = function(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }
+
     return where.replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 
@@ -186,7 +187,7 @@ const getExtUrlFromPage = function(resource, _waitMs) {
 
 export {
     getBrowser, readFile, safeParseJson,
-    replaceAll, escapeRegExp, findByIdAndRemove,
+    replaceAll, findByIdAndRemove,
     copy, getTransform, getRotation,
     basename, safeCall, removeAllChildren,
     injectScript, isChrome, strIsNullOrEmpty,

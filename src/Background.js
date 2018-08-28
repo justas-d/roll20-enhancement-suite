@@ -1,6 +1,6 @@
 import { hooks } from './Hooks.js'
 import { ModPatchTesting } from './tools/ModPatchTesting.js';
-import { escapeRegExp, getBrowser, isChrome, replaceAll } from './tools/MiscUtils';
+import { getBrowser, isChrome, replaceAll } from './tools/MiscUtils';
 import { Config } from './tools/Config.js';
 
 window.modPatchTesting = new ModPatchTesting(hooks);
@@ -192,9 +192,8 @@ if (isChrome()) {
                 setupEnvironment("${Config.appUrl}");
                 
                 ${getHooks.toString()}
-                ${escapeRegExp.toString()}
+                var replaceAll = ${replaceAll.toString()}
                 ${injectHooks.toString()}
-                ${replaceAll.toString()}
                 ${scriptString()}
                 `
             } else {

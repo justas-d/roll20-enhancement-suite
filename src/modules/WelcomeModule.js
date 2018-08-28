@@ -1,6 +1,6 @@
 import { R20Module } from "../tools/R20Module";
 import { DOM } from "../tools/DOM";
-import { getExtUrlFromPage } from "../tools/MiscUtils";
+import { getExtUrlFromPage, copy } from "../tools/MiscUtils";
 
 const welcomeStyle = {
     backgroundColor: "#ffffff",
@@ -102,11 +102,13 @@ class ConfirmWorkingPopup extends DOM.ElementBase {
 
     constructor() {
         super();
-        this.doDots = this.doDots.bind(this);
-        this.onClick = this.onClick.bind(this);
-        this.dots = <span></span>;
         this.sec = 0;
-
+        getExtUrlFromPage("logo.svg", 5000)
+            .then(url => {
+                this.logoUrl = url;
+                this.rerender();
+            })
+            .catch(err => console.error(`Failed to get logo.svg: ${err}`));
     }
 
     killMe() {
@@ -114,26 +116,26 @@ class ConfirmWorkingPopup extends DOM.ElementBase {
         this.dispose();
     }
 
-    doDots() {
+    doDots = () => {
         this.sec++;
-        this.dots.innerHTML = ` ${".".repeat(this.sec)}`;
 
         if (this.sec > 5) {
             this.killMe();
         }
     }
 
-    onClick() {
-        this.killMe();
-    }
+    onClick = () => this.killMe();
 
     internalRender() {
         this.interval = setInterval(this.doDots, 1000);
+        const divStyle = copy(welcomeStyle, {
+            background: "rgba(6,26,45,255)"
+        });
 
         return (
-            <div style={welcomeStyle} onClick={this.onClick}>
-                <span>R20ES has been loaded!</span>
-                {this.dots}
+            <div style={divStyle} onClick={this.onClick}>
+                <img style={{ display: "block", width: "100%", marginBottom: "8px" }} src={this.logoUrl} alt="Logo" />
+                <div style={{color: "#FFF"}}>R20ES has been loaded!</div>
             </div>
         );
     }
