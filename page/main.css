@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color:whitesmoke;
+
+}
+
+.nav-link {
+    margin: auto 4px auto 4px;
+    text-decoration: none;
+}
+
+.navbar-nav {
+    margin-left: auto;
+    margin-right: auto;
+}
