@@ -14,7 +14,7 @@
     <a href="https://addons.mozilla.org/en-US/firefox/addon/roll20-enhancement-suite/" target="_blank">
     <img src="assets/readme/firefox.png" alt="| for Firefox |"/>
   </a>
-  <a href="https://addons.mozilla.org/en-US/firefox/addon/roll20-enhancement-suite/" target="_blank">
+  <a href="https://chrome.google.com/webstore/detail/roll20-enhancement-suite/fadcomaehamhdhekodcpiglabcjkepff" target="_blank">
     <img src="assets/readme/chrome.png" alt="| for Chrome |"/>
   </a>
 </p>
