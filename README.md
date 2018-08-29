@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-    <b>A browser extention containing quality of life and workflow improvements for Roll20.</b>
+    <b>A quality of life and workflow extension for Roll20</b>
 </p>
 
 <p align="center">
@@ -57,10 +57,10 @@ Or both:
 npm run build -- --env.browsers=firefox,chrome --mode development
 ```
 
-The built extention can be found in `builds/(firefox|chome)/(dev|prod)/`.
+The built extension can be found in `builds/(firefox|chome)/(dev|prod)/`.
 
 
-When devloping with firefox, use web-ext to automatically install and reload the extention:
+When devloping with firefox, use web-ext to automatically install and reload the extension:
 ```
 npm run start
 ```
