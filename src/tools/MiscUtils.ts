@@ -30,21 +30,6 @@ const getRotation = function(ctx) {
     return rad;
 };
 
-
-const basename = function(str) {
-    let idx = str.lastIndexOf('/');
-    if (idx === -1) {
-        return str;
-    }
-    idx += 1;
-
-    if (idx >= str.length) {
-        return "";
-    }
-
-    return str.substr(idx);
-}
-
 const findByIdAndRemove = function(id) {
     const elem = document.getElementById(id);
     if (elem) {
@@ -189,7 +174,7 @@ export {
     getBrowser, readFile, safeParseJson,
     replaceAll, findByIdAndRemove,
     copy, getTransform, getRotation,
-    basename, safeCall, removeAllChildren,
+    safeCall, removeAllChildren,
     injectScript, isChrome, strIsNullOrEmpty,
     mapObj, createCSSElement, getExtUrlFromPage
 };

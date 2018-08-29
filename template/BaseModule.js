@@ -8,7 +8,7 @@ import { R20Module } from "../tools/R20Module"
 
 class MyBaseModule extends R20Module.Base {
     constructor() {
-        super(__filename);
+        super(__dirname);
         // ctor
     }
 

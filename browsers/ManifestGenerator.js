@@ -8,10 +8,12 @@ const gen = (browser) => {
 
     let versionName = manifestGit.version();
     let version = versionName.replace(/v/g, "");
-    
-    const rcIndex = version.indexOf("-rc");
-    if (rcIndex !== -1) {
-        version = version.substring(0, rcIndex);
+
+    {
+        const rcIndex = version.indexOf("-rc");
+        if (rcIndex !== -1) {
+            version = version.substring(0, rcIndex);
+        }
     }
 
 
@@ -19,8 +21,7 @@ const gen = (browser) => {
         manifest_version: 2,
         name: 'Roll20 Enhancement Suite',
         version,
-        version_name: versionName,
-        description: 'A provides quality-of-life and workflow speed improvements to Roll20.',
+        description: 'Provides quality-of-life and workflow speed improvements to Roll20.',
 
         permissions: [
             '*://app.roll20.net/editor/',
@@ -59,6 +60,10 @@ const gen = (browser) => {
             '*.png',
             '*.webm'
         ]
+    }
+
+    if (browser.id === "chrome") {
+        manfiest.version_name = versionName;
     }
 
     return Object.assign(manifest, browser.manifest);

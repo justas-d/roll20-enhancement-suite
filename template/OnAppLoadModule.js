@@ -7,7 +7,7 @@ import { R20Module } from "../tools/R20Module"
 
 class MyOnAppLoadModule extends R20Module.OnAppLoadBase {
     constructor() {
-        super(__filename);
+        super(__dirname);
         // ctor
     }
 

@@ -7,7 +7,7 @@ import { R20Module } from "../tools/R20Module"
 
 class MySimpleModule extends R20Module.SimpleBase {
     constructor() {
-        super(__filename);
+        super(__dirname);
         // ctor
     }
 

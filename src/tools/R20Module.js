@@ -1,10 +1,10 @@
-import { basename } from "./MiscUtils";
+import TransformDirname from '../tools/TransformDirname'
 
 let R20Module = {};
 
 R20Module.Base = class ModuleBase {
-    constructor(filename) {
-        this.filename = basename(filename);
+    constructor(dirname) {
+        this.filename = TransformDirname(dirname);
         this.isDisposed = true;
     }
 
@@ -171,16 +171,6 @@ R20Module.OnAppLoadBase = class OnAppLoadModuleBase extends R20Module.Base {
 
 R20Module.canInstall = _ => window.r20es && "canInstallModules" in window.r20es && window.r20es.canInstallModules;
 
-R20Module.makeHook = function (filename, hook) {
-    hook.filename = basename(filename);
-    
-    if(!("gmOnly" in hook)) {
-        hook.gmOnly = false;
-    }
-
-    return hook;
-}
-
 R20Module.getModule = function (filename) {
     if (!("r20esInstalledModuleTable" in window)) return null;
     return window.r20esInstalledModuleTable[filename];
@@ -189,15 +179,6 @@ R20Module.getModule = function (filename) {
 R20Module.getModuleById = function (id) {
     if (!("r20esInstalledModuleTable" in window)) return null;
     return R20Module.getModule(window.r20es.hooks[id].filename);
-}
-
-R20Module.category = {
-    canvas: "Canvas",
-    exportImport: "Exporting/Importing",
-    initiative: "Initiative",
-    token: "Token",
-    journal: "Journal",
-    misc: "Misc."
 }
 
 export { R20Module };

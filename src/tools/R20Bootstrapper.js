@@ -1,15 +1,13 @@
-import { basename } from "./MiscUtils";
+import TransformDirname from "./TransformDirname";
 
 let R20Bootstrapper = {};
 
 R20Bootstrapper.Base = class BootstrapperBase {
-    constructor(filename) {
-        this.filename = basename(filename);
+    constructor(dirname) {
+        this.filename = TransformDirname(dirname);
     }
 
     setup() {}
-    beforeInject() { }
-    afterInject() { }
 
     // "this" will be the new boostrap, has no access to previous "this"
     disposePrevious() { }
@@ -50,7 +48,5 @@ R20Bootstrapper.Base = class BootstrapperBase {
         return c;
     }
 }
-
-R20Bootstrapper.canBootstrap = _ => "bootstrapTable" in window && window.isR20esBootstrapping;
 
 export { R20Bootstrapper };

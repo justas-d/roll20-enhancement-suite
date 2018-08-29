@@ -1,6 +1,7 @@
 import { DOM } from "./DOM";
 import { copy } from "./MiscUtils";
 import { DialogBase } from "./DialogBase";
+import ConfigViews from "./ConfigViews";
 
 class LoadingDialog extends DialogBase {
     constructor(action, className, style) {

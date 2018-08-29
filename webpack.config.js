@@ -24,7 +24,7 @@ module.exports = (_env, argv) => {
     const wantsZip = "zip" in env && env.zip;
 
     // make zip of source code
-    if(isProd && wantsZip) {
+    if (isProd && wantsZip) {
         shell.exec(`git archive -o r20es_${new GitRevisionPlugin().version()}_source.zip HEAD`);
     }
 
@@ -35,34 +35,52 @@ module.exports = (_env, argv) => {
         const entry = {};
         const staticFiles = {};
 
-        const addSourceFolder = folder => {
-            fs.readdirSync(folder).forEach(f => {
-                if (fs.lstatSync(folder + f).isDirectory()) return;
-
-                entry[f] = folder + f;
-            });
-        }
-
         const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
+        const addEntryPoint = (mappedName, sourcePath) => entry[mappedName] = sourcePath;
 
-        const addStaticFolder = folder => {
-            fs.readdirSync(folder).forEach(f => {
-                const path = folder + f;
-                if (fs.lstatSync(path).isDirectory()) return;
-                addStaticFile(f, path);
-            });
-        }
-
-        addSourceFolder("./src/");
-        addSourceFolder("./src/modules/");
-
-        addStaticFolder("./css/");
         addStaticFile("logo.svg", "./assets/logo.svg");
 
-        const settingsAssets = "./assets/settings/";
-        fs.readdirSync(settingsAssets).forEach(f => {
-            addStaticFile(f, settingsAssets + f);
-        });
+        {
+            const root = "./css/";
+            fs.readdirSync(root).forEach(f => {
+                const rootFile = root + f;
+                if (fs.lstatSync(rootFile).isDirectory()) return;
+                addStaticFile(f, rootFile);
+            });
+        }
+
+        {
+            const settingsAssets = "./assets/settings/";
+            fs.readdirSync(settingsAssets).forEach(f => {
+                addStaticFile(f, settingsAssets + f);
+            });
+        }
+
+        {
+            const root = "./src/modules/";
+            fs.readdirSync(root).forEach(dirname => {
+                const rootDirname = root + dirname;
+                if (!fs.lstatSync(rootDirname).isDirectory()) return;
+
+                // look for the entry point
+                const entryRegex = /Module\.js.?$|\.ts.?$/i;
+                fs.readdirSync(rootDirname).forEach(f => {
+                    if (!f.match(entryRegex)) return;
+
+                    addEntryPoint(dirname + ".js", "./" + path.join(root, dirname, f));
+                });
+            });
+        }
+
+        {
+            const root = "./src/entrypoints/"
+            fs.readdirSync(root).forEach(f => {
+                const rootFile = root + f;
+                if (fs.lstatSync(rootFile).isDirectory()) return;
+
+                addEntryPoint(f, rootFile);
+            });
+        }
 
         const browser = browserDefinitions[b];
         const sourceOutputPath = path.join(path.resolve(__dirname), "builds", browser.target, isProd ? "prod" : "dev");
@@ -104,7 +122,7 @@ module.exports = (_env, argv) => {
             },
 
             context: __dirname,
-            node: { __filename: true },
+            node: { __filename: true, __dirname: true },
             target: "web",
 
             entry: entry,
