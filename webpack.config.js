@@ -201,9 +201,18 @@ module.exports = (_env, argv) => {
             delete config.devtool;
             config.optimization = { minimizer: [new UglifyJsPlugin({ test: /\.js$|\.jsx$|\.ts$|\.tsx$/i, parallel: true })] };
         }
-
+.
         if (wantsZip) {
-            config.plugins.push(new ZipPlugin({ path: packageOutputPath, filename: `r20es_${git.version}_${browser.id}.zip` }))
+            config.plugins.push(new ZipPlugin({ 
+                path: packageOutputPath, 
+                filename: `r20es_${git.version}_${browser.id}.zip`,
+                fileOptions: {
+                    mtime: new Date(0),
+                    mode: 0o100664,
+                    compress: true,
+                    forceZip64Format: false,
+                  },
+            }))
         }
 
         return config;
