@@ -21,11 +21,9 @@ module.exports = (_env, argv) => {
     }
     addStaticFile("index.html", "./page/index.html");
     addStaticFile("features.html", "./page/features.html");
-    addStaticFile("contribute.html", "./page/contribute.html");
 
     const addFile = f => entry[path.basename(f)] = f;
     addFile("./page/index.js");
-    addFile("./page/contribute.js");
     addFile("./page/features.js");
 
     console.log(entry);
