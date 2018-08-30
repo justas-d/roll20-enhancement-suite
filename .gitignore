@@ -9,3 +9,5 @@ selenium-server.log
 builds/
 dist/
 r20es_*_source.zip
+pagerender/
+git_data.json

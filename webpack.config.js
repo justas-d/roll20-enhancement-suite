@@ -5,11 +5,34 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ZipPlugin = require('zip-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const shell = require("shelljs");
-const tmp = require('tmp');
 const GenerateJsonPlugin = require('generate-json-webpack-plugin');
 const manifestGen = require('./browsers/ManifestGenerator');
 const browserDefinitions = require('./browsers/BrowserDefinitions');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const JSZip = require("jszip");
+
+const gitDataCacheFile = "git_data.json";
+
+let git = {}
+let gitPlugin = null;
+
+if (fs.existsSync("./.git/")) {
+    gitPlugin = new GitRevisionPlugin({
+        branch: true,
+        lightweightTags: true
+    });
+
+    git.version = gitPlugin.version();
+    git.commit = gitPlugin.commithash()
+    git.branch = gitPlugin.branch();
+    fs.writeFileSync(gitDataCacheFile, JSON.stringify(git), "utf8");
+
+} else {
+    git = JSON.parse(fs.readFileSync(gitDataCacheFile, "utf8"));
+}
+
+
+let madeSourceZip = false;
 
 module.exports = (_env, argv) => {
     let env = _env || {};
@@ -24,11 +47,24 @@ module.exports = (_env, argv) => {
     const wantsZip = "zip" in env && env.zip;
 
     // make zip of source code
-    if (isProd && wantsZip) {
-        shell.exec(`git archive -o r20es_${new GitRevisionPlugin().version()}_source.zip HEAD`);
+    if (isProd && wantsZip && !madeSourceZip) {
+        madeSourceZip = true
+        const filename = `r20es_${git.version}_source.zip`;
+        shell.exec(`git archive -o ${filename} HEAD`);
+
+        // read a zip file
+        fs.readFile(filename, (err, data) => {
+            if (err) throw err;
+            JSZip.loadAsync(data).then(zip => {
+                zip.file(gitDataCacheFile, fs.readFileSync(gitDataCacheFile, "utf8"));
+
+                zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+                    .pipe(fs.createWriteStream(filename));
+            });
+        });
     }
 
-    console.log(browsers);
+    console.log(browsers);ez
 
     return browsers.map((b) => {
 
@@ -37,11 +73,7 @@ module.exports = (_env, argv) => {
 
         const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
         const addEntryPoint = (mappedName, sourcePath) => entry[mappedName] = sourcePath;
-
-        addStaticFile("logo.svg", "./assets/logo.svg");
-
-        {
-            const root = "./css/";
+        const addStaticFolder = (root) => {
             fs.readdirSync(root).forEach(f => {
                 const rootFile = root + f;
                 if (fs.lstatSync(rootFile).isDirectory()) return;
@@ -49,12 +81,9 @@ module.exports = (_env, argv) => {
             });
         }
 
-        {
-            const settingsAssets = "./assets/settings/";
-            fs.readdirSync(settingsAssets).forEach(f => {
-                addStaticFile(f, settingsAssets + f);
-            });
-        }
+        addStaticFolder("./css/");
+        addStaticFolder("./assets/logo/");
+        addStaticFolder("./assets/settings/");
 
         {
             const root = "./src/modules/";
@@ -86,21 +115,6 @@ module.exports = (_env, argv) => {
         const sourceOutputPath = path.join(path.resolve(__dirname), "builds", browser.target, isProd ? "prod" : "dev");
         const packageOutputPath = path.join(path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev");
 
-        const makePng = size => {
-            const tmpHandle = tmp.fileSync();
-            const tempFile = tmpHandle.name;
-
-            shell.exec(`inkscape -z --export-png ${tempFile} -h ${size} ./assets/logo.svg`);
-            shell.exec(`magick convert ${tempFile} -background none -gravity center -extent ${size}x${size} ${tempFile}`);
-
-            addStaticFile(`logo${size}.png`, tempFile);
-        };
-
-        makePng(16);
-        makePng(48);
-        makePng(96);
-        makePng(128);
-
         if (browser.extraFiles) {
             for (const file of browser.extraFiles) {
                 addStaticFile(path.basename(file), file);
@@ -108,10 +122,6 @@ module.exports = (_env, argv) => {
         }
 
         const finalManifest = manifestGen(browser);
-        const gitRevision = new GitRevisionPlugin({
-            branch: true,
-            lightweightTags: true
-        });
 
         console.log(entry);
         console.log(staticFiles);
@@ -173,12 +183,10 @@ module.exports = (_env, argv) => {
                     return accum;
                 }, [])),
 
-                gitRevision,
-
                 new webpack.DefinePlugin({
-                    R20ES_VERSION: JSON.stringify(gitRevision.version()),
-                    R20ES_COMMIT: JSON.stringify(gitRevision.commithash()),
-                    R20ES_BRANCH: JSON.stringify(gitRevision.branch()),
+                    R20ES_VERSION: JSON.stringify(git.version),
+                    R20ES_COMMIT: JSON.stringify(git.commit),
+                    R20ES_BRANCH: JSON.stringify(git.branch),
                     R20ES_BROWSER: JSON.stringify(browser.target),
                     'process.env.NODE_ENV': JSON.stringify('production'),
                 }),
@@ -194,7 +202,7 @@ module.exports = (_env, argv) => {
         }
 
         if (wantsZip) {
-            config.plugins.push(new ZipPlugin({ path: packageOutputPath, filename: `r20es_${gitRevision.version()}_${browser.id}.zip` }))
+            config.plugins.push(new ZipPlugin({ path: packageOutputPath, filename: `r20es_${git.version}_${browser.id}.zip` }))
         }
 
         return config;
