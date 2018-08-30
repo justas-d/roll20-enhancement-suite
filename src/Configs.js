@@ -6,7 +6,6 @@ import AutoSortInitiative from './modules/AutoSortInitiative/Config'
 import BulkMacro from './modules/BulkMacro/Config'
 import ChangeIdWhenDuplicating from './modules/ChangeIdWhenDuplicating/Config'
 import CharacterIO from './modules/CharacterIO/Config'
-import ChromeLoadFix from './modules/ChromeLoadFix/Config'
 import DrawCurrentLayer from './modules/DrawCurrentLayer/Config'
 import DuplicateButton from './modules/DuplicateButton/Config'
 import ExposeD20 from './modules/ExposeD20/Config'
@@ -24,7 +23,6 @@ import TokenContextMenuApi from './modules/TokenContextMenuApi/Config'
 import TokenLayerDrawing from './modules/TokenLayerDrawing/Config'
 import TransparentPaper from './modules/TransparentPaper/Config'
 import Welcome from './modules/Welcome/Config'
-import { isChrome } from './tools/MiscUtils';
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -37,7 +35,6 @@ addCfg(AutoSortInitiative);
 addCfg(BulkMacro);
 addCfg(ChangeIdWhenDuplicating);
 addCfg(CharacterIO);
-if (isChrome()) addCfg(ChromeLoadFix);
 addCfg(DrawCurrentLayer);
 addCfg(DuplicateButton);
 addCfg(ExposeD20);

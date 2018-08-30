@@ -19,7 +19,8 @@ function getHooks(hooks, url) {
         let hook = hooks[id];
 
         if (hook.mods) {
-            for (let mod of hook.mods) {``
+            for (let mod of hook.mods) {
+                ``
                 addModToQueueIfOk(mod, hook);
             }
         } else {
@@ -32,7 +33,7 @@ function getHooks(hooks, url) {
 
 function injectHooks(intoWhat, hookQueue, replaceFunc) {
     if (hookQueue.length <= 0) return intoWhat;
-    
+
     for (let combo of hookQueue) {
         const mod = combo.mod;
 
@@ -104,9 +105,15 @@ if (isChrome()) {
 
                     response.text().then(text => {
 
+                        // take over jquery .ready
                         text = text.replace(
                             "jQuery.ready.promise().done( fn );",
                             "window.r20esChrome.readyCallbacks.push(fn);");
+
+                        // incredibly long loading screens fix
+                        text = text.replace(
+                            `"You will join the game shortly..."),i=6e4)`,
+                            `"You will join the game shortly..."),i=250)`);
 
                         const hookQueue = getHooks(window.r20esChrome.hooks, localUrl);
                         text = injectHooks(text, hookQueue, window["replaceAll"]);
@@ -150,7 +157,7 @@ if (isChrome()) {
 
                             console.log("scripts injected.");
 
-                            
+
                             setTimeout(() => {
                                 window.r20esChrome.readyCallbacks.each(f => f());
 
@@ -160,7 +167,7 @@ if (isChrome()) {
                                     Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
                                     contratry to what happens on Firefox.
                                 */
-                                
+
                                 window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
                             }, 500);
                         }
@@ -238,7 +245,7 @@ if (isChrome()) {
     window.requestListener = function (dt) {
 
         const hookQueue = getHooks(hooks, dt.url);
-        if(hookQueue.length <= 0) return;
+        if (hookQueue.length <= 0) return;
 
         let filter = getBrowser().webRequest.filterResponseData(dt.requestId);
         let decoder = new TextDecoder("utf-8");
