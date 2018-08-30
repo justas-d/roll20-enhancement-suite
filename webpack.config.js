@@ -12,11 +12,12 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const JSZip = require("jszip");
 
 const gitDataCacheFile = "git_data.json";
+const isInRepo = fs.existsSync("./.git/");
 
 let git = {}
 let gitPlugin = null;
 
-if (fs.existsSync("./.git/")) {
+if (isInRepo) {
     gitPlugin = new GitRevisionPlugin({
         branch: true,
         lightweightTags: true
@@ -47,7 +48,7 @@ module.exports = (_env, argv) => {
     const wantsZip = "zip" in env && env.zip;
 
     // make zip of source code
-    if (isProd && wantsZip && !madeSourceZip) {
+    if (isInRepo && isProd && wantsZip && !madeSourceZip) {
         madeSourceZip = true
         const filename = `r20es_${git.version}_source.zip`;
         shell.exec(`git archive -o ${filename} HEAD`);
