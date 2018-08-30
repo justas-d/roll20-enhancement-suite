@@ -201,7 +201,7 @@ module.exports = (_env, argv) => {
             delete config.devtool;
             config.optimization = { minimizer: [new UglifyJsPlugin({ test: /\.js$|\.jsx$|\.ts$|\.tsx$/i, parallel: true })] };
         }
-.
+
         if (wantsZip) {
             config.plugins.push(new ZipPlugin({ 
                 path: packageOutputPath, 
