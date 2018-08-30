@@ -63,8 +63,12 @@ h1 {
 }
 
 .navbar {
-    
     flex-shrink: 1;
+    background-color: unset;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: unset;
 }
 
 .browser-icons img {

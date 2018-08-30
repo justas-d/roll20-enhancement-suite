@@ -1,14 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import 'main.css';
-import 'index.css';
-
-import chromeImg from 'chrome.png';
-import ffImg from 'firefox.png';
-import gitImg from 'github.png';
-
 import NavBar from 'NavBar.js';
-import logoSvg from '../assets/logo.svg'
+
 
 function Index() {
     return (
@@ -18,7 +11,7 @@ function Index() {
                 <div className="column-flex top">
 
                     <div className="logo">
-                        <img src={logoSvg} alt=""></img>
+                        <img src="logo.svg" alt=""></img>
                     </div>
 
                     <div className="text-bg">
@@ -27,15 +20,15 @@ function Index() {
 
                         <div className="browser-icons">
                             <a href="https://addons.mozilla.org/en-US/firefox/addon/roll20-enhancement-suite/">
-                                <img src={ffImg} alt="" />
+                                <img src="firefox.png" alt="" />
                             </a>
 
                             <a href="https://chrome.google.com/webstore/detail/roll20-enhancement-suite/fadcomaehamhdhekodcpiglabcjkepff">
-                                <img src={chromeImg} alt="" />
+                                <img src="chrome.png" alt="" />
                             </a>
 
                             <a href="https://github.com/SSStormy/roll20-enhancement-suite">
-                                <img className="invert" src={gitImg} alt="" />
+                                <img className="invert" src="github.png" alt="" />
                             </a>
                         </div>
 
@@ -51,4 +44,8 @@ function Index() {
     )
 }
 
-ReactDOM.render(<Index />, document.getElementById("root"));
+if(typeof(window) !== "undefined" && window.document) {
+    ReactDOM.render(<Index />, document.getElementById("root"));
+}
+
+export default Index;

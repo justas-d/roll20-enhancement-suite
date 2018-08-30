@@ -3,10 +3,6 @@ import ReactDOM from 'react-dom'
 
 import NavBar from 'NavBar.js'
 
-import 'main.css';
-import 'more.css'
-import 'about.css';
-
 function About() {
 
     return (
@@ -27,9 +23,17 @@ function About() {
  
                 <p>The primary and only goal of R20ES is to save people's time. Not only when preparing for games, but also when running them and playing in them. Roll20 is not perfect and I have had some repeating frusturating moments (why can't I select this darn token?). R20ES fixes the major quirks I've experienced.</p>
 
+                <h2>Privacy</h2>
+                R20ES does not collect any of your private information, it does not track you etc or sell any kind of personal data.
+
             </div>
         </div>
     );
 }
 
-ReactDOM.render(<About />, document.getElementById("root"));
+if(typeof(window) !== "undefined" && window.document) {
+    ReactDOM.render(<About />, document.getElementById("root"));
+}
+
+export default About;
+

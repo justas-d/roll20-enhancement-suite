@@ -2,31 +2,88 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const fs = require('fs');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const cfgModule = {
+    rules: [
+        {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'babel-loader?babelrc=false',
+                options: {
+                    presets: ["@babel/preset-react"],
+                    plugins: [
+                        ["@babel/plugin-transform-react-jsx", {
+                            "pragma": "React.createElement"
+                        }],
+
+                    ]
+                }
+            }],
+        },
+    ]
+};
+
+const getPlugins = (isProd) => {
+    return [
+        new webpack.DefinePlugin({
+            R20ES_PAGE_PREFIX: JSON.stringify(isProd ? "/roll20-enhancement-suite" : ""),
+        }),
+    ];
+};
 
 module.exports = (_env, argv) => {
 
     const isProd = argv.mode === "production";
-    const sourceOutputPath = path.join(path.resolve(__dirname), "page_dist", isProd ? "prod" : "dev");
+
+    const sourceOutputPath = path.join(path.resolve(__dirname), "pagerender");
+
+    if (isProd) {
+        return {
+            target: "node",
+            entry: { "renderer.js": "./page/renderer.js" },
+
+            output: {
+                path: sourceOutputPath,
+                filename: '[name]',
+            },
+
+            module: cfgModule,
+
+            plugins: getPlugins(isProd),
+
+            resolve: {
+                extensions: ['.js'],
+                modules: ['page', 'node_modules'],
+            },
+        }
+    }
 
     const entry = {};
     const staticFiles = {};
 
     const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
-    {
-        const settingsAssets = "./assets/settings/";
-        fs.readdirSync(settingsAssets).forEach(f => {
-            addStaticFile(f, settingsAssets + f);
+    const addStaticFolder = (folder) => {
+        fs.readdirSync(folder).forEach(f => {
+            addStaticFile(f, folder + f);
         });
     }
+
+    addStaticFolder("./assets/settings/");
+    addStaticFolder("./assets/site/");
+
     addStaticFile("index.html", "./page/index.html");
     addStaticFile("features.html", "./page/features.html");
     addStaticFile("about.html", "./page/about.html");
+    addStaticFile("logo.svg", "./assets/logo/logo.svg");
 
     const addFile = f => entry[path.basename(f)] = f;
     addFile("./page/index.js");
     addFile("./page/features.js");
     addFile("./page/about.js");
+    addStaticFile("main.css", "./page/main.css");
+    addStaticFile("index.css", "./page/index.css");
+    addStaticFile("features.css", "./page/features.css");
 
     console.log(entry);
 
@@ -40,44 +97,14 @@ module.exports = (_env, argv) => {
             filename: '[name]',
         },
 
-        module: {
-            rules: [
-                {
-                    test: /\.css$/,
-                    use: [
-                        { loader: "style-loader" },
-                        { loader: "css-loader" }
-                    ]
-                },
-                {
-                    test: /(\.js|\.jsx)$/,
-                    exclude: /node_modules/,
-                    use: [{
-                        loader: 'babel-loader?babelrc=false',
-                        options: {
-                            presets: ["@babel/preset-react"],
-                            plugins: [
-                                ['transform-define', {
-                                    'process.env.NODE_ENV': argv.mode,
-                                }],
-                                ["@babel/plugin-transform-react-jsx", {
-                                    "pragma": "React.createElement"
-                                }],
-                            ]
-                        }
-                    }],
-                },
-                { test: /\.(svg|png|jpg|jpeg|gif)$/, loader: 'file-loader' },
-
-            ],
-        },
+        module: cfgModule,
 
         resolve: {
             extensions: ['.js', '.jsx'],
             modules: ['page', 'node_modules'],
         },
 
-        plugins: [
+        plugins: getPlugins(isProd).concat([
             new CopyWebpackPlugin(Object.keys(staticFiles).reduce((accum, mappedName) => {
                 accum.push({
                     from: staticFiles[mappedName],
@@ -85,10 +112,11 @@ module.exports = (_env, argv) => {
                 });
                 return accum;
             }, [])),
-        ],
-
+        ]),
+        
         devtool: "sourcemap"
     };
 
     return config;
 }
+

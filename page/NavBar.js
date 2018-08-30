@@ -6,13 +6,13 @@ class NavBar extends React.Component {
             <nav className="navbar navbar-expand-lg navbar-light">
                 <ul className="navbar-nav">
                 <li className="nav-item">
-                        <a className="nav-link" href="/">Landing</a>
+                        <a className="nav-link" href={`${R20ES_PAGE_PREFIX}/`}>Landing</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="/features.html">Features</a>
+                        <a className="nav-link" href={`${R20ES_PAGE_PREFIX}/features.html`}>Features</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="/about.html">About</a>
+                        <a className="nav-link" href={`${R20ES_PAGE_PREFIX}/about.html`}>About</a>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link" href="https://github.com/SSStormy/roll20-enhancement-suite">GitHub</a>

@@ -6,12 +6,20 @@ body {
 
 }
 
-.nav-link {
+.navbar-light .navbar-nav .nav-link {
     margin: auto 4px auto 4px;
     text-decoration: none;
+    color: lightgray;
 }
 
 .navbar-nav {
     margin-left: auto;
     margin-right: auto;
+}
+
+
+
+.navbar {
+    background-color: rgb(6, 26, 45);   
+    margin-bottom: 32px;
 }

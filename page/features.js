@@ -4,10 +4,6 @@ import ReactDOM from 'react-dom'
 import Configs from '../src/Configs';
 import NavBar from 'NavBar.js'
 
-import 'main.css';
-import 'more.css'
-import 'features.css';
-
 function FeatureCard(props) {
     const cfg = props.config;
 
@@ -67,4 +63,9 @@ function Features() {
     );
 }
 
-ReactDOM.render(<Features />, document.getElementById("root"));
+
+if(typeof(window) !== "undefined" && window.document) {
+    ReactDOM.render(<Features />, document.getElementById("root"));
+}
+
+export default Features;
