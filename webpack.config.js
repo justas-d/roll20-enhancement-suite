@@ -64,7 +64,7 @@ module.exports = (_env, argv) => {
         });
     }
 
-    console.log(browsers);ez
+    console.log(browsers);
 
     return browsers.map((b) => {
 
@@ -121,7 +121,7 @@ module.exports = (_env, argv) => {
             }
         }
 
-        const finalManifest = manifestGen(browser);
+        const finalManifest = manifestGen(browser, git.version);
 
         console.log(entry);
         console.log(staticFiles);

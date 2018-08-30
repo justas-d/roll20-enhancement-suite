@@ -1,16 +1,11 @@
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
-const gen = (browser) => {
+const gen = (browser, versionName) => {
 
-    const manifestGit = new GitRevisionPlugin({
-        versionCommand: "describe --abbrev=0"
-    });
-
-    let versionName = manifestGit.version();
     let version = versionName.replace(/v/g, "");
 
     {
-        const rcIndex = version.indexOf("-rc");
+        const rcIndex = version.indexOf("-");
         if (rcIndex !== -1) {
             version = version.substring(0, rcIndex);
         }
