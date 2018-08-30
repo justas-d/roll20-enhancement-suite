@@ -63,7 +63,7 @@ const gen = (browser) => {
     }
 
     if (browser.id === "chrome") {
-        manfiest.version_name = versionName;
+        manifest.version_name = versionName;
     }
 
     return Object.assign(manifest, browser.manifest);
