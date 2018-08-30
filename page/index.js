@@ -8,6 +8,7 @@ import ffImg from 'firefox.png';
 import gitImg from 'github.png';
 
 import NavBar from 'NavBar.js';
+import logoSvg from '../assets/logo.svg'
 
 function Index() {
     return (
@@ -17,7 +18,7 @@ function Index() {
                 <div className="column-flex top">
 
                     <div className="logo">
-                        <img src="https://raw.githubusercontent.com/SSStormy/roll20-enhancement-suite/master/assets/logo.svg?sanitize=true" alt=""></img>
+                        <img src={logoSvg} alt=""></img>
                     </div>
 
                     <div className="text-bg">

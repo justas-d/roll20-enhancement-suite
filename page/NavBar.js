@@ -5,14 +5,14 @@ class NavBar extends React.Component {
         return (
             <nav className="navbar navbar-expand-lg navbar-light">
                 <ul className="navbar-nav">
-                    <li className="nav-item">
-                        <a className="nav-link" href="/">About</a>
+                <li className="nav-item">
+                        <a className="nav-link" href="/">Landing</a>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link" href="/features.html">Features</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="/contribute.html">Contribute</a>
+                        <a className="nav-link" href="/about.html">About</a>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link" href="https://github.com/SSStormy/roll20-enhancement-suite">GitHub</a>
