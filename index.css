@@ -1,28 +1,55 @@
-.page-body {
-    min-height: 100%;
-    min-height: 100vh;
-    display: flex;
+.column-flex {
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
-.logo {
-    width: 25%;
-    display: block;
-    margin-bottom: 32px;
-    margin-right: auto;
-    margin-left: auto;
+h1 {
+    font-size: 3em;
+}
+
+.main-content {
+    min-height: 100vh;
+}
+
+.top {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.bottom {
+    flex-grow: 1;
 }
 
 .browser-icons {
-    margin: auto;
     width: 50%;
+    margin: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 48px;
+    margin-bottom: 32px;
+    
+    background: rgb(6, 26, 45);
+    border-radius: 32px;
+    padding: 8px;
 }
 
-.browser-icons img {
-    margin: 0 8px 0 8px;
+.logo {
+    
+    background-image: linear-gradient( rgb(6, 26, 45) 60%, whitesmoke 60%);
+    padding-top: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.text-bg {
+    text-align: center;
+    flex-grow: 0.6;
 }
 
 .invert {
@@ -30,10 +57,21 @@
     filter: invert(1);
 }
 
-.content {
-    width: 100%;
+.logo img {
+    
+    height: 100%;
 }
 
-.centered-text {
-    text-align: center;
+.navbar {
+    flex-shrink: 1;
+    background-color: unset;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: unset;
+}
+
+.browser-icons img {
+    margin: 0 8px 0 8px;
+    min-width: 64px;
 }
