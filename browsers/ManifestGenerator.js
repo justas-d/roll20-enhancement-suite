@@ -1,21 +1,48 @@
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
-const gen = (browser, versionName) => {
+const gen = (browser, origVersionName) => {
 
-    let version = versionName.replace(/v/g, "");
+    const versionName = origVersionName.replace(/v/g, "");
+    let finalVersion = null;
 
-    {
-        const rcIndex = version.indexOf("-");
-        if (rcIndex !== -1) {
-            version = version.substring(0, rcIndex);
+    const dashIndex = versionName.indexOf("-");
+    if (dashIndex !== -1) {
+        finalVersion = versionName.substring(0, dashIndex);
+    } else {
+        finalVersion = versionName;
+    }
+
+    const rcString = "-rc."
+    const rcIndex = versionName.indexOf(rcString);
+    if (rcIndex !== -1) {
+        let idx = rcIndex + rcString.length;
+        let numBuf = "";
+        const isdigit = c => ((c >= '0') && (c <= '9'));
+
+        do {
+            const char = versionName.charAt(idx);
+            console.log(char);
+            if (versionName.length > idx && isdigit(char)) {
+                idx++;
+                numBuf += char;
+            } else { break; }
+
+        } while (true);
+
+        //console.log(numBuf);
+        //console.log(`${rcIndex}-${idx}/${versionName.length}`);
+
+        if (numBuf.length > 0) {
+            finalVersion += `.${numBuf};`
         }
     }
 
+    //console.log(finalVersion);
 
     let manifest = {
         manifest_version: 2,
         name: 'Roll20 Enhancement Suite',
-        version,
+        finalVersion,
         description: 'Provides quality-of-life and workflow speed improvements to Roll20.',
 
         permissions: [
