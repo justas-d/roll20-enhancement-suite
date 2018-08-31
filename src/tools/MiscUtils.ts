@@ -170,12 +170,21 @@ const getExtUrlFromPage = function(resource, _waitMs) {
     });
 }
 
+const waitPromise = (timeMs, dataPassthrough) => {
+    return new Promise((ok, err) => {
+        setTimeout(() => {
+            ok(dataPassthrough);
+        }, timeMs);
+    })
+}
+
 export {
     getBrowser, readFile, safeParseJson,
     replaceAll, findByIdAndRemove,
     copy, getTransform, getRotation,
     safeCall, removeAllChildren,
     injectScript, isChrome, strIsNullOrEmpty,
-    mapObj, createCSSElement, getExtUrlFromPage
+    mapObj, createCSSElement, getExtUrlFromPage,
+    waitPromise
 };
 

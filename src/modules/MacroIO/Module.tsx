@@ -29,7 +29,7 @@ class MacroIOModule extends R20Module.OnAppLoadBase {
         (e.target as any).disabled = true
 
         readFile(file)
-            .then(payload => MacroIO.import(R20.getCurrentPlayer(), payload as string))
+            .then(payload => MacroIO.importData(R20.getCurrentPlayer(), payload as string))
             .then(result => {
                 if(result.isErr()) alert(result.err().unwrap());
                 R20.rerenderJournalMacros();
