@@ -107,7 +107,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
             ? this.importTablesTableExport
             : this.importTableJson;
 
-        const input = $(e.target.parentNode).find("input")[0];
+        const input = $(e.target.parentNode.parentNode).find("input")[0];
 
         const plsWait = new LoadingDialog("Importing");
         plsWait.show()
