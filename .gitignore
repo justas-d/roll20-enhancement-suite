@@ -11,3 +11,5 @@ dist/
 r20es_*_source.zip
 pagerender/
 git_data.json
+.env
+deploy_data.json

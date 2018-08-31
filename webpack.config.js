@@ -10,9 +10,12 @@ const manifestGen = require('./browsers/ManifestGenerator');
 const browserDefinitions = require('./browsers/BrowserDefinitions');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const JSZip = require("jszip");
+const VersionNameGen = require("./browsers/VersionNameGen");
 
 const gitDataCacheFile = "git_data.json";
 const isInRepo = fs.existsSync("./.git/");
+
+const genZipName = (version, target) => `r20es_${version}_${target}.zip`;
 
 let git = {}
 let gitPlugin = null;
@@ -26,14 +29,12 @@ if (isInRepo) {
     git.version = gitPlugin.version();
     git.commit = gitPlugin.commithash()
     git.branch = gitPlugin.branch();
+    // cache git data for source code zip
     fs.writeFileSync(gitDataCacheFile, JSON.stringify(git), "utf8");
 
 } else {
     git = JSON.parse(fs.readFileSync(gitDataCacheFile, "utf8"));
 }
-
-
-let madeSourceZip = false;
 
 module.exports = (_env, argv) => {
     let env = _env || {};
@@ -47,13 +48,12 @@ module.exports = (_env, argv) => {
     const isProd = argv.mode === "production";
     const wantsZip = "zip" in env && env.zip;
 
-    // make zip of source code
-    if (isInRepo && isProd && wantsZip && !madeSourceZip) {
-        madeSourceZip = true
+    // if packaging
+    if (isInRepo && isProd && wantsZip) {
+        // prep source code
         const filename = `r20es_${git.version}_source.zip`;
         shell.exec(`git archive -o ${filename} HEAD`);
 
-        // read a zip file
         fs.readFile(filename, (err, data) => {
             if (err) throw err;
             JSZip.loadAsync(data).then(zip => {
@@ -63,6 +63,18 @@ module.exports = (_env, argv) => {
                     .pipe(fs.createWriteStream(filename));
             });
         });
+
+        // prep deploy data
+        const deployData = {
+            version: VersionNameGen(git.version)
+        };
+
+        for (const b of browsers) {
+            const browser = browserDefinitions[b];
+            deployData[browser.target] = genZipName(git.version, browser.target);
+        }
+
+        fs.writeFile("./deploy_data.json", JSON.stringify(deployData), "utf8", (err) => { if (err) console.error(err) });
     }
 
     console.log(browsers);
@@ -203,15 +215,15 @@ module.exports = (_env, argv) => {
         }
 
         if (wantsZip) {
-            config.plugins.push(new ZipPlugin({ 
-                path: packageOutputPath, 
-                filename: `r20es_${git.version}_${browser.id}.zip`,
+            config.plugins.push(new ZipPlugin({
+                path: packageOutputPath,
+                filename: genZipName(git.version, browser.id),
                 fileOptions: {
                     mtime: new Date(0),
                     mode: 0o100664,
                     compress: true,
                     forceZip64Format: false,
-                  },
+                },
             }))
         }
 
