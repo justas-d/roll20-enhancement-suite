@@ -566,6 +566,8 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         // wait for plsWait to render.
         setTimeout(() => {
             try {
+                const istokenaction = typeof(data.setIsTokenAction) === "undefined" ? false : data.setIsTokenAction;
+
                 for (let elem of data.macros) {
                     if (elem.modify) {
                         const existing = pc.abilities.find(f => f.get("name") === elem.name);
@@ -582,13 +584,13 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
                         existing.save({
                             action: elem.macro,
-                            istokenaction: data.setIsTokenAction
+                            istokenaction,
                         });
                     } else {
                         pc.abilities.create({
                             name: elem.name,
                             action: elem.macro,
-                            istokenaction: data.setIsTokenAction
+                            istokenaction,
                         });
                     }
                 }
