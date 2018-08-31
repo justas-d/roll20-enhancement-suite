@@ -33,7 +33,7 @@ const gen = (browser, origVersionName) => {
         //console.log(`${rcIndex}-${idx}/${versionName.length}`);
 
         if (numBuf.length > 0) {
-            finalVersion += `.${numBuf};`
+            finalVersion += `.${numBuf}`
         }
     }
 
@@ -42,7 +42,7 @@ const gen = (browser, origVersionName) => {
     let manifest = {
         manifest_version: 2,
         name: 'Roll20 Enhancement Suite',
-        finalVersion,
+        version: finalVersion,
         description: 'Provides quality-of-life and workflow speed improvements to Roll20.',
 
         permissions: [
