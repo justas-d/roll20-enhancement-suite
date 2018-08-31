@@ -1,29 +1,34 @@
 import { R20Module } from '../../tools/R20Module'
-import { CharacterIO } from '../../tools/CharacterIO.js'
+import { CharacterIO, IOverwriteStrategy } from '../../tools/CharacterIO'
 import { R20 } from '../../tools/R20'
-import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../../tools/DOM.js'
+import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../../tools/DOM'
 import { saveAs } from 'save-as'
 import { findByIdAndRemove, readFile, safeParseJson } from '../../tools/MiscUtils';
 import { SheetTab } from '../../tools/SheetTab';
 import { LoadingDialog } from '../../tools/DialogComponents';
 
+interface IProcessResultData {
+    strategy: IOverwriteStrategy,
+    data: any;
+}
 
 class CharacterIOModule extends R20Module.OnAppLoadBase {
+    private static readonly journalWidgetId = "r20es-character-io-journal-widget";
+    private static readonly overwriteButtonClass = "r20es-sheet-overwrite-button";
+
+    private sheetTab: any = null;
+
     constructor() {
         super(__dirname);
-
-        this.journalWidgetId = "r20es-character-io-journal-widget";
-        this.overwriteButtonClass = "r20es-sheet-overwrite-button";
-
-        this.onOverwriteClick = this.onOverwriteClick.bind(this);
-        this.onFileChange = this.onFileChange.bind(this);
-        this.onExportClick = this.onExportClick.bind(this);
-        this.renderWidget = this.renderWidget.bind(this);
-        this.onImportClick = this.onImportClick.bind(this);
-        this.onJournalFileChange = this.onJournalFileChange.bind(this);
     }
 
-    static processData(input) {
+    private catchError = (e: any) => {
+        alert(e);
+        console.trace();
+        console.error(e);
+    }
+
+    private static processData(input: string): Promise<IProcessResultData> {
         return new Promise((resolve, reject) => {
             let data = null;
 
@@ -45,53 +50,52 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
                 return;
             }
 
-            let validity = version.isValidData(data);
-
-            if (!validity.isValid) {
-                reject(`Character data does not adhere to the schema version (${data.schema_version}). Reason: ${validity.reason}`);
-
-                return;
+            const payload: IProcessResultData = {
+                strategy: version,
+                data
             }
 
-            resolve({ version, data });
+            resolve(payload);
         });
     }
 
-    onJournalFileChange(e) {
+    private onJournalFileChange = (e: any) => {
         const btn = $(e.target.parentNode).find("button")[0];
         console.log(btn);
         btn.disabled = !(e.target.files.length > 0);
     }
 
-    onImportClick(e) {
+    private onImportClick = (e: any) => {
         const input = $(e.target.parentNode).find("input")[0];
 
         let plsWait = new LoadingDialog("Importing");
         plsWait.show();
 
         const handle = input.files[0];
-        readFile(handle)
+        
+        const promise = readFile(handle)
             .then(CharacterIOModule.processData)
             .then(payload => {
                 let pc = R20.createCharacter();
-                payload.version.overwrite(pc, payload.data);
+                payload.strategy.overwrite(pc, payload.data);
             })
-            .catch( alert)
-            .finally(plsWait.dispose)
+            .catch(this.catchError);
+
+        (promise as any).finally(plsWait.dispose);
 
         input.value = "";
         e.target.disabled = true;
     }
 
-    addJournalWidget() {
+    private addJournalWidget = () => {
 
         if (!window.is_gm) return;
 
         let journal = document.getElementById("journal").getElementsByClassName("content")[0];
 
 
-        const widget = <div id={this.journalWidgetId}>
-            <SidebarSeparator/>
+        const widget = <div id={CharacterIOModule.journalWidgetId}>
+            <SidebarSeparator />
 
             <div>
                 <SidebarCategoryTitle>
@@ -100,7 +104,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
                 <input
                     type="file"
-                    style={{width: "95%"}}
+                    style={{ width: "95%" }}
                     onChange={this.onJournalFileChange}
                 />
 
@@ -110,13 +114,13 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
             </div>
 
-            <SidebarSeparator big="1px"/>
+            <SidebarSeparator big="1px" />
         </div>
 
         journal.appendChild(widget);
     };
 
-    getPc(target) {
+    private getPc = (target: HTMLElement) => {
         let elem = null;
         if (target.hasAttribute("data-characterid")) {
             elem = target;
@@ -134,7 +138,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         return pc;
     }
 
-    onExportClick(e) {
+    private onExportClick = (e: any) => {
         e.stopPropagation();
         const pc = this.getPc(e.target.parentElement.parentElement);
         if (!pc) return;
@@ -149,7 +153,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         })
     }
 
-    onOverwriteClick(e) {
+    private onOverwriteClick = (e: any) => {
         e.stopPropagation();
 
         const input = $(e.target.parentNode).find("input")[0];
@@ -168,26 +172,27 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
         let plsWait = new LoadingDialog("Overwriting");
         plsWait.show();
-        
-        readFile(fileHandle)
+
+        const promise = readFile(fileHandle)
             .then(CharacterIOModule.processData)
-            .then(payload => payload.version.overwrite(pc, payload.data))
-            .catch(alert)
-            .finally(plsWait.dispose);
+            .then(payload => payload.strategy.overwrite(pc, payload.data))
+            .catch(this.catchError);
+
+        (promise as any).finally(plsWait.dispose);
     }
 
-    onFileChange(e) {
+    private onFileChange = (e: any) => {
         e.stopPropagation();
 
-        const overwriteButton = $(e.target.parentNode).find("." + this.overwriteButtonClass)[0];
+        const overwriteButton = $(e.target.parentNode).find("." + CharacterIOModule.overwriteButtonClass)[0];
         overwriteButton.disabled = !(e.target.files.length > 0);
     }
 
-    renderWidget() {
+    private renderWidget = () => {
         const style = { marginRight: "8px" }
         const headerStyle = { marginBottom: "10px", marginTop: "10px" }
         return (
-            <div className={this.sheetWidgetClass}>
+            <div>
                 <h3 style={headerStyle}>Export</h3>
                 <div className="r20es-indent">
                     <button onClick={this.onExportClick} style={style} className="btn">
@@ -197,7 +202,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
                 <h3 style={headerStyle}>Overwrite</h3>
                 <div className="r20es-indent">
-                    <button onClick={this.onOverwriteClick} disabled style={style} className={["btn", this.overwriteButtonClass]}>
+                    <button onClick={this.onOverwriteClick} disabled style={style} className={["btn", CharacterIOModule.overwriteButtonClass]}>
                         Overwrite this Character with:
                     </button>
 
@@ -207,17 +212,16 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         );
     }
 
-
-    setup() {
+    public setup = () => {
         this.sheetTab = SheetTab.add("Export & Overwrite", this.renderWidget);
         this.addJournalWidget();
     }
 
-    dispose() {
+    public dispose = () => {
         super.dispose();
 
         if (this.sheetTab) this.sheetTab.dispose();
-        findByIdAndRemove(this.journalWidgetId);
+        findByIdAndRemove(CharacterIOModule.journalWidgetId);
     }
 }
 

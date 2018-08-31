@@ -1,5 +1,7 @@
 /// <reference path="../../typings/roll20/index.d.ts"/>
 
+import { ObjectStorage, SyncObject, PlayerAttributes } from "roll20";
+
 namespace R20 {
 
     export enum InitiativeOrdering {
@@ -21,7 +23,7 @@ namespace R20 {
         return window.Campaign.handouts.get(uuid);
     }
 
-    export function createCharacter(initialAttributes) {
+    export function createCharacter(initialAttributes?: PlayerAttributes) {
         return window.Campaign.characters.create(initialAttributes);
     }
 
@@ -232,6 +234,25 @@ namespace R20 {
 
     export function renderAll() {
         window.d20.engine.renderAll();
+    }
+
+    export const wipeObjectStorage = <T>(storage: ObjectStorage<SyncObject<T>>): void => {
+
+        const len = storage.length;
+        for(let __unusedIndex = 0; __unusedIndex < len; __unusedIndex++) {
+            // Note(Justas): i don't want to control 'i' here. The storage models array needs to directly control this.
+            const i = storage.length - 1;
+            if(0 > i) break;
+
+            const obj = storage.models[i];
+            if(!obj || typeof(obj) === "undefined") break;
+
+            obj.destroy();
+        }
+
+        if(storage.length < 0) {
+            console.error("FAILED TO WIPE OBJECT STORAGE!");
+        }
     }
 }
 

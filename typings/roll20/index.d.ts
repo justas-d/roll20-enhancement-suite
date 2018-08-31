@@ -19,12 +19,19 @@ declare namespace Roll20 {
     export function generateUUID(): string;
 
     export class SyncObject<TAttribs> {
-        save: (data: TAttribs|any) => TAttribs;
+        save: (data?: TAttribs | any) => TAttribs;
         get: <T>(attrib: string) => T;
+        destroy: () => void; // actually returns some firebase internal stuff that we dont care about
 
         id: string;
         cid: string;
         attributes: TAttribs;
+    }
+
+    export class CharacterBlobs {
+        gmnotes?: string;
+        defaulttoken?: string;
+        bio?: string;
     }
 
     export class RollableTableAttributes {
@@ -36,17 +43,16 @@ declare namespace Roll20 {
     }
 
     export class PlayerAttributes {
-        macrobar: string;
-        
-        displayname: string;
+        macrobar?: string;
+        displayname?: string;
     }
 
     export class MacroAttributes {
-        action: string;
-        id: string;
-        istokenaction: boolean;
-        name: string;
-        visibleto: string;
+        action?: string;
+        id?: string;
+        istokenaction?: boolean;
+        name?: string;
+        visibleto?: string;
     }
 
     export class Macro extends SyncObject<MacroAttributes> {
@@ -58,15 +64,15 @@ declare namespace Roll20 {
     }
 
     export class HandoutAttributes {
-        archived: boolean;
-        avatar: string;
-        controlledby: string;
-        gmnotes: number;
-        id: string;
-        inplayerjournals: string;
-        name: string;
-        notes: number;
-        tags: string;
+        archived?: boolean;
+        avatar?: string;
+        controlledby?: string;
+        gmnotes?: number;
+        id?: string;
+        inplayerjournals?: string;
+        name?: string;
+        notes?: number;
+        tags?: string;
     }
 
     export class Handout extends SyncObject<HandoutAttributes> {
@@ -74,16 +80,56 @@ declare namespace Roll20 {
     }
 
     export class CharacterAttributes {
+        name?: string;
+        avatar?: string;
+        tags?: string;
+        controlledby?: string;
+        inplayerjournals?: string;
+        defaulttoken?: number | string; // string if null, and the number value is a unix timestamp
+        id?: string;
+        bio?: string|number; // string if null, and the number value is a unix timestamp
+        gmnotes?: string|number; // string if null, and the number value is a unix timestamp
+        archived?: boolean;
+        attrorder?: string;
+        abilorder?: string;
+        mancerdata?: string;
+        mancerget?: string;
+        mancerstep?: string;
+    }
+
+    export class CharacterSheetAttributeAttributes {
+
+    }
+
+    export class CharacterSheetAttribute extends SyncObject<CharacterSheetAttributeAttributes>{
+
+    }
+
+    export class CharacterAbilityAttributes {
+
+    }
+
+    export class CharacterAbility extends SyncObject<CharacterAbilityAttributes> {
 
     }
 
     export class Character extends SyncObject<CharacterAttributes> {
-        // todo
+        _blobcache: CharacterBlobs;
+        attribs: ObjectStorage<CharacterSheetAttribute>;
+        abilities: ObjectStorage<CharacterAbility>;
+        view: CharacterView;
+
+        updateBlobs: (blobs: CharacterBlobs) => void;
+
+    }
+
+    export class CharacterView {
+        render: () => void;
     }
 
     export class CampaignAttributes {
-        turnorder: string;
-        playerpageid: string;
+        turnorder?: string;
+        playerpageid?: string;
     }
 
     export class Campaign extends SyncObject<CampaignAttributes> {
@@ -173,7 +219,8 @@ declare namespace Roll20 {
 
     }
 
-    export class Canvas {macros
+    export class Canvas {
+        macros
         getObjects: () => CanvasObject[];
         containsPoint: (e: MouseEvent, obj: CanvasObject) => boolean;
     }
@@ -191,8 +238,8 @@ declare namespace Roll20 {
         models: T[];
         get: (uuid: string) => T;
         getByCid: (cid: string) => T;
-        create: (initialState: T|any) => T;
-        reset: () => ObjectStorage<T>;
+        create: (initialState: T | any) => T;
+        //reset: () => ObjectStorage<T>; local only, doesn't sync with firebase
     }
 
     export class R20ES {
