@@ -19,17 +19,20 @@ function Index() {
                         <b>A quality of life and workflow extension for Roll20</b>
 
                         <div className="browser-icons">
-                            <a href="https://addons.mozilla.org/en-US/firefox/addon/roll20-enhancement-suite/">
-                                <img src="firefox.png" alt="" />
-                            </a>
 
-                            <a href="https://chrome.google.com/webstore/detail/roll20-enhancement-suite/fadcomaehamhdhekodcpiglabcjkepff">
-                                <img src="chrome.png" alt="" />
-                            </a>
+                            <span className="background">
+                                <a href="https://addons.mozilla.org/en-US/firefox/addon/roll20-enhancement-suite/">
+                                    <img src="firefox.png" alt="" />
+                                </a>
 
-                            <a href="https://github.com/SSStormy/roll20-enhancement-suite">
-                                <img className="invert" src="github.png" alt="" />
-                            </a>
+                                <a href="https://chrome.google.com/webstore/detail/roll20-enhancement-suite/fadcomaehamhdhekodcpiglabcjkepff">
+                                    <img src="chrome.png" alt="" />
+                                </a>
+
+                                <a href="https://github.com/SSStormy/roll20-enhancement-suite">
+                                    <img className="invert" src="github.png" alt="" />
+                                </a>
+                            </span>
                         </div>
 
                         <NavBar />
@@ -44,7 +47,7 @@ function Index() {
     )
 }
 
-if(typeof(window) !== "undefined" && window.document) {
+if (typeof (window) !== "undefined" && window.document) {
     ReactDOM.render(<Index />, document.getElementById("root"));
 }
 
