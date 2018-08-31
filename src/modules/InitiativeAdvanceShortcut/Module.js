@@ -9,7 +9,7 @@ class InitiativeAdvanceShortcutModule extends R20Module.OnAppLoadBase {
     setup() {
         if (!R20.isGM()) return;
 
-        const advance = _ => R20.advanceInitiative();
+        const advance = () => R20.advanceInitiative();
 
         Mousetrap.bind("ctrl+right", advance);
         Mousetrap.bind("meta+right", advance);
