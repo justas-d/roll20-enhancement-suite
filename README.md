@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-    <img src="assets/logo.svg">
+    <img src="assets/logo/logo.svg">
 </p>
 
 <p align="center">
