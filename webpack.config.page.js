@@ -41,7 +41,7 @@ module.exports = (_env, argv) => {
     if (isProd) {
         return {
             target: "node",
-            entry: { "renderer.js": "./page/renderer.js" },
+            entry: { "renderPage.js": "./utils/renderPage.js" },
 
             output: {
                 path: sourceOutputPath,

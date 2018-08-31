@@ -1,6 +1,6 @@
-import About from "./about";
-import Features from "./features";
-import Index from ".";
+import About from "../page/about";
+import Features from "../page/features";
+import Index from "../page/index";
 import ReactDOMServer from 'react-dom/server';
 import React from 'react';
 

@@ -8,7 +8,7 @@
     "scripts": {
         "build": "webpack -w --display-error-details --progress --colors",
         "start-page": "webpack-dev-server --config webpack.config.page.js --mode development --open",
-        "build-page": "webpack --config webpack.config.page.js --mode production ; node pagerender/renderer.js",
+        "build-page": "webpack --config webpack.config.page.js --mode production ; node pagerender/renderPage.js",
         "clean": "rm -rf builds dist",
         "package": "webpack --display-error-details --progress --colors --env.zip --env.browsers=chrome,firefox --mode production",
         "start": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
