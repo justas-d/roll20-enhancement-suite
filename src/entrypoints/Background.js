@@ -5,7 +5,7 @@ import { Config } from '../tools/Config';
 
 window.modPatchTesting = new ModPatchTesting(hooks);
 
-function getHooks(hooks, url) {
+const getHooks = (hooks, url) => {
 
     let hookQueue = [];
 
@@ -31,7 +31,7 @@ function getHooks(hooks, url) {
     return hookQueue;
 }
 
-function injectHooks(intoWhat, hookQueue, replaceFunc) {
+const injectHooks = (intoWhat, hookQueue, replaceFunc) => {
     if (hookQueue.length <= 0) return intoWhat;
 
     for (let combo of hookQueue) {
@@ -65,7 +65,7 @@ if (isChrome()) {
         "https://app.roll20.net/js/tutorial_tips.js",
     ];
 
-    function setupEnvironment(appUrl) {
+    const setupEnvironment = appUrl => {
 
         window.r20esChrome = {
             scriptQueue: [],
@@ -115,8 +115,8 @@ if (isChrome()) {
                             `"You will join the game shortly..."),i=6e4)`,
                             `"You will join the game shortly..."),i=250)`);
 
-                        const hookQueue = getHooks(window.r20esChrome.hooks, localUrl);
-                        text = injectHooks(text, hookQueue, window["replaceAll"]);
+                        const hookQueue = window["getHooks"](window.r20esChrome.hooks, localUrl);
+                        text = window["injectHooks"](text, hookQueue, window["replaceAll"]);
 
                         const blob = new Blob([text], { type: "application/json" });
 
@@ -195,12 +195,12 @@ if (isChrome()) {
             let payload = null;
             if (window.redirectCount <= 0) {
 
-                payload = `${setupEnvironment.toString()}
+                payload = `
+                var setupEnvironment = ${setupEnvironment.toString()}
                 setupEnvironment("${Config.appUrl}");
-                
-                ${getHooks.toString()}
+                var getHooks = ${getHooks.toString()}
                 var replaceAll = ${replaceAll.toString()}
-                ${injectHooks.toString()}
+                var injectHooks = ${injectHooks.toString()}
                 ${scriptString()}
                 `
             } else {
