@@ -15,7 +15,7 @@ function FeatureCard(props) {
                 ? <video autoPlay loop src={url}></video>
                 : <img src={url} alt={url} />
 
-            media.push(<span key={url}>
+            media.push(<span className="inner-card" key={url}>
                 {widget}
                 <p>{cfg.media[url]}</p>
             </span>);
