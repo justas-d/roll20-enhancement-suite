@@ -52,7 +52,7 @@ const addStaticFolder = (folder) => {
 
 addStaticFolder("./assets/settings/");
 addStaticFolder("./assets/site/");
-addStaticFile("logo.svg", "./assets/logo.svg");
+addStaticFile("logo.svg", "./assets/logo/logo.svg");
 addStaticFile("main.css", "./page/main.css");
 addStaticFile("more.css", "./page/more.css");
 
