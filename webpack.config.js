@@ -105,7 +105,7 @@ module.exports = (_env, argv) => {
                 if (!fs.lstatSync(rootDirname).isDirectory()) return;
 
                 // look for the entry point
-                const entryRegex = /Module\.js.?$|\.ts.?$/i;
+                const entryRegex = /Module(\.js.?$|\.ts.?$)/i;
                 fs.readdirSync(rootDirname).forEach(f => {
                     if (!f.match(entryRegex)) return;
 
@@ -197,10 +197,10 @@ module.exports = (_env, argv) => {
                 }, [])),
 
                 new webpack.DefinePlugin({
-                    R20ES_VERSION: JSON.stringify(git.version),
-                    R20ES_COMMIT: JSON.stringify(git.commit),
-                    R20ES_BRANCH: JSON.stringify(git.branch),
-                    R20ES_BROWSER: JSON.stringify(browser.target),
+                    "build.R20ES_VERSION": JSON.stringify(git.version),
+                    "build.R20ES_COMMIT": JSON.stringify(git.commit),
+                    "build.R20ES_BRANCH": JSON.stringify(git.branch),
+                    "build.R20ES_BROWSER": JSON.stringify(browser.target),
                     'process.env.NODE_ENV': JSON.stringify('production'),
                 }),
                 new GenerateJsonPlugin("manifest.json", finalManifest),
