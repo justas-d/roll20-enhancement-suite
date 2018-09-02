@@ -1,37 +1,35 @@
 import { DOM } from "./DOM";
 import { copy } from "./MiscUtils";
 import { DialogBase } from "./DialogBase";
-import ConfigViews from "./ConfigViews";
 
 class LoadingDialog extends DialogBase {
-    constructor(action, className, style) {
-        console.log("ctoring");
+    private action: string;
+    constructor(action: string, className?: string, style?: any) {
         super(className, style);
-
         this.action =action;
     }
 
-    render() {
+    render = (): HTMLElement => {
         return (
             <Dialog>
                 <DialogBody>
                     <h3>{this.action}, please wait...</h3>
                 </DialogBody>
-            </Dialog>
+            </Dialog> as any
         )
     }
 }
 
 
-function DialogHeader() {
+function DialogHeader(props: any): any {
     return <div className="dialog-header"></div>
 }
 
-function DialogBody() {
+function DialogBody(props: any): any {
     return <div className="dialog-body"></div>
 }
 
-function DialogFooter() {
+function DialogFooter(props: any): any {
     return (
         <div className="dialog-footer">
             <hr />
@@ -39,15 +37,15 @@ function DialogFooter() {
     );
 }
 
-function DialogFooterContent() {
+function DialogFooterContent(props: any): any {
     return <div className="dialog-footer-content"></div>
 }
 
-function Dialog() {
+function Dialog(props: any): any {
     return <div className="r20es-dialog"></div>
 }
 
-function CheckboxWithText(_props) {
+function CheckboxWithText(_props: any): any {
     const props = copy(_props, {
         style: { verticalAlign: "middle", marginRight: "4px" },
         type: "checkbox"
