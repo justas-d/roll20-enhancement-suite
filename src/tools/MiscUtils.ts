@@ -127,7 +127,7 @@ const createCSSElement = function(css, id) {
     return el;
 }
 
-const getExtUrlFromPage = function(resource, _waitMs) {
+const getExtUrlFromPage = function(resource: string, _waitMs: number) {
     const waitMs = (_waitMs === undefined || _waitMs === null) ? 1000 : _waitMs;
 
     return new Promise((ok, err) => {
@@ -144,7 +144,7 @@ const getExtUrlFromPage = function(resource, _waitMs) {
                     worked = true;
                     
                     removeCb();
-                    ok(e.data.r20esGivesResourceUrl.url);
+                    ok(e.data.r20esGivesResourceUrl.url as string);
                 }
             };
 
