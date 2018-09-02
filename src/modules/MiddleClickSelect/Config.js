@@ -15,10 +15,36 @@ export default MakeConfig(__dirname,{
         select: {
             display: "Also select token",
             type: ConfigViews.Checkbox
+        },
+
+        switchToGmLayer: {
+            display: "Allow switching to tokens in the GM layer.",
+            type: ConfigViews.Checkbox
+        },
+
+        
+        switchToTokenLayer: {
+            display: "Allow switching to tokens in the player token layer.",
+            type: ConfigViews.Checkbox
+        },
+
+        
+        switchToMapLayer: {
+            display: "Allow switching to tokens in the map layer.",
+            type: ConfigViews.Checkbox
+        },
+
+        switchToLightsLayer: {
+            display: "Allow switching to tokens in the lights layer",
+            type: ConfigViews.Checkbox
         }
     },
 
     config: {
         select: false,
+        switchToGmLayer: true,
+        switchToTokenLayer: true,
+        switchToMapLayer: false,
+        switchToLightsLayer: false
     }
 });

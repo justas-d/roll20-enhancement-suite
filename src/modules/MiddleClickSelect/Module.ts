@@ -1,32 +1,51 @@
 import { R20Module } from "../../tools/R20Module";
 import { R20 } from "../../tools/R20";
-import {LayerData } from "../../tools/LayerData";
+import { LayerData } from "../../tools/LayerData";
 
 class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     constructor() {
         super(__dirname);
-        this.onClick = this.onClick.bind(this);
     }
 
-    onClick(e) {
+    onClick = (e: any) => {
         if (e.button !== 1) return;
 
         const objs = R20.getCurrentPageTokens();
+        const cfg: any = this.getHook().config;
+
+        const canSelectBitmap = {
+            [R20.CanvasLayer.GMTokens]: cfg.switchToGmLayer,
+            [R20.CanvasLayer.PlayerTokens]: cfg.switchToTokenLayer,
+            [R20.CanvasLayer.Map]: cfg.switchToMapLayer,
+            [R20.CanvasLayer.Lighting]: cfg.switchToLightsLayer,
+        };
+
+        console.log("Middle-click selecting with bitmap:");
+        console.log(canSelectBitmap);
+
         let idx = objs.length;
 
         while (idx-- > 0) {
             const obj = objs[idx];
 
             if (R20.doesTokenContainMouse(e, obj) && obj.model) {
-                let layer = obj.model.get<R20.CanvasLayer>("layer");
+
+                console.log("Found containing object:");
+                console.log(obj);
+
+                const layer = obj.model.get<R20.CanvasLayer>("layer");
+
+                if(!canSelectBitmap[layer])  {
+                    console.log("But not selecting due to it not being within the bitmap.");
+                    continue;
+                }
 
                 if (R20.getCurrentLayer() !== layer) {
-
                     const selector = LayerData.getLayerData(layer).selector;
                     $(selector).trigger("click");
                 }
 
-                if (this.getHook().config.select) {
+                if (cfg.select) {
                     R20.selectToken(obj);
                 }
 
@@ -37,7 +56,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
 
     setup() {
         if (!R20.isGM()) return;
-        
+
         document.addEventListener("mouseup", this.onClick);
     }
 
