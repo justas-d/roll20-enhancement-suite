@@ -1,0 +1,84 @@
+import { DOM } from "./DOM";
+import { removeAllChildren, findByIdAndRemove } from "./MiscUtils";
+
+abstract class DialogBase {
+    private centerWorkaround: boolean;
+    private _id: string;
+    private _root: HTMLDialogElement;
+    private returnData: any;
+
+    constructor(className?: string, style?: any, centerWorkaround?: boolean) {
+        window["r20esDialogId"] = "r20esDialogId" in window ? window["r20esDialogId"] : 0;
+        
+        this.centerWorkaround = (centerWorkaround === null || centerWorkaround === undefined) ? false : centerWorkaround;
+
+        this._id = `r20es-dialog-${window["r20esDialogId"]++}`;
+        this._root = <dialog className={className} style={style} id={this.getId()} /> as any;
+
+        document.body.insertBefore(this.getRoot(), document.body.firstElementChild);
+
+        if (window["dialogPolyfill"]) {
+            window["dialogPolyfill"].registerDialog(this.getRoot());
+        }
+
+        this.close = this.close.bind(this);
+        this.show = this.show.bind(this);
+    }
+
+    public getRoot = () => this._root;
+    public getId = () => this._id;
+
+    protected abstract render(): HTMLElement;
+
+    private internalRender() {
+        this.getRoot().appendChild(this.render());
+        if (window["dialogPolyfill"]) {
+            window["dialogPolyfill"].reposition(this.getRoot());
+        }
+
+        if (this.centerWorkaround) {
+            setTimeout(() => {
+                this.recenter();
+            }, 100);
+        }
+    }
+
+    public recenter() {
+        const el = this.getRoot();
+        const scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+        const topValue = scrollTop + (window.innerHeight - el.offsetHeight) / 2;
+        el.style.top = Math.max(scrollTop, topValue) + 'px';
+    }
+
+    protected rerender() {
+        removeAllChildren(this.getRoot());
+        this.internalRender();
+    }
+
+    public show() {
+        removeAllChildren(this.getRoot());
+        this.internalRender();
+        this.getRoot().showModal();
+    }
+
+    protected setData = data => this.returnData = data;
+    public getData() {
+        const temp = this.returnData;
+        this.returnData = null;
+        return temp;
+    }
+
+    public close() {
+        const dialog = this.getRoot();
+        if (dialog.open) {
+            this.getRoot().close();
+        }
+    }
+
+    public dispose() {
+        this.close();
+        findByIdAndRemove(this.getId());
+    }
+}
+
+export { DialogBase }
