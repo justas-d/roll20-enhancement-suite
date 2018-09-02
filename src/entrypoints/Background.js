@@ -159,7 +159,9 @@ if (isChrome()) {
 
 
                             setTimeout(() => {
-                                window.r20esChrome.readyCallbacks.each(f => f());
+                                for(let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
+                                    window.r20esChrome.readyCallbacks[i]();
+                                }
 
                                 /*
                                     NOTE(Justas):
