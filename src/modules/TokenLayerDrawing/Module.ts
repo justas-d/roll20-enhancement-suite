@@ -6,15 +6,24 @@ import { R20 } from "../../tools/R20";
 class TokenLayerDrawing extends R20Module.SimpleBase {
     constructor() {
         super(__dirname);
-        this.drawOverlay = this.drawOverlay.bind(this);
     }
 
-    drawOverlay(ctx: CanvasRenderingContext2D, graphic: Roll20.CanvasObject) {
+    drawOverlay = (ctx: CanvasRenderingContext2D, graphic: Roll20.CanvasObject) => {
         // careful here: tokenDrawBg will run in the renderer and crash recovery requires a referesh
         try {
             const config = this.getHook().config;
+            const bitmap = {
+                [R20.CanvasLayer.GMTokens]: config.drawOnGmLayer,
+                [R20.CanvasLayer.PlayerTokens]: config.drawOnTokenLayer,
+                [R20.CanvasLayer.Map]: config.drawOnMapLayer,
+                [R20.CanvasLayer.Lighting]: config.drawOnLightsLayer,
+            };
             
-            const data = LayerData.getLayerData(graphic.model.get("layer"));
+            const layer: CanvasLayer = graphic.model.get("layer")
+
+            if(!bitmap[layer]) return;
+
+            const data = LayerData.getLayerData(layer);
 
             ctx.save();
             ctx.globalAlpha = config.globalAlpha;
@@ -26,7 +35,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
 
             let sz = config.textFontSize;
             ctx.font = "bold " + sz + "px Arial";
-            
+
             let txtWidth = ctx.measureText(data.txt).width;
 
             const pxOffsetFromFloor = txtWidth * 0.08;
@@ -36,10 +45,10 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
             let offY = Math.floor(graphic.get<number>("height") / 2);
 
             ctx.fillStyle = data.makeBgStyle(config.backgroundOpacity);
-            ctx.fillRect(offX - (pxWallPadding * 0.5), offY - sz, txtWidth + pxWallPadding , sz);
+            ctx.fillRect(offX - (pxWallPadding * 0.5), offY - sz, txtWidth + pxWallPadding, sz);
 
             ctx.strokeStyle = `rgba(${config.textStrokeColor[0]}, ${config.textStrokeColor[1]}, ${config.textStrokeColor[2]}, ${config.textStrokeOpacity})`;
-            
+
             ctx.fillStyle = `rgba(${config.textFillColor[0]},${config.textFillColor[1]},${config.textFillColor[2]}, ${config.textFillOpacity})`;
 
             ctx.strokeText(data.txt, offX, offY - pxOffsetFromFloor);
@@ -57,8 +66,8 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
     }
 
     setup() {
-        if(!R20.isGM()) return;
-        
+        if (!R20.isGM()) return;
+
         window.r20es.tokenDrawBg = this.drawOverlay;
         R20.renderAll();
     }

@@ -74,6 +74,28 @@ export default MakeConfig(__dirname, {
             type: ConfigViews.Color
         },
 
+        drawOnGmLayer: {
+            display: "Draw on tokens in the GM layer.",
+            type: ConfigViews.Checkbox
+        },
+
+        
+        drawOnTokenLayer: {
+            display: "Draw on tokens in the player token layer.",
+            type: ConfigViews.Checkbox
+        },
+
+        
+        drawOnMapLayer: {
+            display: "Draw on tokens in the map layer.",
+            type: ConfigViews.Checkbox
+        },
+
+        drawOnLightsLayer: {
+            display: "Draw on tokens in the lights layer",
+            type: ConfigViews.Checkbox
+        }
+
     },
 
     config: {
@@ -86,5 +108,10 @@ export default MakeConfig(__dirname, {
         textFillColor: [255, 255, 255],
         textFontSize: 18,
         rotateAlongWithToken: false,
+
+        drawOnGmLayer: true,
+        drawOnTokenLayer: true,
+        drawOnMapLayer: true,
+        drawOnLightsLayer: true
     },
 });
