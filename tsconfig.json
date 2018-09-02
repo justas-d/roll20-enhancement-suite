@@ -10,7 +10,8 @@
             "jquery",
             "roll20",
             "chrome",
-            "firefox-webext-browser"
+            "firefox-webext-browser",
+            "underscore"
         ],
         "lib": ["es6", "dom", "esnext.promise"],
         "typeRoots": ["node_modules/@types", "./typings"],
