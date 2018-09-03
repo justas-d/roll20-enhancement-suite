@@ -18,7 +18,7 @@ declare namespace Roll20 {
 
     export function generateUUID(): string;
 
-    export class SyncObject<TAttribs> {
+    export interface SyncObject<TAttribs> {
         save: (data?: TAttribs | any) => TAttribs;
         get: <T>(attrib: string) => T;
         destroy: () => void; // actually returns some firebase internal stuff that we dont care about
@@ -28,92 +28,92 @@ declare namespace Roll20 {
         attributes: TAttribs;
     }
 
-    export class CharacterBlobs {
+    export interface CharacterBlobs {
         gmnotes?: string;
         defaulttoken?: string;
         bio?: string;
     }
 
-    export class RollableTableAttributes {
+    export interface RollableTableAttributes {
 
     }
 
-    export class RollableTable extends SyncObject<RollableTableAttributes> {
+    export interface RollableTable extends SyncObject<RollableTableAttributes> {
         // todo
     }
 
-    export class PlayerAttributes {
-        macrobar?: string;
-        displayname?: string;
+    export interface PlayerAttributes {
+        macrobar: string;
+        displayname: string;
     }
 
-    export class MacroAttributes {
-        action?: string;
-        id?: string;
-        istokenaction?: boolean;
-        name?: string;
-        visibleto?: string;
+    export interface MacroAttributes {
+        action: string;
+        id: string;
+        istokenaction: boolean;
+        name: string;
+        visibleto: string;
     }
 
-    export class Macro extends SyncObject<MacroAttributes> {
+    export interface Macro extends SyncObject<MacroAttributes> {
 
     }
 
-    export class Player extends SyncObject<PlayerAttributes> {
+    export interface Player extends SyncObject<PlayerAttributes> {
         macros: ObjectStorage<Macro>
     }
 
-    export class HandoutAttributes {
-        archived?: boolean;
-        avatar?: string;
-        controlledby?: string;
-        gmnotes?: number;
-        id?: string;
-        inplayerjournals?: string;
-        name?: string;
-        notes?: number;
-        tags?: string;
+    export interface HandoutAttributes {
+        archived: boolean;
+        avatar: string;
+        controlledby: string;
+        gmnotes: number;
+        id: string;
+        inplayerjournals: string;
+        name: string;
+        notes: number;
+        tags: string;
     }
 
-    export class Handout extends SyncObject<HandoutAttributes> {
+    export interface Handout extends SyncObject<HandoutAttributes> {
         collection: ObjectStorage<Handout>;
     }
 
-    export class CharacterAttributes {
-        name?: string;
-        avatar?: string;
-        tags?: string;
-        controlledby?: string;
-        inplayerjournals?: string;
-        defaulttoken?: number | string; // string if null, and the number value is a unix timestamp
-        id?: string;
-        bio?: string|number; // string if null, and the number value is a unix timestamp
-        gmnotes?: string|number; // string if null, and the number value is a unix timestamp
-        archived?: boolean;
-        attrorder?: string;
-        abilorder?: string;
+    export interface CharacterAttributes {
+        name: string;
+        avatar: string;
+        tags: string;
+        controlledby: string;
+        inplayerjournals: string;
+        defaulttoken: number | string; // string if null, and the number value is a unix timestamp
+        id: string;
+        bio: string|number; // string if null, and the number value is a unix timestamp
+        gmnotes: string|number; // string if null, and the number value is a unix timestamp
+        archived: boolean;
+        attrorder: string;
+        abilorder: string;
         mancerdata?: string;
         mancerget?: string;
         mancerstep?: string;
     }
 
-    export class CharacterSheetAttributeAttributes {
+    export interface CharacterSheetAttributeAttributes {
 
     }
 
-    export class CharacterSheetAttribute extends SyncObject<CharacterSheetAttributeAttributes>{
+    export interface CharacterSheetAttribute extends SyncObject<CharacterSheetAttributeAttributes>{
 
     }
 
-    export class CharacterAbilityAttributes {
+    export interface CharacterAbilityAttributes {
 
     }
 
-    export class CharacterAbility extends SyncObject<CharacterAbilityAttributes> {
+    export interface CharacterAbility extends SyncObject<CharacterAbilityAttributes> {
 
     }
 
-    export class Character extends SyncObject<CharacterAttributes> {
+    export interface Character extends SyncObject<CharacterAttributes> {
         _blobcache: CharacterBlobs;
         attribs: ObjectStorage<CharacterSheetAttribute>;
         abilities: ObjectStorage<CharacterAbility>;
@@ -144,16 +144,16 @@ declare namespace Roll20 {
 
     }
 
-    export class CharacterView {
+    export interface CharacterView {
         render: () => void;
     }
 
-    export class CampaignAttributes {
-        turnorder?: string;
-        playerpageid?: string;
+    export interface CampaignAttributes {
+        turnorder: string;
+        playerpageid: string;
     }
 
-    export class Campaign extends SyncObject<CampaignAttributes> {
+    export interface Campaign extends SyncObject<CampaignAttributes> {
         handouts: ObjectStorage<Handout>;
         characters: ObjectStorage<Character>;
         rollabletables: ObjectStorage<RollableTable>;
@@ -162,18 +162,18 @@ declare namespace Roll20 {
         activePage: () => Page;
     }
 
-    export class CanvasObject extends SyncObject<CanvasObject> {
+    export interface CanvasObject extends SyncObject<CanvasObject> {
         model?: Character;
         top: number;
         left: number;
     }
 
-    export class PlayerSettings {
+    export interface PlayerSettings {
         refreshMacroBar: () => void;
         refreshRollsList: () => void;
     }
 
-    export class InitiativeData {
+    export interface InitiativeData {
         _pageid: string;
         custom: string;
         id: string;
@@ -181,22 +181,22 @@ declare namespace Roll20 {
         formula?: string;
     }
 
-    export class InitiativeTracker {
+    export interface InitiativeTracker {
         nextTurn: () => void;
         addTokenToList: (uuid: string, name?: string, formula?: string) => void;
         cleanList: () => InitiativeData[];
         model: Campaign;
     }
 
-    export class Chat {
+    export interface Chat {
         doChatInput: (message: string, callbackUUID?: string) => void;
     }
 
-    export class RollCallbackData {
+    export interface RollCallbackData {
         // todo
     }
 
-    export class PingData {
+    export interface PingData {
         left: number;
         top: number;
         radius: number;
@@ -205,12 +205,12 @@ declare namespace Roll20 {
         currentLayer: CanvasLayer;
     }
 
-    export class LocalPingData {
+    export interface LocalPingData {
         downx: number; // left
         downy: number; // top
     }
 
-    export class Engine {
+    export interface Engine {
         selected: () => CanvasObject[];
         unselect: () => void;
         select: (obj: CanvasObject) => void;
@@ -227,26 +227,26 @@ declare namespace Roll20 {
         canvasWidth: number;
     }
 
-    export class TokenEditor {
+    export interface TokenEditor {
         removeRadialMenu: () => void;
         closeContextMenu: () => void;
     }
 
-    export class PageAttributes {
+    export interface PageAttributes {
 
     }
 
-    export class Page extends SyncObject<PageAttributes> {
+    export interface Page extends SyncObject<PageAttributes> {
 
     }
 
-    export class Canvas {
+    export interface Canvas {
         macros
         getObjects: () => CanvasObject[];
         containsPoint: (e: MouseEvent, obj: CanvasObject) => boolean;
     }
 
-    export class D20 {
+    export interface D20 {
         Campaign: Campaign;
         engine: Engine;
         token_editor: TokenEditor;
@@ -254,7 +254,7 @@ declare namespace Roll20 {
         player_settings: PlayerSettings;
     }
 
-    export class ObjectStorage<T> {
+    export interface ObjectStorage<T> {
         length: number;
         models: T[];
         get: (uuid: string) => T;
@@ -265,7 +265,7 @@ declare namespace Roll20 {
         //reset: () => ObjectStorage<T>; local only, doesn't sync with firebase
     }
 
-    export class R20ES {
+    export interface R20ES {
         tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
         setModePrologue: (mode: string) => void;
     }

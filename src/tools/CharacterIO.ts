@@ -98,7 +98,7 @@ class OverwriteV2 implements IOverwriteStrategy {
             data.defaulttoken = replaceAll(data.defaulttoken, data.oldId, pc.attributes.id);
         }
 
-        let save: CharacterAttributes = {
+        let save: any = {
             name: data.name,
             avatar: data.avatar,
             tags: data.tags,
