@@ -1,10 +1,9 @@
-import { MacroAttributes, Player } from "roll20";
+import { Player, MacroAttributes } from "roll20";
 import { IResult, Ok, Err } from "./Result";
 import { R20 } from "./R20";
-import { replaceAll } from "./MiscUtils";
 
-interface IOverwriteStrategy {
-    overwrite: (player: Player, data: any) => IResult<boolean, string>;
+interface IParseStrategy {
+    parse: (data: any) => IResult<IApplyableMacroData[], string>;
 }
 
 interface DataV1 {
@@ -14,15 +13,60 @@ interface DataV1 {
     playerId: string;
 }
 
-class OverwriteV1 implements IOverwriteStrategy {
-    overwrite = (player: Player, data: any): IResult<boolean, string> => {
-        if (!player) return new Err(`player is ${player}`);
+interface DataV2 {
+    schema_version: number;
+    macros: IApplyableMacroData[];
+}
+
+interface ISlimMacroAttributes {
+    action: string;
+    istokenaction: boolean;
+    name: string;
+    visibleto: string;
+}
+
+interface IMacrobarData {
+    color: string;
+    name: string;
+}
+
+interface IApplyableMacroData {
+    attributes: ISlimMacroAttributes;
+    macrobar?: IMacrobarData;
+}
+
+class ParseV2 implements IParseStrategy {
+    parse = (data: any): IResult<IApplyableMacroData[], string> => {
+        if (!("macros" in data)) return new Err("macros list not found in data");
+
+        for (let i = 0; i < data.macros.length; i++) {
+            const macro = data.macros[i];
+            if(!macro) return new Err(`macro ${i}is an invalid value: ${macro}`);
+            if (!("attributes" in macro)) return new Err(`attributes not found in macro ${i}`);
+
+            if(macro.macrobar) {
+                if (!("name" in macro.macrobar)) return new Err(`name not found in macro.macrobar ${i}`);
+                if (!("color" in macro.macrobar)) return new Err(`color not found in macro.macrobar ${i}`);
+            }
+
+            if (!("action" in macro.attributes)) return new Err(`action not found in macro.attributes ${i}`);
+            if (!("istokenaction" in macro.attributes)) return new Err(`istokenaction not found in macro.attributes ${i}`);
+            if (!("name" in macro.attributes)) return new Err(`name not found in macro.attributes ${i}`);
+            if (!("visibleto" in macro.attributes)) return new Err(`visibleto not found in macro.attributes ${i}`);
+        }
+
+        return new Ok(data.macros as IApplyableMacroData[]);
+    }
+}
+
+class ParseV1 implements IParseStrategy {
+    parse = (data: any): IResult<IApplyableMacroData[], string> => {
         if (!data) return new Err(`player is ${data}`);
-    
+
         if (!("macrobar" in data)) return new Err("macrobar not found in data");
         if (!("playerId" in data)) return new Err("playerId not found in data");
         if (!("macros" in data)) return new Err("macros list not found in data");
-    
+
         for (let i = 0; i < data.macros.length; i++) {
             const macro = data.macros[i];
             if (!macro) return new Err(`macro ${i}is an invalid value: ${macro}`);
@@ -32,27 +76,46 @@ class OverwriteV1 implements IOverwriteStrategy {
             if (!("name" in macro)) return new Err(`name not found in macro ${i}`);
             if (!("visibleto" in macro)) return new Err(`visibleto not found in macro ${i}`);
         }
-    
-        
-        MacroIO.wipeMacros(player);
 
-        const shapedData: DataV1 = data;
+        const shapedData: DataV1 = data as DataV1;
+        const macrobarData = getUserMacrobarData(shapedData.macrobar);;
+        const retval: IApplyableMacroData[] = [];
 
-        shapedData.macrobar = replaceAll(shapedData.macrobar, shapedData.playerId, player.id);
-    
-        for (let i = 0; i < shapedData.macros.length; i++) {
-            const macro = shapedData.macros[i];
-            const newMacro = player.macros.create(macro);
-
-            shapedData.macrobar = replaceAll(shapedData.macrobar, macro.id, newMacro.id);
+        for (const macro of shapedData.macros) {
+            const macroPayload = makeApplyableMacro(macro, macrobarData);
+            retval.push(macroPayload);
         }
-    
-        player.save({
-            macrobar: shapedData.macrobar
-        });
-    
-        return new Ok(true);
+
+        return new Ok(retval);
     }
+}
+
+//       user id  0          macro id  1        color  2    name 3
+//-LLDzVWKvJl7qGUiF0m5|-LFqTKwDbqJQ3raPTwNI|#cc4125|%E2%9A%94%EF%B8%8F
+const getUserMacrobarData = (rawMacroBar: string) => rawMacroBar.split(',').map(r => r.split('|'));
+
+const makeApplyableMacro = (macro: MacroAttributes, macrobarData: string[][]): IApplyableMacroData => {
+    const macrobarIndex = macrobarData.findIndex(arr => arr.length >= 2 && arr[1] === macro.id);
+    console.log(macro);
+
+    const retval: IApplyableMacroData = {
+        attributes: {
+            action: macro.action,
+            istokenaction:  macro.istokenaction,
+            name:  macro.name,
+            visibleto:  macro.visibleto
+        }
+    };
+
+    if (macrobarIndex !== -1) {
+        const macrobarRow = macrobarData[macrobarIndex];
+        retval.macrobar = {
+            color: macrobarRow.length >= 3 ? macrobarRow[2] : null,
+            name: macrobarRow.length >= 4 ? macrobarRow[3] : null,
+        }
+    }
+
+    return retval;
 }
 
 namespace MacroIO {
@@ -63,33 +126,25 @@ namespace MacroIO {
         });
     }
 
-    const strategies: {[id: number]: IOverwriteStrategy} = {
-        1: new OverwriteV1()
+    const strategies: { [id: number]: IParseStrategy } = {
+        1: new ParseV1(),
+        2: new ParseV2()
     }
 
     export const serialize = (player: Player): IResult<string, string> => {
-        
-        const macros = player.macros.models.map(m => {
-            return {
-                id: m.attributes.id,
-                action: m.attributes.action,
-                istokenaction: m.attributes.istokenaction,
-                name: m.attributes.name,
-                visibleto: m.attributes.visibleto
-            }
-        });
 
-        const payload: DataV1 = {
-            schema_version: 1,
-            macrobar: player.attributes.macrobar,
-            playerId: player.id,
-            macros
+        const macrobarData = getUserMacrobarData(player.attributes.macrobar);
+        const macros = player.macros.models.map(m => makeApplyableMacro(m.attributes, macrobarData));
+
+        const payload: DataV2 = {
+            schema_version: 2,
+            macros,
         };
-    
+
         return new Ok(JSON.stringify(payload, null, 4));
     }
 
-    export const importData = (player: Player, rawData: string): IResult<boolean, string> => {
+    export const deserialize = (rawData: string): IResult<IApplyableMacroData[], string> => {
         let data: any;
         try {
             data = JSON.parse(rawData);
@@ -102,8 +157,45 @@ namespace MacroIO {
         const ver = data.schema_version;
 
         if (!(ver in strategies)) return new Err(`schema_version ${ver} doesn't have a parse strategy.`);
+        const strategy = strategies[ver];
+        return strategy.parse(data);
+    }
 
-        return strategies[ver].overwrite(player, data);
+    export const applyToPlayer = (player: Player, macros: IApplyableMacroData[]) => {
+        const macrobarRows = player.attributes.macrobar.split(',');
+
+        for (const macroData of macros) {
+            const macro = player.macros.create(macroData.attributes);
+
+            if (macroData.macrobar) {
+
+                let macrobar = `${player.id}|${macro.id}`;
+
+                const hasCol = macroData.macrobar.color !== null;
+                const hasName = macroData.macrobar.name !== null;
+
+                console.log(macroData.macrobar);
+
+                if (hasCol || hasName) {
+
+                    if(hasCol && hasName) {
+                        macrobar += `|${macroData.macrobar.color}|${macroData.macrobar.name}`
+                    } else if (!hasCol) {
+                        if (hasName) macrobar += `|#|${macroData.macrobar.name}`
+                    } else {
+                        if (!hasName) macrobar += `|${macroData.macrobar.color}`
+                    }
+                }
+
+                macrobarRows.push(macrobar);
+            }
+        }
+
+        console.log(macrobarRows);
+
+        player.save({
+            macrobar: macrobarRows.join(',')
+        });
     }
 }
 
