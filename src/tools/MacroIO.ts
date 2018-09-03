@@ -131,17 +131,19 @@ namespace MacroIO {
         2: new ParseV2()
     }
 
-    export const serialize = (player: Player): IResult<string, string> => {
-
+    export const prepareMacroList = (player: Player): IApplyableMacroData[] => {
         const macrobarData = getUserMacrobarData(player.attributes.macrobar);
-        const macros = player.macros.models.map(m => makeApplyableMacro(m.attributes, macrobarData));
+        return player.macros.models.map(m => makeApplyableMacro(m.attributes, macrobarData));
+    }
+
+    export const serialize = (macros: IApplyableMacroData[]): string => {
 
         const payload: DataV2 = {
             schema_version: 2,
             macros,
         };
 
-        return new Ok(JSON.stringify(payload, null, 4));
+        return JSON.stringify(payload, null, 4);
     }
 
     export const deserialize = (rawData: string): IResult<IApplyableMacroData[], string> => {
@@ -199,5 +201,4 @@ namespace MacroIO {
     }
 }
 
-export { MacroIO }
-
+export { MacroIO, ISlimMacroAttributes, IApplyableMacroData}
