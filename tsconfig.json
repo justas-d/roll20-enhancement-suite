@@ -13,7 +13,7 @@
             "firefox-webext-browser",
             "underscore"
         ],
-        "lib": ["es6", "dom", "esnext.promise"],
+        "lib": ["es7", "dom", "esnext.promise"],
         "typeRoots": ["node_modules/@types", "./typings"],
     },
     "exclude": [

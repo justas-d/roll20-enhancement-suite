@@ -121,6 +121,27 @@ declare namespace Roll20 {
 
         updateBlobs: (blobs: CharacterBlobs) => void;
 
+        /*
+            Orders repeating action IDs in a deterministic order.
+            This is used to map an index to an action:
+
+            For example, if we want to figure out which action this refers to:
+            %{selected|repeating_npcaction_$1_npc_action}
+            We would have to create an array of repeating actions ids 
+            that are under the npcaction group. We can do this by iterating
+            over attributes and parsing their names in the following format:
+
+            repeating_$group_$id_$attribute
+            eg: repeating_npcaction_-LLCIa-7pxyiqEzjOu2-_name"
+
+            Then we would call repeatingKeyOrder to sort this table, passing it
+            the repeating action id array as repeatingIds and the $group as groupName.
+
+            The value located at index 1 of the returned array would be what we 
+            were locking for.
+        */
+        repeatingKeyOrder: (repeatingIds: string[], groupName: string) => string[];
+
     }
 
     export class CharacterView {
@@ -239,6 +260,8 @@ declare namespace Roll20 {
         get: (uuid: string) => T;
         getByCid: (cid: string) => T;
         create: (initialState: T | any) => T;
+        find: (predicate: (element: T) => boolean) => T;
+        
         //reset: () => ObjectStorage<T>; local only, doesn't sync with firebase
     }
 

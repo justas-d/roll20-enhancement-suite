@@ -2,8 +2,9 @@ import { DOM } from "./DOM";
 import { copy } from "./MiscUtils";
 import { DialogBase } from "./DialogBase";
 
-class LoadingDialog extends DialogBase {
+class LoadingDialog extends DialogBase<void> {
     private action: string;
+    public show = this.internalShow;
     constructor(action: string, className?: string, style?: any) {
         super(className, style);
         this.action =action;

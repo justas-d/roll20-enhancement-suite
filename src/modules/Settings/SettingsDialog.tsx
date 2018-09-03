@@ -7,15 +7,17 @@ import { mapObj } from "../../tools/MiscUtils";
 import HookHeader from "./HookHeader";
 import HookConfig from "./HookConfig";
 
-export default class SettingsDialog extends DialogBase {
+export default class SettingsDialog extends DialogBase<null> {
     private hooks: any;
     private activeModule: any = null;
     private about: AboutDialog = new AboutDialog();
 
-    constructor(hooks) {
+    public constructor(hooks) {
         super("r20es-settings-dialog");
         this.hooks = hooks;
     }
+
+    public show = this.internalShow;
 
     private onSelect = (selectedModule: any) => {
         this.activeModule = _.isEqual(this.activeModule, selectedModule) ? null : selectedModule;

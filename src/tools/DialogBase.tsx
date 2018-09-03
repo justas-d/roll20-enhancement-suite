@@ -1,11 +1,12 @@
 import { DOM } from "./DOM";
 import { removeAllChildren, findByIdAndRemove } from "./MiscUtils";
 
-abstract class DialogBase {
+abstract class DialogBase<T> {
     private centerWorkaround: boolean;
     private _id: string;
     private _root: HTMLDialogElement;
-    private returnData: any;
+    private returnData: T;
+    private success: boolean = false;
 
     constructor(className?: string, style?: any, centerWorkaround?: boolean) {
         window["r20esDialogId"] = "r20esDialogId" in window ? window["r20esDialogId"] : 0;
@@ -22,11 +23,13 @@ abstract class DialogBase {
         }
 
         this.close = this.close.bind(this);
-        this.show = this.show.bind(this);
+        this.dispose = this.dispose.bind(this);
     }
 
     public getRoot = () => this._root;
     public getId = () => this._id;
+
+    public isSuccessful = () => this.success;
 
     protected abstract render(): HTMLElement;
 
@@ -55,20 +58,28 @@ abstract class DialogBase {
         this.internalRender();
     }
 
-    public show() {
+    protected internalShow() {
         removeAllChildren(this.getRoot());
         this.internalRender();
         this.getRoot().showModal();
     }
 
-    protected setData = data => this.returnData = data;
-    public getData() {
+    protected setData = (data: T) => this.returnData = data;
+    public getData(): T {
         const temp = this.returnData;
         this.returnData = null;
         return temp;
     }
 
-    public close() {
+
+
+    public close(success: boolean = false) {
+        if(typeof(success) !== "boolean") {
+            this.success = false;
+        } else {
+            this.success = success;
+        }
+        
         const dialog = this.getRoot();
         if (dialog.open) {
             this.getRoot().close();

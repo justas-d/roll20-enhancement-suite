@@ -10,8 +10,10 @@ declare namespace build {
     export const R20ES_BROWSER: string;
 }
 
-export default class AboutDialog extends DialogBase {
+export default class AboutDialog extends DialogBase<null> {
     private logoUrl: string = null;
+
+    public show = this.internalShow;
 
     constructor() {
         super(null, null, true); // recenter workaround
@@ -21,12 +23,12 @@ export default class AboutDialog extends DialogBase {
             .catch(err => console.error(`Failed to get logo.svg: ${err}`));
     }
 
-    openGithub() {
+    private openGithub() {
         var redir = window.open("https://github.com/SSStormy/roll20-enhancement-suite/", "_blank");
         redir.location;
     }
 
-    render = (): HTMLElement => {
+    protected render = (): HTMLElement => {
         const mkEntry = (what, data) =>
             <div>
                 {what}0

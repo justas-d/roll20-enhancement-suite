@@ -1,6 +1,7 @@
-let MacroGenerator = {};
+import { IMacroGenerator, MacroFactoryTable, ActionTypeTable} from '../modules/MacroGenerator/IMacroGenerator'
+import { Character } from 'roll20';
 
-const types = {
+const types: ActionTypeTable = {
     npcAction: "NPC Actions",
     npcLegendaryAction: "NPC Legendary Actions",
     npcTrait: "NPC Traits",
@@ -19,10 +20,7 @@ const types = {
     spellbookLvl9: "Spellbook Level 9",
 };
 
-MacroGenerator.actionTypes = types;
-MacroGenerator.macroFactories = {};
-MacroGenerator.id = "D&D 5e OGL by Roll20";
-MacroGenerator.name = "D&D 5e OGL by Roll20";
+let macroFactories: MacroFactoryTable = {};
 
 let dataSet = {
     npcAction: {
@@ -31,11 +29,11 @@ let dataSet = {
         macro: idx => `%{selected|repeating_npcaction_$${idx}_npc_action}`
     },
 
-    npcLegendaryAction: { 
+    npcLegendaryAction: {
         group: "repeating_npcaction-l",
-         name: "name", 
-         macro: idx => `%{selected|repeating_npcaction-l_$${idx}_npc_action}`
-        },
+        name: "name",
+        macro: idx => `%{selected|repeating_npcaction-l_$${idx}_npc_action}`
+    },
 
     npcTrait: {
         group: "repeating_npctrait",
@@ -54,7 +52,7 @@ let dataSet = {
         name: "toolname",
         macro: idx => `%{selected|repeating_tool_$${idx}_tool}`
     },
-    
+
     playerTrait: {
         group: "repeating_traits",
         name: "name",
@@ -68,7 +66,7 @@ let dataSet = {
     }
 };
 
-for(let lvl = 1; lvl <= 9; lvl++) {
+for (let lvl = 1; lvl <= 9; lvl++) {
     dataSet[`spellbookLvl${lvl}`] = {
         group: `repeating_spell-${lvl}`,
         name: "spellname",
@@ -76,12 +74,14 @@ for(let lvl = 1; lvl <= 9; lvl++) {
     }
 }
 
-function generateMacroData(char, group, nameAttrib, macroFactory) {
+const generateMacroData = (char: Character, group: string, nameAttrib: string, macroFactory: (idx: number) => string) => {
     let table = {}
 
+    // create a sorted table so that we can create abilities that reference actions by index.
     char.attribs.models.forEach(a => {
-        const name = a.get("name");
+        const name = a.get<string>("name");
         if (!name.startsWith(group + "_")) return;
+
         const words = name.split('_');
         if (words.length < 2) return;
 
@@ -91,6 +91,7 @@ function generateMacroData(char, group, nameAttrib, macroFactory) {
 
     const ids = char.repeatingKeyOrder(Object.keys(table), group);
 
+    // we've got the ordered table, now make the macros.
     const orderedNames = [];
     for (let idIdx = 0; idIdx < ids.length; idIdx++) {
         const id = ids[idIdx];
@@ -119,9 +120,16 @@ function generateMacroData(char, group, nameAttrib, macroFactory) {
     return orderedNames;
 }
 
-for(let actionType in types) {
+for (let actionType in types) {
     const data = dataSet[actionType];
-    MacroGenerator.macroFactories[actionType] = char => generateMacroData(char, data.group, data.name, data.macro);
+    macroFactories[actionType] = char => generateMacroData(char, data.group, data.name, data.macro);
 }
 
-export { MacroGenerator as OGL5eByRoll20MacroGenerator };
+const OGL5eByRoll20: IMacroGenerator = {
+    actionTypes: types,
+    macroFactories: macroFactories,
+    id: "D&D 5e OGL by Roll20",
+    name: "D&D 5e OGL by Roll20",
+}
+
+export default OGL5eByRoll20;
