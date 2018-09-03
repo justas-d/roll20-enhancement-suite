@@ -88,7 +88,6 @@ export default class SettingsDialog extends DialogBase<null> {
     }
 
     public dispose() {
-        console.trace();
         super.dispose();
         this.about.dispose();
     }
