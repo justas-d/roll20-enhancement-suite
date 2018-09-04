@@ -91,6 +91,7 @@ protected render = (): HTMLElement => {
 
     public dispose() {
         super.dispose();
-        this.about.dispose();
+        if(this.about) this.about.dispose();
+        if(this.changelog) this.changelog.dispose();
     }
 }
