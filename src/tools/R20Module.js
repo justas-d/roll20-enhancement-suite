@@ -121,7 +121,7 @@ R20Module.Base = class ModuleBase {
         if (!("r20esInstalledModuleTable" in window)) return;
         if (!("r20esDisposeTable" in window)) return;
 
-        console.log(`Installing module ID: ${this.filename}`);
+        console.log(`Installing module filename: ${this.filename}`);
 
         let isFirstRun = !(this.filename in window.r20esInstalledModuleTable);
 
@@ -131,15 +131,7 @@ R20Module.Base = class ModuleBase {
         } else {
 
             if (this.filename in window.r20esDisposeTable) {
-                // dispose
-                console.log(`Disposing old`);
-                try {
-                    const disposeOld = window.r20esDisposeTable[this.filename];
-                    disposeOld();
-                } catch (err) {
-                    console.error(`Failed to dispose but still continuing:`);
-                    console.error(err);
-                }
+                console.error(`DUPLICATE MODULE FOUND: ${this.filename}`);
             }
 
             console.log(`Calling install update`);
@@ -168,6 +160,7 @@ R20Module.OnAppLoadBase = class OnAppLoadModuleBase extends R20Module.Base {
     }
 
     installFirstTime() {
+        console.log(window.r20es.isLoading);
         if (window.r20es.isLoading) {
             window.r20es.onAppLoad.addEventListener(this.setup);
         } else {
