@@ -127,7 +127,7 @@ const createCSSElement = function(css, id) {
     return el;
 }
 
-const getExtUrlFromPage = function(resource: string, _waitMs: number) {
+const getExtUrlFromPage = function(resource: string, _waitMs: number): Promise<string> {
     const waitMs = (_waitMs === undefined || _waitMs === null) ? 1000 : _waitMs;
 
     return new Promise((ok, err) => {

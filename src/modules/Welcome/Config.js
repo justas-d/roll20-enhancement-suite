@@ -19,10 +19,17 @@ export default MakeConfig(__dirname, {
             display: "Show startup guide",
             type: ConfigViews.Checkbox
         },
+
+        showChangelog: {
+            display: "Show changelog",
+            type: ConfigViews.Checkbox
+        },
     },
 
     config: {
         showWelcomePopup: true,
-        showStartupGuide: true
+        showStartupGuide: true,
+        showChangelog: true,
+        previousVersion: "",
     },
 });

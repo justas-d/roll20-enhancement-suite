@@ -17,6 +17,10 @@ const isInRepo = fs.existsSync("./.git/");
 
 const genZipName = (version, target) => `r20es_${version}_${target}.zip`;
 
+shell.exec("sh makeChangelog.sh");
+const changelog = fs.readFileSync("changelog.txt", "utf8");
+console.log(changelog);
+
 let git = {}
 let gitPlugin = null;
 
@@ -201,6 +205,7 @@ module.exports = (_env, argv) => {
                     "build.R20ES_COMMIT": JSON.stringify(git.commit),
                     "build.R20ES_BRANCH": JSON.stringify(git.branch),
                     "build.R20ES_BROWSER": JSON.stringify(browser.target),
+                    "build.R20ES_CHANGELOG": JSON.stringify(changelog),
                     'process.env.NODE_ENV': JSON.stringify('production'),
                 }),
                 new GenerateJsonPlugin("manifest.json", finalManifest),

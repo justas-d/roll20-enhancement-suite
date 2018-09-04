@@ -3,8 +3,7 @@ import { DOM } from "../../tools/DOM";
 import { findByIdAndRemove } from "../../tools/MiscUtils";
 import SettingsDialog from "./SettingsDialog";
 
-class SettingsModule extends R20Module.OnAppLoadBase {
-    // referenced by WelcomeModule.js
+export default class SettingsModule extends R20Module.OnAppLoadBase {
     public static readonly buttonId = "r20es-settings-button";
     private dialog: SettingsDialog = null;
 

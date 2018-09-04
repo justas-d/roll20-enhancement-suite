@@ -6,11 +6,13 @@ import * as _ from 'underscore'
 import { mapObj } from "../../tools/MiscUtils";
 import HookHeader from "./HookHeader";
 import HookConfig from "./HookConfig";
+import ChangelogDialog from "./ChangelogDialog";
 
 export default class SettingsDialog extends DialogBase<null> {
     private hooks: any;
     private activeModule: any = null;
     private about: AboutDialog = new AboutDialog();
+    private changelog: ChangelogDialog = new ChangelogDialog();
 
     public constructor(hooks) {
         super("r20es-settings-dialog");
@@ -25,11 +27,10 @@ export default class SettingsDialog extends DialogBase<null> {
         this.rerender();
     }
 
-    private openAbout = () => {
-        this.about.show();
-    }
+    private openAbout = () => this.about.show();
+    private openChangelog = () => this.changelog.show();
 
-    protected render = (): HTMLElement => {
+protected render = (): HTMLElement => {
 
         let byCategory = {};
 
@@ -80,6 +81,7 @@ export default class SettingsDialog extends DialogBase<null> {
                 <DialogFooter>
                     <DialogFooterContent>
                         <input className="btn" type="button" onClick={this.openAbout} value="About" />
+                        <input className="btn" type="button" onClick={this.openChangelog} value="Changelog" />
                         <input className="btn" style={{ float: "right" }} type="button" onClick={this.close} value="Apply & Close" />
                     </DialogFooterContent>
                 </DialogFooter>

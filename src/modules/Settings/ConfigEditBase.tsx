@@ -13,16 +13,9 @@ export abstract class ConfigEditBase extends DOM.ElementBase {
         this.configView = this.hook.configView[this.configName];
     }
 
-    protected setValue(val) {
-        const oldVal = this.hook.config[this.configName];
-
-        this.hook.config[this.configName] = val;
-        this.hook.saveConfig();
-
+    protected setValue(val) {        
         const mod = R20Module.getModule(this.hook.filename);
-        if ("onSettingChange" in mod && typeof (mod.onSettingChange) === "function") {
-            mod.onSettingChange(this.configName, oldVal, val);
-        }
+        mod.setConfigValue(this.configName, val);
     }
 
     public getValue = () => this.hook.config[this.configName];

@@ -60,6 +60,23 @@ R20Module.Base = class ModuleBase {
         this.isDisposed = true;
     }
 
+    setConfigValue(key, value) {
+        const hook = this.getHook();
+        const config = this.getHook().config;
+        if(!(key in config)) {
+            console.error(`Tried to set config of key ${key} to value ${value} but key was not found in the config of module id ${hook.id}"`)
+            return;
+        }
+
+        const oldVal = config[key];
+        config[key] = value;
+        hook.saveConfig();
+
+        if ("onSettingChange" in this && typeof (this.onSettingChange) === "function") {
+            this.onSettingChange(this.configName, oldVal, val);
+        }
+    }
+
     getAllHooks = _ => window.r20es.hooks;
     getHook() {
         if (!("hooks") in window.r20es) return null;

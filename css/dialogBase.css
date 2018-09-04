@@ -87,6 +87,17 @@
     padding-left: 8px;
 }
 
+.r20es-welcome {
+    background-color: #ffffff;
+    max-width: 30%;
+    right: 20%;
+    top: 5%;
+    position: absolute;
+    padding: 10px;
+    z-index: 10000;
+    border: 1px solid black;
+}
+
 dialog::backdrop {
     /* native */
     background-color: rgba(0, 0, 0, 0.45);
