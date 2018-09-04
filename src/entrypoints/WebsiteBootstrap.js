@@ -15,13 +15,16 @@ window.r20es.hooks = hooks;
 if ("r20esDisposeTable" in window) {
     for (const key in window.r20esDisposeTable) {
         const fx = window.r20esDisposeTable[key];
+        console.log(`Disposing module by key ${key}`);
+
         try {
             fx();
         } catch (err) {
             console.error(err);
         }
-        delete window.r20esDisposeTable[key];
     }
+
+    window.r20esDisposeTable = {};
 }
 
 window.r20esInstalledModuleTable = window.r20esInstalledModuleTable || {};
@@ -110,7 +113,7 @@ window.r20es.onAppLoad.removeEventListener = function (fx) {
 }
 
 function setIsLoadingToFalse() {
-    window.r20es.isLoading = false
+    window.r20es.isLoading = false;
 }
 
 if (window.r20es.isLoading) {
