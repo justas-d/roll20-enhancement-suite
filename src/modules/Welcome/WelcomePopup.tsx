@@ -2,7 +2,7 @@ import { DOM } from "../../tools/DOM";
 import { DialogBase } from "../../tools/DialogBase";
 import { getExtUrlFromPage } from "../../tools/MiscUtils";
 import { R20Module } from "../../tools/R20Module";
-import SettingsModule from "../Settings/Module";
+import SettingsModuleButtonId from "../Settings/Vars";
 
 export default class WelcomePopup extends DOM.ElementBase {
     private mod: any;
@@ -44,7 +44,7 @@ export default class WelcomePopup extends DOM.ElementBase {
         this.finish();
 
         $("a[href='#mysettings']").click();
-        const btn = document.getElementById(SettingsModule.buttonId);
+        const btn = document.getElementById(SettingsModuleButtonId);
         const oldBorder = btn.style.border
 
         setTimeout(() => {
@@ -57,7 +57,7 @@ export default class WelcomePopup extends DOM.ElementBase {
         }, 1500);
     }
 
-    internalRender() {
+    protected internalRender(): HTMLElement {
 
         const buttonStyle = { marginRight: "8px" };
 
@@ -87,7 +87,7 @@ export default class WelcomePopup extends DOM.ElementBase {
                     <button className="btn" style={buttonStyle} onClick={this.onClickLater}>Later</button>
                     <button className="btn" style={buttonStyle} onClick={this.onClickNext}>Let's go!</button>
                 </div>
-            </div>
+            </div> as any
         );
     }
 }
