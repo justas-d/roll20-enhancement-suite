@@ -1,6 +1,22 @@
 import hooks from "../Configs";
 import { Config } from "../tools/Config";
 import { safeCall } from "../tools/MiscUtils";
+import showProblemPopup from "../tools/ProblemPopup";
+import { DOM } from "../tools/DOM";
+
+setTimeout(() => {
+
+    if (typeof (window.d20) !== "undefined" && typeof (window.r20es) !== "undefined") return;
+
+    showProblemPopup(
+        <div>
+            {`window.d20: ${typeof (window.d20)} ${window.d20}`}<br />
+            {`window.r20es: ${typeof (window.r20es)} ${window.r20es}`}<br />
+        </div>
+    );
+
+}, 15 * 1000);
+
 
 { // avoid leaking into window.*
     let ids = [];
