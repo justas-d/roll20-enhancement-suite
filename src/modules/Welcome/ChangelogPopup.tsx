@@ -11,7 +11,7 @@ export default class ChangelogPopup extends DOM.ElementBase {
     protected internalRender(): HTMLElement {
         return (
             <div className="r20es-welcome" onClick={this.dispose}>
-                <h1>R20ES - Changelog</h1>
+                <h2>R20ES has been updated</h2>
                 <ChangelogWidget />
                 <input
                     className="btn"

@@ -32,17 +32,18 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
             "R20ES_VERSION": build.R20ES_VERSION,
         });
 
-        if (true || cfg.showStartupGuide) {
+        if (cfg.showStartupGuide) {
             this.welcome = new WelcomePopup(this);
             elem = this.welcome.render();
         } else if (cfg.showChangelog && cfg.previousVersion !== build.R20ES_VERSION) {
-            //this.setConfigValue("previousVersion", build.R20ES_VERSION);
             this.changelog = new ChangelogPopup();
             elem = this.changelog.render();
         } else if (cfg.showWelcomePopup) {
             this.popup = new ConfirmWorkingPopup();
             elem = this.popup.render();
         }
+
+        this.setConfigValue("previousVersion", build.R20ES_VERSION);
 
         if (elem) {
             root.parentElement.insertBefore(elem, root);
