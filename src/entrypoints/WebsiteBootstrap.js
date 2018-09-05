@@ -104,7 +104,7 @@ window.r20es.onAppLoad.removeEventListener = function (fx) {
     while (idx-- > 0) {
         let cur = window.r20es.onAppLoad.listeners[idx];
         if (cur === fx) {
-            window.r20es.onAppLoad.listeners.splice(cur, 1);
+            window.r20es.onAppLoad.listeners.splice(idx, 1);
         }
     }
 }
