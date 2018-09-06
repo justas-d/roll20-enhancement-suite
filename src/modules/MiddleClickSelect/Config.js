@@ -3,8 +3,8 @@ import ConfigViews from '../../tools/ConfigViews';
 
 export default MakeConfig(__dirname,{
     id: "middleClickToTokenLayer",
-    name: "Middle Click to Switch to Token Layer",
-    description: "This module allows the use of middle clicking (mouse3/scroll wheel) on a token. Doing so will switch the current edit layer to the layer of the token.",
+    name: "Mouse Click to Switch to Token Layer",
+    description: "This module allows the use of mouse clicking (default mouse3/scroll wheel) on a token. Doing so will switch the current edit layer to the layer of the token.",
     category: Category.canvas,
     gmOnly: true,
     media: {
