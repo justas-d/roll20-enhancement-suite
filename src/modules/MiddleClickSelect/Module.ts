@@ -8,10 +8,17 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     }
 
     onClick = (e: any) => {
-        if (e.button !== 1) return;
-
+        
         const objs = R20.getCurrentPageTokens();
         const cfg: any = this.getHook().config;
+
+        console.log(cfg);
+        
+        if (e.button !== cfg.mouseButtonIndex) return;
+        if(cfg.modAlt && !window.r20es.keys.altDown) return;
+        if(cfg.modShift && !window.r20es.keys.shiftDown) return;
+        if(cfg.modCtrl && !window.r20es.keys.ctrlDown) return;
+        if(cfg.modMeta && !window.r20es.keys.metaDown) return;
 
         const canSelectBitmap = {
             [R20.CanvasLayer.GMTokens]: cfg.switchToGmLayer,

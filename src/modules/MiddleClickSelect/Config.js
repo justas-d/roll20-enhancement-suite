@@ -37,7 +37,32 @@ export default MakeConfig(__dirname,{
         switchToLightsLayer: {
             display: "Allow switching to tokens in the lights layer",
             type: ConfigViews.Checkbox
-        }
+        },
+
+        modAlt: {
+            display: "Must hold down the ALT key",
+            type:   ConfigViews.Checkbox
+        },
+
+        modShift: {
+            display: "Must hold down the SHIFT key",
+            type:   ConfigViews.Checkbox
+        },
+
+        modCtrl: {
+            display: "Must hold down the CTRL key",
+            type:   ConfigViews.Checkbox
+        },
+
+        modMeta: {
+            display: "Must hold down the meta key",
+            type:   ConfigViews.Checkbox
+        },
+
+        mouseButtonIndex: {
+            display: "Mouse button index",
+            type:   ConfigViews.MouseButtonIndex
+        },
     },
 
     config: {
@@ -45,6 +70,11 @@ export default MakeConfig(__dirname,{
         switchToGmLayer: true,
         switchToTokenLayer: true,
         switchToMapLayer: false,
-        switchToLightsLayer: false
+        switchToLightsLayer: false,
+        modAlt: false,
+        modShift: false,
+        modCtrl: false,
+        modMeta: false,
+        mouseButtonIndex: 1,
     }
 });

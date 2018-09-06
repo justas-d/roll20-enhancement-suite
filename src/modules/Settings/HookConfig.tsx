@@ -7,6 +7,7 @@ import CheckboxEdit from "./CheckboxEdit";
 import SliderEdit from "./SliderEdit";
 import NumberEdit from "./NumberEdit";
 import ColorEdit from "./ColorEdit";
+import MouseButtonEdit from "./MouseButtonEdit";
 
 interface IMediaData {
     url: string;
@@ -46,7 +47,8 @@ export default class HookConfig extends DOM.ElementBase {
             "checkbox": CheckboxEdit,
             "slider": SliderEdit,
             "number": NumberEdit,
-            "color": ColorEdit
+            "color": ColorEdit,
+            "mouse_button_index": MouseButtonEdit,
         };
 
         let elems = [];

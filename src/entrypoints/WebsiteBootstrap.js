@@ -145,6 +145,27 @@ window.r20es.onLoadingOverlayHide = function () {
     }
 }
 
+
 window.r20es.canInstallModules = true;
+
+
+document.removeEventListener("keyup", window.r20es.onDocumentMouseUp);
+document.removeEventListener("keydown", window.r20es.onDocumentMouseUp);
+
+window.r20es.keys = window.r20es.keys || {};
+window.r20es.onDocumentMouseUp = e => {
+    window.r20es.keys.altDown = e.altKey;
+    window.r20es.keys.shiftDown = e.shiftKey;
+    window.r20es.keys.ctrlDown = e.ctrlKey;
+
+    window.r20es.keys.metaDown = (!e.metaKey && e.key && e.key === "OS")
+        ? e.type === "keydown"
+        : e.metaKey;
+    
+    console.log(window.r20es.keys);
+}
+
+document.addEventListener("keyup", window.r20es.onDocumentMouseUp);
+document.addEventListener("keydown", window.r20es.onDocumentMouseUp);
 
 console.log("WebsiteBootstrap.js done.");

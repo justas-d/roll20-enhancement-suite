@@ -265,9 +265,17 @@ declare namespace Roll20 {
         //reset: () => ObjectStorage<T>; local only, doesn't sync with firebase
     }
 
+    export interface R20ESKeys  {
+        altDown: boolean
+        shiftDown: boolean
+        ctrlDown: boolean
+        metaDown: boolean
+    }
+
     export interface R20ES {
         tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
         setModePrologue: (mode: string) => void;
+        keys: R20ESKeys;
     }
 }
 

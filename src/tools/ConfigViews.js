@@ -4,5 +4,6 @@ export default {
     Checkbox: "checkbox",
     Text: "string",
     Number: "number",
-    Color: "color"
+    Color: "color",
+    MouseButtonIndex: "mouse_button_index",
 };
