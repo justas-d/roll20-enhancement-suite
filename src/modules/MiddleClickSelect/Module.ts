@@ -27,9 +27,6 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
             [R20.CanvasLayer.Lighting]: cfg.switchToLightsLayer,
         };
 
-        console.log("Middle-click selecting with bitmap:");
-        console.log(canSelectBitmap);
-
         let idx = objs.length;
 
         while (idx-- > 0) {
