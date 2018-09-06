@@ -161,12 +161,11 @@ window.r20es.onDocumentMouseUp = e => {
     window.r20es.keys.metaDown = (!e.metaKey && e.key && e.key === "OS")
         ? e.type === "keydown"
         : e.metaKey;
-    
-    console.log(window.r20es.keys);
 }
 
 document.addEventListener("keyup", window.r20es.onDocumentMouseUp);
 document.addEventListener("keydown", window.r20es.onDocumentMouseUp);
 
 window.enhancementSuiteEnabled = true;
+
 console.log("WebsiteBootstrap.js done.");
