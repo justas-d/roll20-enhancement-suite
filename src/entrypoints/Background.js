@@ -92,7 +92,7 @@ if (isChrome()) {
         });
 
         window.r20esChrome.fetchAndInject = function (localUrl) {
-            fetch(localUrl, { method: "GET", mode: "same-origin", headers: { "Accept": "application/javascript" } })
+            fetch(localUrl, { cache: "no-store", method: "GET", mode: "same-origin", headers: { "Accept": "application/javascript" } })
                 .then(response => {
 
                     console.log(response);
@@ -143,7 +143,14 @@ if (isChrome()) {
                                 }
                             }
 
-                            const cleanupPayload = "window.r20esChrome.urlsToFree.forEach(window.URL.revokeObjectURL); console.log('freed blob URLs')";
+                            const cleanupPayload = `
+                            window.r20esChrome.urlsToFree.forEach(window.URL.revokeObjectURL); 
+                            console.log('freed blob URLs')
+
+                            var DOMContentLoaded_event = document.createEvent("Event");
+                            DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
+                            window.document.dispatchEvent(DOMContentLoaded_event);
+                            `;
                             let s = document.createElement("script");
                             s.src = `data:application/javascript;base64,${btoa(cleanupPayload)}`;
                             s.async = false;
@@ -163,7 +170,6 @@ if (isChrome()) {
                                     Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
                                     contratry to what happens on Firefox.
                                 */
-
                                 window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
                             }, 500);
                         }
