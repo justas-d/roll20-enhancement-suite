@@ -31,7 +31,7 @@ export default class AboutDialog extends DialogBase<null> {
     protected render = (): HTMLElement => {
         const mkEntry = (what, data) =>
             <div>
-                {what}0
+                {what}
                 <span style={{ float: "right" }}>{data}</span>
             </div>
 
