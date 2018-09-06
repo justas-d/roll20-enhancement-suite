@@ -1,16 +1,13 @@
-import hooks from '../Configs'
-import { ModPatchTesting } from '../tools/ModPatchTesting';
+import configs from '../Configs'
 import { getBrowser, isChrome, replaceAll } from '../tools/MiscUtils';
 import { Config } from '../tools/Config';
-
-window.modPatchTesting = new ModPatchTesting(hooks);
 
 const getHooks = (hooks, url) => {
 
     let hookQueue = [];
 
     const addModToQueueIfOk = (mod, hook) => {
-        if (mod.includes && url.includes(mod.includes)) {
+        if (mod.includes && url.includes(mod.includes) && mod.find && mod.patch) {
             hookQueue.push({ mod, hook });
         }
     }
@@ -20,7 +17,6 @@ const getHooks = (hooks, url) => {
 
         if (hook.mods) {
             for (let mod of hook.mods) {
-                ``
                 addModToQueueIfOk(mod, hook);
             }
         } else {
@@ -37,12 +33,10 @@ const injectHooks = (intoWhat, hookQueue, replaceFunc) => {
     for (let combo of hookQueue) {
         const mod = combo.mod;
 
-        if (!mod.find || !mod.patch) continue;
+        // TODO : move this to Configs.js?
         const patch = replaceFunc(mod.patch, ">>R20ES_MOD_FIND>>", mod.find);
 
-        console.log("===> REPLACING:");
-        console.log(`Find: ${mod.find}`);
-        console.log(`Patch: ${patch}`);
+        console.log(`REPLACING: Find: ${mod.find} Patch: ${patch}`);
         intoWhat = replaceFunc(intoWhat, mod.find, patch);
     }
 
@@ -159,7 +153,7 @@ if (isChrome()) {
 
 
                             setTimeout(() => {
-                                for(let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
+                                for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
                                     window.r20esChrome.readyCallbacks[i]();
                                 }
 
@@ -246,22 +240,23 @@ if (isChrome()) {
     // thanks, Firefox.
     window.requestListener = function (dt) {
 
-        const hookQueue = getHooks(hooks, dt.url);
-        if (hookQueue.length <= 0) return;
+        const hookQueue = getHooks(configs, dt.url);
+        const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
+        const decoder = new TextDecoder("utf-8");
 
-        let filter = getBrowser().webRequest.filterResponseData(dt.requestId);
-        let decoder = new TextDecoder("utf-8");
-        let encoder = new TextEncoder();
+        // Note(Justas): the console.log here forces scripts to run in order
+        // and not randomly, avoiding race conditions
+        let stringBuffer = dt.url.includes("js") ? `console.log("running ${dt.url}");` : "";
 
-        let str = "";
-        filter.ondata = event => {
-            str += decoder.decode(event.data, { stream: true });
+        filter.ondata = e => {
+            stringBuffer += decoder.decode(e.data, { stream: true });
         };
 
-        filter.onstop = _ => {
-            str = injectHooks(str, hookQueue, replaceAll);
+        filter.onstop = e => {
+            const hookedData = injectHooks(stringBuffer, hookQueue, replaceAll);
 
-            filter.write(encoder.encode(str));
+
+            filter.write(new TextEncoder().encode(hookedData));
             filter.close();
         };
     }
