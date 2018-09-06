@@ -168,4 +168,5 @@ window.r20es.onDocumentMouseUp = e => {
 document.addEventListener("keyup", window.r20es.onDocumentMouseUp);
 document.addEventListener("keydown", window.r20es.onDocumentMouseUp);
 
+window.enhancementSuiteEnabled = true;
 console.log("WebsiteBootstrap.js done.");
