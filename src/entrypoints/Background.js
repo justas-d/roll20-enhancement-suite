@@ -150,6 +150,12 @@ if (isChrome()) {
                             var DOMContentLoaded_event = document.createEvent("Event");
                             DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
                             window.document.dispatchEvent(DOMContentLoaded_event);
+
+                            if(typeof(window.r20esChromeBetter20Init) === "function") {
+                                console.log("R20ES found betteR20");
+                                window.r20es.onAppLoad.addEventListener(window.r20esChromeBetter20Init);
+                            }
+
                             `;
                             let s = document.createElement("script");
                             s.src = `data:application/javascript;base64,${btoa(cleanupPayload)}`;
@@ -198,6 +204,8 @@ if (isChrome()) {
             if (window.redirectCount <= 0) {
 
                 payload = `
+                window.enhancementSuiteEnabled = true;
+                window.enhancementSuiteChromeEnabled = true;
                 var setupEnvironment = ${setupEnvironment.toString()}
                 setupEnvironment("${Config.appUrl}");
                 var getHooks = ${getHooks.toString()}
@@ -252,7 +260,7 @@ if (isChrome()) {
 
         // Note(Justas): the console.log here forces scripts to run in order
         // and not randomly, avoiding race conditions
-        let stringBuffer = dt.url.includes("js") ? `console.log("running ${dt.url}");` : "";
+        let stringBuffer = dt.url.includes("js") ? `console.log("running ${dt.url}");window.enhancementSuiteEnabled = true;` : "";
 
         filter.ondata = e => {
             stringBuffer += decoder.decode(e.data, { stream: true });
