@@ -96,7 +96,7 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
                             <CheckboxWithText
                                 ignoreToggleAll
                                 checked={this.parent.setIsTokenAction}
-                                onChecked={this.onTokenActionChecked}
+                                onChange={this.onTokenActionChecked}
                                 checkboxText={"Show as Token Action"}
                             />
                         </div>
