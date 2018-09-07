@@ -43,6 +43,21 @@ const injectHooks = (intoWhat, hookQueue, replaceFunc) => {
     return intoWhat;
 }
 
+
+window.redirectTargets = [
+    "https://app.roll20.net/v2/js/jquery",
+    "https://app.roll20.net/js/featuredetect.js",
+    "https://app.roll20.net/editor/startjs",
+    "https://app.roll20.net/js/jquery",
+    "https://app.roll20.net/js/d20/loading.js",
+    "https://app.roll20.net/assets/firebase",
+    "https://app.roll20.net/assets/base.js",
+    "https://app.roll20.net/assets/app.js",
+    "https://app.roll20.net/js/tutorial_tips.js",
+];
+
+const isRedirectTarget = (url) => typeof(window.redirectTargets.find(f => url.startsWith(f))) !== "undefined";
+
 if (isChrome()) {
 
     window.redirectCount = 0;
@@ -240,21 +255,28 @@ if (isChrome()) {
     // thanks, Firefox.
     window.requestListener = function (dt) {
 
+
+        const isRedir = isRedirectTarget(dt.url);
+        console.log(`${isRedir}: ${dt.url}`);
+        if(!isRedir) return;
+
         const hookQueue = getHooks(configs, dt.url);
         const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
         const decoder = new TextDecoder("utf-8");
 
         // Note(Justas): the console.log here forces scripts to run in order
         // and not randomly, avoiding race conditions
-        let stringBuffer = dt.url.includes("js") ? `console.log("running ${dt.url}");` : "";
+        // Along with that, this place is the earliest we can set
+        // window.enhancementSuiteEnabled = true
+        let stringBuffer = `console.log("running ${dt.url}");window.enhancementSuiteEnabled = true;`;
 
         filter.ondata = e => {
             stringBuffer += decoder.decode(e.data, { stream: true });
         };
 
         filter.onstop = e => {
-            const hookedData = injectHooks(stringBuffer, hookQueue, replaceAll);
 
+            const hookedData = injectHooks(stringBuffer, hookQueue, replaceAll);
 
             filter.write(new TextEncoder().encode(hookedData));
             filter.close();
