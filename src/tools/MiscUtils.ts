@@ -106,6 +106,7 @@ const injectScript = function(name) {
 
     var s = document.createElement("script");
     s.async = false;
+    name = name.replace(/^src[/\\]modules[\\/]/, "");
     s.src = getBrowser().extension.getURL(name);
 
     s.onload = () => { s.remove(); };

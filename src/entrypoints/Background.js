@@ -151,12 +151,7 @@ if (isChrome()) {
                             DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
                             window.document.dispatchEvent(DOMContentLoaded_event);
 
-                            if(typeof(window.r20esChromeBetter20Init) === "function") {
-                                console.log("R20ES found betteR20");
-                                window.r20es.onAppLoad.addEventListener(window.r20esChromeBetter20Init);
-                            }
-
-                            `;
+							`;
                             let s = document.createElement("script");
                             s.src = `data:application/javascript;base64,${btoa(cleanupPayload)}`;
                             s.async = false;
@@ -174,7 +169,7 @@ if (isChrome()) {
                                     NOTE(Justas):
                                     This notifies ContentScript.js to inject module scripts.
                                     Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
-                                    contratry to what happens on Firefox.
+                                    contrary to what happens on Firefox.
                                 */
                                 window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
                             }, 500);
@@ -191,8 +186,7 @@ if (isChrome()) {
             console.log("RESET REDIRECT TABLE");
             window.hasBeenRedirected = {};
             window.redirectCount = 0;
-        }
-        else if (window.redirectTargets.find(f => dt.url.startsWith(f))) {
+        } else if (window.redirectTargets.find(f => dt.url.startsWith(f))) {
             if (window.hasBeenRedirected[dt.url]) {
                 console.log(`SKIP ${dt.url}`);
                 return;
@@ -205,7 +199,6 @@ if (isChrome()) {
 
                 payload = `
                 window.enhancementSuiteEnabled = true;
-                window.enhancementSuiteChromeEnabled = true;
                 var setupEnvironment = ${setupEnvironment.toString()}
                 setupEnvironment("${Config.appUrl}");
                 var getHooks = ${getHooks.toString()}
