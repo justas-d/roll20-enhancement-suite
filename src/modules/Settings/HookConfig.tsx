@@ -77,49 +77,49 @@ export default class HookConfig extends DOM.ElementBase {
             <div className="more-settings">
 
                 {!strIsNullOrEmpty(this.hook.description) &&
-                    <section>
+                    <div>
                         <h3 title={this.hook.id + " " + this.hook.filename}>{this.hook.name}</h3>
                         <hr style={{ marginTop: "4px" }} />
 
-                        <section className="r20es-indent description">
+                        <div className="r20es-indent description">
                             <p>{this.hook.description}</p>
 
                             {this.hook.gmOnly &&
                                 <p>This module is only usable by GMs (which you {R20.isGM() ? "are" : "aren't"})</p>
                             }
 
-                        </section>
-                    </section>
+                        </div>
+                    </div>
                 }
 
                 {elems.length > 0 &&
-                    <section>
+                    <div>
                         <h3>Options</h3>
                         <hr style={{ marginTop: "4px" }} />
 
                         <ul className="r20es-indent">
                             {elems}
                         </ul>
-                    </section>
+                    </div>
                 }
 
                 {this.media &&
 
-                    <section>
+                    <div>
                         <h3>Media</h3>
                         <hr style={{ marginTop: "4px" }} />
 
                         {this.media.map(data =>
-                            <section>
+                            <div>
                                 {data.isVid
                                     ? <video autoplay loop style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "cover", display: "block", margin: "auto" }} src={data.url}></video>
                                     : <img style={{ display: "block", margin: "auto" }} src={data.url} alt={data.url} />
                                 }
                                 <p style={{ textAlign: "center" }}>{data.description}</p>
-                            </section>
+                            </div>
                         )
                         }
-                    </section>
+                    </div>
                 }
             </div> as any
         );

@@ -45,11 +45,10 @@ protected render = (): HTMLElement => {
         }
 
         return (
-            <Dialog>
+            <Dialog className="r20es-settings-flex-wrapper">
                 <DialogHeader>
                     <h2>Roll20 Enhancement Suite Module Settings</h2>
                 </DialogHeader>
-                <hr />
 
                 <DialogBody>
                     <div className="left">

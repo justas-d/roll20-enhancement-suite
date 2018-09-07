@@ -39,7 +39,7 @@ export default class HookHeader extends DOM.ElementBase {
         }
 
         if (this.selected) {
-            style.backgroundColor = "rgb(240,240,240)";
+            style.backgroundColor = "rgb(220,220,220)";
         }
 
         return (
