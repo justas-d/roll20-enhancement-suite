@@ -82,6 +82,8 @@ namespace DOM {
             } else if (attribId === "className") {
                 if (val && Array.isArray(val)) {
                     for (let className of val) {
+                        if(!className || className.length <= 0) continue;
+
                         elem.classList.add(className);
                     }
                 } else if (typeof (val) === "string" && val.length > 0) {
