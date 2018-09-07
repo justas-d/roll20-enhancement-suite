@@ -26,9 +26,7 @@ class OverwriteV1 implements IOverwriteStrategy {
             if (!("max" in el)) return new Err(`Attribute index ${idx} doesn't have max`);
         }
 
-        console.log(pc);
         CharacterIO.wipeCharacter(pc);
-        console.log(pc);
 
         pc.save({
             name: data.name,
@@ -131,8 +129,6 @@ class OverwriteV2 implements IOverwriteStrategy {
         for (let importAttrib of data.attribs) {
             pc.attribs.create(importAttrib);
         }
-
-
 
         for (let abil of data.abilities) {
             pc.abilities.create(abil);
