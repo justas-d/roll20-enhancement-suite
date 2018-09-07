@@ -99,17 +99,6 @@ if (isChrome()) {
             "https://app.roll20.net/js/tutorial_tips.js",
         ];
 
-        window.addEventListener("message", e => {
-            if (e.origin !== appUrl) return;
-
-            if (e.data.r20esHooksForChrome) {
-                console.log("got hooks: ");
-                console.log(e.data.r20esHooksForChrome);
-
-                window.r20esChrome.hooks = e.data.r20esHooksForChrome;
-            }
-        });
-
         window.r20esChrome.fetchAndInject = function (localUrl) {
             fetch(localUrl, { cache: "no-store", method: "GET", mode: "same-origin", headers: { "Accept": "application/javascript" } })
                 .then(response => {
@@ -220,6 +209,9 @@ if (isChrome()) {
                 window.enhancementSuiteEnabled = true;
                 var setupEnvironment = ${setupEnvironment.toString()}
                 setupEnvironment("${Config.appUrl}");
+                window.r20esChrome.hooks = ${JSON.stringify(configs,0,4)};
+                console.log("window.r20esChrome.hooks:");
+                console.log(window.r20esChrome.hooks);
                 var getHooks = ${getHooks.toString()}
                 var replaceAll = ${replaceAll.toString()}
                 var injectHooks = ${injectHooks.toString()}

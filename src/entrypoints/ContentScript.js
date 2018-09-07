@@ -11,10 +11,6 @@ console.log("====================");
 console.log("R20ES ContentScript");
 console.log("====================");
 
-if (isChrome()) {
-    window.postMessage({ r20esHooksForChrome: JSON.parse(JSON.stringify(hooks)) }, Config.appUrl);
-}
-
 window.bootstrapTable = {};
 window.hasInjectedModules = false;
 
