@@ -12,8 +12,6 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
         const objs = R20.getCurrentPageTokens();
         const cfg: any = this.getHook().config;
 
-        console.log(cfg);
-        
         if (e.button !== cfg.mouseButtonIndex) return;
         if(cfg.modAlt && !window.r20es.keys.altDown) return;
         if(cfg.modShift && !window.r20es.keys.shiftDown) return;
