@@ -42,6 +42,12 @@ export default MakeConfig(__dirname, {
             patch: `1;
             if(window.r20esanims && window.r20esanims.disableRadial) { d.addClass("open"); }
             else { >>R20ES_MOD_FIND>>; }`
+        },
+
+        { // take over page toolbar animation
+            includes: "assets/app.js",
+            find: `page-toolbar .handle").bind(clicktype,function(e){`,
+            patch: `>>R20ES_MOD_FIND>>if(window.r20esanims.disablePageToolbar && window.r20es.togglePageToolbar) {window.r20es.togglePageToolbar();} else `
         }
     ],
 
@@ -49,10 +55,16 @@ export default MakeConfig(__dirname, {
         disableRadial: {
             type: ConfigViews.Checkbox,
             display: "Disable token radial button menu animations"
+        },
+
+        disablePageToolbar: {
+            type: ConfigViews.Checkbox,
+            display: "Disable page toolbar animations"
         }
     },
 
     config: {
         disableRadial: false,
+        disablePageToolbar: false
     },
 });

@@ -38,6 +38,35 @@ class NoAnimTokenRadial implements IAnimationMod {
     }
 }
 
+class NoPageToolbarAnim implements IAnimationMod {
+
+    private togglePageToolbar() {
+        const toolbar = document.querySelector("#page-toolbar") as any;
+        const isOpen = toolbar.classList.contains("closed");
+        console.log(`toggling ${isOpen}`);
+
+        if(isOpen) {
+            $("#page-toolbar .pages").show();
+            toolbar.style.top = "0";
+            toolbar.classList.remove("closed");
+        } else {
+            $("#page-toolbar .pages").hide();
+            toolbar.style.top = `-${String(toolbar.clientHeight)}px`
+
+            toolbar.classList.add("closed");
+        }
+    }
+
+    install() {
+        window.r20es.togglePageToolbar = this.togglePageToolbar;
+    }
+
+    uninstall() {
+        window.r20es.togglePageToolbar = null;
+    }
+
+}
+
 class AnimationDisableModule extends R20Module.OnAppLoadBase {
     private installedAnims: string[] = [];
     private animModTable: { [index: string]: IAnimationMod } = {};
@@ -45,6 +74,7 @@ class AnimationDisableModule extends R20Module.OnAppLoadBase {
     constructor() {
         super(__dirname);
         this.animModTable["disableRadial"] = new NoAnimTokenRadial();
+        this.animModTable["disablePageToolbar"] = new NoPageToolbarAnim();
     }
 
 

@@ -273,6 +273,7 @@ declare namespace Roll20 {
     }
 
     export interface R20ES {
+        togglePageToolbar: () => void;
         tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
         setModePrologue: (mode: string) => void;
         keys: R20ESKeys;
