@@ -55,6 +55,22 @@ window.redirectTargets = [
     "https://app.roll20.net/js/tutorial_tips.js",
 ];
 
+window.editorUrls = [
+    "https://app.roll20.net/editor",
+    "https://app.roll20.net/editor/",
+    "https://app.roll20.net/editor/#*", // handle all fragments
+    "https://app.roll20.net/editor#*",
+    "https://app.roll20.net/editor/?*", // handle all queries
+    "https://app.roll20.net/editor?*"
+]
+
+const isEditorUrl = (url) => {
+    return typeof(window.editorUrls.find(f => f === url)) !== "undefined" 
+            || url.startsWith("https://app.roll20.net/editor/#") 
+            || url.startsWith("https://app.roll20.net/editor#")
+            || url.startsWith("https://app.roll20.net/editor/?")
+            || url.startsWith("https://app.roll20.net/editor?")
+}
 const isRedirectTarget = (url) => typeof(window.redirectTargets.find(f => url.startsWith(f))) !== "undefined";
 
 if (isChrome()) {
@@ -185,7 +201,7 @@ if (isChrome()) {
     }
 
     window.requestListener = function (dt) {
-        if (dt.url === "https://app.roll20.net/editor/") {
+        if(isEditorUrl(dt.url)) {
             console.log("RESET REDIRECT TABLE");
             window.hasBeenRedirected = {};
             window.redirectCount = 0;
@@ -223,7 +239,7 @@ if (isChrome()) {
     }
 
     function headerCallback(req) {
-        if (req.url !== "https://app.roll20.net/editor/") return;
+        if(!isEditorUrl(req.url)) return;
 
         const headers = JSON.parse(JSON.stringify(req.responseHeaders));
 
@@ -242,7 +258,7 @@ if (isChrome()) {
 
     chrome.webRequest.onHeadersReceived.addListener(
         headerCallback,
-        { urls: ["https://app.roll20.net/editor/"] },
+        { urls: window.editorUrls },
         ["blocking", "responseHeaders"]);
 
 } else {

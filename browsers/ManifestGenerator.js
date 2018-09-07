@@ -10,7 +10,7 @@ const gen = (browser, origVersionName) => {
         description: 'Provides quality-of-life and workflow speed improvements to Roll20.',
 
         permissions: [
-            '*://app.roll20.net/editor/',
+            '*://app.roll20.net/editor*',
             'webRequest',
             'webRequestBlocking',
             'storage'
@@ -24,7 +24,7 @@ const gen = (browser, origVersionName) => {
         content_scripts: [
             {
                 matches: [
-                    '*://app.roll20.net/editor/'
+                    '*://app.roll20.net/editor*'
                 ],
                 js: [
                     'ContentScript.js'
