@@ -23,11 +23,13 @@ import TokenContextMenuApi from './modules/TokenContextMenuApi/Config'
 import TokenLayerDrawing from './modules/TokenLayerDrawing/Config'
 import TransparentPaper from './modules/TransparentPaper/Config'
 import Welcome from './modules/Welcome/Config'
+import AlternatePageToolbarMenu from './modules/AlternatePageToolbarMenu/Config'
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
 addCfg(AlternativeRadialMenu);
+addCfg(AlternatePageToolbarMenu);
 addCfg(AnimationDisable);
 addCfg(AutoPingNextToken);
 addCfg(AutoSelectNextToken);
