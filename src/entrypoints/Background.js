@@ -105,7 +105,9 @@ if (isChrome()) {
 
                     console.log(response);
 
-                    response.text().then(text => {
+                    response.text().then(_text => {
+
+                        let text = `console.log(\"running ${localUrl}\");${_text}`;
 
                         // take over jquery .ready
                         text = text.replace(
@@ -165,22 +167,36 @@ if (isChrome()) {
                             s.async = false;
                             document.body.appendChild(s);
 
-                            console.log("scripts injected.");
+                            console.log("Scripts injected. Now waiting for dependencies.");
 
+                            let waitedFor = 0;
+                            (function waitForDepts() {
 
-                            setTimeout(() => {
-                                for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
-                                    window.r20esChrome.readyCallbacks[i]();
+                                    const hasJQuery = typeof(window.$) !== "undefined";
+                                    const hasSoundManager = typeof(window.soundManager) !== "undefined";
+                                    const hasD20 = typeof(window.d20) !== "undefined";
+
+                                    if(!hasJQuery || !hasSoundManager || !hasD20) {
+                                        waitedFor += 50;
+                                        setTimeout(waitForDepts, 50);
+                                        return;
+                                    }
+
+                                    console.log(`All dependencies fulfilled after ${waitedFor}ms`);
+
+                                    for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
+                                        window.r20esChrome.readyCallbacks[i]();
+                                    }
+
+                                    /*
+                                        NOTE(Justas):
+                                        This notifies ContentScript.js to inject module scripts.
+                                        Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
+                                        contrary to what happens on Firefox.
+                                    */
+                                    window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
                                 }
-
-                                /*
-                                    NOTE(Justas):
-                                    This notifies ContentScript.js to inject module scripts.
-                                    Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
-                                    contrary to what happens on Firefox.
-                                */
-                                window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
-                            }, 500);
+                            )();
                         }
                     })
                 });
@@ -226,7 +242,7 @@ if (isChrome()) {
 
             console.log(`redirecting ${dt.url}`);
 
-            return { redirectUrl: `data:application/javascript;base64,${btoa(payload)}` };
+            return { redirectUrl: `data:applicabtion/javascript;base64,${btoa(payload)}` };
         }
     }
 
