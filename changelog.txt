@@ -1,13 +1,14 @@
-R20Module: properly call onSettingChange 
-ChangelogWidget: implement 
-WebsiteBootstrap: log disposing, don't delete while disposing 
-SettingsDialog: properly dispose dialogs 
-avoid injecting the Settings module twice 
-R20Module: catch duplicate module installs 
-initial work toward a changelog generator, dialog 
-MacroIO: show select macros dialog when importing/exporting 
-SettingsDialog: remove console.trace in dispose 
-MacroIO: version 2 
-typings: remove a lot of optional flags from vars 
-MacroGenerator: refactor, translated to TS 
-deploy: push tags, publish chrome 
+Added a Changelog.
+Added a page toolbar animation disabler
+Added a dialog for selecting which macros to import/export.
+Added keyboard modifier and button selector configs to the middle click switch module.
+Added a dialog that displays when R20ES detects something didn't load properly.
+
+New macro format: version 2. Version 1 macros will still work.
+The macro importer will no longer wipe player macros.
+
+Improved scrolling and widened the settings dialog.
+
+Fixed set token action not being properly set when generating macros.
+Fixed various issues that make the extension fail to load properly.
+Fixed broken image URLs on Firefox.

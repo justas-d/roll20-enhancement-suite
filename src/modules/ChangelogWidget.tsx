@@ -11,7 +11,7 @@ const ChangelogWidget = function (props: any) {
 
     const lis = [];
     for(const p of paragraphs) {
-        if(strIsNullOrEmpty(p)) continue
+        if(strIsNullOrEmpty(p)) continue;
         lis.push(<li>{p}</li>);
     }
     
