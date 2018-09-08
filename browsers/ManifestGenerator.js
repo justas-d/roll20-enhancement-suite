@@ -29,6 +29,16 @@ const gen = (browser, origVersionName) => {
                 js: [
                     'ContentScript.js'
                 ]
+            },
+
+            {
+                matches: [
+                    '*://app.roll20.net/editor*'
+                ],
+                js: [
+                    "EarlyContentScript.js",
+                ],
+                run_at: "document_start"
             }
         ],
         background: {

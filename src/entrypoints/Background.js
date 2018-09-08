@@ -107,7 +107,7 @@ if (isChrome()) {
 
                     response.text().then(_text => {
 
-                        let text = `console.log(\"running ${localUrl}\");${_text}`;
+                        let text = `console.log("running ${localUrl}");${_text}`;
 
                         // take over jquery .ready
                         text = text.replace(
@@ -222,7 +222,6 @@ if (isChrome()) {
             if (window.redirectCount <= 0) {
 
                 payload = `
-                window.enhancementSuiteEnabled = true;
                 var setupEnvironment = ${setupEnvironment.toString()}
                 setupEnvironment("${Config.appUrl}");
                 window.r20esChrome.hooks = ${JSON.stringify(configs,0,4)};
@@ -246,8 +245,8 @@ if (isChrome()) {
         }
     }
 
-    function headerCallback(req) {
-        if(!isEditorUrl(req.url)) return;
+    const headerCallback = (req) => {
+        if (!isEditorUrl(req.url)) return;
 
         const headers = JSON.parse(JSON.stringify(req.responseHeaders));
 
@@ -261,8 +260,8 @@ if (isChrome()) {
             break;
         }
 
-        return { responseHeaders: headers };
-    }
+        return {responseHeaders: headers};
+    };
 
     chrome.webRequest.onHeadersReceived.addListener(
         headerCallback,
@@ -285,9 +284,7 @@ if (isChrome()) {
 
         // Note(Justas): the console.log here forces scripts to run in order
         // and not randomly, avoiding race conditions
-        // Along with that, this place is the earliest we can set 
-        // window.enhancementSuiteEnabled = true
-        let stringBuffer = `console.log("running ${dt.url}");window.enhancementSuiteEnabled = true;`;
+        let stringBuffer = `console.log("running ${dt.url}");`;
 
         filter.ondata = e => {
             stringBuffer += decoder.decode(e.data, { stream: true });
