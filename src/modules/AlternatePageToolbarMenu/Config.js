@@ -23,16 +23,22 @@ export default MakeConfig(__dirname, {
     },
 
     mods: [
-        {
+        { // multi-axis drag
             "includes": "assets/app.js",
             "find": `e",axis:"x"`,
             "patch": `e"`
         },
 
-        {
+        { // multi-axis drag
             "includes": "assets/app.js",
             "find": `,axis:"x"}).addTouch()`,
             "patch": `}).addTouch()`
+        },
+
+        { // no tooltips in toolbar
+            "includes": "assets/app.js",
+            "find": `<div class='pictos duplicate showtip' title='Duplicate Page'>;</div><div class='pictos settings showtip' title='Page Settings'>y</div></div>`,
+            "patch": `<div class='pictos duplicate'>;</div><div class='pictos settings'>y</div></div>`
         }
     ]
 });

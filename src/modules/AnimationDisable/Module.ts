@@ -51,7 +51,7 @@ class NoPageToolbarAnim implements IAnimationMod {
             toolbar.classList.remove("closed");
         } else {
             $("#page-toolbar .pages").hide();
-            toolbar.style.top = `-${String(toolbar.clientHeight)}px`
+            toolbar.style.top = `-${String(toolbar.clientHeight)}px`;
 
             toolbar.classList.add("closed");
         }

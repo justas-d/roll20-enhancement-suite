@@ -166,6 +166,7 @@ div#page-toolbar:not(.closed) > div.handle.showtip {
   
     white-space: unset;
 }
+
 `;
         const el = createCSSElement(style, this.sheetId);
         document.body.appendChild(el);
@@ -189,6 +190,15 @@ div#page-toolbar:not(.closed) > div.handle.showtip {
     setup() {
         this.addStyle();
         this.updateToolbarTop();
+
+        // Note(Justas): betteR20 modifies the page toolbar menu too
+        // including the top value on the #page-toolbar element.
+        // That new top value makes the alternative menu kinda jut out of hiding
+        // when it's supposed to be fully hidden.
+        // Recalling updateToolbarTop after 1000ms fixes this.
+        setTimeout(() => {
+            this.updateToolbarTop();
+        }, 1000);
     }
 
     dispose() {
