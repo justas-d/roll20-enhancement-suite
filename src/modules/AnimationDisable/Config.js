@@ -5,7 +5,7 @@ import Category from "../Category";
 export default MakeConfig(__dirname, {
     id: "animationDisable",
     name: "Disable Animations",
-    description: "Disables animations that can be configured in the options section.",
+    description: "Disables animations: token radial menu opening, page toolbar menu opening/close.",
     category: Category.canvas,
     media: {
         "no_radial_anim.webm": "No token radial menu animation"
