@@ -155,7 +155,7 @@ div#page-toolbar:not(.closed) > div.handle.showtip {
 #page-toolbar .ui-sortable {
     display: flex !important;
     flex-direction: column;
-    height: 100%;
+    height: auto;
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
