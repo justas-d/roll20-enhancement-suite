@@ -47,7 +47,7 @@ export default MakeConfig(__dirname, {
         { // take over page toolbar animation
             includes: "assets/app.js",
             find: `page-toolbar .handle").bind(clicktype,function(e){`,
-            patch: `>>R20ES_MOD_FIND>>if(window.r20esanims.disablePageToolbar && window.r20es.togglePageToolbar) {window.r20es.togglePageToolbar();} else `
+            patch: `>>R20ES_MOD_FIND>>if(window.r20esanims && window.r20esanims.disablePageToolbar && window.r20es.togglePageToolbar) {window.r20es.togglePageToolbar();} else `
         }
     ],
 
