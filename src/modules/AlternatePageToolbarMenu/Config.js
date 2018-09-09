@@ -8,6 +8,10 @@ export default MakeConfig(__dirname, {
     description: "Replaces the default page toolbar menu with a more concise one.",
     category: Category.canvas,
 
+    media: {
+        "page_toolbar.png": "Alternative page toolbar menu on the right side."
+    },
+
     configView: {
         opacity: {
             type: ConfigViews.Slider,
