@@ -5,6 +5,7 @@ const types: ActionTypeTable = {
     npcAction: "NPC Actions",
     npcLegendaryAction: "NPC Legendary Actions",
     npcTrait: "NPC Traits",
+    npcReaction: "NPC Reactions",
     playerAttack: "Player Attacks",
     playerTool: "Player Tools",
     playerTrait: "Player Traits",
@@ -41,6 +42,13 @@ let dataSet = {
         macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npctrait_$${idx}_name}}} {{description=@{selected|repeating_npctrait_$${idx}_desc}}}`
     },
 
+    npcReaction: {
+        group: "repeating_npcreaction",
+        name: "name",
+        macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npcreaction_$${idx}_name}}} {{description=@{selected|repeating_npcreaction_$${idx}_desc}}}`,
+        nameMod: name => "Reaction:" + name,
+    },
+
     playerAttack: {
         group: "repeating_attack",
         name: "atkname",
@@ -74,8 +82,12 @@ for (let lvl = 1; lvl <= 9; lvl++) {
     }
 }
 
-const generateMacroData = (char: Character, group: string, nameAttrib: string, macroFactory: (idx: number) => string) => {
-    let table = {}
+const generateMacroData = (char: Character,
+                           group: string,
+                           nameAttrib: string,
+                           macroFactory: (idx: number) => string,
+                           nameMod?: (name: string) => string) => {
+    let table = {};
 
     // create a sorted table so that we can create abilities that reference actions by index.
     char.attribs.models.forEach(a => {
@@ -111,18 +123,23 @@ const generateMacroData = (char: Character, group: string, nameAttrib: string, m
             continue;
         }
 
+        let finalName = name.get<string>("current");
+        if(typeof(nameMod) === "function") {
+            finalName = nameMod(finalName);
+        }
+
         orderedNames.push({
-            name: name.get("current"),
+            name: finalName,
             macro: macroFactory(idIdx)
         });
     }
 
     return orderedNames;
-}
+};
 
 for (let actionType in types) {
     const data = dataSet[actionType];
-    macroFactories[actionType] = char => generateMacroData(char, data.group, data.name, data.macro);
+    macroFactories[actionType] = char => generateMacroData(char, data.group, data.name, data.macro, data.nameMod);
 }
 
 const OGL5eByRoll20: IMacroGenerator = {
@@ -130,6 +147,6 @@ const OGL5eByRoll20: IMacroGenerator = {
     macroFactories: macroFactories,
     id: "D&D 5e OGL by Roll20",
     name: "D&D 5e OGL by Roll20",
-}
+};
 
 export default OGL5eByRoll20;
