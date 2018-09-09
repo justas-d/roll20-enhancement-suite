@@ -50,6 +50,8 @@ protected render = (): HTMLElement => {
                     <h2>Roll20 Enhancement Suite Module Settings</h2>
                 </DialogHeader>
 
+                <hr style={{width: "100%"}}/>
+
                 <DialogBody>
                     <div className="left">
                         {mapObj(byCategory, (bucket, categoryName) =>
@@ -68,12 +70,16 @@ protected render = (): HTMLElement => {
                         )}
                     </div>
 
-                    <div className="r20es-indent right">
-                        {this.activeModule
-                            ? <HookConfig hook={this.activeModule} />
-                            : <p>Select a module from the left to see it's description and options.</p>
-                        }
-                    </div>
+                    {this.activeModule
+                        ?
+                        <div className="r20es-indent right">
+                            <HookConfig hook={this.activeModule}/>
+                        </div>
+                        :
+                        <div className="r20es-indent right noconfig">
+                            <p>Select a module from the left to see its description and options</p>
+                        </div>
+                    }
 
                 </DialogBody>
 

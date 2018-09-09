@@ -69,3 +69,14 @@
     width: 100%;
     height: 100%;
 }
+
+.r20es-settings-dialog .noconfig {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.r20es-settings-dialog .noconfig p {
+    font-size: 1.2em;
+    font-weight: bold;
+}
