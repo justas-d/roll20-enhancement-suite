@@ -16,10 +16,21 @@ export default MakeConfig(__dirname, {
             sliderMin: 0,
             sliderMax: 1
         },
+
+        location: {
+            type: ConfigViews.Dropdown,
+            display: "Location",
+
+            dropdownValues: {
+                right: "Right",
+                left: "Left"
+            }
+        }
     },
 
     config: {
         opacity: 1,
+        location: "right"
     },
 
     mods: [

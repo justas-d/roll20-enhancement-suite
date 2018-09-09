@@ -18,8 +18,12 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
         const cfg = this.getHook().config;
         let style = `
 #page-toolbar {
+    right: unset;
+    left: unset;
     padding-bottom: 8px;
-    left: 128px;
+    ${cfg.location === "right"
+            ? "right: 400px"
+            : "left: 128px"};
     max-width: 486px;
     max-height: 90%;
     width: 100%;
@@ -123,8 +127,10 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
 }
 
 #page-toolbar .handle {
-    right: unset !important;
-    left: -30px; 
+    
+    ${cfg.location === "right"
+            ? "right: -30px !important; left: unset;"
+            : "left: -30px; right: unset !important;"};
 }
 
 div#page-toolbar:not(.closed) > div.handle.showtip {
