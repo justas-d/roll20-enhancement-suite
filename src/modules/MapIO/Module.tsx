@@ -11,7 +11,6 @@ class MapIOModule extends R20Module.OnAppLoadBase {
     readonly widgetId = "r20es-map-io-widget";
     private pickMapsDialog: PickObjectsDialog<IApplyableMapData>;
     private mapBuffer: IApplyableMapData[];
-    private continueCallback: (maps: IApplyableMapData[]) => void;
 
     constructor() {
         super(__dirname);
@@ -25,8 +24,12 @@ class MapIOModule extends R20Module.OnAppLoadBase {
         ($(targ.parentNode).find("button.import")[0] as any).disabled = targ.files.length <= 0;
     }
 
-    private showPickMapsDialog() {
-        this.pickMapsDialog.show("Select Maps", this.mapBuffer, (d) => d.attributes.name, (d) => d.attributes.thumbnail);
+    private showPickMapsDialog(continueCallback: (maps: IApplyableMapData[]) => void) {
+        this.pickMapsDialog.show("Select Maps", 
+            this.mapBuffer, 
+            (d) => d.attributes.name, 
+            (d) => d.attributes.thumbnail, 
+            continueCallback);
     }
 
     private onImportClick = (e: any) => {
@@ -45,8 +48,7 @@ class MapIOModule extends R20Module.OnAppLoadBase {
 
                 const data = result.ok().unwrap();
                 this.mapBuffer = result.ok().unwrap();
-                this.continueCallback = this.continueImporting;
-                this.showPickMapsDialog();
+                this.showPickMapsDialog(this.continueImporting);
             })
             .catch(alert);
     }
@@ -67,38 +69,19 @@ class MapIOModule extends R20Module.OnAppLoadBase {
         }
 
         this.mapBuffer = maps;
-        this.continueCallback = this.continueExporting;
-        this.showPickMapsDialog();
+        this.showPickMapsDialog(this.continueExporting);
     }
 
     private continueExporting(maps: IApplyableMapData[]) {
         const result = MapIO.serialize(maps);
 
         const jsonBlob = new Blob([result], { type: 'data:application/json;charset=utf-8' });
-        saveAs(jsonBlob, maps.map(m => m.attributes.name).join("_") + ".json");
-    }
-
-    private onPickMapsClose = (e: any) => {
-        if(!this.pickMapsDialog.isSuccessful()) return;
-        const isNotFilteredAt = this.pickMapsDialog.getData();
-
-        const finalMacros = [];
-        this.mapBuffer.forEach((val, idx) => {
-            if(isNotFilteredAt[idx]) return;
-            finalMacros.push(val);
-        });
-
-        if(finalMacros.length <= 0) {
-            alert("Selection is empty.");
-            return;
-        }
-
-        this.continueCallback(finalMacros);
+        const fileName = maps.map(m => m.attributes.name.replace(" ", ".")).join("_") + ".json";
+        saveAs(jsonBlob, fileName);
     }
 
     public setup() {
         this.pickMapsDialog= new PickObjectsDialog<IApplyableMapData>();
-        this.pickMapsDialog.getRoot().addEventListener("close", this.onPickMapsClose);
         
         const root = $("#deckstables")[0].firstElementChild;
         const nextTo = $("#deckstables").find("#addmacro")[0]
