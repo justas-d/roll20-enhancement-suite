@@ -24,7 +24,7 @@
 <hr>
 
 ## Similar
-* [5etools, betteR20](https://5etools.com/) (Notice: R20ES + betteR20 is broken on Chrome)
+* [5etools, betteR20](https://5etools.com/)
 
 ## Contributing
 Awesome, contributing is always welcome and appretiatied!
