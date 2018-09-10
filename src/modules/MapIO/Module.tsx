@@ -2,32 +2,31 @@ import { R20Module } from "../../tools/R20Module"
 import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../../tools/DOM'
 import { findByIdAndRemove, readFile } from "../../tools/MiscUtils";
 import { R20 } from "../../tools/R20";
-import { MacroIO, IApplyableMacroData } from "../../tools/MacroIO";
 import { saveAs } from 'save-as'
 import PickObjectsDialog from "../PickObjectsDialog";
+import {IApplyableMapData, MapIO} from "../../tools/MapIO";
 
-type FilterTableType = { [id: number]: boolean };
-
-class MacroIOModule extends R20Module.OnAppLoadBase {
-    readonly widgetId = "r20es-macro-io-widget";
-
-    private pickMacrosDialog: PickObjectsDialog<IApplyableMacroData>;
-    private continueCallback: (finalMacros: IApplyableMacroData[]) => void;
-    private macroBuffer: IApplyableMacroData[];
+// @COPYPASTED from MacroIO
+class MapIOModule extends R20Module.OnAppLoadBase {
+    readonly widgetId = "r20es-map-io-widget";
+    private pickMapsDialog: PickObjectsDialog<IApplyableMapData>;
+    private mapBuffer: IApplyableMapData[];
+    private continueCallback: (maps: IApplyableMapData[]) => void;
 
     constructor() {
         super(__dirname);
     }
 
     private onFileChange(e: any) {
+
         e.stopPropagation();
         const targ = e.target;
         
         ($(targ.parentNode).find("button.import")[0] as any).disabled = targ.files.length <= 0;
     }
 
-    private showPickMacrosDialog() {
-        this.pickMacrosDialog.show("Select Macros", this.macroBuffer, (d) => d.attributes.name, (d) => d.attributes.action);
+    private showPickMapsDialog() {
+        this.pickMapsDialog.show("Select Maps", this.mapBuffer, (d) => d.attributes.name, (d) => d.attributes.thumbnail);
     }
 
     private onImportClick = (e: any) => {
@@ -41,52 +40,50 @@ class MacroIOModule extends R20Module.OnAppLoadBase {
 
         readFile(file)
             .then((payload: string) => {
-                const result = MacroIO.deserialize(payload);
+                const result = MapIO.deserialize(payload);
                 if(result.isErr()) throw new Error(result.err().unwrap());
-                
-                this.macroBuffer = result.ok().unwrap();
+
+                const data = result.ok().unwrap();
+                this.mapBuffer = result.ok().unwrap();
                 this.continueCallback = this.continueImporting;
-                this.showPickMacrosDialog();
+                this.showPickMapsDialog();
             })
             .catch(alert);
     }
 
-    private continueImporting(finalMacros: IApplyableMacroData[]) {
-        MacroIO.applyToPlayer(R20.getCurrentPlayer(), finalMacros);
-
-        R20.rerenderJournalMacros();
-        R20.rerenderMacroBar();
+    private continueImporting(finalData: IApplyableMapData[]) {
+        MapIO.applyToCampaign(finalData);
     }
 
     private onExportClick = (e: any) => {
         e.stopPropagation();
 
         const player = R20.getCurrentPlayer();
-        const macros = MacroIO.prepareMacroList(player);
+        const maps= MapIO.prepareMapData(window.d20.Campaign.pages.models);
 
-        if(macros.length <= 0) {
-            alert("No macros found.")
+        if(maps.length <= 0) {
+            alert("No maps found.")
             return;
         }
 
-        this.macroBuffer = macros;
+        this.mapBuffer = maps;
         this.continueCallback = this.continueExporting;
-        this.showPickMacrosDialog();
+        this.showPickMapsDialog();
     }
 
-    private continueExporting(finalMacros: IApplyableMacroData[]) {
-        const result = MacroIO.serialize(finalMacros);
+    private continueExporting(maps: IApplyableMapData[]) {
+        const result = MapIO.serialize(maps);
 
         const jsonBlob = new Blob([result], { type: 'data:application/json;charset=utf-8' });
-        saveAs(jsonBlob, R20.getCurrentPlayer().attributes.displayname+ "_macros.json");
+        saveAs(jsonBlob, maps.map(m => m.attributes.name).join("_") + ".json");
     }
 
-    private onPickMacrosClose = (e: any) => {
-        if(!this.pickMacrosDialog.isSuccessful()) return;
-        const isNotFilteredAt = this.pickMacrosDialog.getData();
+    private onPickMapsClose = (e: any) => {
+        if(!this.pickMapsDialog.isSuccessful()) return;
+        const isNotFilteredAt = this.pickMapsDialog.getData();
 
         const finalMacros = [];
-        this.macroBuffer.forEach((val, idx) => {
+        this.mapBuffer.forEach((val, idx) => {
             if(isNotFilteredAt[idx]) return;
             finalMacros.push(val);
         });
@@ -100,16 +97,17 @@ class MacroIOModule extends R20Module.OnAppLoadBase {
     }
 
     public setup() {
-        this.pickMacrosDialog = new PickObjectsDialog<IApplyableMacroData>();
-        this.pickMacrosDialog.getRoot().addEventListener("close", this.onPickMacrosClose);
+        this.pickMapsDialog= new PickObjectsDialog<IApplyableMapData>();
+        this.pickMapsDialog.getRoot().addEventListener("close", this.onPickMapsClose);
         
         const root = $("#deckstables")[0].firstElementChild;
-        const nextTo = $("#deckstables").find("#adddeck")[0]
+        const nextTo = $("#deckstables").find("#addmacro")[0]
+
         const widget = (
             <div id={this.widgetId}>
                 <div>
                     <SidebarCategoryTitle>
-                        Import/Export Macros
+                        Import/Export Maps
                 </SidebarCategoryTitle>
 
                     <input
@@ -138,12 +136,11 @@ class MacroIOModule extends R20Module.OnAppLoadBase {
     }
 
     public dispose() {
-        if(this.pickMacrosDialog) this.pickMacrosDialog.dispose();
+        if(this.pickMapsDialog) this.pickMapsDialog.dispose();
 
         findByIdAndRemove(this.widgetId);
         super.dispose();
     }
 }
 
-if (R20Module.canInstall()) new MacroIOModule().install();
-
+if (R20Module.canInstall()) new MapIOModule().install();

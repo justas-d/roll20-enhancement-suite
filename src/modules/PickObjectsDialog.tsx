@@ -1,16 +1,22 @@
-import { DialogBase } from "../../tools/DialogBase";
-import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../tools/DialogComponents";
-import { DOM } from "../../tools/DOM";
-import { IApplyableMacroData } from "../../tools/MacroIO";
+import { DialogBase } from "../tools/DialogBase";
+import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../tools/DialogComponents";
+import { DOM } from "../tools/DOM";
+import { IApplyableMacroData } from "../tools/MacroIO";
 
 type FilterTableType = { [id: number]: boolean };
 
-export default class PickMacros extends DialogBase<FilterTableType> {
+export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
 
-    private macros: IApplyableMacroData[];
+    private data: T[];
+    private nameGetter: (d: T) => string;
+    private descGetter: (d: T) => string;
+    private title: string;
 
-    public show(macros: IApplyableMacroData[]) {
-        this.macros = macros;
+    public show(title: string, data: T[], nameGetter: (d: T) => string, descGetter: (d: T) => string) {
+        this.title = title;
+        this.data =data;
+        this.nameGetter = nameGetter;
+        this.descGetter = descGetter;
         super.internalShow();
     }
 
@@ -38,16 +44,16 @@ export default class PickMacros extends DialogBase<FilterTableType> {
     protected render(): HTMLElement {
 
         const macroElements = [];
-        for (const macro of this.macros) {
+        for (const obj of this.data) {
             macroElements.push(
                 <tr>
                     <th scope="row">
                         <CheckboxWithText
-                            checkboxText={macro.attributes.name}
+                            checkboxText={this.nameGetter(obj)}
                             checked
                         />
                     </th>
-                    <td className="r20es-code">{macro.attributes.action}</td>
+                    <td className="r20es-code">{this.descGetter(obj)}</td>
                 </tr>
             );
         }
@@ -55,7 +61,7 @@ export default class PickMacros extends DialogBase<FilterTableType> {
         return (
             <Dialog>
                 <DialogHeader>
-                    <h2>Select Macros</h2>
+                    <h2>{this.title}</h2>
                 </DialogHeader>
 
                 <hr />

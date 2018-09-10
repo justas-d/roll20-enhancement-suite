@@ -26,6 +26,8 @@ interface IResult<TData, TError> {
 
     isOk: () => boolean;
     isErr: () => boolean;
+
+    map: <TD, TE>() => IResult<TD, TE>;
 }
 
 class Err<TData, TError> implements IResult<TData, TError> {
@@ -39,6 +41,8 @@ class Err<TData, TError> implements IResult<TData, TError> {
 
     public isOk = () => false;
     public isErr = () => true;
+
+    public map= <TD, TError>() => new Err<TD, TError>(<any>this.error);
 }
 
 class Ok<TData, TError> implements IResult<TData, TError> {
@@ -53,6 +57,8 @@ class Ok<TData, TError> implements IResult<TData, TError> {
     
     public isOk = () => true;
     public isErr = () => false;
+
+    public map= <TData, TE>() => new Err<TData, TE>(<any>this.data);
 }
 
 export { IResult, Ok, Err, None, Some, IOption }

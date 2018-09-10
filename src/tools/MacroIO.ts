@@ -1,6 +1,7 @@
 import { Player, MacroAttributes } from "roll20";
 import { IResult, Ok, Err } from "./Result";
 import { R20 } from "./R20";
+import IOCommon from "./IOCommon";
 
 interface IParseStrategy {
     parse: (data: any) => IResult<IApplyableMacroData[], string>;
@@ -147,20 +148,14 @@ namespace MacroIO {
     }
 
     export const deserialize = (rawData: string): IResult<IApplyableMacroData[], string> => {
-        let data: any;
-        try {
-            data = JSON.parse(rawData);
-        } catch (err) {
-            return new Err(err);
-        }
+        const dataResult = IOCommon.parseRaw(rawData);
+        if(dataResult.isErr()) return dataResult.map();
+        const data = dataResult.ok().unwrap();
 
-        if (!("schema_version" in data)) return new Err("schema_version property not found in JSON data.");
+        const stratLookup = IOCommon.lookupStrategy(data, strategies);
+        if(stratLookup.isErr()) return stratLookup.map();
 
-        const ver = data.schema_version;
-
-        if (!(ver in strategies)) return new Err(`schema_version ${ver} doesn't have a parse strategy.`);
-        const strategy = strategies[ver];
-        return strategy.parse(data);
+        return stratLookup.ok().unwrap().parse(data);
     }
 
     export const applyToPlayer = (player: Player, macros: IApplyableMacroData[]) => {
