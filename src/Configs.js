@@ -25,6 +25,7 @@ import TransparentPaper from './modules/TransparentPaper/Config'
 import Welcome from './modules/Welcome/Config'
 import AlternatePageToolbarMenu from './modules/AlternatePageToolbarMenu/Config'
 import MapIO from './modules/MapIO/Config';
+import QuickRemove from './modules/QuickRemoveModule/Config';
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -56,5 +57,6 @@ addCfg(TokenContextMenuApi);
 addCfg(TokenLayerDrawing);
 addCfg(TransparentPaper);
 addCfg(Welcome);
+addCfg(QuickRemove);
 
 export default configs;
