@@ -1,23 +1,24 @@
 import { R20Module } from "../../tools/R20Module";
 import { replaceAll } from "../../tools/MiscUtils";
 import { R20 } from "../../tools/R20";
+import {Character,CharacterEditor} from "roll20";
 
 class ChangeIdWhenDuplicatingModule extends R20Module.SimpleBase {
-    constructor() {
+    public constructor() {
         super(__dirname);
     }
 
-    doReplace(original, clone) {
+    private static doReplace(original: CharacterEditor, clone: Character) {
         return replaceAll(original.model._blobcache.defaulttoken, original.model.get("id"), clone.get("id"));
     }
 
-    setup() {
+    public setup() {
         if(!R20.isGM()) return;
         
-        window.r20es.replaceIdOnDupe = this.doReplace;
+        window.r20es.replaceIdOnDupe = ChangeIdWhenDuplicatingModule .doReplace;
     }
 
-    dispose() {
+    public dispose() {
         window.r20es.replaceIdOnDupe = null;
     }
 }

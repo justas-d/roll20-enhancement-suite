@@ -312,6 +312,11 @@ declare namespace Roll20 {
         closeContextMenu: () => void;
     }
 
+    export interface CharacterEditor {
+        model: Character;
+        collection: ObjectStorage<Character>
+    }
+
     export interface PageAttributes {
 
     }
@@ -360,6 +365,7 @@ declare namespace Roll20 {
         setModePrologue: (mode: string) => void;
         selectInitiativeToken: (token: Token) => void;
         keys: R20ESKeys;
+        replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
     }
 }
 
