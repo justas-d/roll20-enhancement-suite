@@ -2,28 +2,30 @@ import { R20Module } from "../../tools/R20Module";
 import { R20 } from "../../tools/R20";
 
 class InitiativeAdvanceShortcutModule extends R20Module.OnAppLoadBase {
-    constructor() {
+    private wasBound: boolean = false;
+
+    public  constructor() {
         super(__dirname);
     }
     
-    setup() {
+    public setup() {
         if (!R20.isGM()) return;
 
         const advance = () => R20.advanceInitiative();
 
-        Mousetrap.bind("ctrl+right", advance);
-        Mousetrap.bind("meta+right", advance);
+        window.Mousetrap.bind("ctrl+right", advance);
+        window.Mousetrap.bind("meta+right", advance);
 
         this.wasBound = true;
     }
 
-    dispose() {
+    public dispose() {
         super.dispose();
         
         if (this.wasBound) {
             this.wasBound = false;
-            Mousetrap.unbind("ctrl+right");
-            Mousetrap.unbind("meta+right");
+            window.Mousetrap.unbind("ctrl+right");
+            window.Mousetrap.unbind("meta+right");
         }
     }
 }

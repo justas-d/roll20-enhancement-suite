@@ -389,6 +389,11 @@ declare namespace Roll20 {
         replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
         onJournalDuplicate: (id: string) => void;
     }
+
+    export interface Mousetrap {
+        bind: (keys: string, cb: () => void) => void;
+        unbind: (keys: string) => void;
+    }
 }
 
 
@@ -400,6 +405,7 @@ interface Window {
     currentEditingLayer: CanvasLayer;
     generateUUID: () => string;
     r20es: Roll20.R20ES;
+    Mousetrap: Roll20.Mousetrap;
 }
 
 declare module 'roll20' {
