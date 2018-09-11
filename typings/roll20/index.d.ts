@@ -162,8 +162,16 @@ declare namespace Roll20 {
         activePage: () => Page;
     }
 
+    export interface TokenAttributes {
+
+    }
+
+    export interface Token extends SyncObject<TokenAttributes> {
+        character?: Character;
+    }
+
     export interface CanvasObject extends SyncObject<CanvasObject> {
-        model?: Character;
+        model?: Token;
         top: number;
         left: number;
     }
