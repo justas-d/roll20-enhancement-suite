@@ -7,24 +7,23 @@ import { TableExportLang } from "../../tools/TableExportLang";
 import { readFile, safeParseJson, findByIdAndRemove } from "../../tools/MiscUtils";
 import { LoadingDialog } from "../../tools/DialogComponents";
 import Vars from './Vars';
+import PasteTableExportDialog from "./PasteTableExportDialog";
 
 class TableIOModule extends R20Module.OnAppLoadBase {
-    constructor() {
+
+    private static readonly journalDivId = "r20es-tableio-journal-widget";
+    private static readonly tableWidgetClass = "r20es-export-table-button"
+    private static readonly normalImportButtonId = "r20es-norma;-import-button";
+    private static readonly tableExportImportButtonId = "r20es-table-export-import-button";
+    private static readonly tableExportImportFromTextButtonId = "r20es-table-export-import-from-text-buttom";
+    private observer: MutationObserver;
+    private pasteDialog: PasteTableExportDialog;
+
+    public constructor() {
         super(__dirname);
-
-        this.journalDivId = "r20es-tableio-journal-widget";
-        this.tableWidgetClass = "r20es-export-table-button"
-
-        this.normalImportButtonId = "r20es-norma;-import-button";
-        this.tableExportImportButtonId = "r20es-table-export-import-button";
-
-        this.observerCallback = this.observerCallback.bind(this);
-        this.onExportButtonClicked = this.onExportButtonClicked.bind(this);
-        this.onImportClicked = this.onImportClicked.bind(this);
-        this.onFileChanged = this.onFileChanged.bind(this);
     }
 
-    getTableId(target) {
+    private getTableId(target) {
         // target must be the header with all the fancy classes that we match
         const query = $(target.parentNode).find(`div[${Vars.TableIdAttribute}]`);
         if (query.length <= 0) return null;
@@ -35,7 +34,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         return elem.getAttribute(Vars.TableIdAttribute);
     }
 
-    onExportButtonClicked(e) {
+    private onExportButtonClicked = (e: any) => {
         let tableId = this.getTableId(e.target.parentNode);
         if (!tableId) { alert("Failed to get table id."); return; }
 
@@ -48,10 +47,10 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         saveAs(jsonBlob, table.get("name") + ".json");
     }
 
-    tryInsertTableWidget(target) {
+    private tryInsertTableWidget(target: HTMLElement) {
         if (!target.className) return false;
         if (target.className !== "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") return false;
-        if (target.getElementsByClassName(this.tableWidgetClass).length > 0) return false;
+        if (target.getElementsByClassName(TableIOModule.tableWidgetClass).length > 0) return false;
 
         const table = this.getTableId(target);
 
@@ -60,7 +59,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         const button = <button
             style={{ marginTop: "8px" }}
             onClick={this.onExportButtonClicked}
-            className={[this.tableWidgetClass, "btn"]}>
+            className={[TableIOModule.tableWidgetClass, "btn"]}>
             Export
             </button>;
 
@@ -68,7 +67,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         return true;
     }
 
-    observerCallback(muts) {
+    private observerCallback = (muts: any[]) => {
         for (var e of muts) {
             if (this.tryInsertTableWidget(e.target)) {
                 break;
@@ -76,20 +75,22 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         }
     }
 
-    importTableJson(e) {
+    private importTableJson(e: any) {
         const json = safeParseJson(e);
         if (!json) return;
 
         TableIO.importJson(json);
     }
 
-    importTablesTableExport(e) {
+    private importTablesTableExport(e: string)  {
         if (!TableExportLang.naiveVerify(e)) return;
+        console.log(e);
 
         let tables = null;
         try {
             tables = TableExportLang.parse(e);
         } catch (err) {
+            console.error(err);
             alert(err);
         }
         if (!tables) return;
@@ -101,9 +102,9 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         }
     }
 
-    onImportClicked(e) {
+    private onImportClicked = (e: any ) => {
 
-        let cb = e.target.id === this.tableExportImportButtonId
+        let cb = e.target.id === TableIOModule.tableExportImportButtonId
             ? this.importTablesTableExport
             : this.importTableJson;
 
@@ -114,31 +115,45 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
         const handle = input.files[0];
 
-        readFile(handle)
+        (readFile(handle)
             .then(cb)
-            .catch(alert)
+            .catch(alert) as any)
             .finally(plsWait.dispose);
 
         input.value = "";
         this.setButtonDisabled(e.target.parentNode, true);
-    }
+    };
 
-    setButtonDisabled(root, state) {
+    private setButtonDisabled(root, state) {
         let query = $(root).find(".btn");
         query.each(idx => {
             query[idx].disabled = state;
         });
     }
 
-    onFileChanged(e) {
+    private onFileChanged = (e) => {
         this.setButtonDisabled(e.target.parentNode, e.target.files.length <= 0);
-    }
+    };
 
-    setup() {
+    private onImportFromPasteClicked = (e: any) => {
+        e.stopPropagation();
+        this.pasteDialog.show();
+    };
+
+    private onPasteDialogClose = (e: any) => {
+        if(!this.pasteDialog.isSuccessful()) return;
+
+        this.importTablesTableExport(this.pasteDialog.getData());
+    };
+
+    public setup() {
         if (!R20.isGM()) return;
 
+        this.pasteDialog = new PasteTableExportDialog();
+        this.pasteDialog.getRoot().addEventListener("close", this.onPasteDialogClose);
+
         // @COPYPASTE from CharacterIOModule
-        const existingHeaders = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix");
+        const existingHeaders = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix") as any;
 
         for (const header of existingHeaders) {
             this.tryInsertTableWidget(header);
@@ -146,8 +161,8 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
         let root = document.getElementById("deckstables").getElementsByClassName("content")[0];
 
-        const buttonStyle = { width: "100%", marginBottom: "20px", marginRight: "8px" };
-        const elem = <div id={this.journalDivId}>
+        const buttonStyle = { width: "100%", marginRight: "8px", marginBottom: "8px" };
+        const elem = <div id={TableIOModule.journalDivId} style={{marginBottom: "20px"}}>
             <SidebarSeparator />
 
             <SidebarCategoryTitle>
@@ -162,15 +177,20 @@ class TableIOModule extends R20Module.OnAppLoadBase {
             />
 
             <div style={{ display: "flex", justifyContent: "space-between"}}>
-                <button id={this.normalImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
+                <button id={TableIOModule.normalImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
                     Import
+                </button>
+
+                <button id={TableIOModule.tableExportImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
+                    Import (TableExport)
+                </button>
+            </div>
+
+            <button id={TableIOModule.tableExportImportFromTextButtonId} onClick={this.onImportFromPasteClicked} className="btn" style={{width: "90%", float: "unset"}}>
+                Import TableExport (Paste text)
             </button>
 
-                <button id={this.tableExportImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
-                    Import (TableExport)
-            </button>
-            </div>
-        </div >
+        </div >;
 
         root.appendChild(elem);
 
@@ -178,14 +198,13 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         this.observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    dispose() {
+    public dispose() {
         super.dispose();
-        if (this.observer) {
-            this.observer.disconnect();
-        }
+        if (this.observer) this.observer.disconnect();
+        if(this.pasteDialog) this.pasteDialog.dispose();
 
         // @COPYPASTE from CharacterIOModule
-        const widgets = document.getElementsByClassName(this.tableWidgetClass);
+        const widgets = document.getElementsByClassName(TableIOModule.tableWidgetClass);
 
 
         // removing a widget modifies the widgets html element collection 
@@ -195,7 +214,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
             widgets[0].remove();
         }
 
-        findByIdAndRemove(this.journalDivId);
+        findByIdAndRemove(TableIOModule.journalDivId);
     }
 }
 
