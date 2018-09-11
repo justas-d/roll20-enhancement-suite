@@ -2,20 +2,22 @@ import {R20Module } from "../../tools/R20Module";
 import { R20 } from "../../tools/R20";
 
 class MoveCameraToTokenModule extends R20Module.SimpleBase {
-    constructor() {
+    public constructor() {
         super(__dirname);
     }
+
+    private static doMove(data) {
+        if(!data) return;
+        R20.moveCameraToTokenByUUID(data.id)
+    }
     
-    setup() {
+    public setup() {
         if(!R20.isGM()) return;
 
-        window.r20es.moveCameraTo = (d) => { 
-            if(!d) return; 
-            R20.moveCameraToTokenByUUID(d.id)
-        };
+        window.r20es.moveCameraTo = MoveCameraToTokenModule.doMove;
     }
 
-    dispose() {
+    public dispose() {
         window.r20es.moveCameraTo = null;
     }
 }

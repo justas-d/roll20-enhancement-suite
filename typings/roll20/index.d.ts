@@ -388,6 +388,7 @@ declare namespace Roll20 {
         keys: R20ESKeys;
         replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
         onJournalDuplicate: (id: string) => void;
+        moveCameraTo: (tokenId: string) => void;
     }
 
     export interface Mousetrap {
