@@ -109,16 +109,31 @@ class Lexer {
     }
 }
 
+const getArgOrDefault = (args, index, _default) => {
+    if(args.length <= index) return _default;
+    return args[index].arg;
+}
+
 class Parser {
     constructor(lexer) {
         this.lexer = lexer;
+        this.tokenBuffer = null;
     }
 
     readArgs(numArgs, who) {
         let tokens = [];
 
         for (let i = 0; i < numArgs; i++) {
-            tokens[i] = this.lexer.nextToken();
+            const token = this.lexer.nextToken();
+            if(!("arg" in token)) {
+                this.tokenBuffer = token;
+                return tokens;
+            }
+
+            tokens[i] = token;
+
+            console.log(tokens[i]);
+
             if (!tokens[i]) { 
                 throw new Error(`${who} expected ${numArgs}, got ${i + 1}`);
             }
@@ -129,26 +144,45 @@ class Parser {
 
     nextStatement() {
 
-        let token = this.lexer.nextToken();
+        const token = typeof(this.tokenBuffer) !== "undefined" && this.tokenBuffer
+            ? this.tokenBuffer
+            : this.lexer.nextToken();
+
+        this.tokenBuffer = null;
         let ret = {};
 
         do {
+            console.log("starting statement parsing");
+            console.log(token);
+
             if (token.command) {
                 if (token.command === "import-table") {
+                    console.log("Parsing table header");
 
                     ret.table = {};
-                    let argTokens = this.readArgs(2, "import-table");
+                    const argTokens = this.readArgs(2, "import-table");
+
+                    if(argTokens.length <= 0) {
+                        throw new Error(`Expected to find 1 or 2 arguments to import-table, but received ${argTokens.length}. Lexer is at char position ${this.lexer.readHead}`);
+                    }
+
                     ret.table.name = argTokens[0].arg;
-                    ret.table.showplayers = argTokens[1].arg === "show";
+                    ret.table.showplayers = getArgOrDefault(argTokens, 1, "hide") === "show";
                     return ret;
 
                 } else if (token.command == "import-table-item") {
+                    console.log('Parsing table item');
                     ret.item = {};
-                    let argTokens = this.readArgs(4, "import-table-item");
+                    const argTokens = this.readArgs(4, "import-table-item");
+
+                    if(argTokens.length < 2) {
+                        throw new Error(`Expected to find 2, 3 or 4 arguments to import-table-item, but received ${argTokens.length}.Lexer is at char position ${this.lexer.readHead}`);
+                    }
+
                     ret.item.tableName = argTokens[0].arg;
                     ret.item.name = argTokens[1].arg;
-                    ret.item.weight = argTokens[2].arg;
-                    ret.item.avatar = argTokens[3].arg;
+                    ret.item.weight = getArgOrDefault(argTokens, 2, 1);
+                    ret.item.avatar = getArgOrDefault(argTokens, 3, "");
                     return ret;
 
                 } else {
@@ -158,7 +192,7 @@ class Parser {
                 ret.eof = true;
                 return ret;
             } else {
-                throw new Error(`Unexpected token: ${token}. Expected a command token.`);
+                throw new Error(`Unexpected token: ${token}. Expected a command token. Lexer is at ${this.lexer.readHead}`);
             }
 
         } while (token.eof === undefined);
@@ -197,6 +231,7 @@ class Runtime {
 
         } while (statement.eof === undefined);
 
+        console.log(tables);
         return tables;
     }
 }
