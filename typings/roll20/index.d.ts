@@ -158,8 +158,85 @@ declare namespace Roll20 {
         characters: ObjectStorage<Character>;
         rollabletables: ObjectStorage<RollableTable>;
         initiativewindow: InitiativeTracker;
+        pages: ObjectStorage<Map>;
 
         activePage: () => Page;
+    }
+
+    export interface MapAttributes {
+        adv_fow_dim_reveals: boolean
+        adv_fow_enabled: boolean
+        adv_fow_grid_size: number
+        adv_fow_show_grid: boolean
+        archived: boolean
+        background_color: string;
+        diagonaltype: string;
+        fog_opacity: number;
+        grid_opacity:number;
+        grid_type: string;
+        gridcolor: string;
+        gridlabels: boolean;
+        height: number;
+        jukeboxtrigger: string;
+        lightenforcelos: boolean;
+        lightglobalillum: boolean;
+        lightrestrictmove: boolean;
+        lightupdatedrop: boolean;
+        name: string;
+        placement: number;
+        revealedAreas: string;
+        scale_number: number;
+        scale_units: string;
+        showdarkness: boolean;
+        showgrid: boolean;
+        showlighting: boolean;
+        snapping_increment: number;
+        thumbnail: string;
+        version: number;
+        width: number;
+        zorder: string[]; // comma separated list of token ids
+    }
+
+    export interface Map extends SyncObject<MapAttributes> {
+        thepaths: ObjectStorage<PathToken>;
+        thegraphics: ObjectStorage<Token>;
+        thetexts: ObjectStorage<TextToken>;
+    }
+
+    export interface TextTokenAttributes {}
+    export interface TextToken extends SyncObject<TextTokenAttributes> { }
+
+    export interface PathTokenAttributes {
+        controlledby: string;
+        fill:  string; // transparent
+        groupwith: string;
+        height: number;
+        id: string;
+        layer: string;
+        page_id: number;
+        path: string;
+        rotation: number;
+        scaleX: number;
+        scaleY: number;
+        stroke: string;
+        stroke_width: number;
+        top: number;
+        type: string; // path
+        width: number;
+        left: number;
+        z_index: number;
+    }
+
+    export interface TokenAttributes {
+
+    }
+
+    export interface Token extends SyncObject<TokenAttributes> {
+        character?: Character;
+    }
+
+    export interface PathToken extends SyncObject<PathTokenAttributes> {
+
     }
 
     export interface CanvasObject extends SyncObject<CanvasObject> {
@@ -261,6 +338,7 @@ declare namespace Roll20 {
         getByCid: (cid: string) => T;
         create: (initialState: T | any) => T;
         find: (predicate: (element: T) => boolean) => T;
+        map: <TOut>(selector: (element: T) => TOut)=> TOut[];
         
         //reset: () => ObjectStorage<T>; local only, doesn't sync with firebase
     }

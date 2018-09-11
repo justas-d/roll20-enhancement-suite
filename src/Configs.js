@@ -24,6 +24,7 @@ import TokenLayerDrawing from './modules/TokenLayerDrawing/Config'
 import TransparentPaper from './modules/TransparentPaper/Config'
 import Welcome from './modules/Welcome/Config'
 import AlternatePageToolbarMenu from './modules/AlternatePageToolbarMenu/Config'
+import MapIO from './modules/MapIO/Config';
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -43,6 +44,7 @@ addCfg(ExposeD20);
 addCfg(InitiativeAdvanceShortcut);
 addCfg(MacroGenerator);
 addCfg(MacroIO);
+addCfg(MapIO);
 addCfg(MiddleClickSelect);
 addCfg(MoveCameraToToken);
 addCfg(PageLoadEvent);
