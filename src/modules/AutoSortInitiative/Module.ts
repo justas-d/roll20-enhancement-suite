@@ -1,21 +1,24 @@
 import { R20Module } from "../../tools/R20Module";
 import { R20 } from "../../tools/R20";
+import { InitiativeData} from "roll20";
+import * as _ from 'underscore'
 
 class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
-    constructor() {
+    private isWorking: boolean = false;
+    private localInitiativeData: InitiativeData[] = [];
+    private debouncedDoSorting: () => void;
+
+    public constructor() {
         super(__dirname);
 
-        this.isWorking = false;
         this.doSorting = this.doSorting.bind(this);
         this.onTurnOrderChanged = this.onTurnOrderChanged.bind(this);
-        this.localInitiativeData = [];
 
-        this.debouncedDoSorting = _.debounce(this.doSorting, 500);
-        
+        this.debouncedDoSorting = _.debounce(this.doSorting, 1000);
     }
 
-    getNew(a, b) {
-        let added = [];
+    private getNew(a: InitiativeData[], b: InitiativeData[]): InitiativeData[] {
+        let added: InitiativeData[] = [];
 
         for(const bObj of b) {
             let has = false;
@@ -35,12 +38,12 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
         return added;
     }
 
-    setLocalInitiative(initiative) {
+    private setLocalInitiative(initiative: InitiativeData[]) {
         const clone = JSON.parse(JSON.stringify(initiative));
         this.localInitiativeData = clone;
     }
 
-    doSorting() {
+    private doSorting() {
 
         const old = this.localInitiativeData;
         let initiative = R20.getInitiativeData();
@@ -55,7 +58,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
             if (old.length <= 0) {
                 console.log("NEW INITIATIVE");
 
-                // we added the very first tokens to the initiative.
+                // Note(Justas): we added the very first tokens to the initiative.
                 // in this state we don't have a "First token", only a list of
                 // tokens that have started the initiative.
                 // therefore we just sort the whole list.
@@ -67,7 +70,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
             } else {
                 console.log("APPENDING NEW TOKENS");
 
-                // now we have tokens joining others that already exist in the list.
+                // Note(Justas): now we have tokens joining others that already exist in the list.
                 // now we sort and respect the location of the first token.
 
                 const firstToken = initiative[0];
@@ -89,7 +92,6 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
                 if (firstTokenNewIdx === null) {
                     console.error("Could not find firstTokenNewIdx")
                     console.error(initiative);
-                    console.error(newToken);
                     return;
                 }
 
@@ -112,19 +114,16 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
         }
     }
 
-    onTurnOrderChanged(e) {
-        this.debouncedDoSorting();
-    }
+    private onTurnOrderChanged = (e) => this.debouncedDoSorting();
 
-    setup() {
+    public setup() {
         if (!R20.isGM()) return;
-        
 
         R20.getInitiativeWindow().model.on("change:turnorder", this.onTurnOrderChanged);
         this.setLocalInitiative(R20.getInitiativeData());
     }
 
-    dispose() {
+    public dispose() {
         super.dispose();
         R20.getInitiativeWindow().model.off("change:turnorder", this.onTurnOrderChanged);
     }

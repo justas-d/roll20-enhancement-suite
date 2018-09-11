@@ -26,6 +26,9 @@ declare namespace Roll20 {
         id: string;
         cid: string;
         attributes: TAttribs;
+
+        on: (event: string, callback: (e: any) => void) => void;
+        off: (event: string, callback: (e: any) => void) => void;
     }
 
     export interface CharacterBlobs {

@@ -1,14 +1,1 @@
-Added a Changelog.
-Added a page toolbar animation disabler
-Added a dialog for selecting which macros to import/export.
-Added keyboard modifier and button selector configs to the middle click switch module.
-Added a dialog that displays when R20ES detects something didn't load properly.
-
-New macro format: version 2. Version 1 macros will still work.
-The macro importer will no longer wipe player macros.
-
-Improved scrolling and widened the settings dialog.
-
-Fixed set token action not being properly set when generating macros.
-Fixed various issues that make the extension fail to load properly.
-Fixed broken image URLs on Firefox.
+Fixed bulk macro dialog not being properly displayed.
