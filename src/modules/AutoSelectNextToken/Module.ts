@@ -1,12 +1,13 @@
 import { R20Module } from "../../tools/R20Module";
 import { R20 } from "../../tools/R20";
+import {Token} from "roll20";
 
 class AutoSelectNextTokenModule extends R20Module.SimpleBase {
     constructor() {
         super(__dirname);
     }
 
-    select(data) {
+    private static select(data: Token) {
         if(!data.id) return;
 
         let obj = R20.getCurrentPageTokenByUUID(data.id);
@@ -15,14 +16,14 @@ class AutoSelectNextTokenModule extends R20Module.SimpleBase {
             R20.selectToken(obj);
         }
     }
-    
-    setup() {
+
+    public setup() {
         if(!R20.isGM()) return;
 
-        window.r20es.selectInitiativeToken = this.select;
+        window.r20es.selectInitiativeToken = AutoSelectNextTokenModule .select;
     }
 
-    dispose() {
+    public dispose() {
         window.r20es.selectInitiativeToken = null;
     }
 }

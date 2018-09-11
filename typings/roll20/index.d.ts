@@ -358,6 +358,7 @@ declare namespace Roll20 {
         tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
         pingInitiativeToken: (token: Token) => void;
         setModePrologue: (mode: string) => void;
+        selectInitiativeToken: (token: Token) => void;
         keys: R20ESKeys;
     }
 }
