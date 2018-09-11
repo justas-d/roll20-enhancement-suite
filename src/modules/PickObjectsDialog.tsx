@@ -12,6 +12,10 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
     private title: string;
     private continueCallback: (data: T[]) => void;
 
+    public constructor() {
+        super("r20es-big-dialog");
+    }
+
     public show(title: string, 
                 data: T[], 
                 nameGetter: (d: T) => string, 
