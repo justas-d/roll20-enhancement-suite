@@ -29,6 +29,8 @@ declare namespace Roll20 {
 
         on: (event: string, callback: (e: any) => void) => void;
         off: (event: string, callback: (e: any) => void) => void;
+
+        toJSON: () => TAttribs;
     }
 
     export interface CharacterBlobs {
@@ -78,8 +80,23 @@ declare namespace Roll20 {
         tags: string;
     }
 
-    export interface Handout extends SyncObject<HandoutAttributes> {
+    export interface HandoutBlobs {
+        notes?: string;
+        gmnotes?: string;
+    }
+
+    export interface Handout extends SyncObject<HandoutAttributes>, IBlobObject<HandoutBlobs> {
         collection: ObjectStorage<Handout>;
+        editview: HandoutEditor;
+    }
+
+    export interface IEditorDialog {
+        el: HTMLElement;
+        render: () => void;
+    }
+
+    export interface HandoutEditor extends IEditorDialog {
+
     }
 
     export interface CharacterAttributes {
@@ -116,13 +133,17 @@ declare namespace Roll20 {
 
     }
 
-    export interface Character extends SyncObject<CharacterAttributes> {
+    export interface IBlobObject<TBlobs> {
         _blobcache: CharacterBlobs;
+        updateBlobs: (blobs: TBlobs) => void;
+        _getLatestBlob: (blobName: string, callback: (blob: string) => void) => void;
+    }
+
+    export interface Character extends SyncObject<CharacterAttributes>, IBlobObject<CharacterBlobs> {
         attribs: ObjectStorage<CharacterSheetAttribute>;
         abilities: ObjectStorage<CharacterAbility>;
         view: CharacterView;
-
-        updateBlobs: (blobs: CharacterBlobs) => void;
+        editview: CharacterEditor;
 
         /*
             Orders repeating action IDs in a deterministic order.
@@ -312,7 +333,7 @@ declare namespace Roll20 {
         closeContextMenu: () => void;
     }
 
-    export interface CharacterEditor {
+    export interface CharacterEditor extends IEditorDialog {
         model: Character;
         collection: ObjectStorage<Character>
     }
@@ -366,6 +387,7 @@ declare namespace Roll20 {
         selectInitiativeToken: (token: Token) => void;
         keys: R20ESKeys;
         replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
+        onJournalDuplicate: (id: string) => void;
     }
 }
 
