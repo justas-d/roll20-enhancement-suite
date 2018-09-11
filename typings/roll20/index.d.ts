@@ -243,7 +243,7 @@ declare namespace Roll20 {
     }
 
     export interface CanvasObject extends SyncObject<CanvasObject> {
-        model?: Character;
+        model?: Token;
         top: number;
         left: number;
     }

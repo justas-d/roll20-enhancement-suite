@@ -25,7 +25,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
         const padCoef = 9.375;
         const bottomPadCoef = 3.75;
-        const pad = `${cfg.size / padCoef}px`; document
+        const pad = `${cfg.size / padCoef}px`;
 
         const divStyle = {
             height: `${cfg.size}px`,

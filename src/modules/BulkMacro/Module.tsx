@@ -1,90 +1,21 @@
-import { DOM } from '../../tools/DOM'
 import { R20Module } from "../../tools/R20Module"
 import { R20 } from '../../tools/R20';
 import { DialogBase } from "../../tools/DialogBase";
 import { DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../../tools/DialogComponents";
 import { TokenContextMenu } from '../../tools/TokenContextMenu';
-
-class MacroSelectDialog extends DialogBase {
-    constructor() {
-        super(undefined, {maxWidth: "20%"});
-        this.buttonClick = this.buttonClick.bind(this);
-    }
-
-    reset() {
-        this.macros = undefined;
-    }
-
-    show(data) {
-        this.macros = data;
-        super.show();
-    }
-
-    buttonClick(e) {
-        e.stopPropagation();
-
-        this.setData(e.target.getAttribute("data-r20es-macro-action"))
-        this.close();
-    }
-
-    render() {
-        console.log(this.macros);
-
-        const elems = [];
-        for (let category in this.macros) {
-            const bucket = this.macros[category];
-
-            const macroElems = []
-            for (const id in bucket) {
-                let macro = bucket[id];
-
-                macroElems.push(
-                    <button className="r20btn btn" data-r20es-macro-action={macro.action} onClick={this.buttonClick}>
-                        {macro.name}
-                    </button>
-                );
-            }
-
-            elems.push(<div>
-                <h3>{category}</h3>
-                <div className="r20es-indent">
-                    {macroElems}
-                </div>
-            </div>);
-        }
-
-        return (
-            <Dialog>
-                <DialogHeader>
-                    <h2>Macro selection</h2>
-                </DialogHeader>
-
-                <hr />
-
-                <DialogBody>
-                    {elems}
-                </DialogBody>
-
-                <DialogFooter>
-                    <DialogFooterContent >
-                        <input style={{boxSizing: "border-box", width: "100%"}} className="r20btn btn" type="button" onClick={this.close} value="Close" />
-                    </DialogFooterContent>
-                </DialogFooter>
-            </Dialog>
-
-        );
-    }
-}
+import MacroSelectDialog from './MacroSelectDialog';
+import { ISlimMacro, TableOfMacrosByCategoryAndId  } from './Types';
+import { Macro } from 'roll20';
 
 class BulkMacroModule extends R20Module.OnAppLoadBase {
-    constructor() {
-        super(__dirname);
 
-        this.bulkMacroButtonClicked = this.bulkMacroButtonClicked.bind(this);
-        this.onDialogClose = this.onDialogClose.bind(this);
+    private selectDialog: MacroSelectDialog;
+
+    public constructor() {
+        super(__dirname);
     }
 
-    onDialogClose() {
+    private onDialogClose = (e) => {
         const action = this.selectDialog.getData();
         if (!action) return;
 
@@ -104,13 +35,13 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         }
     }
 
-    bulkMacroButtonClicked() {
+    private bulkMacroButtonClicked = (e) => {
 
-        let macros = {};
+        let macros: TableOfMacrosByCategoryAndId = {};
 
-        const addMacro = (macro, category) => {
+        const addMacro = (macro: Macro, category: string) => {
             if (!(category in macros)) macros[category] = {};
-            let cat = macros[category][macro.get("id")] = {
+            let cat = macros[category][macro.get<string>("id")] = {
                 name: macro.get("name"),
                 action: macro.get("action")
             };
@@ -131,7 +62,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                     return accum;
                 }
 
-                const id = obj.model.character
+                const id: string = obj.model.character
                     ? obj.model.character.get("id")
                     : obj.model.get("id");
 
@@ -156,9 +87,9 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         this.selectDialog.show(macros);
     }
 
-    setup() {
+    public setup() {
         if(!R20.isGM()) return;
-        
+
         this.selectDialog = new MacroSelectDialog();
         this.selectDialog.getRoot().addEventListener("close", this.onDialogClose);
 
@@ -167,7 +98,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         });
     }
 
-    dispose() {
+    public dispose() {
         if (this.selectDialog) this.selectDialog.dispose();
 
         super.dispose();
