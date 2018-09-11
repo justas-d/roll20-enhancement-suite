@@ -23,10 +23,16 @@ export default MakeConfig(__dirname, {
                 3: "Alphabetically: Z-A",
                 card: "By Card/Suit"
             }
-        }
+        },
+
+        respectFirstTokenPosition: {
+            display: "Respect the position of the current token in the order",
+            type: ConfigViews.Checkbox
+        },
     },
 
     config: {
-       sortBy: 1
+        sortBy: 1,
+        respectFirstTokenPosition: true
     },
 });

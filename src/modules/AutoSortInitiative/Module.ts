@@ -54,8 +54,10 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
         if (newData.length <= 0) return;
         if (initiative.length <= 0) return;
 
+        const cfg = this.getHook().config;
+
         try {
-            if (old.length <= 0) {
+            if (old.length <= 0 || !cfg.respectFirstTokenPosition) {
                 console.log("NEW INITIATIVE");
 
                 // Note(Justas): we added the very first tokens to the initiative.
