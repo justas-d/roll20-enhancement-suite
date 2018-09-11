@@ -9,23 +9,20 @@ import { LoadingDialog } from "../../tools/DialogComponents";
 import Vars from './Vars';
 
 class TableIOModule extends R20Module.OnAppLoadBase {
-    constructor() {
+
+    private static readonly tableWidgetClass = "r20es-export-table-button"
+    private static readonly journalDivId = "r20es-tableio-journal-widget";
+    private static readonly normalImportButtonId = "r20es-norma;-import-button";
+    private static readonly tableExportImportButtonId = "r20es-table-export-import-button";
+    private observer: MutationObserver;
+
+    public constructor() {
         super(__dirname);
-
-        this.journalDivId = "r20es-tableio-journal-widget";
-        this.tableWidgetClass = "r20es-export-table-button"
-
-        this.normalImportButtonId = "r20es-norma;-import-button";
-        this.tableExportImportButtonId = "r20es-table-export-import-button";
-
-        this.observerCallback = this.observerCallback.bind(this);
-        this.onExportButtonClicked = this.onExportButtonClicked.bind(this);
-        this.onImportClicked = this.onImportClicked.bind(this);
-        this.onFileChanged = this.onFileChanged.bind(this);
     }
 
-    getTableId(target) {
+    private getTableId(target: any) {
         // target must be the header with all the fancy classes that we match
+
         const query = $(target.parentNode).find(`div[${Vars.TableIdAttribute}]`);
         if (query.length <= 0) return null;
 
@@ -35,7 +32,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         return elem.getAttribute(Vars.TableIdAttribute);
     }
 
-    onExportButtonClicked(e) {
+    private onExportButtonClicked = (e) => {
         let tableId = this.getTableId(e.target.parentNode);
         if (!tableId) { alert("Failed to get table id."); return; }
 
@@ -48,10 +45,10 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         saveAs(jsonBlob, table.get("name") + ".json");
     }
 
-    tryInsertTableWidget(target) {
+    private tryInsertTableWidget(target: HTMLElement) {
         if (!target.className) return false;
         if (target.className !== "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") return false;
-        if (target.getElementsByClassName(this.tableWidgetClass).length > 0) return false;
+        if (target.getElementsByClassName(TableIOModule.tableWidgetClass).length > 0) return false;
 
         const table = this.getTableId(target);
 
@@ -60,7 +57,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         const button = <button
             style={{ marginTop: "8px" }}
             onClick={this.onExportButtonClicked}
-            className={[this.tableWidgetClass, "btn"]}>
+            className={[TableIOModule.tableWidgetClass, "btn"]}>
             Export
             </button>;
 
@@ -68,22 +65,22 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         return true;
     }
 
-    observerCallback(muts) {
+    private observerCallback = (muts: any[]) => {
         for (var e of muts) {
-            if (this.tryInsertTableWidget(e.target)) {
+            if (this.tryInsertTableWidget(e.target as HTMLElement)) {
                 break;
             }
         }
     }
 
-    importTableJson(e) {
+    private static importTableJson(e) {
         const json = safeParseJson(e);
         if (!json) return;
 
         TableIO.importJson(json);
     }
 
-    importTablesTableExport(e) {
+    private static importTablesTableExport(e) {
         if (!TableExportLang.naiveVerify(e)) return;
 
         let tables = null;
@@ -101,11 +98,11 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         }
     }
 
-    onImportClicked(e) {
+    private onImportClicked = (e) => {
 
-        let cb = e.target.id === this.tableExportImportButtonId
-            ? this.importTablesTableExport
-            : this.importTableJson;
+        let cb = e.target.id === TableIOModule.tableExportImportButtonId
+            ? TableIOModule.importTablesTableExport
+            : TableIOModule.importTableJson;
 
         const input = $(e.target.parentNode.parentNode).find("input")[0];
 
@@ -114,31 +111,31 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
         const handle = input.files[0];
 
-        readFile(handle)
+        (readFile(handle)
             .then(cb)
-            .catch(alert)
+            .catch(alert) as any)
             .finally(plsWait.dispose);
 
         input.value = "";
-        this.setButtonDisabled(e.target.parentNode, true);
+        TableIOModule.setButtonDisabled(e.target.parentNode, true);
     }
 
-    setButtonDisabled(root, state) {
-        let query = $(root).find(".btn");
+    private static setButtonDisabled(root: HTMLElement, state: boolean) {
+        let query = $(root).find(".btn") as JQuery<HTMLButtonElement>;
         query.each(idx => {
             query[idx].disabled = state;
         });
     }
 
-    onFileChanged(e) {
-        this.setButtonDisabled(e.target.parentNode, e.target.files.length <= 0);
+    private onFileChanged = (e) => {
+        TableIOModule.setButtonDisabled(e.target.parentNode, e.target.files.length <= 0);
     }
 
-    setup() {
+    public setup() {
         if (!R20.isGM()) return;
 
         // @COPYPASTE from CharacterIOModule
-        const existingHeaders = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix");
+        const existingHeaders: any = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix");
 
         for (const header of existingHeaders) {
             this.tryInsertTableWidget(header);
@@ -147,7 +144,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         let root = document.getElementById("deckstables").getElementsByClassName("content")[0];
 
         const buttonStyle = { width: "100%", marginBottom: "20px", marginRight: "8px" };
-        const elem = <div id={this.journalDivId}>
+        const elem = <div id={TableIOModule.journalDivId}>
             <SidebarSeparator />
 
             <SidebarCategoryTitle>
@@ -162,11 +159,11 @@ class TableIOModule extends R20Module.OnAppLoadBase {
             />
 
             <div style={{ display: "flex", justifyContent: "space-between"}}>
-                <button id={this.normalImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
+                <button id={TableIOModule.normalImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
                     Import
             </button>
 
-                <button id={this.tableExportImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
+                <button id={TableIOModule.tableExportImportButtonId} onClick={this.onImportClicked} disabled className="btn" style={buttonStyle}>
                     Import (TableExport)
             </button>
             </div>
@@ -178,14 +175,14 @@ class TableIOModule extends R20Module.OnAppLoadBase {
         this.observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    dispose() {
+    public dispose() {
         super.dispose();
         if (this.observer) {
             this.observer.disconnect();
         }
 
         // @COPYPASTE from CharacterIOModule
-        const widgets = document.getElementsByClassName(this.tableWidgetClass);
+        const widgets = document.getElementsByClassName(TableIOModule.tableWidgetClass);
 
 
         // removing a widget modifies the widgets html element collection 
@@ -195,7 +192,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
             widgets[0].remove();
         }
 
-        findByIdAndRemove(this.journalDivId);
+        findByIdAndRemove(TableIOModule.journalDivId);
     }
 }
 
