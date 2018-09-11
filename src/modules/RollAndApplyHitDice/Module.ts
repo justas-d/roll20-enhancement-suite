@@ -3,19 +3,18 @@ import { R20 } from "../../tools/R20";
 import { DOM } from "../../tools/DOM";
 import { findByIdAndRemove } from "../../tools/MiscUtils";
 import { TokenContextMenu } from "../../tools/TokenContextMenu";
+import SayCallback = R20.SayCallback;
 
 class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
-    constructor() {
+    public constructor() {
         super(__dirname);
-
-        this.onClickMenuItem = this.onClickMenuItem.bind(this);
     }
 
-    fancySay(msg, callback) {
+    private static fancySay(msg: string, callback?: SayCallback) {
         R20.sayToSelf(`&{template:default} {{name=R20ES Hit Dice}} {{${msg}}}`, callback);
     }
 
-    onClickMenuItem(e) {
+    private onClickMenuItem = (e) => {
         const objects = R20.getSelectedTokens();
         const config = this.getHook().config;
 
@@ -40,12 +39,13 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
             }
 
             if (!hpFormula) {
-                this.fancySay(`Could not find attribute ${config.diceFormulaAttribute}`);
+                RollAndApplyHitDiceModule.fancySay(`Could not find attribute ${config.diceFormulaAttribute}`);
 
                 continue;
             }
 
-            this.fancySay(`${token.model.character.get("name")}: [[${hpFormula}]]`, (_, o) => {
+            RollAndApplyHitDiceModule.fancySay(`${token.model.character.get("name")}: [[${hpFormula}]]`,
+                (_, o) => {
                 if (!o.inlinerolls || o.inlinerolls.length <= 0) return;
 
                 let hp = o.inlinerolls[0].results.total;
@@ -66,9 +66,9 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
                 }
             });
         }
-    }
+    };
 
-    setup() {
+    public setup() {
         if(!R20.isGM()) return;
 
         TokenContextMenu.addButton("Hit Dice", this.onClickMenuItem, {
@@ -76,7 +76,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
         });
     }
 
-    dispose() {
+    public dispose() {
         TokenContextMenu.removeButton("Hit Dice", this.onClickMenuItem);
     }
 }

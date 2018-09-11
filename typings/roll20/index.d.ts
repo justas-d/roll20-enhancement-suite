@@ -118,7 +118,9 @@ declare namespace Roll20 {
     }
 
     export interface CharacterSheetAttributeAttributes {
-
+        name: string;
+        current: string;
+        max: string;
     }
 
     export interface CharacterSheetAttribute extends SyncObject<CharacterSheetAttributeAttributes>{
@@ -293,8 +295,16 @@ declare namespace Roll20 {
         doChatInput: (message: string, callbackUUID?: string) => void;
     }
 
+    interface InlineRollResults {
+        total: number;
+    }
+
+    interface InlineRoll {
+        results: InlineRollResults;
+    }
     export interface RollCallbackData {
         // todo
+        inlinerolls: InlineRoll[];
     }
 
     export interface PingData {

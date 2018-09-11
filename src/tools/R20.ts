@@ -185,10 +185,11 @@ namespace R20 {
         window.d20.textchat.doChatInput(what, callbackId);
     }
 
+    export type SayCallback = (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData) => void;
+
     export function say(
         what: string, 
-        callback?: (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData) 
-        => void) {
+        callback?: SayCallback) {
         if (callback) {
 
             const callbackId = window.generateUUID();
