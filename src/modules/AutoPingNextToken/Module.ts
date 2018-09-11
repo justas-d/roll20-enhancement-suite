@@ -1,12 +1,13 @@
 import { R20Module } from "../../tools/R20Module";
 import { R20 } from "../../tools/R20";
+import {Token} from "roll20";
 
 class AutoPingNextTokenModule extends R20Module.SimpleBase {
-    constructor() {
+    public constructor() {
         super(__dirname);
     }
 
-    ping(data) {
+    private static ping(data: Token) {
         if (!data.id) return;
 
         const obj = R20.getCurrentPageTokenByUUID(data.id);
@@ -17,13 +18,13 @@ class AutoPingNextTokenModule extends R20Module.SimpleBase {
         R20.ping(obj.left, obj.top, null, null, R20.CanvasLayer.PlayerTokens);
     }
 
-    setup() {
+    public setup() {
         if (!R20.isGM()) return;
 
-        window.r20es.pingInitiativeToken = this.ping;
+        window.r20es.pingInitiativeToken = AutoPingNextTokenModule.ping;
     }
 
-    dispose() {
+    public dispose() {
         window.r20es.pingInitiativeToken = null;
     }
 }
