@@ -20,14 +20,15 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
 #page-toolbar {
     right: unset;
     left: unset;
-    padding-bottom: 8px;
     ${cfg.location === "right"
             ? "right: 400px"
             : "left: 128px"};
     max-width: 486px;
+    
     max-height: 90%;
     width: 100%;
     height: 100%;
+    
     opacity: ${cfg.opacity};
     background-color: #222;
     
@@ -159,7 +160,8 @@ div#page-toolbar:not(.closed) > div.handle.showtip {
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 8px;
+    
+    padding-bottom: 32px;
 }
     
 #page-toolbar .container {
@@ -168,9 +170,9 @@ div#page-toolbar:not(.closed) > div.handle.showtip {
     overflow-x: hidden;
     padding: 0;
     margin: 0;
-    padding-bottom: 8px;
   
     white-space: unset;
+    
 }
 
 `;
