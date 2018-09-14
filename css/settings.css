@@ -17,7 +17,7 @@
     flex-grow: 1;
     display: flex;
     flex-direction: row;
-    height: 80%;
+    height: 40%;
 }
 
 .r20es-settings-dialog .more-settings ul > li {
@@ -55,16 +55,23 @@
     margin-bottom: 30px;
 }
 
+.r20es-clickable-text {
+    width: 100%;
+}
+
 .r20es-clickable-text:hover {
     background-color: rgb(245,245,245);
 }
 
 .dialog-body > .left {
     white-space: nowrap;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
 }
 
 .dialog-body > .right {
-    flex-grow: 1;
+    flex-grow: 2;
     overflow: auto;
     width: 100%;
     height: 100%;
