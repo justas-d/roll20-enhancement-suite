@@ -1,11 +1,11 @@
-import { R20Module } from "../../tools/R20Module"
-import { R20 } from '../../tools/R20';
-import { DialogBase } from "../../tools/DialogBase";
-import { DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent } from "../../tools/DialogComponents";
-import { TokenContextMenu } from '../../tools/TokenContextMenu';
+import {R20Module} from "../../tools/R20Module"
+import {R20} from '../../tools/R20';
+import {DialogBase} from "../../tools/DialogBase";
+import {DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent} from "../../tools/DialogComponents";
+import {TokenContextMenu} from '../../tools/TokenContextMenu';
 import MacroSelectDialog from './MacroSelectDialog';
-import { ISlimMacro, TableOfMacrosByCategoryAndId  } from './Types';
-import { Macro } from 'roll20';
+import {ISlimMacro, TableOfMacrosByCategoryAndId} from './Types';
+import {Macro} from 'roll20';
 
 class BulkMacroModule extends R20Module.OnAppLoadBase {
 
@@ -22,18 +22,51 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         const sel = R20.getSelectedTokens();
         R20.unselectTokens();
 
-        for (let obj of sel) {
+        const cfg = this.getHook().config;
+
+        const rollForObj = (obj) => {
             R20.selectToken(obj);
             R20.say(action);
-        }
+        };
 
-        R20.hideTokenRadialMenu();
-        R20.hideTokenContextMenu();
+        const cleanup = () => {
 
-        for (let obj of sel) {
-            R20.addTokenToSelection(obj);
+            R20.hideTokenRadialMenu();
+            R20.hideTokenContextMenu();
+
+            if (cfg.reselectAfter) {
+                for (let obj of sel) {
+                    R20.addTokenToSelection(obj);
+                }
+            }
+        };
+
+        if (cfg.delayBetweenRolls === 0) {
+
+            for (const obj of sel) {
+                rollForObj(obj);
+            }
+
+            cleanup();
+
+        } else {
+            let waited = cfg.delayBetweenRolls;
+
+            for (let i = 0; i < sel.length; i++) {
+                setTimeout(() => {
+                    rollForObj(sel[i]);
+
+                    const isLastObj = i + 1 === sel.length;
+                    if (isLastObj) {
+                        cleanup();
+                    }
+
+                }, waited);
+
+                waited += cfg.delayBetweenRolls;
+            }
         }
-    }
+    };
 
     private bulkMacroButtonClicked = (e) => {
 
@@ -75,7 +108,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
                     }
                 }
                 return accum;
-            }, { map: {}, arr: [], uniq: 0 });
+            }, {map: {}, arr: [], uniq: 0});
 
         if (chars.uniq === 1 && chars.arr.length > 0) {
             for (let macro of chars.arr[0].abilities.models) {
@@ -88,7 +121,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
     }
 
     public setup() {
-        if(!R20.isGM()) return;
+        if (!R20.isGM()) return;
 
         this.selectDialog = new MacroSelectDialog();
         this.selectDialog.getRoot().addEventListener("close", this.onDialogClose);
