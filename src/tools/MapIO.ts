@@ -1,6 +1,7 @@
 import {Err, IResult, Ok} from "./Result";
 import IOCommon from "./IOCommon";
-import {MapAttributes, TokenAttributes, TextTokenAttributes, PathTokenAttributes, Map, ObjectStorage, SyncObject} from "roll20";
+import {MapAttributes, TokenAttributes, TextTokenAttributes, PathTokenAttributes, Map, ObjectStorage, SyncObject,
+    MapTokenAttributes} from "roll20";
 
 interface DataV1 {
     schema_version: number;
@@ -72,16 +73,22 @@ namespace MapIO {
         return stratLookup.ok().unwrap().parse(data);
     };
 
-    const addSubstorage = <TData extends SyncObject<TAttrib>, TAttrib>(sourceSet: TAttrib[], target: ObjectStorage<TData>) => {
-        sourceSet.forEach(data => target.create(data));
+    const addSubstorage =
+        <TData extends SyncObject<TAttrib>, TAttrib extends MapTokenAttributes>
+        (map: Map, sourceSet: TAttrib[], target: ObjectStorage<TData>) => {
+        sourceSet.forEach(data => {
+            data.page_id = map.id;
+            target.create(data)
+        });
     };
 
     export const applyToCampaign = (mapDatas: IApplyableMapData[]) => {
         mapDatas.forEach(mapData => {
             const map = window.d20.Campaign.pages.create(mapData.attributes);
-            addSubstorage(mapData.graphics, map.thegraphics);
-            addSubstorage(mapData.paths, map.thepaths);
-            addSubstorage(mapData.text, map.thetexts);
+
+            addSubstorage(map, mapData.graphics, map.thegraphics);
+            addSubstorage(map, mapData.paths, map.thepaths);
+            addSubstorage(map, mapData.text, map.thetexts);
         });
     }
 }

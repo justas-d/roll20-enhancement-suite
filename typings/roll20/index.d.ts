@@ -189,6 +189,10 @@ declare namespace Roll20 {
         activePage: () => Page;
     }
 
+    export interface MapTokenAttributes {
+        page_id: string;
+    }
+
     export interface MapAttributes {
         adv_fow_dim_reveals: boolean
         adv_fow_enabled: boolean
@@ -229,17 +233,16 @@ declare namespace Roll20 {
         thetexts: ObjectStorage<TextToken>;
     }
 
-    export interface TextTokenAttributes {}
+    export interface TextTokenAttributes extends MapTokenAttributes {}
     export interface TextToken extends SyncObject<TextTokenAttributes> { }
 
-    export interface PathTokenAttributes {
+    export interface PathTokenAttributes extends MapTokenAttributes {
         controlledby: string;
         fill:  string; // transparent
         groupwith: string;
         height: number;
         id: string;
         layer: string;
-        page_id: number;
         path: string;
         rotation: number;
         scaleX: number;
@@ -253,8 +256,7 @@ declare namespace Roll20 {
         z_index: number;
     }
 
-    export interface TokenAttributes {
-
+    export interface TokenAttributes extends MapTokenAttributes{
     }
 
     export interface Token extends SyncObject<TokenAttributes> {
