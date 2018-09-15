@@ -1,6 +1,6 @@
 /// <reference path="../../typings/roll20/index.d.ts"/>
 
-import { ObjectStorage, SyncObject, PlayerAttributes } from "roll20";
+import { ObjectStorage, SyncObject, PlayerAttributes, Character } from "roll20";
 
 namespace R20 {
 
@@ -27,8 +27,12 @@ namespace R20 {
         return window.Campaign.characters.create(initialAttributes);
     }
 
-    export function getCharacter(uuid) {
+    export function getCharacter(uuid): Character {
         return window.Campaign.characters.get(uuid);
+    }
+
+    export function getAllCharacters(): Character[] {
+        return window.Campaign.characters.models;
     }
 
     export function createRollableTable(initialAttributes) {

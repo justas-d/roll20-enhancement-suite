@@ -257,6 +257,10 @@ declare namespace Roll20 {
     }
 
     export interface TokenAttributes extends MapTokenAttributes{
+        bar1_link: string;
+        bar2_link: string;
+        bar3_link: string;
+        represents: string;
     }
 
     export interface Token extends SyncObject<TokenAttributes> {
