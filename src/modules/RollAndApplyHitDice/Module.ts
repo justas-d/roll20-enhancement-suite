@@ -15,6 +15,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     }
 
     private onClickMenuItem = (e) => {
+
         const objects = R20.getSelectedTokens();
         const config = this.getHook().config;
 
@@ -25,7 +26,10 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
 
         for (let token of objects) {
 
-            if (!token.model || !token.model.character) continue;
+            if (!token.model || !token.model.character) {
+                RollAndApplyHitDiceModule.fancySay("Token doesn't have a character.");
+                continue;
+            }
 
             let attribs = token.model.character.attribs;
 
@@ -44,6 +48,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
                 continue;
             }
 
+            console.log("fancysaying");
             RollAndApplyHitDiceModule.fancySay(`${token.model.character.get("name")}: [[${hpFormula}]]`,
                 (_, o) => {
                 if (!o.inlinerolls || o.inlinerolls.length <= 0) return;
