@@ -38,7 +38,7 @@ export default class PasteTableExportDialog extends DialogBase<string> {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button onClick={this.close}>Close></button>
+                        <button onClick={this.close}>Close</button>
                         <button onClick={this.onImportClick}>Import</button>
                     </DialogFooterContent>
                 </DialogFooter>
