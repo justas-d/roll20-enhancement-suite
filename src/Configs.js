@@ -44,7 +44,11 @@ addCfg(ExposeD20);
 addCfg(InitiativeAdvanceShortcut);
 addCfg(MacroGenerator);
 addCfg(MacroIO);
-addCfg(MapIO);
+
+if(build.R20ES_IS_DEV) {
+    addCfg(MapIO);
+}
+
 addCfg(MiddleClickSelect);
 addCfg(MoveCameraToToken);
 addCfg(PageLoadEvent);
