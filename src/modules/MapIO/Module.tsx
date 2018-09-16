@@ -5,11 +5,13 @@ import { R20 } from "../../tools/R20";
 import { saveAs } from 'save-as'
 import PickObjectsDialog from "../PickObjectsDialog";
 import {IApplyableMapData, MapIO} from "../../tools/MapIO";
+import TokenRemapDialog from "./TokenRemapDialog";
 
 // @COPYPASTED from MacroIO
 class MapIOModule extends R20Module.OnAppLoadBase {
     readonly widgetId = "r20es-map-io-widget";
     private pickMapsDialog: PickObjectsDialog<IApplyableMapData>;
+    private remapDialog: TokenRemapDialog;
     private mapBuffer: IApplyableMapData[];
 
     constructor() {
@@ -39,7 +41,7 @@ class MapIOModule extends R20Module.OnAppLoadBase {
 
         const file = fs.files[0];
         fs.value = "";
-        (e.target as any).disabled = true
+        (e.target as any).disabled = true;
 
         readFile(file)
             .then((payload: string) => {
@@ -48,23 +50,24 @@ class MapIOModule extends R20Module.OnAppLoadBase {
 
                 const data = result.ok().unwrap();
                 this.mapBuffer = result.ok().unwrap();
-                this.showPickMapsDialog(this.continueImporting);
+                this.showPickMapsDialog((finalData: IApplyableMapData[]) => {
+
+                    const remap = MapIO.generateRemapTable(finalData);
+                    console.log(remap);
+
+                    //MapIO.applyToCampaign(finalData, remap);
+                });
             })
             .catch(alert);
-    }
-
-    private continueImporting(finalData: IApplyableMapData[]) {
-        MapIO.applyToCampaign(finalData);
-    }
+    };
 
     private onExportClick = (e: any) => {
         e.stopPropagation();
 
-        const player = R20.getCurrentPlayer();
         const maps= MapIO.prepareMapData(window.d20.Campaign.pages.models);
 
         if(maps.length <= 0) {
-            alert("No maps found.")
+            alert("No maps found.");
             return;
         }
 
@@ -82,9 +85,11 @@ class MapIOModule extends R20Module.OnAppLoadBase {
 
     public setup() {
         this.pickMapsDialog= new PickObjectsDialog<IApplyableMapData>();
+        this.remapDialog = new TokenRemapDialog();
+        this.remapDialog.show();
         
         const root = $("#deckstables")[0].firstElementChild;
-        const nextTo = $("#deckstables").find("#addmacro")[0]
+        const nextTo = $("#deckstables").find("#addmacro")[0];
 
         const widget = (
             <div id={this.widgetId}>
@@ -119,6 +124,7 @@ class MapIOModule extends R20Module.OnAppLoadBase {
     }
 
     public dispose() {
+        if(this.remapDialog ) this.remapDialog .dispose();
         if(this.pickMapsDialog) this.pickMapsDialog.dispose();
 
         findByIdAndRemove(this.widgetId);

@@ -87,3 +87,16 @@
     font-size: 1.2em;
     font-weight: bold;
 }
+
+.r20es-autocomplete {
+    position: relative;
+}
+
+.r20es-autocomplete .r20es-autocomplete-entries {
+    positon: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background-color: red;
+}
