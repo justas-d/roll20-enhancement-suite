@@ -4,13 +4,13 @@ import { R20Module } from "../../tools/R20Module";
 export abstract class ConfigEditBase extends DOM.ElementBase {
     protected hook: any;
     protected configName: string;
-    protected configView: any;
+    protected configView?: any;
 
     public constructor(props) {
         super();
         this.hook = props.hook;
         this.configName = props.configName;
-        this.configView = this.hook.configView[this.configName];
+        this.configView = this.hook.configView && this.hook.configView[this.configName];
     }
 
     protected setValue(val) {        

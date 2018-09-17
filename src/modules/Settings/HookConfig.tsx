@@ -9,6 +9,7 @@ import NumberEdit from "./NumberEdit";
 import ColorEdit from "./ColorEdit";
 import MouseButtonEdit from "./MouseButtonEdit";
 import MediaWidget from "../../MediaWidget";
+import EditComponentWrapper from "./EditComponentWrapper";
 
 interface IMediaData {
     url: string;
@@ -63,11 +64,12 @@ export default class HookConfig extends DOM.ElementBase {
 
                 const Component = elemMap[cfg.type];
                 elems.push(
-                    <li style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span title={cfgId} className="text">{cfg.display}</span>
-                        <Component configName={cfgId} hook={this.hook} />
-                    </li>
-
+                    <EditComponentWrapper
+                        Component={Component}
+                        cfgId={cfgId}
+                        display={cfg.display}
+                        hook={this.hook}
+                    />
                 );
             }
         }

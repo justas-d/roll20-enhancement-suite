@@ -1,6 +1,6 @@
 /// <reference path="../../typings/roll20/index.d.ts"/>
 
-import { ObjectStorage, SyncObject, PlayerAttributes, Character } from "roll20";
+import { ObjectStorage, SyncObject, PlayerAttributes, Character, CanvasObject } from "roll20";
 
 namespace R20 {
 
@@ -25,6 +25,16 @@ namespace R20 {
 
     export function createCharacter(initialAttributes?: PlayerAttributes) {
         return window.Campaign.characters.create(initialAttributes);
+    }
+
+    export function setCanvasObjectDimensions(obj: CanvasObject, width: number, height: number) {
+        obj.model.save({
+            width,
+            height
+        });
+    }
+
+    export function setCanvasObjectLocation(obj: CanvasObject, left: number, top: number) {
     }
 
     export function getCharacter(uuid): Character {

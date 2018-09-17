@@ -35,7 +35,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
         if (cfg.showStartupGuide) {
             this.welcome = new WelcomePopup(this);
             elem = this.welcome.render();
-        } else if (true || cfg.showChangelog && cfg.previousVersion !== build.R20ES_VERSION) {
+        } else if (cfg.showChangelog && cfg.previousVersion !== build.R20ES_VERSION) {
             this.changelog = new ChangelogPopup();
             elem = this.changelog.render();
         } else if (cfg.showWelcomePopup) {

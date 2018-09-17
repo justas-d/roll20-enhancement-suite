@@ -272,9 +272,16 @@ declare namespace Roll20 {
     }
 
     export interface CanvasObject extends SyncObject<CanvasObject> {
+        _element: HTMLImageElement;
         model?: Token;
         top: number;
         left: number;
+
+        setWidth(width: number): CanvasObject;
+        setHeight(width: number): CanvasObject;
+
+        width: number;
+        height: number;
     }
 
     export interface PlayerSettings {
@@ -355,7 +362,8 @@ declare namespace Roll20 {
     }
 
     export interface PageAttributes {
-
+        width: number; // in squares
+        height: number; // in squares
     }
 
     export interface Page extends SyncObject<PageAttributes> {

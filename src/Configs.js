@@ -25,6 +25,7 @@ import TransparentPaper from './modules/TransparentPaper/Config'
 import Welcome from './modules/Welcome/Config'
 import AlternatePageToolbarMenu from './modules/AlternatePageToolbarMenu/Config'
 import MapIO from './modules/MapIO/Config';
+import TokenResize from "./modules/TokenResize/Config"
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -56,6 +57,7 @@ addCfg(RollAndApplyHitDice);
 addCfg(Settings);
 addCfg(SheetTabApi);
 addCfg(TableIO);
+addCfg(TokenResize);
 addCfg(TokenContextMenuApi);
 addCfg(TokenLayerDrawing);
 addCfg(TransparentPaper);
