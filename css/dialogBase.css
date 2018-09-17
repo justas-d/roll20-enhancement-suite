@@ -13,7 +13,6 @@
 .r20es-dialog>.dialog-body {
     margin: 10px 30px 10px 30px;
     overflow: auto;
-    height: 100%;
 }
 
 .r20es-dialog>.dialog-footer {
@@ -76,10 +75,6 @@
     background-color: rgb(240, 240, 240);
 }
 
-.r20es-dialog table {
-    width: 100%;
-}
-
 .r20es-dialog table caption {
     font-weight: bold;
     font-size: 1.25em;
@@ -120,6 +115,7 @@ dialog {
     max-width: 60%;
     border: none;
     padding: 0;
+    height: 100%;
 }
 
 .r20es-big-dialog {
