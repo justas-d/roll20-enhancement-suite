@@ -36,12 +36,14 @@ if (isInRepo) {
     git = JSON.parse(fs.readFileSync(gitDataCacheFile, "utf8"));
 }
 
-if(!fs.existsSync("changelog.txt")) {
-    console.log("couldn't find changelog.txt");
+const changelogFile = "changelog.json";
+
+if(!fs.existsSync(changelogFile)) {
+    console.log(`couldn't find ${changelogFile}`);
     process.exit(1);
 }
 
-const changelog = fs.readFileSync("changelog.txt", "utf8");
+const changelog = fs.readFileSync(changelogFile, "utf8");
 
 module.exports = (_env, argv) => {
     let env = _env || {};

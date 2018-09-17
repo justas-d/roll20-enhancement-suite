@@ -1,0 +1,36 @@
+{
+  "info": {
+    "title": "Alternative Token Menu update",
+    "media": "page_toolbar.png"
+  },
+  "changes": [
+    {
+      "id": "alternativePageToolbarMenu",
+      "content": "Added Alternate Page Toolbar Menu."
+    },
+    {
+      "id": "",
+      "content": "Added add option to disable first-token respecting in the Auto-Sort Initiative module."
+    },
+    {
+      "id": "",
+      "content": "Added NPC reaction macro generation to the OGL 5e sheet macro generator."
+    },
+    {
+      "id": "",
+      "content": "Added a paste menu for TableExport tables."
+    },
+    {
+      "id": "",
+      "content": "Made some dialogs larger."
+    },
+    {
+      "id": "",
+      "content": "Improved scrolling in large dialogs."
+    },
+    {
+      "id": "",
+      "content": "Fixed settings dialog footer being awfully positioned on low DPI screens."
+    }
+  ]
+}

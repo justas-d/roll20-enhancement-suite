@@ -43,7 +43,7 @@ function Features() {
         const config = Configs[id];
         if (config.name && config.description) {
             cards.push(<div>
-                <h2>{config.name}</h2>
+                <h2 id={id}>{config.name}</h2>
                 <FeatureCard key={id} config={config} />
                 <hr />
             </div>);

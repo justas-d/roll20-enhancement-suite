@@ -4,7 +4,13 @@ import { Dialog, DialogHeader, DialogBody} from "../../tools/DialogComponents";
 import ChangelogWidget from "../ChangelogWidget";
 
 export default class ChangelogDialog extends DialogBase<null> {
-    public show = this.internalShow;
+    public show() {
+        setTimeout(() => {
+            this.recenter()
+        }, 100);
+
+        this.internalShow();
+    };
     protected render(): HTMLElement {
         return (
             <Dialog>

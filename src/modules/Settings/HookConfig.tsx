@@ -8,10 +8,10 @@ import SliderEdit from "./SliderEdit";
 import NumberEdit from "./NumberEdit";
 import ColorEdit from "./ColorEdit";
 import MouseButtonEdit from "./MouseButtonEdit";
+import MediaWidget from "../../MediaWidget";
 
 interface IMediaData {
     url: string;
-    isVid: boolean;
     description: string;
 }
 
@@ -30,8 +30,7 @@ export default class HookConfig extends DOM.ElementBase {
                 console.log(url);
                 getExtUrlFromPage(url, 5000)
                     .then((e: string) => {
-                        const isVid = e.endsWith(".webm");
-                        this.media.push({ url: e, isVid, description: this.hook.media[url] });
+                        this.media.push({ url: e, description: this.hook.media[url] });
                         this.rerender();
                     })
                     .catch(err => console.error(`Failed to get ${url}: ${err}`));
@@ -109,16 +108,7 @@ export default class HookConfig extends DOM.ElementBase {
                         <h3>Media</h3>
                         <hr style={{ marginTop: "4px" }} />
 
-                        {this.media.map(data =>
-                            <div>
-                                {data.isVid
-                                    ? <video autoplay loop style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "cover", display: "block", margin: "auto" }} src={data.url}></video>
-                                    : <img style={{ display: "block", margin: "auto" }} src={data.url} alt={data.url} />
-                                }
-                                <p style={{ textAlign: "center" }}>{data.description}</p>
-                            </div>
-                        )
-                        }
+                        {this.media.map(data => <MediaWidget url={data.url} description={data.description}/>)}
                     </div>
                 }
             </div> as any
