@@ -85,7 +85,8 @@ class MacroIOModule extends R20Module.OnAppLoadBase {
     public setup() {
         this.pickMacrosDialog = new PickObjectsDialog<IApplyableMacroData>();
         const root = $("#deckstables")[0].firstElementChild;
-        const nextTo = $("#deckstables").find("#adddeck")[0]
+        const nextTo = $("#deckstables").find("#adddeck")[0];
+
         const widget = (
             <div id={this.widgetId}>
                 <div>

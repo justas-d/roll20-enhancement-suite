@@ -86,7 +86,6 @@ class MapIOModule extends R20Module.OnAppLoadBase {
     public setup() {
         this.pickMapsDialog= new PickObjectsDialog<IApplyableMapData>();
         this.remapDialog = new TokenRemapDialog();
-        this.remapDialog.show();
         
         const root = $("#deckstables")[0].firstElementChild;
         const nextTo = $("#deckstables").find("#addmacro")[0];
