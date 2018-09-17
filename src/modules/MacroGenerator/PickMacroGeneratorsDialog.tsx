@@ -80,8 +80,6 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
                     <h2>Sheet, category selection.</h2>
                 </DialogHeader>
 
-                <hr />
-
                 <DialogBody>
                     <select value={this.parent.activeGenerator ? this.parent.activeGenerator.id : ""} onChange={this.onSelectChange}>
                         <option value="">Select a sheet</option>

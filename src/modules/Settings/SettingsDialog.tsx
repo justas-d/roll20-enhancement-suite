@@ -50,8 +50,6 @@ protected render = (): HTMLElement => {
                     <h2>Roll20 Enhancement Suite Module Settings</h2>
                 </DialogHeader>
 
-                <hr style={{width: "100%"}}/>
-
                 <DialogBody>
                     <div className="left">
                         {mapObj(byCategory, (bucket, categoryName) =>

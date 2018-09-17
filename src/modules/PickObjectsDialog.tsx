@@ -84,8 +84,6 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
                     <h2>{this.title}</h2>
                 </DialogHeader>
 
-                <hr />
-
                 <DialogBody>
                     <button className="btn" onClick={this.onToggleAll}>Toggle All</button>
 

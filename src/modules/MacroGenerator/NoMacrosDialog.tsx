@@ -11,8 +11,6 @@ export default class NoMacrosDialog extends DialogBase<null> {
                     <h2>Notice</h2>
                 </DialogHeader>
 
-                <hr />
-
                 <DialogBody>
                     <p>We found nothing to make a macro for.</p>
                 </DialogBody>

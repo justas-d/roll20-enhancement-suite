@@ -117,8 +117,6 @@ export default class VerifyMacrosDialog extends DialogBase<null> {
                     <h2>Review Changes</h2>
                 </DialogHeader>
 
-                <hr />
-
                 <DialogBody>
                     <button className="btn" onClick={this.onToggleAll}>Toggle All</button>
                     {this.addedMacros.length > 0 && this.generateAdded()}

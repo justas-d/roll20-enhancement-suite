@@ -58,8 +58,6 @@ export default class MacroSelectDialog extends DialogBase<string> {
                     <h2>Macro selection</h2>
                 </DialogHeader>
 
-                <hr />
-
                 <DialogBody>
                     {elems}
                 </DialogBody>

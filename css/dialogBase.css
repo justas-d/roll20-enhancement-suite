@@ -12,6 +12,8 @@
 
 .r20es-dialog>.dialog-body {
     margin: 10px 30px 10px 30px;
+    overflow: auto;
+    height: 100%;
 }
 
 .r20es-dialog>.dialog-footer {
@@ -48,6 +50,9 @@
 
 .r20es-dialog {
     background-color: rgb(253, 253, 253);
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr auto 1fr;
 }
 
 .r20es-dialog th {
