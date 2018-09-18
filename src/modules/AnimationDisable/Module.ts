@@ -1,8 +1,9 @@
-import { R20Module } from "../../tools/R20Module"
-import { createCSSElement, findByIdAndRemove } from "../../tools/MiscUtils";
+import {R20Module} from "../../tools/R20Module"
+import {createCSSElement, findByIdAndRemove} from "../../tools/MiscUtils";
 
 interface IAnimationMod {
     install();
+
     uninstall();
 }
 
@@ -45,7 +46,7 @@ class NoPageToolbarAnim implements IAnimationMod {
         const isOpen = toolbar.classList.contains("closed");
         console.log(`toggling ${isOpen}`);
 
-        if(isOpen) {
+        if (isOpen) {
             $("#page-toolbar .pages").show();
             toolbar.style.top = "0";
             toolbar.classList.remove("closed");
@@ -89,27 +90,34 @@ class AnimationDisableModule extends R20Module.OnAppLoadBase {
         return data;
     }
 
+    shouldDoCustomAnim(key: string) {
+        const isNotObj = (obj: any): boolean => typeof(obj) !== "object";
+        if (isNotObj(window.r20es)) return false;
+        if (isNotObj(window.r20es.hooks)) return false;
+        if (isNotObj(window.r20es.hooks.animationDisable)) return false;
+        if (isNotObj(window.r20es.hooks.animationDisable.config)) return false;
+        const val = window.r20es.hooks.animationDisable.config[key];
+        if (typeof(val) !== "boolean") return false;
+        return val;
+    }
+
     installAnimMod(key: string) {
         const data = this.getAnimModData(key);
         if (!data) return;
 
         console.log(`installing anim mod ${key}`);
-        
-        data.install();
-        window["r20esanims"][key] = true;
 
+        data.install();
         this.installedAnims.push(key);
     }
 
     uninstallAnimMod(key: string) {
         const data = this.getAnimModData(key);
         if (!data) return;
-        
+
         console.log(`removing anim mod ${key} ${data}`);
 
         data.uninstall();
-        window["r20esanims"][key] = false;
-        
         {
             const idx = this.installedAnims.indexOf(key);
             if (idx >= 0) {
@@ -127,16 +135,19 @@ class AnimationDisableModule extends R20Module.OnAppLoadBase {
     }
 
     setup() {
+        window.r20es.shouldDoCustomAnim = this.shouldDoCustomAnim;
+
         const cfg = this.getHook().config;
 
-        window["r20esanims"] = window["r20esanims"] || {};
         for (const key in this.animModTable) {
-            if(!cfg[key]) continue;
+            if (!cfg[key]) continue;
             this.installAnimMod(key);
         }
     }
 
     dispose() {
+        window.r20es.shouldDoCustomAnim = null;
+
         super.dispose();
         for (const key of this.installedAnims) {
             this.uninstallAnimMod(key);

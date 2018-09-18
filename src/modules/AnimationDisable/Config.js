@@ -16,7 +16,7 @@ export default MakeConfig(__dirname, {
             includes: "assets/app.js",
             find: `setTimeout(function(){$(e).addClass("open"),o.find(".button div.hasnumber").textfill(20)},30*a),a++`,
             patch: `;
-            if(window.r20esanims && window.r20esanims.disableRadial) { $(e).addClass("open");o.find(".button div.hasnumber").textfill(20);}
+            if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(e).addClass("open");o.find(".button div.hasnumber").textfill(20);}
             else { >>R20ES_MOD_FIND>>; }`,
         },
 
@@ -24,7 +24,7 @@ export default MakeConfig(__dirname, {
             includes: "assets/app.js",
             find: `setTimeout(function(){o.find(".button").addClass("animcomplete")},250)`,
             patch: `1;
-            if(window.r20esanims && window.r20esanims.disableRadial) { o.find(".button").addClass("animcomplete");}
+            if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { o.find(".button").addClass("animcomplete");}
             else { >>R20ES_MOD_FIND>>; }`,
         },
 
@@ -32,7 +32,7 @@ export default MakeConfig(__dirname, {
             includes: "assets/app.js",
             find: `setTimeout(function(){p&&p.remove()},300)`,
             patch: `1;
-            if(window.r20esanims && window.r20esanims.disableRadial) { p && p.remove(); }
+            if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { p && p.remove(); }
             else { >>R20ES_MOD_FIND>>; }`,
         },
 
@@ -40,14 +40,14 @@ export default MakeConfig(__dirname, {
             includes: "assets/app.js",
             find: `_.delay(function(){d.addClass("open")})`,
             patch: `1;
-            if(window.r20esanims && window.r20esanims.disableRadial) { d.addClass("open"); }
+            if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { d.addClass("open"); }
             else { >>R20ES_MOD_FIND>>; }`
         },
 
         { // take over page toolbar animation
             includes: "assets/app.js",
             find: `page-toolbar .handle").bind(clicktype,function(e){`,
-            patch: `>>R20ES_MOD_FIND>>if(window.r20esanims && window.r20esanims.disablePageToolbar && window.r20es.togglePageToolbar) {window.r20es.togglePageToolbar();} else `
+            patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) {window.r20es.togglePageToolbar();} else `
         }
     ],
 

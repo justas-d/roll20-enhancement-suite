@@ -413,6 +413,9 @@ declare namespace Roll20 {
         replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
         onJournalDuplicate: (id: string) => void;
         moveCameraTo: (tokenId: string) => void;
+        hooks: {[id: string]: any};
+
+        shouldDoCustomAnim: (key: string) => boolean;
     }
 
     export interface Mousetrap {
