@@ -211,7 +211,7 @@ module.exports = (_env, argv) => {
                     "build.R20ES_BRANCH": JSON.stringify(git.branch),
                     "build.R20ES_BROWSER": JSON.stringify(browser.target),
                     "build.R20ES_CHANGELOG": JSON.stringify(changelog),
-                    'build.R20ES_IS_DEV': JSON.stringify(isProd === false),
+                    'build_R20ES_IS_DEV': JSON.stringify(isProd === false),
                     'process.env.NODE_ENV': JSON.stringify('production'),
                 }),
                 new GenerateJsonPlugin("manifest.json", finalManifest),

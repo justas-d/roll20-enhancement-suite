@@ -5,7 +5,7 @@ const changes = shell.exec("sh utils/makeChangelog.sh")
     .stdout.split("\n").map(c => {
     c = c.trim();
     return {
-        href: "",
+        id: "",
         content: c,
     };
 });

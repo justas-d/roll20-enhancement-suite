@@ -46,7 +46,7 @@ addCfg(InitiativeAdvanceShortcut);
 addCfg(MacroGenerator);
 addCfg(MacroIO);
 
-if(build.R20ES_IS_DEV) {
+if(typeof(build_R20ES_IS_DEV) !== "undefined" && build_R20ES_IS_DEV) {
     addCfg(MapIO);
 }
 

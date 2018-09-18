@@ -1,9 +1,13 @@
 {
   "info": {
-    "title": "Alternative Token Menu update",
+    "title": "Alternative Token Menu & Token Resize update",
     "media": "page_toolbar.png"
   },
   "changes": [
+    {
+      "id": "tokenResize",
+      "content": "Added TokenResize: resize to fit canvas, custom resize."
+    },
     {
       "id": "alternativePageToolbarMenu",
       "content": "Added Alternate Page Toolbar Menu."
@@ -31,6 +35,10 @@
     {
       "id": "",
       "content": "Fixed settings dialog footer being awfully positioned on low DPI screens."
+    },
+    {
+      "id": "",
+      "content": "Fixed committing invalid data to cache: set enhancementSuiteEnabled without committing it to cache Previous methods committed that statement to cache which led to enhancementSuiteEnabled being set when R20ES is not active."
     }
   ]
 }
