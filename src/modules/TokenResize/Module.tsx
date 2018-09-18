@@ -2,6 +2,7 @@ import {R20Module} from "../../tools/R20Module";
 import {R20} from "../../tools/R20";
 import {TokenContextMenu} from "../../tools/TokenContextMenu";
 import TokenResizeDialog from "./TokenResizeDialog";
+import {CanvasObject} from "roll20";
 
 class TokenResizeModule extends R20Module.SimpleBase {
 
@@ -10,6 +11,13 @@ class TokenResizeModule extends R20Module.SimpleBase {
     public constructor() {
         super(__dirname);
     }
+
+    private tryPlaceTopLeft = (obj: CanvasObject) => {
+        if(!this.getHook().config.placeTopLeft) return;
+
+        R20.setCanvasObjectLocation(obj, obj.width / 2, obj.height/ 2);
+
+    };
 
     private clickResizeFit = (e) => {
         const objects = R20.getSelectedTokens();
@@ -33,6 +41,7 @@ class TokenResizeModule extends R20Module.SimpleBase {
             };
 
             R20.setCanvasObjectDimensions(obj, data.width, data.height);
+            this.tryPlaceTopLeft(obj);
         }
 
 
@@ -51,8 +60,8 @@ class TokenResizeModule extends R20Module.SimpleBase {
                 const width = config.lastSquareWidth * config.lastNumSquaresX;
                 const height = config.lastSquareHeight * config.lastNumSquaresY;
 
-                obj.setWidth(width);
-                obj.setHeight(height);
+                R20.setCanvasObjectDimensions(obj, width, height);
+                this.tryPlaceTopLeft(obj);
             }
 
             R20.renderAll();

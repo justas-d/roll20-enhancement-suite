@@ -1,8 +1,10 @@
 /// <reference path="../../typings/roll20/index.d.ts"/>
 
-import { ObjectStorage, SyncObject, PlayerAttributes, Character, CanvasObject, Handout, RollableTable, InitiativeTracker,
+import {
+    ObjectStorage, SyncObject, PlayerAttributes, Character, CanvasObject, Handout, RollableTable, InitiativeTracker,
     InitiativeData,
-    Page, IBlobObject} from "roll20";
+    Page, IBlobObject
+} from "roll20";
 
 namespace R20 {
 
@@ -13,7 +15,7 @@ namespace R20 {
         AlphabeticalDescending = 3,
         Card = 4,
     }
-    
+
     export enum CanvasLayer {
         Map = "map",
         PlayerTokens = "objects",
@@ -21,11 +23,18 @@ namespace R20 {
         Lighting = "walls",
     }
 
+    export function setCanvasObjectLocation(obj: CanvasObject, left: number, top: number) {
+        obj.model.save({
+            top: top,
+            left: left,
+        });
+    }
+
     export const getBlob = (obj: IBlobObject<any>, blobName: string, timeout: number = 5000) => new Promise<string>((ok, err) => {
         obj._getLatestBlob(blobName, ok);
         setTimeout(err, timeout);
     });
-    
+
     export function getHandout(uuid: string): Handout {
         return window.Campaign.handouts.get(uuid);
     }
@@ -50,7 +59,7 @@ namespace R20 {
     }
 
     export function createRollableTable(initialAttributes): RollableTable {
-        return window.d20.Campaign.rollabletables.create(initialAttributes); 
+        return window.d20.Campaign.rollabletables.create(initialAttributes);
     }
 
     export function getRollableTable(uuid): RollableTable {
@@ -118,9 +127,9 @@ namespace R20 {
         window.d20.player_settings.refreshRollsList();
     }
 
-    
+
     export function orderInitiativeBy(order: InitiativeOrdering) {
-        
+
         const map = {
             [InitiativeOrdering.NumericAscending]: ".sortlist_numeric",
             [InitiativeOrdering.NumericDescending]: ".sortlist_numericdesc",
@@ -143,7 +152,8 @@ namespace R20 {
         (<any>$("#initiativewindow_settings")).dialog({
             modal: false,
             title: "Turn Order Settings",
-            beforeClose: () => { }
+            beforeClose: () => {
+            }
         });
 
         $(selector).click();
@@ -206,7 +216,7 @@ namespace R20 {
     export type SayCallback = (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData) => void;
 
     export function say(
-        what: string, 
+        what: string,
         callback?: SayCallback) {
         if (callback) {
 
@@ -225,9 +235,9 @@ namespace R20 {
     }
 
     export function sayToSelf(
-        what: string, 
-        callback?: (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData) 
-        => void) {
+        what: string,
+        callback?: (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData)
+            => void) {
         say(`/w "${getCurrentPlayer().get("displayname")}" ${what}`, callback);
     }
 
@@ -258,21 +268,21 @@ namespace R20 {
     export const wipeObjectStorage = <T>(storage: ObjectStorage<SyncObject<T>>): void => {
 
         const len = storage.length;
-        for(let __unusedIndex = 0; __unusedIndex < len; __unusedIndex++) {
+        for (let __unusedIndex = 0; __unusedIndex < len; __unusedIndex++) {
             // Note(Justas): i don't want to control 'i' here. The storage models array needs to directly control this.
             const i = storage.length - 1;
-            if(0 > i) break;
+            if (0 > i) break;
 
             const obj = storage.models[i];
-            if(!obj || typeof(obj) === "undefined") break;
+            if (!obj || typeof(obj) === "undefined") break;
 
             obj.destroy();
         }
 
-        if(storage.length < 0) {
+        if (storage.length < 0) {
             console.error("FAILED TO WIPE OBJECT STORAGE!");
         }
     }
 }
 
-export { R20 }
+export {R20}

@@ -12,7 +12,15 @@ export default MakeConfig(__dirname, {
         "token_resize.webm": "Two map tokens being resized to fit the canvas."
     },
 
+    configView: {
+        placeTopLeft: {
+            type: ConfigViews.Checkbox,
+            display: "Position token in the top-left corner after resizing"
+        }
+    },
+
     config: {
+        placeTopLeft: true,
         lastSquareWidth: 70,
         lastSquareHeight: 70,
         lastNumSquaresX: 25,
