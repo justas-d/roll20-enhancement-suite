@@ -306,6 +306,7 @@ declare namespace Roll20 {
 
     export interface Chat {
         doChatInput: (message: string, callbackUUID?: string) => void;
+        incoming: (playSound: boolean, data: any) => void;
     }
 
     interface InlineRollResults {

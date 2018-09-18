@@ -5,6 +5,7 @@ import { DialogBase } from "../../tools/DialogBase";
 import WelcomePopup from "./WelcomePopup";
 import ConfirmWorkingPopup from "./ConfirmWorkingPopup";
 import ChangelogPopup from "./ChangelogPopup";
+import {R20} from "../../tools/R20";
 
 declare namespace build {
     export const R20ES_VERSION: string;
@@ -41,6 +42,20 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
         } else if (cfg.showWelcomePopup) {
             this.popup = new ConfirmWorkingPopup();
             elem = this.popup.render();
+        }
+
+        if(!cfg.hasShownDiscordPoll) {
+            this.setConfigValue("hasShownDiscordPoll", true);
+
+
+            setTimeout(() =>{
+                R20.saySystem(`<h2>R20ES - Discord Server</h2>
+<hr/>
+Would you be interested in joining a R20ES Discord server?
+<br/>
+<br/>
+<a style="color: orange" href="https://www.strawpoll.me/16480327">Click here to anwser</a>`);
+            }, 1000);
         }
 
         this.setConfigValue("previousVersion", build.R20ES_VERSION);

@@ -241,6 +241,18 @@ namespace R20 {
         say(`/w "${getCurrentPlayer().get("displayname")}" ${what}`, callback);
     }
 
+    export function saySystemRaw(htmlContent: string) {
+        window.d20.textchat.incoming(false, ({
+            who: "system",
+            type: "system",
+            content: htmlContent
+        }));
+    }
+
+    export function saySystem(content: string) {
+        saySystemRaw(`<span class='r20es-system-chat'>${content}</span>`)
+    }
+
     export function ping(left: number, top: number, playerId?: string, pageId?: string, layer?: CanvasLayer) {
         playerId = playerId || getCurrentPlayer().id;
 

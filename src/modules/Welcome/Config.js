@@ -27,6 +27,7 @@ export default MakeConfig(__dirname, {
     },
 
     config: {
+        hasShownDiscordPoll: false,
         showWelcomePopup: true,
         showStartupGuide: true,
         showChangelog: true,
