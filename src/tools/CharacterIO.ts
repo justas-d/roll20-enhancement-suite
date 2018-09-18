@@ -1,9 +1,9 @@
-import { replaceAll } from "./MiscUtils";
-import { R20 } from "./R20";
-import { NaiveManualResetEvent } from "./NaiveManualResetEvent"
-import { Character, CharacterBlobs, CharacterAttributes } from "roll20";
+import {replaceAll} from "./MiscUtils";
+import {R20} from "./R20";
+import {Character, CharacterBlobs, CharacterAttributes} from "roll20";
 
-import { IResult, Err, Ok } from './Result'
+import {IResult, Err, Ok} from './Result'
+import promiseWait from "./promiseWait";
 
 interface IOverwriteStrategy {
     overwrite: (pc: Character, data: any) => IResult<boolean, string>;
@@ -34,7 +34,7 @@ class OverwriteV1 implements IOverwriteStrategy {
 
         });
 
-        pc.updateBlobs({ bio: data.bio });
+        pc.updateBlobs({bio: data.bio});
 
         for (let importAttrib of data.attribs) {
             pc.attribs.create(importAttrib);
@@ -146,52 +146,54 @@ namespace CharacterIO {
     export const formatVersions: { [id: number]: IOverwriteStrategy } = {
         1: new OverwriteV1(),
         2: new OverwriteV2()
-    }
+    };
 
     export const exportSheet = (sheet, doneCallback) => {
 
-        const ev = new NaiveManualResetEvent(1000);
-        sheet._getLatestBlob("defaulttoken", () => ev.set());
+        const blobPromise = new Promise(ok => sheet._getLatestBlob("defaulttoken", () => {console.log("IN CALLBA CK"); ok(false);}));
+        const waitPromise = promiseWait(3000, true);
 
-        ev.whenDone(didTimeout => {
+        Promise.race([blobPromise, waitPromise])
+            .then(didTimeout => {
+                console.log(sheet._blobcache.defaulttoken);
 
-            let data = {
-                schema_version: 2,
-                oldId: sheet.attributes.id || "",
-                name: sheet.attributes.name || "",
-                avatar: sheet.attributes.avatar || "",
-                bio: sheet._blobcache.bio || "",
-                gmnotes: sheet._blobcache.gmnotes || "",
-                defaulttoken: sheet._blobcache.defaulttoken || "",
-                tags: sheet.attributes.tags || "",
-                controlledby: sheet.attributes.controlledby || "",
-                inplayerjournals: sheet.attributes.inplayerjournals || "",
-                attribs: [],
-                abilities: []
-            };
+                let data = {
+                    schema_version: 2,
+                    oldId: sheet.attributes.id || "",
+                    name: sheet.attributes.name || "",
+                    avatar: sheet.attributes.avatar || "",
+                    bio: sheet._blobcache.bio || "",
+                    gmnotes: sheet._blobcache.gmnotes || "",
+                    defaulttoken: sheet._blobcache.defaulttoken || "",
+                    tags: sheet.attributes.tags || "",
+                    controlledby: sheet.attributes.controlledby || "",
+                    inplayerjournals: sheet.attributes.inplayerjournals || "",
+                    attribs: [],
+                    abilities: []
+                };
 
-            for (let attrib of sheet.attribs.models) {
-                data.attribs.push({
-                    name: attrib.attributes.name,
-                    current: attrib.attributes.current,
-                    max: attrib.attributes.max,
-                    id: attrib.attributes.id,
-                });
-            }
+                for (let attrib of sheet.attribs.models) {
+                    data.attribs.push({
+                        name: attrib.attributes.name,
+                        current: attrib.attributes.current,
+                        max: attrib.attributes.max,
+                        id: attrib.attributes.id,
+                    });
+                }
 
-            for (let abil of sheet.abilities.models) {
-                data.abilities.push({
-                    name: abil.attributes.name,
-                    description: abil.attributes.description,
-                    istokenaction: abil.attributes.istokenaction,
-                    action: abil.attributes.action,
-                    order: abil.attributes.order
-                });
-            }
+                for (let abil of sheet.abilities.models) {
+                    data.abilities.push({
+                        name: abil.attributes.name,
+                        description: abil.attributes.description,
+                        istokenaction: abil.attributes.istokenaction,
+                        action: abil.attributes.action,
+                        order: abil.attributes.order
+                    });
+                }
 
-            doneCallback(data);
-        });
-    }
+                //doneCallback(data);
+            });
+    };
 
     export const wipeCharacter = (pc: Character) => {
         R20.wipeObjectStorage(pc.abilities);
@@ -229,4 +231,4 @@ namespace CharacterIO {
     }
 }
 
-export { CharacterIO, IOverwriteStrategy};
+export {CharacterIO, IOverwriteStrategy};
