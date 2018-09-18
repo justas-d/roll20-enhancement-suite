@@ -1,6 +1,8 @@
 /// <reference path="../../typings/roll20/index.d.ts"/>
 
-import { ObjectStorage, SyncObject, PlayerAttributes, Character, CanvasObject } from "roll20";
+import { ObjectStorage, SyncObject, PlayerAttributes, Character, CanvasObject, Handout, RollableTable, InitiativeTracker,
+    InitiativeData,
+    Page, IBlobObject} from "roll20";
 
 namespace R20 {
 
@@ -18,12 +20,17 @@ namespace R20 {
         GMTokens = "gmlayer",
         Lighting = "walls",
     }
+
+    export const getBlob = (obj: IBlobObject<any>, blobName: string, timeout: number = 5000) => new Promise<string>((ok, err) => {
+        obj._getLatestBlob(blobName, ok);
+        setTimeout(err, timeout);
+    });
     
-    export function getHandout(uuid: string) {
+    export function getHandout(uuid: string): Handout {
         return window.Campaign.handouts.get(uuid);
     }
 
-    export function createCharacter(initialAttributes?: PlayerAttributes) {
+    export function createCharacter(initialAttributes?: PlayerAttributes): Character {
         return window.Campaign.characters.create(initialAttributes);
     }
 
@@ -34,9 +41,6 @@ namespace R20 {
         });
     }
 
-    export function setCanvasObjectLocation(obj: CanvasObject, left: number, top: number) {
-    }
-
     export function getCharacter(uuid): Character {
         return window.Campaign.characters.get(uuid);
     }
@@ -45,15 +49,15 @@ namespace R20 {
         return window.Campaign.characters.models;
     }
 
-    export function createRollableTable(initialAttributes) {
+    export function createRollableTable(initialAttributes): RollableTable {
         return window.d20.Campaign.rollabletables.create(initialAttributes); 
     }
 
-    export function getRollableTable(uuid) {
+    export function getRollableTable(uuid): RollableTable {
         return window.d20.Campaign.rollabletables.get(uuid);
     }
 
-    export function getSelectedTokens() {
+    export function getSelectedTokens(): CanvasObject[] {
         return window.d20.engine.selected();
     }
 
@@ -78,19 +82,19 @@ namespace R20 {
         window.d20.token_editor.closeContextMenu();
     }
 
-    export function getCurrentPlayer() {
+    export function getCurrentPlayer(): Roll20.Player {
         return window.currentPlayer;
     }
 
-    export function isGM() {
+    export function isGM(): boolean {
         return window.is_gm;
     }
 
-    export function getCurrentLayer() {
+    export function getCurrentLayer(): CanvasLayer {
         return window.currentEditingLayer;
     }
 
-    export function getCurrentToolName() {
+    export function getCurrentToolName(): string {
         return window.d20.engine.mode;
     }
 
@@ -145,11 +149,11 @@ namespace R20 {
         $(selector).click();
     }
 
-    export function getInitiativeWindow() {
+    export function getInitiativeWindow(): InitiativeTracker {
         return window.d20.Campaign.initiativewindow;
     }
 
-    export function getInitiativeData() {
+    export function getInitiativeData(): InitiativeData[] {
         return window.d20.Campaign.initiativewindow.cleanList();
     }
 
@@ -159,19 +163,19 @@ namespace R20 {
         });
     }
 
-    export function getCurrentPage() {
+    export function getCurrentPage(): Page {
         return window.d20.Campaign.activePage();
     }
 
-    export function getCurrentPageTokens() {
+    export function getCurrentPageTokens(): CanvasObject[] {
         return window.d20.engine.canvas.getObjects();
     }
 
-    export function doesTokenContainMouse(mouseEvent: MouseEvent, token: Roll20.CanvasObject) {
+    export function doesTokenContainMouse(mouseEvent: MouseEvent, token: Roll20.CanvasObject): boolean {
         return window.d20.engine.canvas.containsPoint(mouseEvent, token);
     }
 
-    export function getCurrentPageTokenByUUID(uuid: string) {
+    export function getCurrentPageTokenByUUID(uuid: string): CanvasObject {
         const tokens = getCurrentPageTokens();
         for (let obj of tokens) {
             if (!obj.model) continue;
