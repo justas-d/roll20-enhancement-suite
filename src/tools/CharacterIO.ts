@@ -191,7 +191,7 @@ namespace CharacterIO {
                     });
                 }
 
-                //doneCallback(data);
+                doneCallback(data);
             });
     };
 
