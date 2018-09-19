@@ -26,7 +26,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         alert(e);
         console.trace();
         console.error(e);
-    }
+    };
 
     private static processData(input: string): Promise<IProcessResultData> {
         return new Promise((resolve, reject) => {
@@ -77,7 +77,13 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
             .then(CharacterIOModule.processData)
             .then(payload => {
                 let pc = R20.createCharacter();
-                payload.strategy.overwrite(pc, payload.data);
+                console.log(pc);
+                console.log(payload);
+                const result = payload.strategy.overwrite(pc, payload.data);
+                if(result.isErr()) {
+                    this.catchError(result.err().unwrap());
+                    pc.destroy();
+                }
             })
             .catch(this.catchError);
 
