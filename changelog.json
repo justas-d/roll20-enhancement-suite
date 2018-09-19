@@ -1,44 +1,16 @@
 {
-  "info": {
-    "title": "Alternative Token Menu & Token Resize update",
-    "media": "page_toolbar.png"
-  },
-  "changes": [
-    {
-      "id": "tokenResize",
-      "content": "Added TokenResize: resize to fit canvas, custom resize."
+    "info": {
+        "title": "Bug Fixes",
+        "media": ""
     },
-    {
-      "id": "alternativePageToolbarMenu",
-      "content": "Added Alternate Page Toolbar Menu."
-    },
-    {
-      "id": "",
-      "content": "Added add option to disable first-token respecting in the Auto-Sort Initiative module."
-    },
-    {
-      "id": "",
-      "content": "Added NPC reaction macro generation to the OGL 5e sheet macro generator."
-    },
-    {
-      "id": "",
-      "content": "Added a paste menu for TableExport tables."
-    },
-    {
-      "id": "",
-      "content": "Made some dialogs larger."
-    },
-    {
-      "id": "",
-      "content": "Improved scrolling in large dialogs."
-    },
-    {
-      "id": "",
-      "content": "Fixed settings dialog footer being awfully positioned on low DPI screens."
-    },
-    {
-      "id": "",
-      "content": "Fixed committing invalid data to cache: set enhancementSuiteEnabled without committing it to cache Previous methods committed that statement to cache which led to enhancementSuiteEnabled being set when R20ES is not active."
-    }
-  ]
+    "changes": [
+        {
+            "id": "",
+            "content": "Fix character importing not reporting errors."
+        },
+        {
+            "id": "",
+            "content": "Fix character exporting doing nothing."
+        }
+    ]
 }
