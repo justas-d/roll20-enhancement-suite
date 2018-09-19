@@ -90,11 +90,10 @@ export default class DuplicateResolveDialog<T> extends DialogBase<SelectedButton
                 </DialogHeader>
 
                 <DialogBody>
+
                     <p>Abilities with duplicate names were generated.</p>
                     <p>Choose which duplicate ability should be kept.</p>
-                </DialogBody>
 
-                <DialogBody>
                     {this.genDiffs()}
                 </DialogBody>
 
