@@ -75,6 +75,10 @@ window.r20es.recvPluginMsg = function (e) {
                 hook.config = cfg;
             }
 
+            if("enabledByDefault" in hook) {
+                hook.config.enabled = hook.enabledByDefault;
+            }
+
             console.log(id);
             console.log(hook.config);
         }
