@@ -1,0 +1,27 @@
+import {R20Module} from "../../tools/R20Module"
+import {createCSSElement, findByIdAndRemove} from "../../tools/MiscUtils";
+
+class HidePlayerListModule extends R20Module.SimpleBase {
+    private static readonly styleId = "r20es-hide-player-list-style";
+
+    public constructor() {
+        super(__dirname);
+    }
+
+    public setup() {
+        const style = createCSSElement(`
+#playerzone .player {
+    display: none !important;
+    visibility: hidden !important;
+}
+`, HidePlayerListModule.styleId);
+        document.body.appendChild(style);
+    }
+
+    public dispose() {
+        findByIdAndRemove(HidePlayerListModule.styleId);
+    }
+}
+
+
+if (R20Module.canInstall()) new HidePlayerListModule().install();

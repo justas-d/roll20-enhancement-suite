@@ -26,6 +26,7 @@ import Welcome from './modules/Welcome/Config'
 import AlternatePageToolbarMenu from './modules/AlternatePageToolbarMenu/Config'
 import MapIO from './modules/MapIO/Config';
 import TokenResize from "./modules/TokenResize/Config"
+import HidePlayerList from "./modules/HidePlayerList/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -61,6 +62,7 @@ addCfg(TokenResize);
 addCfg(TokenContextMenuApi);
 addCfg(TokenLayerDrawing);
 addCfg(TransparentPaper);
+addCfg(HidePlayerList);
 addCfg(Welcome);
 
 export default configs;
