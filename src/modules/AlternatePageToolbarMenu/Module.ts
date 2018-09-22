@@ -78,18 +78,37 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
     
 }
 
+#page-toolbar .playerspecificbookmark.ui-draggable-dragging {
+    
+}
+
+#page-toolbar .playerspecificbookmark {
+    position: relative;
+    order: 4;
+    left: 0 !important;
+    top: 0 !important;
+}
+
+#page-toolbar .playerbookmark.dropping {
+    left: 0;
+    border: none;
+    border: 3px solid yellow;
+}
+
 #page-toolbar .playerbookmark {    
     position: relative;
     display: inline;
-    order: 4;
+    order: 5;
     left: 0;
-    width: auto;
-    flex: 1;
-    cursor: pointer;    
+    cursor: pointer;
+    width: 75px;    
+    margin-left: 8px;
+    height: 30px;
+     box-sizing: border-box;
 }
 
 #page-toolbar .playerbookmark img {
-    transform: rotate(90deg) translateY(20px);
+    transform: rotate(90deg) translateY(-15px) translateX(-25px);
 }
 
 #page-toolbar .pages .availablepage {
