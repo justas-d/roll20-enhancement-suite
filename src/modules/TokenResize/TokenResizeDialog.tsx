@@ -3,6 +3,8 @@ import {DialogBase} from "../../tools/DialogBase";
 import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../tools/DialogComponents";
 import NumberEdit from "../Settings/NumberEdit";
 import EditComponentWrapper from "../Settings/EditComponentWrapper";
+import CheckboxEdit from "../Settings/CheckboxEdit";
+import {R20} from "../../tools/R20";
 
 export default class TokenResizeDialog extends DialogBase<string> {
     private moduleConfig: any;
@@ -27,10 +29,13 @@ export default class TokenResizeDialog extends DialogBase<string> {
 
     protected render() {
 
+        const page = R20.getCurrentPage();
+        const unitName = this.moduleConfig.config.useUnits ? page.attributes.scale_units : "squares";
+
         return (
             <Dialog>
                 <DialogHeader>
-                    <h2>TokenResize</h2>
+                    <h2>Resize Token</h2>
                 </DialogHeader>
 
                 <DialogBody>
@@ -38,28 +43,28 @@ export default class TokenResizeDialog extends DialogBase<string> {
                         <EditComponentWrapper
                             Component={NumberEdit}
                             cfgId={"lastSquareWidth"}
-                            display={"Map square width (px)"}
+                            display={"Width of a square in the token (px)"}
                             hook={this.moduleConfig}
                         />
 
                         <EditComponentWrapper
                             Component={NumberEdit}
                             cfgId={"lastSquareHeight"}
-                            display={"Map square height (px)"}
+                            display={"Height of a square in the token (px)"}
                             hook={this.moduleConfig}
                         />
 
                         <EditComponentWrapper
                             Component={NumberEdit}
                             cfgId={"lastNumSquaresX"}
-                            display={"Num. squares horizontally"}
+                            display={`Num. ${unitName} horizontally`}
                             hook={this.moduleConfig}
                         />
 
                         <EditComponentWrapper
                             Component={NumberEdit}
                             cfgId={"lastNumSquaresY"}
-                            display={"Num. squares vertically"}
+                            display={`Num. ${unitName} vertically`}
                             hook={this.moduleConfig}
                         />
 
@@ -75,7 +80,7 @@ export default class TokenResizeDialog extends DialogBase<string> {
 
                 <DialogFooter>
                     <DialogFooterContent >
-                        <input className="r20btn btn" type="button" onClick={this.close} value="Close" />
+                        <input style={{marginRight: "8px"}} className="r20btn btn" type="button" onClick={this.close} value="Close" />
                         <input className="r20btn btn" type="button" onClick={this.onSubmit} value="OK" />
                     </DialogFooterContent>
                 </DialogFooter>

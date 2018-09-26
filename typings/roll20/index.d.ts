@@ -365,6 +365,8 @@ declare namespace Roll20 {
     export interface PageAttributes {
         width: number; // in squares
         height: number; // in squares
+        scale_number: number;
+        scale_units: string;
     }
 
     export interface Page extends SyncObject<PageAttributes> {

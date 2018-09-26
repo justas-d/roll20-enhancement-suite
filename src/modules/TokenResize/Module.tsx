@@ -64,8 +64,14 @@ class TokenResizeModule extends R20Module.SimpleBase {
 
             for (const obj of objects) {
 
-                const width = config.lastSquareWidth * config.lastNumSquaresX;
-                const height = config.lastSquareHeight * config.lastNumSquaresY;
+                let width = config.lastSquareWidth * config.lastNumSquaresX;
+                let height = config.lastSquareHeight * config.lastNumSquaresY;
+
+                if(config.useUnits) {
+                    const page = R20.getCurrentPage();
+                    width /= page.attributes.scale_number;
+                    height /= page.attributes.scale_number;
+                }
 
                 R20.setCanvasObjectDimensions(obj, width, height);
 

@@ -15,12 +15,18 @@ export default MakeConfig(__dirname, {
     configView: {
         placeTopLeft: {
             type: ConfigViews.Checkbox,
-            display: "Position token in the top-left corner after resizing"
+            display: "Position tokens in the top-left corner after resizing"
+        },
+
+        useUnits: {
+            type: ConfigViews.Checkbox,
+            display: "Use map units (feet, meters, km, etc) instead of squares."
         }
     },
 
     config: {
         placeTopLeft: true,
+        useUnits: false,
         lastSquareWidth: 70,
         lastSquareHeight: 70,
         lastNumSquaresX: 25,
