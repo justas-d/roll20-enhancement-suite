@@ -50,7 +50,8 @@ class TokenResizeModule extends R20Module.SimpleBase {
 
     private clickResizeCustom = (e) => {
 
-        this.resizeDialog.show(this.getHook(), () => {
+        this.resizeDialog.show(this.getHook(), (moveTokens: boolean) => {
+
             const config = this.getHook().config;
             if(config.lastSquareWidth == 0 || config.lastSquareHeight == 0|| config.lastNumSquaresX == 0|| config.lastNumSquaresY == 0) {
                 alert("Invalid input: one of the values was zero.");
@@ -58,7 +59,7 @@ class TokenResizeModule extends R20Module.SimpleBase {
             }
 
             const objects = R20.getSelectedTokens();
-            const config = this.getHook().config;
+
             R20.unselectTokens();
 
             for (const obj of objects) {
@@ -67,7 +68,10 @@ class TokenResizeModule extends R20Module.SimpleBase {
                 const height = config.lastSquareHeight * config.lastNumSquaresY;
 
                 R20.setCanvasObjectDimensions(obj, width, height);
-                this.tryPlaceTopLeft(obj);
+
+                if(moveTokens) {
+                    this.tryPlaceTopLeft(obj);
+                }
             }
 
             R20.renderAll();

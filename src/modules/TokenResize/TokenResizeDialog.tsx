@@ -6,13 +6,14 @@ import EditComponentWrapper from "../Settings/EditComponentWrapper";
 
 export default class TokenResizeDialog extends DialogBase<string> {
     private moduleConfig: any;
-    private cont: () => void;
+    private cont: (moveTokens: boolean) => void;
+    private static readonly checkboxId = "r20es-token-resize-move-tokens-checkbox";
 
     constructor() {
         super(null, {height: "auto"});
     }
 
-    public show(moduleConfig: any, cont: () => void) {
+    public show(moduleConfig: any, cont: (moveTokens: boolean) => void) {
         this.moduleConfig = moduleConfig;
         this.cont = cont;
         super.internalShow();
@@ -20,7 +21,8 @@ export default class TokenResizeDialog extends DialogBase<string> {
 
     private onSubmit = (e) => {
         this.close(true);
-        this.cont();
+        const moveTokens = (document.getElementById(TokenResizeDialog.checkboxId) as HTMLInputElement).checked;
+        this.cont(moveTokens);
     };
 
     protected render() {
@@ -60,6 +62,14 @@ export default class TokenResizeDialog extends DialogBase<string> {
                             display={"Num. squares vertically"}
                             hook={this.moduleConfig}
                         />
+
+                        <span>
+                        <input type="checkbox"
+                               id={TokenResizeDialog.checkboxId}
+                               checked={this.moduleConfig.config.placeTopLeft}
+                        />
+                            <span>Position tokens in the top-left corner.</span>
+                        </span>
                     </div>
                 </DialogBody>
 
