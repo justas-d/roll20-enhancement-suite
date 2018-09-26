@@ -105,6 +105,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         );
 
         tab._addElem(widget);
+        tab._setWidgetRoot(widget);
         tabroot.appendChild(widget);
 
         return true;

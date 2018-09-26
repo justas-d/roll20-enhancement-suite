@@ -26,6 +26,8 @@ import Welcome from './modules/Welcome/Config'
 import AlternatePageToolbarMenu from './modules/AlternatePageToolbarMenu/Config'
 import TokenResize from "./modules/TokenResize/Config"
 import HidePlayerList from "./modules/HidePlayerList/Config";
+import CharacterTokenModifier from "./modules/CharacterTokenModifier/Config";
+import SeenAd from "./modules/SeenAd/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -44,6 +46,7 @@ addCfg(DuplicateButton);
 addCfg(ExposeD20);
 addCfg(InitiativeAdvanceShortcut);
 addCfg(MacroGenerator);
+addCfg(CharacterTokenModifier);
 addCfg(MacroIO);
 addCfg(MiddleClickSelect);
 addCfg(MoveCameraToToken);
@@ -51,6 +54,7 @@ addCfg(PageLoadEvent);
 addCfg(RollAndApplyHitDice);
 addCfg(Settings);
 addCfg(SheetTabApi);
+addCfg(SeenAd);
 addCfg(TableIO);
 addCfg(TokenResize);
 addCfg(TokenContextMenuApi);
