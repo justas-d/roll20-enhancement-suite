@@ -24,7 +24,6 @@ import TokenLayerDrawing from './modules/TokenLayerDrawing/Config'
 import TransparentPaper from './modules/TransparentPaper/Config'
 import Welcome from './modules/Welcome/Config'
 import AlternatePageToolbarMenu from './modules/AlternatePageToolbarMenu/Config'
-import MapIO from './modules/MapIO/Config';
 import TokenResize from "./modules/TokenResize/Config"
 import HidePlayerList from "./modules/HidePlayerList/Config";
 
@@ -46,11 +45,6 @@ addCfg(ExposeD20);
 addCfg(InitiativeAdvanceShortcut);
 addCfg(MacroGenerator);
 addCfg(MacroIO);
-
-if(typeof(build_R20ES_IS_DEV) !== "undefined" && build_R20ES_IS_DEV) {
-    addCfg(MapIO);
-}
-
 addCfg(MiddleClickSelect);
 addCfg(MoveCameraToToken);
 addCfg(PageLoadEvent);
