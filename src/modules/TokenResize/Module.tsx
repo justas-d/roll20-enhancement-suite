@@ -51,6 +51,12 @@ class TokenResizeModule extends R20Module.SimpleBase {
     private clickResizeCustom = (e) => {
 
         this.resizeDialog.show(this.getHook(), () => {
+            const config = this.getHook().config;
+            if(config.lastSquareWidth == 0 || config.lastSquareHeight == 0|| config.lastNumSquaresX == 0|| config.lastNumSquaresY == 0) {
+                alert("Invalid input: one of the values was zero.");
+                return;
+            }
+
             const objects = R20.getSelectedTokens();
             const config = this.getHook().config;
             R20.unselectTokens();
