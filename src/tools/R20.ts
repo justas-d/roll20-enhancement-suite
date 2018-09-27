@@ -3,7 +3,7 @@
 import {
     ObjectStorage, SyncObject, PlayerAttributes, Character, CanvasObject, Handout, RollableTable, InitiativeTracker,
     InitiativeData,
-    Page, IBlobObject
+    Page, IBlobObject, Campaign
 } from "roll20";
 
 namespace R20 {
@@ -34,6 +34,10 @@ namespace R20 {
         obj._getLatestBlob(blobName, ok);
         setTimeout(err, timeout);
     });
+
+    export function getCampaign(): Campaign {
+        return window.Campaign;
+    }
 
     export function getHandout(uuid: string): Handout {
         return window.Campaign.handouts.get(uuid);

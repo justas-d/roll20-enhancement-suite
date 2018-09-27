@@ -1,6 +1,8 @@
 import {R20Module} from '../../tools/R20Module'
 import {DOM} from '../../tools/DOM'
 import {SheetTab} from '../../tools/SheetTab';
+import {R20} from "../../tools/R20";
+import {Character} from 'roll20';
 
 const AuraEditor = ({name}) => {
     return (
@@ -30,11 +32,13 @@ const AuraEditor = ({name}) => {
     );
 };
 
-const BarEditor = ({name}) => {
+const BarEditor = ({name, color, _char}) => {
+    const char: Character = _char;
+
     return (
         <div>
             <label>
-                <span className="bar_color_indicator" style={{marginRight: "4px", display: "inline-block", width: "15px", height:"15px", borderRadius: "10px", backgroundColor: "#7CC48A"}}></span>
+                <span className="bar_color_indicator" style={{marginRight: "4px", display: "inline-block", width: "15px", height:"15px", borderRadius: "10px", backgroundColor: color}}></span>
                 {name}
             </label>
 
@@ -50,6 +54,9 @@ const BarEditor = ({name}) => {
 
                 <select className="bar1_link" style={{width: "125px;"}}>
                     <option value="">None</option>
+                    {char.attribs.map(a => {
+                        <option value={a.id}>{a.attributes.name}</option>
+                    })}
                 </select>
 
             </div>
@@ -69,12 +76,20 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
     }
 
     private renderWidget = () => {
+        const campaign = R20.getCampaign().attributes;
+        const char = this.sheetTab.tryGetPc();
+        if(!char) {
+            return <div>
+                "Could not find character."
+            </div>
+        }
+
         return (
             <div>
 
-                <BarEditor name="Bar 1"/>
-                <BarEditor name="Bar 2"/>
-                <BarEditor name="Bar 3"/>
+                <BarEditor name="Bar 1" color={campaign.bar1_color} _char={char}/>
+                <BarEditor name="Bar 2" color={campaign.bar2_color} _char={char}/>
+                <BarEditor name="Bar 3" color={campaign.bar3_color} _char={char}/>
 
 
                 <div className="clear" style={{height: "10px"}}></div>

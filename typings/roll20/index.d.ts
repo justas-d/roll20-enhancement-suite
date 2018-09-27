@@ -177,6 +177,9 @@ declare namespace Roll20 {
     export interface CampaignAttributes {
         turnorder: string;
         playerpageid: string;
+        bar1_color: string;
+        bar2_color: string;
+        bar3_color: string;
     }
 
     export interface Campaign extends SyncObject<CampaignAttributes> {

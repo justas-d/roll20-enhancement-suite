@@ -56,6 +56,9 @@ export class SheetTab {
             return null;
         }
 
+
+
+
         let elem = null;
         if (this._root.hasAttribute("data-characterid")) {
             elem = this._root;
@@ -64,6 +67,8 @@ export class SheetTab {
             if (!query) return null;
             elem = query[0];
         }
+
+        if(!elem) return null;
 
         const pcId = elem.getAttribute("data-characterid");
         if (!pcId) return null;
