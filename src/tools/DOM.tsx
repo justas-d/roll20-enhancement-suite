@@ -82,7 +82,7 @@ namespace DOM {
             } else if (attribId === "className") {
                 if (val && Array.isArray(val)) {
                     for (let className of val) {
-                        if(!className || className.length <= 0) continue;
+                        if (!className || className.length <= 0) continue;
 
                         elem.classList.add(className);
                     }
@@ -92,9 +92,15 @@ namespace DOM {
                         : val;
                 }
             } else if (attribId === "style") {
-                for (let elemId in val) {
-                    if (!val) continue;
-                    elem.style[elemId] = val[elemId];
+                if (typeof(val) === "string") {
+                    elem.style.cssText = val;
+                } else if(typeof(val) === "object") {
+                    for (let elemId in val) {
+                        if (!val) continue;
+                        elem.style[elemId] = val[elemId];
+                    }
+                } else {
+                    console.error(`Unknown style attribute type: ${typeof(val)}, ${val}`);
                 }
             } else if (attribId.startsWith("data")) {
                 elem.setAttribute(attribId, val);
@@ -117,7 +123,9 @@ namespace DOM {
 
         protected abstract internalRender(): HTMLElement;
 
-        public rerender = () => rerender(this.getRoot(), () => { return this.render() });
+        public rerender = () => rerender(this.getRoot(), () => {
+            return this.render()
+        });
         private setRoot = (root: HTMLElement) => this.elementRoot = root;
         public getRoot = () => this.elementRoot;
 
@@ -131,15 +139,15 @@ const SidebarSeparator = (props: any) => {
     const big = props && props.big;
     return (
         <div>
-            {big && <div className="clear" style={{ height: big }} />}
-            <hr />
-            {big && <div className="clear" style={{ height: big }} />}
+            {big && <div className="clear" style={{height: big}}/>}
+            <hr/>
+            {big && <div className="clear" style={{height: big}}/>}
         </div>
     )
 }
 
 const SidebarCategoryTitle = (props: any) => {
-    return <h3 style={{ marginBottom: "5px", marginLeft: "5px" }}></h3>
+    return <h3 style={{marginBottom: "5px", marginLeft: "5px"}}></h3>
 }
 
-export { DOM, SidebarSeparator, SidebarCategoryTitle };
+export {DOM, SidebarSeparator, SidebarCategoryTitle};
