@@ -260,10 +260,46 @@ declare namespace Roll20 {
     }
 
     export interface TokenAttributes extends MapTokenAttributes{
+        adv_fow_view_distance: string;
+        aura1_color: string;
+        aura1_radius: string;
+        aura1_square: boolean;
+        aura2_color: string;
+        aura2_radius: string;
+        aura2_square: boolean;
         bar1_link: string;
+        bar1_max: number;
+        bar1_value: number;
         bar2_link: string;
+        bar2_max: number;
+        bar2_value: number;
         bar3_link: string;
+        bar3_max: number;
+        bar3_value: number;
+        gmnotes: string;
+        height: number;
+        imgsrc: string;
+        lastmove: string;
+        layer: string;
+        left: number;
+        light_dimradius: string;
+        light_hassight: boolean;
+        light_losangle: string;
+        light_radius: string;
+        name: string;
+        page_id: string;
         represents: string;
+        rotation: number;
+        showname: boolean;
+        showplayers_aura1: boolean;
+        showplayers_aura2: boolean;
+        showplayers_bar1: boolean;
+        showplayers_bar2: boolean;
+        showplayers_bar3: boolean;
+        showplayers_name: boolean;
+        tint_color: string;
+        top: number;
+        width: number;
     }
 
     export interface Token extends SyncObject<TokenAttributes> {

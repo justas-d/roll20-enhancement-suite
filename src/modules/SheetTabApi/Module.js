@@ -43,10 +43,19 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
 
     navOnClick(e) {
 
+        const targetTabClass = e.target.getAttribute("data-tab");
+
+        const internalTabs = SheetTab._getInternalData();
+        const tab = internalTabs.tabsById[targetTabClass];
+
+        if(tab && tab.onShow) {
+            tab.onShow();
+        }
+
         this.unselectSyntheticNavs(e);
         e.target.parentNode.classList.add("active");
 
-        const targetTabClass = e.target.getAttribute("data-tab");
+
 
         this.getWidgetTabRoots(e.target).each((i, obj) => {
             obj.style.display = obj.classList.contains(targetTabClass)
@@ -101,9 +110,11 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         const tabroot = $(target.firstElementChild).find(".tab-content")[0];
         tab._setTabContentRoot(tabroot);
 
+        const renderFxResult = tab.renderFx();
+        tab.root = renderFxResult;
         const widget = (
             <div className={[this.tabStyle, tab.id, "tab-pane"]} style={{ display: "none" }}>
-                {tab.renderFx()}
+                {renderFxResult}
             </div>
         );
 

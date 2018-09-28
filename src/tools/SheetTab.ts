@@ -3,8 +3,29 @@ import {Character} from "roll20";
 
 export class InternalSheetTabData {
     public tabs: SheetTab[] = [];
+    public tabsById: {[id: string]: SheetTab} = {};
+
     public idTop: number = 0;
     public rescanFunc?: () => void = undefined;
+
+    public addTab(tab: SheetTab) {
+        this.tabs.push(tab);
+        this.tabsById[tab.id] = tab;
+    }
+
+    public removeTab(tab: SheetTab) {
+        delete this.tabsById[tab.id];
+
+        let idx = this.tabs.length;
+
+        while (idx-- > 0) {
+            const cur = this.tabs[idx];
+
+            if (cur.id === tab.id) {
+                this.tabs.splice(idx, 1);
+            }
+        }
+    }
 }
 
 export class SheetTab {
@@ -12,15 +33,18 @@ export class SheetTab {
     public name: string;
     public renderFx: () => HTMLElement;
     public id: string;
+    public onShow: (() => void) | null;
+    public root: HTMLElement = null;
 
     private _elements: HTMLElement[] = [];
-    private _root:HTMLElement;
+    private _contentRoot:HTMLElement;
 
-    private constructor(name: string, fx: () => HTMLElement, id: string) {
+    private constructor(name: string, fx: () => HTMLElement, id: string, onShow?: () => void) {
         this.name = name;
         this.renderFx = fx;
         this.id = id;
-        this._root = null;
+        this._contentRoot = null;
+        this.onShow = onShow;
     }
 
     public _addElem(el: HTMLElement) {
@@ -28,7 +52,7 @@ export class SheetTab {
     }
 
     public _setTabContentRoot(root: HTMLElement) {
-        this._root = root;
+        this._contentRoot = root;
     }
 
     public static _getInternalData(): InternalSheetTabData {
@@ -39,10 +63,10 @@ export class SheetTab {
         return window.r20es["sheetTabData"];
     }
 
-    public static add(name: string, renderFx: () => HTMLElement) {
+    public static add(name: string, renderFx: () => HTMLElement, onShow?: () => void) {
         const data = SheetTab._getInternalData();
-        let tab = new SheetTab(name, renderFx, `r20es-character-sheet-tab-${data.idTop++}`);
-        data.tabs.push(tab);
+        let tab = new SheetTab(name, renderFx, `r20es-character-sheet-tab-${data.idTop++}`, onShow);
+        data.addTab(tab);
 
         if (typeof(data.rescanFunc) === "function") {
             data.rescanFunc();
@@ -52,17 +76,17 @@ export class SheetTab {
     }
 
     public tryGetPc(): Character | null {
-        if(!this._root) {
+        if(!this._contentRoot) {
             return null;
         }
 
-        console.log(this._root);
+        console.log(this._contentRoot);
 
         let elem = null;
-        if (this._root.hasAttribute("data-characterid")) {
-            elem = this._root;
+        if (this._contentRoot.hasAttribute("data-characterid")) {
+            elem = this._contentRoot;
         } else {
-            let query = $(this._root).closest("div[data-characterid]");
+            let query = $(this._contentRoot).closest("div[data-characterid]");
             if (!query) return null;
             elem = query[0];
         }
@@ -83,14 +107,6 @@ export class SheetTab {
         this._elements = [];
 
         const data = SheetTab._getInternalData();
-        let idx = data.tabs.length;
-
-        while (idx-- > 0) {
-            const cur = data.tabs[idx];
-
-            if (cur.id === this.id) {
-                data.tabs.splice(idx, 1);
-            }
-        }
+        data.removeTab(this);
     }
 }

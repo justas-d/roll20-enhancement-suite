@@ -1,6 +1,7 @@
 namespace DOM {
     export const rerender = (root, renderFx) => {
 
+        console.log("in rerender");
         const nextTo = root.nextSibling;
         const parent = root.parentNode;
 
@@ -15,7 +16,7 @@ namespace DOM {
         }
 
         return elem;
-    }
+    };
 
     export const createElement = (type, attributes, ...children): ElementBase | HTMLElement => {
 
@@ -59,6 +60,7 @@ namespace DOM {
                         frag.appendChild(document.createTextNode(child));
                         // values that we assume are control flow related
                     } else if (child === null || child === undefined || typeof (child) === "boolean") {
+
                         console.warn(`JSX got an unrenderable child value, assuming it's control flow related: type: ${typeof (child)} value: ${child}.`);
                     } else {
                         console.error(`Unknown child type while proecssing JSX: ${child}`);
