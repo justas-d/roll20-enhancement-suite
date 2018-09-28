@@ -87,7 +87,7 @@ window.r20es.recvPluginMsg = function (e) {
         window.postMessage({ r20esLoadModules: true }, Config.appUrl);
         window.postMessage({ r20esAppWantsSync: configs }, Config.appUrl);
     }
-}
+};
 
 window.addEventListener("message", window.r20es.recvPluginMsg);
 
@@ -100,7 +100,7 @@ window.r20es.syncConfigs = function () {
     }
 
     window.postMessage({ r20esAppWantsSync: patch }, Config.appUrl);
-}
+};
 
 for (const id in window.r20es.hooks) {
     window.r20es.hooks[id].saveConfig = window.r20es.syncConfigs;
@@ -115,11 +115,11 @@ window.r20es.onAppLoad.fire = function () {
     for (let listener of window.r20es.onAppLoad.listeners) {
         safeCall(listener);
     }
-}
+};
 
 window.r20es.onAppLoad.addEventListener = function (fx) {
     window.r20es.onAppLoad.listeners.push(fx);
-}
+};
 
 window.r20es.onAppLoad.removeEventListener = function (fx) {
     let idx = window.r20es.onAppLoad.listeners.length;
@@ -127,10 +127,10 @@ window.r20es.onAppLoad.removeEventListener = function (fx) {
     while (idx-- > 0) {
         let cur = window.r20es.onAppLoad.listeners[idx];
         if (cur === fx) {
-            window.r20es.onAppLoad.listeners.splice(cur, 1);
+            window.r20es.onAppLoad.listeners.splice(idx, 1);
         }
     }
-}
+};
 
 function setIsLoadingToFalse() {
     window.r20es.isLoading = false;
@@ -147,7 +147,7 @@ window.r20es.onLoadingOverlayHide = function () {
     } else {
         alert("R20ES global state is undefined. R20ES will not function properly.");
     }
-}
+};
 
 
 window.r20es.canInstallModules = true;
@@ -165,7 +165,7 @@ window.r20es.onDocumentMouseUp = e => {
     window.r20es.keys.metaDown = (!e.metaKey && e.key && e.key === "OS")
         ? e.type === "keydown"
         : e.metaKey;
-}
+};
 
 document.addEventListener("keyup", window.r20es.onDocumentMouseUp);
 document.addEventListener("keydown", window.r20es.onDocumentMouseUp);
