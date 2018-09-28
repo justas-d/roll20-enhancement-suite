@@ -25,7 +25,7 @@ class LayerData {
 
     static getLayerData(layer: R20.CanvasLayer) {
         if (layer === R20.CanvasLayer.Map)
-            return new LayerData("#editinglayer li.choosemap", "Map Background", "MP", { red: 255, green: 255, blue: 0 });
+            return new LayerData("#editinglayer li.choosemap", "Page Background", "MP", { red: 255, green: 255, blue: 0 });
 
         else if (layer === R20.CanvasLayer.PlayerTokens)
             return new LayerData("#editinglayer li.chooseobjects", "Tokens (Player Visible)", "TK", { red: 255, green: 0, blue: 0 });

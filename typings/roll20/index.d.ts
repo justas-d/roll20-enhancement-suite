@@ -187,7 +187,7 @@ declare namespace Roll20 {
         characters: ObjectStorage<Character>;
         rollabletables: ObjectStorage<RollableTable>;
         initiativewindow: InitiativeTracker;
-        pages: ObjectStorage<Map>;
+        pages: ObjectStorage<Page>;
 
         activePage: () => Page;
     }
@@ -196,7 +196,7 @@ declare namespace Roll20 {
         page_id: string;
     }
 
-    export interface MapAttributes {
+    export interface PageAttributes {
         adv_fow_dim_reveals: boolean
         adv_fow_enabled: boolean
         adv_fow_grid_size: number
@@ -230,7 +230,7 @@ declare namespace Roll20 {
         zorder: string[]; // comma separated list of token ids
     }
 
-    export interface Map extends SyncObject<MapAttributes> {
+    export interface Page extends SyncObject<PageAttributes> {
         thepaths: ObjectStorage<PathToken>;
         thegraphics: ObjectStorage<Token>;
         thetexts: ObjectStorage<TextToken>;
@@ -286,6 +286,9 @@ declare namespace Roll20 {
         light_hassight: boolean;
         light_losangle: string;
         light_radius: string;
+        light_angle: string;
+        light_otherplayers: boolean;
+        light_multiplier: string;
         name: string;
         page_id: string;
         represents: string;
@@ -297,6 +300,12 @@ declare namespace Roll20 {
         showplayers_bar2: boolean;
         showplayers_bar3: boolean;
         showplayers_name: boolean;
+        playersedit_aura1: boolean;
+        playersedit_aura2: boolean;
+        playersedit_bar1: boolean;
+        playersedit_bar2: boolean;
+        playersedit_bar3: boolean;
+        playersedit_name: boolean;
         tint_color: string;
         top: number;
         width: number;
@@ -400,22 +409,14 @@ declare namespace Roll20 {
         model: Character;
         collection: ObjectStorage<Character>
     }
-
-    export interface PageAttributes {
-        width: number; // in squares
-        height: number; // in squares
-        scale_number: number;
-        scale_units: string;
-    }
-
-    export interface Page extends SyncObject<PageAttributes> {
-
-    }
-
     export interface Canvas {
         macros
         getObjects: () => CanvasObject[];
         containsPoint: (e: MouseEvent, obj: CanvasObject) => boolean;
+    }
+
+    export interface Utils {
+        setupAvatar: (element: JQuery<any>, parentObject: any) => void;
     }
 
     export interface D20 {
@@ -424,6 +425,7 @@ declare namespace Roll20 {
         token_editor: TokenEditor;
         textchat: Chat;
         player_settings: PlayerSettings;
+        utils: Utils;
     }
 
     export interface ObjectStorage<T> {

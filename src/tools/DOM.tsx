@@ -1,7 +1,6 @@
 namespace DOM {
     export const rerender = (root, renderFx) => {
 
-        console.log("in rerender");
         const nextTo = root.nextSibling;
         const parent = root.parentNode;
 
@@ -101,7 +100,7 @@ namespace DOM {
                         if (!val) continue;
                         elem.style[elemId] = val[elemId];
                     }
-                } else {
+                } else if(typeof(val) !== "undefined"){
                     console.error(`Unknown style attribute type: ${typeof(val)}, ${val}`);
                 }
             } else if (attribId.startsWith("data")) {

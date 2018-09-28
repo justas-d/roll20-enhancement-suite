@@ -1,41 +1,56 @@
 import {R20Module} from '../../tools/R20Module'
-import {DOM, DOM} from '../../tools/DOM'
-import {SheetTab} from '../../tools/SheetTab';
+import {DOM} from '../../tools/DOM'
+import {SheetTab, SheetTabSheetInstanceData} from '../../tools/SheetTab';
 import {R20} from "../../tools/R20";
 import {Character, Token, TokenAttributes} from 'roll20';
 import getBlob = R20.getBlob;
 
-const AuraEditor = ({name}) => {
+const AuraEditor = ({tokenAttribs, name, index}) => {
+    const radius = `aura${index}_radius`;
+    const color = `aura${index}_color`;
+    const square = `aura${index}_square`;
+
     return (
         <div className="inlineinputs" style={{marginTop: "5px"}}>
             <b>{name}</b>
 
-            <input className="aura1_radius" type="text"/>
+            <InputWrapper propName={radius} type="text" token={tokenAttribs}/>
 
             <span style={{marginRight: "16px"}}>
             ft.
             </span>
 
             <span style={{marginRight: "16px"}}>
-                <input type="color"/>
+                <ColorWidget propName={color} token={tokenAttribs}/>
             </span>
 
             <span>
-                <input className="aura1_square" type="checkbox"/>
+                <InputWrapper propName={square} type="checkbox" token={tokenAttribs}/>
                 Square
             </span>
         </div>
     );
 };
 
-const BarEditor = ({name, color, _char}) => {
-    const char: Character = _char;
+const BarEditor = ({name, color, character, tokenAttribs, index}) => {
+    const char: Character = character;
+    const value = `bar${index}_value`;
+    const max = `bar${index}_max`;
+    const link = `bar${index}_link`;
+
+    const selectWidget = (
+        <select value={tokenAttribs[link]} style={{width: "125px;"}}>
+            <option value="">None</option>
+            {char.attribs.map(a => <option value={a.id}>{a.attributes.name}</option>)}
+        </select>
+    );
+
+    setTokenAttributeDataKey(selectWidget, link);
 
     return (
         <div className="inlineinputs" style={{marginTop: "5px", marginBottom: "5px"}}>
 
             <b>
-
                 {name}
                 <span className="bar_color_indicator" style={{
                     marginLeft: "4px",
@@ -47,41 +62,101 @@ const BarEditor = ({name, color, _char}) => {
                 }}/>
             </b>
 
-            <input className="bar1_value" type="text"/>
+            <InputWrapper propName={value} type="text" token={tokenAttribs}/>
             /
-            <input className="bar1_max" type="text"/>
+            <InputWrapper propName={max} type="text" token={tokenAttribs}/>
 
-
-            <select className="bar1_link" style={{width: "125px;"}}>
-                <option value="">None</option>
-                {char.attribs.map(a => <option value={a.id}>{a.attributes.name}</option>)}
-            </select>
+            {selectWidget}
 
         </div>
 
     )
 };
 
-const TokenPermission = ({name}) => {
+const TokenPermission = ({name, tokenAttribs, propName}) => {
+    const seeProp = `showplayers_${propName}`;
+    const editProp = `playersedit_${propName}`;
     return (
         <div className="inlineinputs">
 
             <b style={{display: "inline-block", width: "60px"}}>{name}</b>
 
             <span style={{marginRight: "16px"}}>
-                <input className="showplayers_name" type="checkbox"/>
+                <InputWrapper defaultVal={false} propName={seeProp} type="checkbox" token={tokenAttribs}/>
                 See
             </span>
 
             <span>
-                <input className="playersedit_name" type="checkbox"/>
+                <InputWrapper defaultVal={true} propName={editProp} type="checkbox" token={tokenAttribs}/>
                 Edit
             </span>
         </div>
     )
 };
 
-const LightSettings = ({}) => {
+const setTokenAttributeDataKey = (element: HTMLElement, value: string) => {
+    element.setAttribute(tokenAttributeDataKey, value);
+};
+
+const tokenAttributeDataKey = "data-token-prop-name";
+
+const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) => {
+    const t: TokenAttributes = token;
+    const widget = <input {...otherProps} type={type}/> as HTMLInputElement;
+
+    setTokenAttributeDataKey(widget, propName);
+
+    let valProp = null;
+    let valDefault = null;
+
+    switch (type) {
+        case "checkbox":
+            valProp = "checked";
+            valDefault = false;
+            break;
+        case "color":
+        case "text":
+            valProp = "value";
+            valDefault = "";
+            widget.value = t[propName] || defaultVal || "";
+            break;
+        default:
+            console.error(`Unknown input type ${type}`);
+    }
+
+    if (valProp) {
+        const tokenVal = t[propName];
+
+        const val = typeof(tokenVal) === "undefined"
+            ? (typeof(defaultVal) === "undefined" ? valDefault : defaultVal)
+            : tokenVal;
+
+        widget[valProp] = val
+    }
+
+    return widget;
+};
+
+const ColorWidget = ({propName, token}) => {
+
+    const input = <InputWrapper propName={propName} type="color" token={token}/> as HTMLInputElement;
+    const onClick = (e: Event) => {
+        e.stopPropagation();
+        input.value = (e.target as any).value;
+    };
+    const button = <button onClick={onClick} value="transparent" className="btn">Clear</button>;
+
+    setTokenAttributeDataKey(button, propName);
+
+    return (
+        <span style={{display: "inline-grid", gridTemplateColumns: "4fr 1fr"}}>
+            {input}
+            {button}
+        </span>
+    );
+};
+
+const LightSettings = ({tokenAttribs}) => {
     return (
         <div className="span6">
 
@@ -89,12 +164,11 @@ const LightSettings = ({}) => {
 
             <div className="inlineinputs" style="margin-bottom: 16px;">
 
-
-                <input className="light_radius" type="text"/>
+                <InputWrapper propName="light_radius" type="text" token={tokenAttribs}/>
                 ft.
-                <input className="light_dimradius" type="text"/>
+                <InputWrapper propName="light_dimradius" type="text" token={tokenAttribs}/>
                 ft.
-                <input className="light_angle" placeholder="360" type="text"/>
+                <InputWrapper propName="light_angle" type="text" token={tokenAttribs}/>
 
                 <span style="font-size: 2.0em;">°</span>
 
@@ -104,8 +178,9 @@ const LightSettings = ({}) => {
                 </div>
 
                 <div style="margin-left: 7px;">
-                    <input className="light_otherplayers" type="checkbox" style={{marginRight: "8px"}}/>
-                    Visible by observers?
+                    <InputWrapper propName="light_otherplayers" type="checkbox" style={{marginRight: "8px"}}
+                                  token={tokenAttribs}/>
+                    Is emitting light?
                 </div>
 
             </div>
@@ -117,12 +192,12 @@ const LightSettings = ({}) => {
 
                     <div className="inlineinputs" style="margin-bottom: 16px;">
 
-                        <input className="light_losangle" placeholder="360" type="text"/>
-                        <span style="font-size: 2.0em;">
-                    °
-                </span>
+                        <InputWrapper propName="light_losangle" type="text" placeholder="360"
+                                      token={tokenAttribs}/>
+                        <span style="font-size: 2.0em;">°</span>
 
-                        <input className="light_multiplier" placeholder="1.0" style="margin-right: 10px;" type="text"/>
+                        <InputWrapper propName="light_multiplier" type="text" placeholder="1.0"
+                                      token={tokenAttribs}/>
 
 
                         <div style="color: #888; padding-left: 5px; margin-bottom: 8px">
@@ -130,7 +205,8 @@ const LightSettings = ({}) => {
                         </div>
 
                         <div style="margin-left: 7px;">
-                            <input className="light_hassight" type="checkbox" style={{marginRight: "8px"}}/>
+                            <InputWrapper propName="light_hassight" type="checkbox" style={{marginRight: "8px"}}
+                                          token={tokenAttribs}/>
                             Can see?
                         </div>
                     </div>
@@ -140,7 +216,8 @@ const LightSettings = ({}) => {
                     <h4>Advanced Fog of War</h4>
 
                     <div className="inlineinputs" style="margin-top: 5px; margin-bottom: 16px;">
-                        <input className="advfow_viewdistance" type="text"/> ft.
+                        <InputWrapper propName="adv_fow_view_distance" type="text"
+                                      token={tokenAttribs}/>
                         <div style="color: #888; padding-left: 5px;">View Distance</div>
                     </div>
                 </div>
@@ -151,41 +228,55 @@ const LightSettings = ({}) => {
     )
 };
 
+class TabInstanceData {
+    public token: TokenAttributes = null;
+    public char: Character = null;
+}
+
 class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
-    private sheetTab: SheetTab = null;
-    private token: TokenAttributes = null;
-    private char: Character = null;
+    private sheetTab: SheetTab<TabInstanceData> = null;
 
     constructor() {
         super(__dirname);
     }
 
-    private onShowTab = () => {
-        this.token = null;
-        this.char = this.sheetTab.tryGetPc();
+    private getUserData(instance: SheetTabSheetInstanceData<TabInstanceData>) {
+        if (!instance.userData) instance.userData = new TabInstanceData();
+        return instance.userData;
+    }
 
-        if (!this.char) return;
+    private onShowTab = (instance: SheetTabSheetInstanceData<TabInstanceData>) => {
+        const data = this.getUserData(instance);
+        console.log("show");
 
-        (R20.getBlob(this.char, "defaulttoken")
+
+        if (data.token && data.char) return;
+
+        data.char = instance.tryGetPc();
+        console.log(data);
+
+        if (!data.char) return;
+
+        (R20.getBlob(data.char, "defaulttoken")
             .then((jsonToken) => {
-                this.token = JSON.parse(jsonToken);
+                data.token = JSON.parse(jsonToken);
             }) as any)
             .finally(() => {
-                DOM.rerender(this.sheetTab.root, this.renderWidget);
-
+                instance.rerender();
             })
     };
 
-    private renderWidget = () => {
+    private renderWidget = (instance: SheetTabSheetInstanceData<TabInstanceData>) => {
         const campaign = R20.getCampaign().attributes;
+        const data = this.getUserData(instance);
 
-        if (!this.char) {
+        if (!data.char) {
             return <div>
                 "Could not find character."
             </div>
         }
 
-        if (!this.token) {
+        if (!data.token) {
             return (<div>
                 "Failed to get default token. You might not have permissions to do so.
             </div>);
@@ -196,8 +287,95 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
             marginLeft: "16px"
         };
 
-        return (
+        const onChange = (e: Event) => {
+            e.stopPropagation();
+            const target = e.target as HTMLInputElement;
+            const attribName = target.getAttribute(tokenAttributeDataKey);
+            if (!attribName) return;
 
+            let val: any = target.value;
+
+            switch (target.type) {
+                case "checkbox": {
+                    val = target.checked;
+                    break;
+                }
+            }
+
+            console.log(`Change: ${attribName} -> ${val}`);
+            data.token[attribName] = val;
+        };
+
+        const onRefresh = (e: Event) => {
+            e.stopPropagation();
+
+            if (confirm("You will lose any unsaved changes. Proceed?")) {
+                data.char = null;
+                data.token = null;
+                this.onShowTab(instance);
+            }
+        };
+
+        const onClickUpdateAllTokens = (e: Event) => {
+            e.stopPropagation();
+            if (!confirm("Are you sure you want to do this? " +
+                "This will update ALL tokens in this campaign that represent this character." +
+                "" +
+                "If you have changed the avatar, a refresh is required to see the changes."))
+                return;
+            console.log(data.token);
+
+            const pages = R20.getAllPages();
+            for (const page of pages) {
+                for (const token of page.thegraphics.models) {
+                    if (!token.character) continue;
+                    if (token.character.id !== data.char.id) continue;
+
+                    token.save(data.token);
+                }
+            }
+        };
+
+        const onUpdateDefaultToken = () => {
+            const rawToken = JSON.stringify(data.token);
+            data.char.updateBlobs({
+                defaulttoken: rawToken
+            });
+        };
+
+        const setFromUrl = (e: Event) => {
+            e.stopPropagation();
+            const url = prompt("Image URL.", "www.example.com/image.png");
+            if (!url) return;
+
+            data.token.imgsrc = url;
+            instance.rerender();
+        };
+
+        const removeAvatar = (e: Event) => {
+            e.stopPropagation();
+            data.token.imgsrc = "/images/character.png";
+            instance.rerender();
+        };
+
+        const onExternalAvatarDrop = (e: DragEvent) => {
+            let url = null;
+            try {
+                const data = e.dataTransfer.getData('text/html');
+                // matches src="": 1st group is the inside of those quotes.
+                const regex = /src="?([^"\s]+)"?\s*/;
+                url = regex.exec(data)[1];
+            } catch(err) {
+                alert(`Drag & Drop image failed: ${err}`);
+            }
+
+            if(!url) return;
+
+            data.token.imgsrc = url;
+            instance.rerender();
+        };
+
+        const widget = (
             <div>
                 <h3 style={{marginBottom: "16px"}}>Token Editor</h3>
                 <div style={{borderBottom: "1px solid lightgray"}}/>
@@ -207,64 +385,122 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                         <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
 
-                            <div style={{padding: "8px"}}>
-                                <img src={this.token.imgsrc} alt="token image"/>
+                            <div onDrop={onExternalAvatarDrop} className="r20es-token-img-hover" style={{margin: "16px", position: "relative"}}>
+
+                                <div className="r20es-hover-block"
+                                     style={{position: "absolute", bottom: "0", right: "0", left: "0", top: "0"}}>
+                                    <button onClick={removeAvatar} className="btn" style={{marginBottom: "8px"}}>Remove
+                                        Image
+                                    </button>
+                                    <button onClick={setFromUrl} className="btn">Set from URL</button>
+                                </div>
+
+                                <img src={data.token.imgsrc} alt="token image"/>
+
                             </div>
 
                             <div style={{marginRight: "16px"}}>
                                 <div>Name</div>
-                                <input className="name" style={{width: "210px"}} type="text"/>
 
-                                <input style={{marginTop: "8px", marginRight: "4px"}} type="checkbox"/>
-                                <span>Show nameplate?</span>
+                                <InputWrapper propName="name" type="text" style={{width: "210px"}}
+                                              token={data.token}/>
+
+                                <div>
+                                    <InputWrapper propName="showname" type="checkbox"
+                                                  style={{marginTop: "8px", marginRight: "4px"}}
+                                                  token={data.token}/>
+                                    <span>Show nameplate?</span>
+                                </div>
 
                                 <div>Tint Color</div>
-                                <input type="color"/>
+                                <ColorWidget propName={"tint_color"} token={data.token}/>
                             </div>
+                        </div>
+
+                        <div>
+                            <span style={{display: "inline-block", marginRight: "4px"}}>Width (px)</span>
+                            <InputWrapper propName="width" style={{width: "32px", marginRight: "12px"}} type="text"
+                                          token={data.token}/>
+
+                            <span style={{display: "inline-block", marginRight: "4px"}}>Height (px)</span>
+                            <InputWrapper propName="height" style={{width: "32px"}} type="text" token={data.token}/>
+
                         </div>
 
                         <hr/>
 
-                        <LightSettings/>
+                        <LightSettings tokenAttribs={data.token}/>
 
                     </div>
 
                     <div style={{borderLeft: "1px solid lightgray"}}>
                         <div style={indentStyle}>
-                            <BarEditor name="Bar 1" color={campaign.bar1_color} _char={this.char}/>
-                            <BarEditor name="Bar 2" color={campaign.bar2_color} _char={this.char}/>
-                            <BarEditor name="Bar 3" color={campaign.bar3_color} _char={this.char}/>
+                            <BarEditor name="Bar 1" color={campaign.bar1_color} tokenAttribs={data.token}
+                                       character={data.char} index={1}/>
+                            <BarEditor name="Bar 2" color={campaign.bar2_color} tokenAttribs={data.token}
+                                       character={data.char} index={2}/>
+                            <BarEditor name="Bar 3" color={campaign.bar3_color} tokenAttribs={data.token}
+                                       character={data.char} index={3}/>
                         </div>
                         <hr/>
 
                         <div style={indentStyle}>
-                            <AuraEditor name="Aura 1"/>
-                            <AuraEditor name="Aura 2"/>
+                            <AuraEditor name="Aura 1" tokenAttribs={data.token} index={1}/>
+                            <AuraEditor name="Aura 2" tokenAttribs={data.token} index={2}/>
                         </div>
 
                         <hr/>
 
                         <div style={indentStyle}>
-                            <TokenPermission name="Name"/>
-                            <TokenPermission name="Bar 1"/>
-                            <TokenPermission name="Bar 2"/>
-                            <TokenPermission name="Bar 3"/>
-                            <TokenPermission name="Aura 1"/>
-                            <TokenPermission name="Aura 2"/>
+                            <TokenPermission name="Name" propName="name"
+                                             tokenAttribs={data.token}/>
+                            <TokenPermission name="Bar 1" propName="bar1"
+                                             tokenAttribs={data.token}/>
+                            <TokenPermission name="Bar 2" propName="bar2"
+                                             tokenAttribs={data.token}/>
+                            <TokenPermission name="Bar 3" propName="bar3"
+                                             tokenAttribs={data.token}/>
+                            <TokenPermission name="Aura 1" propName="aura1"
+                                             tokenAttribs={data.token}/>
+                            <TokenPermission name="Aura 2" propName="aura2"
+                                             tokenAttribs={data.token}/>
                         </div>
 
                     </div>
                 </div>
 
+                <span style="float: left">
+                    <button onClick={onRefresh} className="btn btn-danger">Refresh</button>
+                </span>
+
                 <span style="float: right">
-                    <button className="btn" style="margin-right: 8px">Update default token</button>
-                    <button className="btn">Update all tokens</button>
+                    <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn btn-info">Update all tokens</button>
+                    <button onClick={onUpdateDefaultToken} className="btn btn-primary">Update default token</button>
                 </span>
             </div>
         );
-    };
 
-    // <div className="clear" style={{height: "10px"}}></div>
+        $(widget).find("input, select, button").on("change", onChange).on("click", onChange);
+
+        R20.setupImageDropTarget($(widget).find(".r20es-token-img-hover"),
+            ({avatar}) => {
+                console.log(avatar);
+                data.token.imgsrc = avatar;
+            },
+            () => {
+            /*
+                Note(Justas): this callback is fired before the save callback is
+                but we need the save cb to fire first so we just delay the redraw here.
+             */
+
+                setTimeout(() => {
+                    console.log("rerender");
+                    instance.rerender()
+                }, 100);
+            });
+
+        return widget;
+    };
 
     public setup = () => {
         this.sheetTab = SheetTab.add("Token Editor", this.renderWidget, this.onShowTab);

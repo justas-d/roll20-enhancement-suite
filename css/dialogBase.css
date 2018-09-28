@@ -145,3 +145,14 @@ dialog {
     width: 100%;
     height: 100%;
 }
+
+.r20es-token-img-hover .r20es-hover-block {
+    display: none;
+}
+
+.r20es-token-img-hover:hover .r20es-hover-block{
+    padding: 4px;
+    background-color: rgba(255,255,255, 0.5);
+    border: 4px dashed black;
+    display: block;
+}

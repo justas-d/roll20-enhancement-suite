@@ -1,19 +1,20 @@
 import {R20} from "./R20";
 import {Character} from "roll20";
+import {DOM} from "./DOM";
 
 export class InternalSheetTabData {
-    public tabs: SheetTab[] = [];
-    public tabsById: {[id: string]: SheetTab} = {};
+    public tabs: SheetTab<any>[] = [];
+    public tabsById: {[id: string]: SheetTab<any>} = {};
 
     public idTop: number = 0;
     public rescanFunc?: () => void = undefined;
 
-    public addTab(tab: SheetTab) {
+    public addTab(tab: SheetTab<any>) {
         this.tabs.push(tab);
         this.tabsById[tab.id] = tab;
     }
 
-    public removeTab(tab: SheetTab) {
+    public removeTab(tab: SheetTab<any>) {
         delete this.tabsById[tab.id];
 
         let idx = this.tabs.length;
@@ -28,65 +29,32 @@ export class InternalSheetTabData {
     }
 }
 
-export class SheetTab {
+export class SheetTabSheetInstanceData<T> {
+    public root: HTMLElement;
+    public userData: T;
+    public parent: SheetTab<T>;
+    public contentRoot: HTMLElement;
 
-    public name: string;
-    public renderFx: () => HTMLElement;
-    public id: string;
-    public onShow: (() => void) | null;
-    public root: HTMLElement = null;
-
-    private _elements: HTMLElement[] = [];
-    private _contentRoot:HTMLElement;
-
-    private constructor(name: string, fx: () => HTMLElement, id: string, onShow?: () => void) {
-        this.name = name;
-        this.renderFx = fx;
-        this.id = id;
-        this._contentRoot = null;
-        this.onShow = onShow;
+    constructor(parent: SheetTab<T>) {
+        this.parent = parent;
     }
 
-    public _addElem(el: HTMLElement) {
-        this._elements.push(el);
-    }
-
-    public _setTabContentRoot(root: HTMLElement) {
-        this._contentRoot = root;
-    }
-
-    public static _getInternalData(): InternalSheetTabData {
-        if (!("sheetTabData" in window.r20es)) {
-            window.r20es["sheetTabData"] = new InternalSheetTabData();
-        }
-
-        return window.r20es["sheetTabData"];
-    }
-
-    public static add(name: string, renderFx: () => HTMLElement, onShow?: () => void) {
-        const data = SheetTab._getInternalData();
-        let tab = new SheetTab(name, renderFx, `r20es-character-sheet-tab-${data.idTop++}`, onShow);
-        data.addTab(tab);
-
-        if (typeof(data.rescanFunc) === "function") {
-            data.rescanFunc();
-        }
-        
-        return tab;
+    public rerender() {
+        this.root = DOM.rerender(this.root, () => this.parent.renderFx(this));
     }
 
     public tryGetPc(): Character | null {
-        if(!this._contentRoot) {
+        if(!this.contentRoot) {
             return null;
         }
 
-        console.log(this._contentRoot);
+        console.log(this.contentRoot);
 
         let elem = null;
-        if (this._contentRoot.hasAttribute("data-characterid")) {
-            elem = this._contentRoot;
+        if (this.contentRoot.hasAttribute("data-characterid")) {
+            elem = this.contentRoot;
         } else {
-            let query = $(this._contentRoot).closest("div[data-characterid]");
+            let query = $(this.contentRoot).closest("div[data-characterid]");
             if (!query) return null;
             elem = query[0];
         }
@@ -100,6 +68,62 @@ export class SheetTab {
         if (!pc) return null;
 
         return pc;
+    }
+}
+
+export class SheetTab<T> {
+
+    public name: string;
+    public renderFx: (instance?: SheetTabSheetInstanceData<T>) => HTMLElement;
+    public id: string;
+    public onShow: ((instance?: SheetTabSheetInstanceData<T>) => void) | null;
+    public byIdSheetData: {[charId: string]: SheetTabSheetInstanceData<T>} = {};
+
+    private _elements: HTMLElement[] = [];
+    private _contentRoot:HTMLElement;
+
+    private constructor(name: string,
+                        fx: (instance?: SheetTabSheetInstanceData<T>) => HTMLElement,
+                        id: string,
+                        onShow?: (instance?: SheetTabSheetInstanceData<T>) => void) {
+        this.name = name;
+        this.renderFx = fx;
+        this.id = id;
+        this._contentRoot = null;
+        this.onShow = onShow;
+    }
+
+    public getInstanceData(charId: string): SheetTabSheetInstanceData<T> {
+        if(!(charId in this.byIdSheetData)) {
+            this.byIdSheetData[charId] = new SheetTabSheetInstanceData(this);
+        }
+        return this.byIdSheetData[charId];
+    }
+
+    public _addElem(el: HTMLElement) {
+        this._elements.push(el);
+    }
+
+    public static _getInternalData(): InternalSheetTabData {
+        if (!("sheetTabData" in window.r20es)) {
+            window.r20es["sheetTabData"] = new InternalSheetTabData();
+        }
+
+        return window.r20es["sheetTabData"];
+    }
+
+    public static add<T>(name: string,
+                      renderFx: (instance?: SheetTabSheetInstanceData<T>) => HTMLElement,
+                      onShow?: (instance?: SheetTabSheetInstanceData<T>) => void) {
+        const data = SheetTab._getInternalData();
+        let tab = new SheetTab(name, renderFx, `r20es-character-sheet-tab-${data.idTop++}`, onShow);
+        data.addTab(tab);
+
+        if (typeof(data.rescanFunc) === "function") {
+            data.rescanFunc();
+        }
+        
+        return tab;
     }
 
     public dispose() {

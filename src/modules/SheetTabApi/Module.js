@@ -2,6 +2,7 @@ import { R20Module } from '../../tools/R20Module'
 import { DOM } from '../../tools/DOM'
 import { SheetTab } from '../../tools/SheetTab';
 
+const charIdAttribute = "data-characterid";
 
 class SheetTabApiModule extends R20Module.OnAppLoadBase {
     constructor() {
@@ -42,20 +43,24 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
     }
 
     navOnClick(e) {
-
         const targetTabClass = e.target.getAttribute("data-tab");
 
         const internalTabs = SheetTab._getInternalData();
         const tab = internalTabs.tabsById[targetTabClass];
 
+        const charRoot = $(e.target).closest(`[${charIdAttribute}]`)[0];
+        console.log(charRoot);
+        let tabInstance = null;
+        if(charRoot && charRoot.hasAttribute(charIdAttribute)) {
+            tabInstance = tab.getInstanceData(charRoot.getAttribute(charIdAttribute))
+        }
+
         if(tab && tab.onShow) {
-            tab.onShow();
+            tab.onShow(tabInstance);
         }
 
         this.unselectSyntheticNavs(e);
         e.target.parentNode.classList.add("active");
-
-
 
         this.getWidgetTabRoots(e.target).each((i, obj) => {
             obj.style.display = obj.classList.contains(targetTabClass)
@@ -76,9 +81,11 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
 
         if (!target) return false;
         if (!target.className) return false;
-        if (!target.hasAttribute("data-characterid")) return false;
+        if (!target.hasAttribute(charIdAttribute)) return false;
         if (target.getElementsByClassName(tab.id).length > 0) return;
         if ($(target).find(".charactereditor").length > 0) return;
+
+        const characterId = target.getAttribute(charIdAttribute);
 
         const nav = (
             <li>
@@ -106,12 +113,14 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         });
 
 
+        const tabInstanceData = tab.getInstanceData(characterId);
 
         const tabroot = $(target.firstElementChild).find(".tab-content")[0];
-        tab._setTabContentRoot(tabroot);
+        const renderFxResult = tab.renderFx(tabInstanceData);
 
-        const renderFxResult = tab.renderFx();
-        tab.root = renderFxResult;
+        tabInstanceData.contentRoot = tabroot;
+        tabInstanceData.root = renderFxResult;
+
         const widget = (
             <div className={[this.tabStyle, tab.id, "tab-pane"]} style={{ display: "none" }}>
                 {renderFxResult}

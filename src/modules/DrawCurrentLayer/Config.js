@@ -7,7 +7,7 @@ export default MakeConfig(__dirname, {
     description: "Displays the current edit layer and whether the select tool is active.",
     media: {
         "gm_bg.png": "GM layer identifier", 
-        "map_bg.png": "Map layer identitifer", 
+        "map_bg.png": "Page layer identitifer",
         "tokens_bg.png": "Player token layer identifier"
     },
     category: Category.canvas,

@@ -23,6 +23,20 @@ namespace R20 {
         Lighting = "walls",
     }
 
+    export function setupImageDropTarget(element: JQuery<any>,
+                                         saveCallback: ({avatar}: {avatar: string}) => void,
+                                         updateModelCallback: () => void) {
+
+        const r20AvatarContext: any = {
+            model: {
+                save: saveCallback
+            },
+            updateModel: updateModelCallback
+        };
+
+        window.d20.utils.setupAvatar(element, r20AvatarContext);
+    }
+
     export function setCanvasObjectLocation(obj: CanvasObject, left: number, top: number) {
         obj.model.save({
             top: top,
@@ -60,6 +74,10 @@ namespace R20 {
 
     export function getAllCharacters(): Character[] {
         return window.Campaign.characters.models;
+    }
+
+    export function getAllPages(): Page[] {
+        return window.Campaign.pages.models;
     }
 
     export function createRollableTable(initialAttributes): RollableTable {
