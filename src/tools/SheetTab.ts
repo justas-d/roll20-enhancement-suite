@@ -27,7 +27,7 @@ export class SheetTab {
         this._elements.push(el);
     }
 
-    public _setWidgetRoot(root: HTMLElement) {
+    public _setTabContentRoot(root: HTMLElement) {
         this._root = root;
     }
 
@@ -56,8 +56,7 @@ export class SheetTab {
             return null;
         }
 
-
-
+        console.log(this._root);
 
         let elem = null;
         if (this._root.hasAttribute("data-characterid")) {

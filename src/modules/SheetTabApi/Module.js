@@ -97,7 +97,10 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         });
 
 
+
         const tabroot = $(target.firstElementChild).find(".tab-content")[0];
+        tab._setTabContentRoot(tabroot);
+
         const widget = (
             <div className={[this.tabStyle, tab.id, "tab-pane"]} style={{ display: "none" }}>
                 {tab.renderFx()}
@@ -105,7 +108,6 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         );
 
         tab._addElem(widget);
-        tab._setWidgetRoot(widget);
         tabroot.appendChild(widget);
 
         return true;
