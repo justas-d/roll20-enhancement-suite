@@ -6,6 +6,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
+        "changelog": "node utils/makeChangelog.js",
         "build": "webpack -w --display-error-details --progress --colors",
         "start-page": "webpack-dev-server --config webpack.config.page.js --mode development --open",
         "build-page": "webpack --config webpack.config.page.js --mode production ; node pagerender/renderPage.js",
