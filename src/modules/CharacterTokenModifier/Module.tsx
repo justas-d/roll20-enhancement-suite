@@ -4,6 +4,7 @@ import {SheetTab, SheetTabSheetInstanceData} from '../../tools/SheetTab';
 import {R20} from "../../tools/R20";
 import {Character, Token, TokenAttributes} from 'roll20';
 import getBlob = R20.getBlob;
+import {strIsNullOrEmpty} from "../../tools/MiscUtils";
 
 const AuraEditor = ({tokenAttribs, name, index}) => {
     const radius = `aura${index}_radius`;
@@ -237,6 +238,8 @@ class TabInstanceData {
     public char: Character = null;
 }
 
+const DEFAULT_AVATAR_URL = "/images/character.png";
+
 class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
     private sheetTab: SheetTab<TabInstanceData> = null;
 
@@ -263,7 +266,20 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         (R20.getBlob(data.char, "defaulttoken")
             .then((jsonToken) => {
-                data.token = JSON.parse(jsonToken);
+                if(strIsNullOrEmpty(jsonToken)) {
+                    // @ts-ignore
+                    const tkn: TokenAttributes = {
+                        imgsrc: data.char.attributes.avatar || DEFAULT_AVATAR_URL,
+                        height: 70,
+                        width: 70,
+                        name: data.char.attributes.name,
+                        represents: data.char.id,
+                    };
+
+                    data.token = tkn;
+                } else {
+                    data.token = JSON.parse(jsonToken);
+                }
             }) as any)
             .finally(() => {
                 instance.rerender();
@@ -282,7 +298,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         if (!data.token) {
             return (<div>
-                "Failed to get default token. You might not have permissions to do so.
+                Failed to get default token. You might not have permissions to do so.
             </div>);
         }
 
@@ -348,6 +364,10 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
             data.char.updateBlobs({
                 defaulttoken: rawToken
             });
+
+            data.char.save({
+                defaulttoken: new Date().getTime()
+            });
         };
 
         const setFromUrl = (e: Event) => {
@@ -361,7 +381,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         const removeAvatar = (e: Event) => {
             e.stopPropagation();
-            data.token.imgsrc = "/images/character.png";
+            data.token.imgsrc = DEFAULT_AVATAR_URL;
             instance.rerender();
         };
 
