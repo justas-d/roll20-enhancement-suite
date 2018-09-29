@@ -23,9 +23,6 @@
 
 <hr>
 
-## Similar
-* [5etools, betteR20](https://5etools.com/)
-
 ## Contributing
 Awesome, contributing is always welcome and appretiatied!
 
