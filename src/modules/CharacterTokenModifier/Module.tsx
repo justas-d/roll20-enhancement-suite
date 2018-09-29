@@ -114,11 +114,11 @@ const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) =
             valProp = "checked";
             valDefault = false;
             break;
+        case "number":
         case "color":
         case "text":
             valProp = "value";
             valDefault = "";
-            widget.value = t[propName] || defaultVal || "";
             break;
         default:
             console.error(`Unknown input type ${type}`);
@@ -127,9 +127,13 @@ const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) =
     if (valProp) {
         const tokenVal = t[propName];
 
-        const val = typeof(tokenVal) === "undefined"
+        let val = typeof(tokenVal) === "undefined"
             ? (typeof(defaultVal) === "undefined" ? valDefault : defaultVal)
             : tokenVal;
+
+        if(type === "number") {
+            val = parseInt(val, 10) || 0;
+        }
 
         widget[valProp] = val
     }
@@ -196,8 +200,8 @@ const LightSettings = ({tokenAttribs}) => {
                                       token={tokenAttribs}/>
                         <span style="font-size: 2.0em;">°</span>
 
-                        <InputWrapper propName="light_multiplier" type="text" placeholder="1.0"
-                                      token={tokenAttribs}/>
+                        <InputWrapper propName="light_multiplier" type="number" placeholder="1.0"
+                                      token={tokenAttribs} style={{width: "40px", display: "inline-block", margin: "0px 5px"}}/>
 
 
                         <div style="color: #888; padding-left: 5px; margin-bottom: 8px">
@@ -299,6 +303,9 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                 case "checkbox": {
                     val = target.checked;
                     break;
+                }
+                case "number": {
+                    val = parseInt(target.value, 10);
                 }
             }
 
@@ -419,11 +426,11 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                         <div>
                             <span style={{display: "inline-block", marginRight: "4px"}}>Width (px)</span>
-                            <InputWrapper propName="width" style={{width: "32px", marginRight: "12px"}} type="text"
+                            <InputWrapper propName="width" style={{width: "48px", marginRight: "12px"}} type="number"
                                           token={data.token}/>
 
                             <span style={{display: "inline-block", marginRight: "4px"}}>Height (px)</span>
-                            <InputWrapper propName="height" style={{width: "32px"}} type="text" token={data.token}/>
+                            <InputWrapper propName="height" style={{width: "48px"}} type="number" token={data.token}/>
 
                         </div>
 
