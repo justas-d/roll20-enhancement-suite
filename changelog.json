@@ -1,36 +1,20 @@
 {
   "info": {
-    "title": "Token Editor Update",
-    "media": "token_editor.png"
+    "title": "Token editor bug fixes",
+    "media": ""
   },
   "changes": [
     {
-      "id": "characterTokenModifier",
-      "content": "Added Token Editor: a new character sheet tab for fast token editing."
+      "id": "",
+      "content": "Fixed a typo in the token editor message for not having permissions to view the default token."
     },
     {
       "id": "",
-      "content": "Added the Hide Player List module: it hides the player list."
+      "content": "Fixed a case where the token editor would not update the default token fully."
     },
     {
       "id": "",
-      "content": "Added an option to use units instead of squares in TokenResize."
-    },
-    {
-      "id": "",
-      "content": "Added a checkbox to the TokenResize dialog for moving the current selection."
-    },
-    {
-      "id": "",
-      "content": "Fixed TokenResize allowing the resizing of tokens to a size of 0."
-    },
-    {
-      "id": "",
-      "content": "Fixed potential memory leak when disabling modules."
-    },
-    {
-      "id": "",
-      "content": "Fixed player avatars in the alternative page toolbar menu."
+      "content": "Fixed the token editor assuming the player cannot view the default token when the character simply doesn't have a default token."
     }
   ]
 }
