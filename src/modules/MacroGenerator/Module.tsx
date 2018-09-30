@@ -11,6 +11,7 @@ import { Character, CharacterAbility } from "roll20";
 import DuplicateResolveDialog from "./DuplicateResolveDialog";
 import VerifyMacrosDialog from "./VerifyMacrosDialog";
 import NoMacrosDialog from "./NoMacrosDialog";
+import lexCompare from "../../tools/LexicographicalComparator";
 
 class MacroGeneratorModule extends R20Module.SimpleBase {
     private pickerDialog: PickMacroGeneratorsDialog;
@@ -93,11 +94,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         }
 
         // sort lexicographically
-        data.sort((a, b) => {
-            if (a.name < b.name) return -1;
-            if (a.name > b.name) return 1;
-            return 0;
-        });
+        data.sort((a, b) => lexCompare(a, b, (d) => d.name));
 
         // make a by-name table
         for (const obj of data) {

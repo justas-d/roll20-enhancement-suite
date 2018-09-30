@@ -2,9 +2,10 @@ import {R20Module} from '../../tools/R20Module'
 import {DOM} from '../../tools/DOM'
 import {SheetTab, SheetTabSheetInstanceData} from '../../tools/SheetTab';
 import {R20} from "../../tools/R20";
-import {Character, Token, TokenAttributes} from 'roll20';
+import {Character, CharacterSheetAttribute, TokenAttributes} from 'roll20';
 import getBlob = R20.getBlob;
 import {strIsNullOrEmpty} from "../../tools/MiscUtils";
+import lexCompare from "../../tools/LexicographicalComparator";
 
 const AuraEditor = ({tokenAttribs, name, index}) => {
     const radius = `aura${index}_radius`;
@@ -33,6 +34,8 @@ const AuraEditor = ({tokenAttribs, name, index}) => {
     );
 };
 
+
+
 const BarEditor = ({name, color, character, tokenAttribs, index}) => {
     const char: Character = character;
     const value = `bar${index}_value`;
@@ -42,7 +45,10 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
     const selectWidget = (
         <select value={tokenAttribs[link]} style={{width: "125px;"}}>
             <option value="">None</option>
-            {char.attribs.map(a => <option value={a.id}>{a.attributes.name}</option>)}
+            {char.attribs.models
+                .sort((a: CharacterSheetAttribute, b: CharacterSheetAttribute) => lexCompare(a, b, (d: CharacterSheetAttribute) => d.attributes.name))
+                .map(a => <option value={a.id}>{a.attributes.name}</option>)
+            }
         </select>
     );
 
