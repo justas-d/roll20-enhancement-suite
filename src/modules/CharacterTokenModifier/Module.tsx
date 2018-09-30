@@ -425,7 +425,10 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                                     <button onClick={removeAvatar} className="btn" style={{marginBottom: "8px"}}>Remove
                                         Image
                                     </button>
-                                    <button onClick={setFromUrl} className="btn">Set from URL</button>
+
+                                    <button style={{marginBottom: "8px"}} onClick={setFromUrl} className="btn">Set from URL</button>
+
+                                    <div style={{backgroundColor: "rgba(255,255,255,0.5)"}}>Drag an image on me!</div>
                                 </div>
 
                                 <img src={data.token.imgsrc} alt="token image"/>
