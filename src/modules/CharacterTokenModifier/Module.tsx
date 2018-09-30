@@ -148,7 +148,7 @@ const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) =
     return widget;
 };
 
-const ColorWidget = ({propName, token}) => {
+const ColorWidget = ({propName, token}: any) => {
 
     const input = <InputWrapper propName={propName} type="color" token={token}/> as HTMLInputElement;
     const onClick = (e: Event) => {
