@@ -1,11 +1,10 @@
-import { R20Module } from "../../tools/R20Module";
-import { DOM } from "../../tools/DOM";
-import { getExtUrlFromPage, copy } from "../../tools/MiscUtils";
-import { DialogBase } from "../../tools/DialogBase";
+import {R20Module} from "../../tools/R20Module";
+import {DOM} from "../../tools/DOM";
+import {getExtUrlFromPage} from "../../tools/MiscUtils";
 import WelcomePopup from "./WelcomePopup";
-import ConfirmWorkingPopup from "./ConfirmWorkingPopup";
 import ChangelogPopup from "./ChangelogPopup";
 import {R20} from "../../tools/R20";
+import {Config} from "../../tools/Config";
 
 declare namespace build {
     export const R20ES_VERSION: string;
@@ -13,11 +12,29 @@ declare namespace build {
 
 class WelcomeModule extends R20Module.OnAppLoadBase {
     private welcome: WelcomePopup;
-    private popup: ConfirmWorkingPopup;
     private changelog: ChangelogPopup;
 
     public constructor() {
         super(__dirname);
+    }
+
+    private sendWelcomeMessage() {
+        setTimeout(() => {
+
+            const cfg = this.getHook().config;
+
+            if (cfg.showWelcomePopup) {
+                R20.saySystem(`<h2 style="color: whitesmoke">Roll20 Enhancement Suite</h2>
+R20ES has been loaded!
+<br/>
+<br/>
+Have a feature idea, issues?:
+<br/>
+<a style="color: orange" href="${Config.discordInvite}">Visit our Discord Server!</a>
+<br/>
+`);
+            }
+        }, 2000);
     }
 
     public setup() {
@@ -26,6 +43,8 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
         let elem = null;
 
         const cfg = this.getHook().config;
+
+        this.sendWelcomeMessage();
 
         console.table({
             "showChangelog": cfg.showChangelog,
@@ -39,23 +58,6 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
         } else if (cfg.showChangelog && cfg.previousVersion !== build.R20ES_VERSION) {
             this.changelog = new ChangelogPopup();
             elem = this.changelog.render();
-        } else if (cfg.showWelcomePopup) {
-            this.popup = new ConfirmWorkingPopup();
-            elem = this.popup.render();
-        }
-
-        if(!cfg.hasShownDiscordPoll) {
-            this.setConfigValue("hasShownDiscordPoll", true);
-
-
-            setTimeout(() =>{
-                R20.saySystem(`<h2>R20ES - Discord Server</h2>
-<hr/>
-Would you be interested in joining a R20ES Discord server?
-<br/>
-<br/>
-<a style="color: orange" href="https://www.strawpoll.me/16480327">Click here to anwser</a>`);
-            }, 1000);
         }
 
         this.setConfigValue("previousVersion", build.R20ES_VERSION);
@@ -68,7 +70,6 @@ Would you be interested in joining a R20ES Discord server?
     public dispose() {
         super.dispose();
         if (this.welcome) this.welcome.dispose();
-        if (this.popup) this.popup.dispose();
     }
 }
 

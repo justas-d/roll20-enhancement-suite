@@ -11,7 +11,7 @@ export default MakeConfig(__dirname, {
 
     configView: {
         showWelcomePopup: {
-            display: "Show welcome popup",
+            display: "Show welcome message.",
             type: ConfigViews.Checkbox
         },
 

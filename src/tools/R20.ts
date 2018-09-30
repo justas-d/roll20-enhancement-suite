@@ -272,7 +272,17 @@ namespace R20 {
     }
 
     export function saySystem(content: string) {
-        saySystemRaw(`<span class='r20es-system-chat'>${content}</span>`)
+        saySystemRaw(`<span style="background: rgba(6,26,45,255);
+    color: whitesmoke;
+    border: none;
+    display: inline-block;
+    padding: 8px;
+    margin: -15px -5px -7px -45px;    
+    "
+>
+${content}
+</span>
+        `)
     }
 
     export function ping(left: number, top: number, playerId?: string, pageId?: string, layer?: CanvasLayer) {
