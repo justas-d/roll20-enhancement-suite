@@ -60,6 +60,7 @@ abstract class DialogBase<T> {
 
     protected internalShow() {
         removeAllChildren(this.getRoot());
+        this.success = false;
         this.internalRender();
         this.getRoot().showModal();
     }
