@@ -83,7 +83,7 @@ class MacroIOModule extends R20Module.OnAppLoadBase {
     }
 
     public setup() {
-        this.pickMacrosDialog = new PickObjectsDialog<IApplyableMacroData>();
+        this.pickMacrosDialog = new PickObjectsDialog<IApplyableMacroData>("r20es-big-dialog");
         const root = $("#deckstables")[0].firstElementChild;
         const nextTo = $("#deckstables").find("#adddeck")[0];
 

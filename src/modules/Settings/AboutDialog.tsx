@@ -17,7 +17,9 @@ export default class AboutDialog extends DialogBase<null> {
     public show = this.internalShow;
 
     constructor() {
-        super(null, null, true); // recenter workaround
+        super(null, {
+            maxHeight: "100%"
+        }, true); // recenter workaround
 
         getExtUrlFromPage("logo.svg", 5000)
             .then((url: string) => this.logoUrl = url)
