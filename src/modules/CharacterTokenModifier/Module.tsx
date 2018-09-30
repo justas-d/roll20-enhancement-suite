@@ -446,7 +446,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                                 </div>
 
                                 <div>Tint Color</div>
-                                <ColorWidget propName={"tint_color"} token={data.token}/>
+                                <ColorWidget style={{marginBottom: "8px"}} propName={"tint_color"} token={data.token}/>
                             </div>
                         </div>
 
