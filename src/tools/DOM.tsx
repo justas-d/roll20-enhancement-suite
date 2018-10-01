@@ -59,13 +59,12 @@ namespace DOM {
                         frag.appendChild(document.createTextNode(child));
                         // values that we assume are control flow related
                     } else if (child === null || child === undefined || typeof (child) === "boolean") {
-
-                        console.warn(`JSX got an unrenderable child value, assuming it's control flow related: type: ${typeof (child)} value: ${child}.`);
+                        console.log(`JSX got an unrenderable child value, assuming it's control flow related: type: ${typeof (child)} value: ${child}.`);
                     } else {
                         console.error(`Unknown child type while proecssing JSX: ${child}`);
                     }
                 }
-            }
+            };
 
             recursiveAddChildren(children);
 
