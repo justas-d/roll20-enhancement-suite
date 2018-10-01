@@ -24,7 +24,7 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
             if(data.options && data.options.mustHaveSelection && selection.length <= 0)
                 continue;
                 
-            function clicked(e) {
+            const clicked = (e) => {
                 e.stopPropagation();
 
                 R20.hideTokenRadialMenu(); 
