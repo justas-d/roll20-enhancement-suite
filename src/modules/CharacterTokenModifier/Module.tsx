@@ -35,7 +35,6 @@ const AuraEditor = ({tokenAttribs, name, index}) => {
 };
 
 
-
 const BarEditor = ({name, color, character, tokenAttribs, index}) => {
     const char: Character = character;
     const value = `bar${index}_value`;
@@ -50,12 +49,10 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
         <InputWrapper propName={max} type="text" token={tokenAttribs}/>
     ) as HTMLInputElement;
 
-    const onSelectChange = (e: Event) => {
-        e.stopPropagation();
-        const target = e.target as HTMLInputElement;
-        const attribId = target.value;
+    const updateBarValues = () => {
+        const attribId = selectWidget.value;
         const attrib = char.attribs.get(attribId);
-        if(!attrib) {
+        if (!attrib) {
             return;
         }
 
@@ -63,15 +60,39 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
         maxWidget.value = attrib.attributes.max;
     };
 
+    const sortedAttribs = char.attribs.models
+        .sort((a: CharacterSheetAttribute, b: CharacterSheetAttribute) => lexCompare(a, b, (d: CharacterSheetAttribute) => d.attributes.name));
+
     const selectWidget = (
-        <select value={tokenAttribs[link]} style={{width: "125px;"}}>
+        <select onChange={updateBarValues} value={tokenAttribs[link]} style={{width: "125px;"}}>
             <option value="">None</option>
-            {char.attribs.models
-                .sort((a: CharacterSheetAttribute, b: CharacterSheetAttribute) => lexCompare(a, b, (d: CharacterSheetAttribute) => d.attributes.name))
-                .map(a => <option value={a.id}>{a.attributes.name}</option>)
-            }
+            {sortedAttribs.map(a => <option value={a.id}>{a.attributes.name}</option>)}
         </select>
+    ) as HTMLInputElement;
+
+    const searchWidget = (
+        <input type="text" placeholder="Search for attribute"/>
     );
+
+    const attribAutocompleteData = char.attribs.models
+        .map((a) => {
+            return {
+                value: a.id,
+                label: a.attributes.name,
+            }
+        });
+
+    // @ts-ignore
+    $(searchWidget).autocomplete({
+        source: attribAutocompleteData,
+        change: (e, ui) => {
+            console.log(e);
+            console.log(ui);
+            e.value = "";
+            selectWidget.value = ui.item.value;
+            updateBarValues();
+        },
+    });
 
     setTokenAttributeDataKey(selectWidget, link);
 
@@ -94,6 +115,7 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
             {currentWidget}
             /
             {maxWidget}
+            {searchWidget}
         </div>
 
     )
@@ -157,7 +179,7 @@ const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) =
             ? (typeof(defaultVal) === "undefined" ? valDefault : defaultVal)
             : tokenVal;
 
-        if(type === "number") {
+        if (type === "number") {
             val = parseInt(val, 10) || 0;
         }
 
@@ -227,7 +249,8 @@ const LightSettings = ({tokenAttribs}) => {
                         <span style="font-size: 2.0em;">°</span>
 
                         <InputWrapper propName="light_multiplier" type="number" placeholder="1.0"
-                                      token={tokenAttribs} style={{width: "40px", display: "inline-block", margin: "0px 5px"}}/>
+                                      token={tokenAttribs}
+                                      style={{width: "40px", display: "inline-block", margin: "0px 5px"}}/>
 
 
                         <div style="color: #888; padding-left: 5px; margin-bottom: 8px">
@@ -291,7 +314,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         (R20.getBlob(data.char, "defaulttoken")
             .then((jsonToken) => {
-                if(strIsNullOrEmpty(jsonToken)) {
+                if (strIsNullOrEmpty(jsonToken)) {
                     // @ts-ignore
                     const tkn: TokenAttributes = {
                         imgsrc: data.char.attributes.avatar || DEFAULT_AVATAR_URL,
@@ -417,11 +440,11 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                 // matches src="": 1st group is the inside of those quotes.
                 const regex = /src="?([^"\s]+)"?\s*/;
                 url = regex.exec(data)[1];
-            } catch(err) {
+            } catch (err) {
                 alert(`Drag & Drop image failed: ${err}`);
             }
 
-            if(!url) return;
+            if (!url) return;
 
             data.token.imgsrc = url;
             instance.rerender();
@@ -437,7 +460,8 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                         <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
 
-                            <div onDrop={onExternalAvatarDrop} className="r20es-token-img-hover" style={{margin: "16px", position: "relative"}}>
+                            <div onDrop={onExternalAvatarDrop} className="r20es-token-img-hover"
+                                 style={{margin: "16px", position: "relative"}}>
 
                                 <div className="r20es-hover-block"
                                      style={{position: "absolute", bottom: "0", right: "0", left: "0", top: "0"}}>
@@ -445,7 +469,9 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                                         Image
                                     </button>
 
-                                    <button style={{marginBottom: "8px"}} onClick={setFromUrl} className="btn">Set from URL</button>
+                                    <button style={{marginBottom: "8px"}} onClick={setFromUrl} className="btn">Set from
+                                        URL
+                                    </button>
 
                                     <div style={{backgroundColor: "rgba(255,255,255,0.5)"}}>Drag an image on me!</div>
                                 </div>
@@ -543,10 +569,10 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                 data.token.imgsrc = avatar;
             },
             () => {
-            /*
-                Note(Justas): this callback is fired before the save callback is
-                but we need the save cb to fire first so we just delay the redraw here.
-             */
+                /*
+                    Note(Justas): this callback is fired before the save callback is
+                    but we need the save cb to fire first so we just delay the redraw here.
+                 */
 
                 setTimeout(() => {
                     console.log("rerender");
