@@ -6,6 +6,7 @@ import {Character, CharacterSheetAttribute, TokenAttributes} from 'roll20';
 import getBlob = R20.getBlob;
 import {strIsNullOrEmpty} from "../../tools/MiscUtils";
 import lexCompare from "../../tools/LexicographicalComparator";
+import isChrome from "../../tools/IsChrome";
 
 const AuraEditor = ({tokenAttribs, name, index}) => {
     const radius = `aura${index}_radius`;
@@ -475,15 +476,23 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
         ) as HTMLInputElement;
 
         if (!R20.isGM()) {
+            const addTooltip = (elem: HTMLElement) => {
+                // Note(Justas): tipsy on FF has this neat HTML tooltip that gets disabled when live is set to true.
+                // However, that tooltip doesn't work on Chrome unless live is set to true.
+                // So we set live to true if we're on Chrome.
+                // @ts-ignore
+                $(elem).tipsy({
+                    live: isChrome(),
+                });
+            };
+
             updateDefaultTokenButton.title = "Players do not have permission to update the default token but they can update already placed tokens. Try updating all tokens.";
             updateDefaultTokenButton.disabled = true;
-            // @ts-ignore
-            $(updateDefaultTokenButton).tipsy({});
+            addTooltip(updateDefaultTokenButton);
 
             refreshButton.title = "Players do not have permissions to read default character tokens.";
             refreshButton.disabled = true;
-            // @ts-ignore
-            $(refreshButton).tipsy({});
+            addTooltip(refreshButton);
 
         } else {
             updateDefaultTokenButton.classList.add("btn-primary");
