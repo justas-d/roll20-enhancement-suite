@@ -24,7 +24,7 @@
 <hr>
 
 ## Discord
-We've got a [Discord Server](https://discord.gg/WAqNY2). Come say hi, discuss new features, report issues etc.
+We've got a [Discord Server](https://discord.gg/pKxxvuM). Come say hi, discuss new features, report issues etc.
 
 ## Contributing
 Awesome, contributing is always welcome and appretiatied!
