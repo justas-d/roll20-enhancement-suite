@@ -49,21 +49,27 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
         <InputWrapper propName={max} type="text" token={tokenAttribs}/>
     ) as HTMLInputElement;
 
-    const updateBarValues = (attrib: CharacterSheetAttribute) => {
+    const updateBarValues = (id: string) => {
+
+        const attrib = char.attribs.get(id);
+        if(!attrib) return;
+
+        searchWidget.value = attrib.attributes.name;
+        setOverrideTokenData(searchWidget, attrib.id);
+
         currentWidget.value = attrib.attributes.current;
         maxWidget.value = attrib.attributes.max;
+
         onChange({target: currentWidget});
         onChange({target: maxWidget});
     };
-
-    const sortedAttribs = char.attribs.models
-        .sort((a: CharacterSheetAttribute, b: CharacterSheetAttribute) => lexCompare(a, b, (d: CharacterSheetAttribute) => d.attributes.name));
 
     const searchWidget = (
         <input type="text" style={{width: "120px"}}placeholder="Search for attribute"/>
     );
 
     const attribAutocompleteData = char.attribs.models
+        .sort((a: CharacterSheetAttribute, b: CharacterSheetAttribute) => lexCompare(a, b, (d: CharacterSheetAttribute) => d.attributes.name))
         .map((a) => {
             return {
                 value: a.id,
@@ -76,23 +82,15 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
         source: attribAutocompleteData,
         change: (e, ui) => {
             if(!ui.item) return;
-
-            const attrib = char.attribs.get(ui.item.value);
-            if(!attrib) {
-                return;
-            }
-
-            searchWidget.value = ui.item.label;
-            setOverrideTokenData(searchWidget, ui.item.value);
-            updateBarValues(attrib);
+            updateBarValues(ui.item.value);
         },
         focus: (e, ui) => {
             e.preventDefault();
-            searchWidget.value = ui.item.label;
+            updateBarValues(ui.item.value);
         },
         select: (e, ui) => {
             e.preventDefault();
-            searchWidget.value = ui.item.label;
+            updateBarValues(ui.item.value);
         }
     });
 
