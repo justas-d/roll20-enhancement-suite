@@ -42,6 +42,27 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
     const max = `bar${index}_max`;
     const link = `bar${index}_link`;
 
+    const currentWidget = (
+        <InputWrapper propName={value} type="text" token={tokenAttribs}/>
+    ) as HTMLInputElement;
+
+    const maxWidget = (
+        <InputWrapper propName={max} type="text" token={tokenAttribs}/>
+    ) as HTMLInputElement;
+
+    const onSelectChange = (e: Event) => {
+        e.stopPropagation();
+        const target = e.target as HTMLInputElement;
+        const attribId = target.value;
+        const attrib = char.attribs.get(attribId);
+        if(!attrib) {
+            return;
+        }
+
+        currentWidget.value = attrib.attributes.current;
+        maxWidget.value = attrib.attributes.max;
+    };
+
     const selectWidget = (
         <select value={tokenAttribs[link]} style={{width: "125px;"}}>
             <option value="">None</option>
@@ -69,12 +90,10 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
                 }}/>
             </b>
 
-            <InputWrapper propName={value} type="text" token={tokenAttribs}/>
-            /
-            <InputWrapper propName={max} type="text" token={tokenAttribs}/>
-
             {selectWidget}
-
+            {currentWidget}
+            /
+            {maxWidget}
         </div>
 
     )
