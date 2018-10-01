@@ -3,6 +3,7 @@ import Features from "../page/features";
 import Index from "../page/index";
 import ReactDOMServer from 'react-dom/server';
 import React from 'react';
+import Contribute from "../page/contribute";
 
 const fs = require("fs");
 const path = require("path");
@@ -43,6 +44,7 @@ ${data}
 buildPage(<About/>, "about");
 buildPage(<Features/>, "features");
 buildPage(<Index/>, "index");
+buildPage(<Contribute/>, "contribute");
 
 const addStaticFolder = (folder) => {
     fs.readdirSync(folder).forEach(f => {
