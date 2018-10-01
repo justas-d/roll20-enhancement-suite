@@ -52,7 +52,7 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     const updateBarValues = (id: string) => {
 
         const attrib = char.attribs.get(id);
-        if(!attrib) return;
+        if (!attrib) return;
 
         searchWidget.value = attrib.attributes.name;
         setOverrideTokenData(searchWidget, attrib.id);
@@ -65,7 +65,7 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     };
 
     const searchWidget = (
-        <input type="text" style={{width: "120px"}}placeholder="Search for attribute"/>
+        <input type="text" style={{width: "120px"}} placeholder="Search for attribute"/>
     );
 
     const attribAutocompleteData = char.attribs.models
@@ -81,7 +81,7 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     $(searchWidget).autocomplete({
         source: attribAutocompleteData,
         change: (e, ui) => {
-            if(!ui.item) return;
+            if (!ui.item) return;
             updateBarValues(ui.item.value);
         },
         focus: (e, ui) => {
@@ -181,7 +181,7 @@ const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) =
         const tokenVal = t[propName];
 
         let val: any = null;
-        if(typeof(tokenVal) === "undefined") {
+        if (typeof(tokenVal) === "undefined") {
             val = typeof(defaultVal) === "undefined"
                 ? valDefault
                 : defaultVal;
@@ -350,7 +350,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         if (!data.char) {
             return <div>
-                "Could not find character."
+                Could not find character. You might not have permissions to do so.
             </div>
         }
 
@@ -366,7 +366,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
         };
 
         const onChange = (e: any) => {
-            if(e.stopPropagation) e.stopPropagation();
+            if (e.stopPropagation) e.stopPropagation();
 
             const target = e.target as HTMLInputElement;
             const attribName = target.getAttribute(tokenAttributeDataKey);
@@ -386,7 +386,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
             const overrideValue = target.getAttribute(tokenAttributeValueOverrideDataKey);
             console.log(overrideValue);
-            if(overrideValue) {
+            if (overrideValue) {
                 val = overrideValue;
             }
 
@@ -467,13 +467,38 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
             instance.rerender();
         };
 
+        const refreshButton = (
+            <button onClick={onRefresh} className="btn">Refresh</button>
+        ) as HTMLInputElement;
+        const updateDefaultTokenButton = (
+            <button onClick={onUpdateDefaultToken} className="btn">Update default token</button>
+        ) as HTMLInputElement;
+
+        if (!R20.isGM()) {
+            updateDefaultTokenButton.title = "Players do not have permission to update the default token but they can update already placed tokens. Try updating all tokens.";
+            updateDefaultTokenButton.disabled = true;
+            // @ts-ignore
+            $(updateDefaultTokenButton).tipsy({});
+
+            refreshButton.title = "Players do not have permissions to read default character tokens.";
+            refreshButton.disabled = true;
+            // @ts-ignore
+            $(refreshButton).tipsy({});
+
+        } else {
+            updateDefaultTokenButton.classList.add("btn-primary");
+            refreshButton.classList.add("btn-danger");
+        }
+
+        const borderString = "1px solid lightgray";
+
         const widget = (
             <div>
                 <h3 style={{marginBottom: "16px"}}>Token Editor</h3>
-                <div style={{borderBottom: "1px solid lightgray"}}/>
+                <div style={{borderBottom: borderString}}/>
 
-                <div style={{display: "grid", gridTemplateColumns: "1fr 1.15fr"}}>
-                    <div>
+                <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
+                    <div style={{borderBottom: borderString}}>
 
                         <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
 
@@ -493,7 +518,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                                     <div style={{backgroundColor: "rgba(255,255,255,0.5)"}}>Drag an image on me!</div>
                                 </div>
 
-                                <img src={data.token.imgsrc} alt="token image"/>
+                                <img style={{width: "100%"}}src={data.token.imgsrc} alt="token image"/>
 
                             </div>
 
@@ -531,7 +556,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                     </div>
 
-                    <div style={{borderLeft: "1px solid lightgray"}}>
+                    <div style={{borderBottom: borderString, borderLeft: borderString}}>
                         <div style={indentStyle}>
                             <BarEditor name="Bar 1" color={campaign.bar1_color} tokenAttribs={data.token}
                                        character={data.char} onChange={onChange} index={1}/>
@@ -549,7 +574,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                         <hr/>
 
-                        <div style={indentStyle}>
+                        <div style={Object.assign({}, indentStyle, {marginBottom: "16px"})}>
                             <TokenPermission name="Name" propName="name"
                                              tokenAttribs={data.token}/>
                             <TokenPermission name="Bar 1" propName="bar1"
@@ -567,14 +592,17 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                     </div>
                 </div>
 
-                <span style="float: left">
-                    <button onClick={onRefresh} className="btn btn-danger">Refresh</button>
-                </span>
+                <div style={{marginTop: "16px", marginBottom: "16px"}}>
 
-                <span style="float: right">
+                    <span style="float: left">
+                        {refreshButton}
+                    </span>
+
+                    <span style="float: right">
                     <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn btn-info">Update all tokens</button>
-                    <button onClick={onUpdateDefaultToken} className="btn btn-primary">Update default token</button>
-                </span>
+                        {updateDefaultTokenButton}
+                    </span>
+                </div>
             </div>
         );
 
