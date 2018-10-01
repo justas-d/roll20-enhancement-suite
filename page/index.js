@@ -32,7 +32,7 @@ function Index() {
                     </span>
                 </div>
 
-                <NavBar />
+                <NavBar noLanding={true}/>
             </div>
         </div>
     )
