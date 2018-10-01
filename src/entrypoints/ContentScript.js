@@ -1,11 +1,12 @@
 import { Config } from "../tools/Config";
 import hooks from "../Configs";
-import { injectScript, isChrome, getBrowser } from "../tools/MiscUtils";
+import { injectScript, getBrowser } from "../tools/MiscUtils";
 import SettingsBootstrapper from "../modules/Settings/Bootstrapper"
 import { DialogFormsBootstrapper } from "../modules/Dialog/Bootstrapper";
 import { LocalStorageBootstrapper } from "../modules/LocalStorage/Bootstrapper";
 import { DOM } from "../tools/DOM";
 import showProblemPopup from "../tools/ProblemPopup";
+import isChrome from "../tools/IsChrome";
 
 console.log("====================");
 console.log("R20ES ContentScript");

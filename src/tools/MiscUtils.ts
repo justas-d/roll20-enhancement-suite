@@ -1,4 +1,3 @@
-import { detect as detectBrowser } from "detect-browser";
 import { Config } from "./Config";
 
 const copy = function(what, overrides) {
@@ -112,9 +111,6 @@ const injectScript = function(name) {
     document.head.appendChild(s);
 }
 
-const isChrome = function() {
-    return detectBrowser().name === "chrome";
-}
 
 const strIsNullOrEmpty = function(str) {
     return str === null || str === undefined || str.length <= 0 || str.trim().length <= 0;
@@ -176,7 +172,7 @@ export {
     replaceAll, findByIdAndRemove,
     copy, getTransform, getRotation,
     safeCall, removeAllChildren,
-    injectScript, isChrome, strIsNullOrEmpty,
+    injectScript, strIsNullOrEmpty,
     mapObj, createCSSElement, getExtUrlFromPage,
 };
 

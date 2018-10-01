@@ -1,6 +1,7 @@
 import configs from '../Configs'
-import { getBrowser, isChrome, replaceAll } from '../tools/MiscUtils';
+import { getBrowser, replaceAll } from '../tools/MiscUtils';
 import { Config } from '../tools/Config';
+import isChrome from "../tools/IsChrome";
 
 const getHooks = (hooks, url) => {
 

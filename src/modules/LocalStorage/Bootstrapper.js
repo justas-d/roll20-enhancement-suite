@@ -1,7 +1,7 @@
 import { R20Bootstrapper } from "../../tools/R20Bootstrapper";
 import { Config } from "../../tools/Config";
-import { getBrowser, isChrome } from "../../tools/MiscUtils";
-
+import { getBrowser } from "../../tools/MiscUtils";
+import isChrome from "../../tools/IsChrome";
 
 class LocalStorageBootstrapper extends R20Bootstrapper.Base {
     constructor() {

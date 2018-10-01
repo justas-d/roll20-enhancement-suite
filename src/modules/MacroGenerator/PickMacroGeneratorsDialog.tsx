@@ -1,5 +1,5 @@
 import { DialogBase } from "../../tools/DialogBase";
-import { isChrome } from "../../tools/MiscUtils";
+import isChrome from "../../tools/IsChrome";
 import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../tools/DialogComponents";
 import MacroGeneratorModule from "./Module";
 import { DOM } from "../../tools/DOM";
