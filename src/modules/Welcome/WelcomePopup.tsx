@@ -85,7 +85,7 @@ export default class WelcomePopup extends DOM.ElementBase {
                 <div style={{ float: "right" }}>
                     <button className="btn" style={buttonStyle} onClick={this.onClickClose}>I'll figure it out</button>
                     <button className="btn" style={buttonStyle} onClick={this.onClickLater}>Later</button>
-                    <button className="btn" style={buttonStyle} onClick={this.onClickNext}>Let's go!</button>
+                    <button className="btn btn-primary" style={buttonStyle} onClick={this.onClickNext}>Let's go!</button>
                 </div>
             </div> as any
         );

@@ -14,7 +14,7 @@ export default class ChangelogPopup extends DOM.ElementBase {
                 <h2>R20ES has been updated</h2>
                 <ChangelogWidget />
                 <input
-                    className="btn"
+                    className="btn btn-primary"
                     style={{ width: "100%", height: "auto", boxSizing: "border-box" }}
                     type="button"
                     onClick={this.dispose}

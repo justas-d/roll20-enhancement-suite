@@ -46,8 +46,8 @@ export default class PasteTableExportDialog extends DialogBase<string> {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button onClick={this.close}>Close</button>
-                        <button onClick={this.onImportClick}>Import</button>
+                        <button className="btn" onClick={this.close}>Close</button>
+                        <button className="btn btn-primary" style={{float: "right"}}onClick={this.onImportClick}>Import</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>

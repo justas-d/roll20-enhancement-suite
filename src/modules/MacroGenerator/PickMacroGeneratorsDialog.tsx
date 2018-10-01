@@ -105,7 +105,7 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
                 <DialogFooter>
                     <DialogFooterContent>
                         <button className="btn" onClick={this.close}>Close</button>
-                        <button className="btn" style={{ float: "right" }} disabled={!("elems" in data)} onClick={e => this.submit(e, checkboxes)}>OK</button>
+                        <button className="btn btn-primary" style={{ float: "right" }} disabled={!("elems" in data)} onClick={e => this.submit(e, checkboxes)}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog> as any

@@ -25,7 +25,7 @@ export default class ChangelogDialog extends DialogBase<null> {
 
                 <section style={{ margin: "20px" }}>
                     <input
-                        className="btn"
+                        className="btn btn-primary"
                         style={{ width: "100%", height: "auto", boxSizing: "border-box" }}
                         type="button"
                         onClick={this.close}
