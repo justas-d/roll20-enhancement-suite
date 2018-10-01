@@ -115,6 +115,7 @@ dialog {
     max-width: 60%;
     border: none;
     padding: 0;
+    height: auto;
 }
 
 .r20es-big-dialog {
