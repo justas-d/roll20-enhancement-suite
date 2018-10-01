@@ -35,7 +35,7 @@ const AuraEditor = ({tokenAttribs, name, index}) => {
 };
 
 
-const BarEditor = ({name, color, character, tokenAttribs, index}) => {
+const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     const char: Character = character;
     const value = `bar${index}_value`;
     const max = `bar${index}_max`;
@@ -49,29 +49,18 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
         <InputWrapper propName={max} type="text" token={tokenAttribs}/>
     ) as HTMLInputElement;
 
-    const updateBarValues = () => {
-        const attribId = selectWidget.value;
-        const attrib = char.attribs.get(attribId);
-        if (!attrib) {
-            return;
-        }
-
+    const updateBarValues = (attrib: CharacterSheetAttribute) => {
         currentWidget.value = attrib.attributes.current;
         maxWidget.value = attrib.attributes.max;
+        onChange({target: currentWidget});
+        onChange({target: maxWidget});
     };
 
     const sortedAttribs = char.attribs.models
         .sort((a: CharacterSheetAttribute, b: CharacterSheetAttribute) => lexCompare(a, b, (d: CharacterSheetAttribute) => d.attributes.name));
 
-    const selectWidget = (
-        <select onChange={updateBarValues} value={tokenAttribs[link]} style={{width: "125px;"}}>
-            <option value="">None</option>
-            {sortedAttribs.map(a => <option value={a.id}>{a.attributes.name}</option>)}
-        </select>
-    ) as HTMLInputElement;
-
     const searchWidget = (
-        <input type="text" placeholder="Search for attribute"/>
+        <input type="text" style={{width: "120px"}}placeholder="Search for attribute"/>
     );
 
     const attribAutocompleteData = char.attribs.models
@@ -86,15 +75,28 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
     $(searchWidget).autocomplete({
         source: attribAutocompleteData,
         change: (e, ui) => {
-            console.log(e);
-            console.log(ui);
-            e.value = "";
-            selectWidget.value = ui.item.value;
-            updateBarValues();
+            if(!ui.item) return;
+
+            const attrib = char.attribs.get(ui.item.value);
+            if(!attrib) {
+                return;
+            }
+
+            searchWidget.value = ui.item.label;
+            setOverrideTokenData(searchWidget, ui.item.value);
+            updateBarValues(attrib);
         },
+        focus: (e, ui) => {
+            e.preventDefault();
+            searchWidget.value = ui.item.label;
+        },
+        select: (e, ui) => {
+            e.preventDefault();
+            searchWidget.value = ui.item.label;
+        }
     });
 
-    setTokenAttributeDataKey(selectWidget, link);
+    setTokenAttributeDataKey(searchWidget, link);
 
     return (
         <div className="inlineinputs" style={{marginTop: "5px", marginBottom: "5px"}}>
@@ -111,11 +113,10 @@ const BarEditor = ({name, color, character, tokenAttribs, index}) => {
                 }}/>
             </b>
 
-            {selectWidget}
+            {searchWidget}
             {currentWidget}
             /
             {maxWidget}
-            {searchWidget}
         </div>
 
     )
@@ -144,6 +145,12 @@ const TokenPermission = ({name, tokenAttribs, propName}) => {
 
 const setTokenAttributeDataKey = (element: HTMLElement, value: string) => {
     element.setAttribute(tokenAttributeDataKey, value);
+};
+
+const tokenAttributeValueOverrideDataKey = "data-token-value-override";
+
+const setOverrideTokenData = (element: HTMLElement, value: string) => {
+    element.setAttribute(tokenAttributeValueOverrideDataKey, value);
 };
 
 const tokenAttributeDataKey = "data-token-prop-name";
@@ -175,9 +182,14 @@ const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) =
     if (valProp) {
         const tokenVal = t[propName];
 
-        let val = typeof(tokenVal) === "undefined"
-            ? (typeof(defaultVal) === "undefined" ? valDefault : defaultVal)
-            : tokenVal;
+        let val: any = null;
+        if(typeof(tokenVal) === "undefined") {
+            val = typeof(defaultVal) === "undefined"
+                ? valDefault
+                : defaultVal;
+        } else {
+            val = tokenVal;
+        }
 
         if (type === "number") {
             val = parseInt(val, 10) || 0;
@@ -355,8 +367,9 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
             marginLeft: "16px"
         };
 
-        const onChange = (e: Event) => {
-            e.stopPropagation();
+        const onChange = (e: any) => {
+            if(e.stopPropagation) e.stopPropagation();
+
             const target = e.target as HTMLInputElement;
             const attribName = target.getAttribute(tokenAttributeDataKey);
             if (!attribName) return;
@@ -371,6 +384,12 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                 case "number": {
                     val = parseInt(target.value, 10);
                 }
+            }
+
+            const overrideValue = target.getAttribute(tokenAttributeValueOverrideDataKey);
+            console.log(overrideValue);
+            if(overrideValue) {
+                val = overrideValue;
             }
 
             console.log(`Change: ${attribName} -> ${val}`);
@@ -517,11 +536,11 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                     <div style={{borderLeft: "1px solid lightgray"}}>
                         <div style={indentStyle}>
                             <BarEditor name="Bar 1" color={campaign.bar1_color} tokenAttribs={data.token}
-                                       character={data.char} index={1}/>
+                                       character={data.char} onChange={onChange} index={1}/>
                             <BarEditor name="Bar 2" color={campaign.bar2_color} tokenAttribs={data.token}
-                                       character={data.char} index={2}/>
+                                       character={data.char} onChange={onChange} index={2}/>
                             <BarEditor name="Bar 3" color={campaign.bar3_color} tokenAttribs={data.token}
-                                       character={data.char} index={3}/>
+                                       character={data.char} onChange={onChange} index={3}/>
                         </div>
                         <hr/>
 
