@@ -1,20 +1,44 @@
 {
-  "info": {
-    "title": "Token editor bug fixes",
-    "media": ""
-  },
-  "changes": [
-    {
-      "id": "",
-      "content": "Fixed a typo in the token editor message for not having permissions to view the default token."
+    "info": {
+        "title": "Bug squashin'",
+        "media": ""
     },
-    {
-      "id": "",
-      "content": "Fixed a case where the token editor would not update the default token fully."
-    },
-    {
-      "id": "",
-      "content": "Fixed the token editor assuming the player cannot view the default token when the character simply doesn't have a default token."
-    }
-  ]
+    "changes": [
+        {
+            "id": "",
+            "content": "TokenEditor: add a special hint for when the user is not a GM."
+        },
+        {
+            "id": "",
+            "content": "TokenEditor: update bar current/max values when linking bar to an attribute."
+        },
+        {
+            "id": "",
+            "content": "TokenEditor: replace attribute dropdown with search box that autocompletes."
+        },
+        {
+            "id": "",
+            "content": "TokenEditor: sort attributes lexicographically (thanks @DoomRice for the report)."
+        },
+        {
+            "id": "",
+            "content": "TokenLayerDrawing: fix improper overlay positioning on mirrored tokens (thanks @DoomRice for the report)."
+        },
+        {
+            "id": "",
+            "content": "New welcome message."
+        },
+        {
+            "id": "",
+            "content": "Dialog: fix invalid success value when ESCaping out of a dialog"
+        },
+        {
+            "id": "",
+            "content": "Dialog: improved visuals, sizes."
+        },
+        {
+            "id": "",
+            "content": "TableIO: add a table repo URL to the paste dialog."
+        }
+    ]
 }
