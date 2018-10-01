@@ -319,14 +319,18 @@ declare namespace Roll20 {
 
     }
 
-    export interface CanvasObject extends SyncObject<CanvasObject> {
+    export interface CanvasObject {
         _element: HTMLImageElement;
         model?: Token;
         top: number;
         left: number;
+        angle: number;
+        flipX: boolean;
+        flipY: boolean;
 
         setWidth(width: number): CanvasObject;
         setHeight(width: number): CanvasObject;
+        get: <T>(attrib: string) => T;
 
         width: number;
         height: number;

@@ -1,7 +1,9 @@
-import { R20Module } from "../../tools/R20Module";
-import { LayerData } from "../../tools/LayerData";
-import { getRotation } from "../../tools/MiscUtils";
-import { R20 } from "../../tools/R20";
+import {R20Module} from "../../tools/R20Module";
+import {LayerData} from "../../tools/LayerData";
+import {getRotation} from "../../tools/MiscUtils";
+import {R20} from "../../tools/R20";
+
+const DEG_TO_RAD = Math.PI / 180.0;
 
 class TokenLayerDrawing extends R20Module.SimpleBase {
     constructor() {
@@ -11,6 +13,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
     drawOverlay = (ctx: CanvasRenderingContext2D, graphic: Roll20.CanvasObject) => {
         // careful here: tokenDrawBg will run in the renderer and crash recovery requires a referesh
         try {
+
             const config = this.getHook().config;
             const bitmap = {
                 [R20.CanvasLayer.GMTokens]: config.drawOnGmLayer,
@@ -18,19 +21,30 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
                 [R20.CanvasLayer.Map]: config.drawOnMapLayer,
                 [R20.CanvasLayer.Lighting]: config.drawOnLightsLayer,
             };
-            
-            const layer: CanvasLayer = graphic.model.get("layer")
 
-            if(!bitmap[layer]) return;
+            const layer: CanvasLayer = graphic.model.get("layer");
+
+            if (!bitmap[layer]) return;
 
             const data = LayerData.getLayerData(layer);
 
-            ctx.save();
             ctx.globalAlpha = config.globalAlpha;
             ctx.lineWidth = config.textStrokeWidth;
 
+
             if (!config.rotateAlongWithToken) {
-                ctx.rotate(-getRotation(ctx));
+                // @ts-ignore
+                const isOneFlipOn = graphic.flipY ^ graphic.flipX;
+
+                let mul = isOneFlipOn ? 1 : -1;
+                ctx.rotate(mul * graphic.angle * DEG_TO_RAD);
+            }
+
+            if (graphic.flipX) {
+                ctx.scale(-1, 1);
+            }
+            if (graphic.flipY) {
+                ctx.scale(1, -1);
             }
 
             let sz = config.textFontSize;
@@ -58,7 +72,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
         } catch (err) {
             console.error(err);
         }
-    }
+    };
 
     onSettingChange(name, oldVal, newVal) {
         console.log("change found");
