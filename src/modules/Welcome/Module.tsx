@@ -24,14 +24,25 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
             const cfg = this.getHook().config;
 
             if (cfg.showWelcomePopup) {
-                R20.saySystem(`<h2 style="color: whitesmoke">Roll20 Enhancement Suite</h2>
-R20ES has been loaded!
+                R20.saySystem(`
+<h2 style="color: whitesmoke">Roll20 Enhancement Suite</h2>
+<span>R20ES has been loaded!</span>
 <br/>
 <br/>
-Have a feature idea, issues?:
+
+<a style="color: orange" href="${Config.discordInvite}">
+    <img style="width: 26px; height: 26px" src="https://discordapp.com/assets/1c8a54f25d101bdc607cec7228247a9a.svg"/>
+    Discord Server
+</a>
+
 <br/>
-<a style="color: orange" href="${Config.discordInvite}">Visit our Discord Server!</a>
-<br/>
+
+<a style="color: orange" class="bmc-button" target="_blank" href=${Config.buyMeACoffee}>
+    <img src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"/>
+    <span style="margin-left:5px">
+        Buy me a coffee
+    </span>
+</a>
 `);
             }
         }, 2000);
