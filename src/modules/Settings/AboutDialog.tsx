@@ -43,7 +43,7 @@ export default class AboutDialog extends DialogBase<null> {
                 <DialogHeader style={{textAlign: "center"}}>
                     <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
                        onClick={() => this.openUrl(Config.website)}>
-                        <h1 style="color: blue" >Roll20 Enhancement Suite</h1>
+                        <h1 style="color: blue">Roll20 Enhancement Suite</h1>
                     </a>
                     <h2>Version {build.R20ES_VERSION}</h2>
                     <h3>Built for {build.R20ES_BROWSER}</h3>
@@ -54,6 +54,39 @@ export default class AboutDialog extends DialogBase<null> {
 
                     <img style={{width: "60%", display: "block", marginLeft: "auto", marginRight: "auto"}}
                          src={this.logoUrl} alt="Logo"/>
+
+                    <div style={{display: "flex", justifyContent: "space-between"}}>
+                        <div>
+                            <div>
+                                <b>Built by</b>
+                            </div>
+
+                            <div>
+                                SSStormy, Giddy
+                            </div>
+
+                            <div>
+                                <b>With contributions from</b>
+                            </div>
+
+                            <div>
+                                Mike
+                            </div>
+                        </div>
+
+                        <div>
+                            <div>
+                                <b>And other work by</b>
+                            </div>
+
+                            <div>
+                                Jay "Vanguard" Fothergill
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr/>
 
                     <div style={{display: "grid", gridTemplateColumns: "auto auto"}}>
                         <span>Branch</span>
@@ -68,7 +101,8 @@ export default class AboutDialog extends DialogBase<null> {
                         <span style={{marginRight: "8px"}}>
                             <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
                                onClick={() => this.openUrl(Config.discordInvite)}>
-                                <img height="32" width="32" src="https://discordapp.com/assets/41484d92c876f76b20c7f746221e8151.svg"/>
+                                <img height="32" width="32"
+                                     src="https://discordapp.com/assets/41484d92c876f76b20c7f746221e8151.svg"/>
                             </a>
                         </span>
 
@@ -83,7 +117,9 @@ export default class AboutDialog extends DialogBase<null> {
                         <span>
                             <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
                                onClick={() => this.openUrl(Config.buyMeACoffee)}>
-                                <img height="32" width="32" src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"/>
+                                <img height="32" width="32"
+                                     src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg"
+                                     alt="Buy me a coffee"/>
                             </a>
                         </span>
 
