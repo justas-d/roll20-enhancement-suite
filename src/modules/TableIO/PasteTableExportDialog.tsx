@@ -36,7 +36,7 @@ export default class PasteTableExportDialog extends DialogBase<string> {
                     <div>
                         <a href="javascript:void(0)" onClick={() => window.open("https://docs.google.com/document/d/1Y5fMpkcm615KH_9ih-HCagswAdgS1CkBiktKeJABiBY", "_blank")}>Document filled with tables</a>
                     </div>
-                    
+
                 </DialogBody>
 
                 <DialogFooter>

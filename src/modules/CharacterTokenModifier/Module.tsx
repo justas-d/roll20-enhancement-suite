@@ -6,7 +6,7 @@ import {Character, CharacterSheetAttribute, TokenAttributes} from 'roll20';
 import getBlob = R20.getBlob;
 import {strIsNullOrEmpty} from "../../tools/MiscUtils";
 import lexCompare from "../../tools/LexicographicalComparator";
-import isChrome from "../../tools/IsChrome";
+import {isChromium} from "../../tools/BrowserDetection";
 
 const AuraEditor = ({tokenAttribs, name, index}) => {
     const radius = `aura${index}_radius`;
@@ -482,7 +482,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                 // So we set live to true if we're on Chrome.
                 // @ts-ignore
                 $(elem).tipsy({
-                    live: isChrome(),
+                    live: isChromium(),
                 });
             };
 

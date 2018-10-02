@@ -1,8 +1,8 @@
 import { DialogBase } from "../../tools/DialogBase";
-import isChrome from "../../tools/IsChrome";
 import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../tools/DialogComponents";
 import MacroGeneratorModule from "./Module";
 import { DOM } from "../../tools/DOM";
+import {isChromium} from "../../tools/BrowserDetection";
 
 export default class PickMacroGeneratorsDialog extends DialogBase<null> {
     private parent: MacroGeneratorModule;
@@ -31,7 +31,7 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
         this.rerender();
         
         // dialog is not centered after rerendering on chrome
-        if (isChrome()) {
+        if (isChromium()) {
             this.recenter();
         }
 

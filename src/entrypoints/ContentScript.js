@@ -1,12 +1,12 @@
-import { Config } from "../tools/Config";
+import {Config} from "../tools/Config";
 import hooks from "../Configs";
-import { injectScript, getBrowser } from "../tools/MiscUtils";
+import {injectScript, getBrowser} from "../tools/MiscUtils";
 import SettingsBootstrapper from "../modules/Settings/Bootstrapper"
-import { DialogFormsBootstrapper } from "../modules/Dialog/Bootstrapper";
-import { LocalStorageBootstrapper } from "../modules/LocalStorage/Bootstrapper";
-import { DOM } from "../tools/DOM";
+import {DialogFormsBootstrapper} from "../modules/Dialog/Bootstrapper";
+import {LocalStorageBootstrapper} from "../modules/LocalStorage/Bootstrapper";
+import {DOM} from "../tools/DOM";
 import showProblemPopup from "../tools/ProblemPopup";
-import isChrome from "../tools/IsChrome";
+import {doesBrowserNotSupportResponseFiltering} from "../tools/BrowserDetection";
 
 console.log("====================");
 console.log("R20ES ContentScript");
@@ -56,7 +56,7 @@ function injectModules() {
     console.log("ContentScript.js is done!");
 }
 
-function recvMsgFromApp(e) {
+const recvMsgFromApp = (e) => {
     if (e.origin !== Config.appUrl) return;
 
     if (e.data.r20esWantsResourceUrl) {
@@ -65,12 +65,13 @@ function recvMsgFromApp(e) {
         const payload = {
             url,
             id: e.data.r20esWantsResourceUrl.id
-        }
+        };
 
-        window.postMessage({ r20esGivesResourceUrl: payload }, Config.appUrl);
+        window.postMessage({r20esGivesResourceUrl: payload}, Config.appUrl);
     } else {
+        console.log(e.data);
 
-        if (isChrome()) {
+        if (doesBrowserNotSupportResponseFiltering()) {
 
             if (e.data.r20esLoadModules) {
                 window.injectWebsiteOK = true;
@@ -83,13 +84,14 @@ function recvMsgFromApp(e) {
             if (window.injectBackgroundOK && window.injectWebsiteOK) {
                 injectModules();
             }
+
         } else {
             if (e.data.r20esLoadModules) {
                 injectModules();
             }
         }
     }
-}
+};
 
 window.addEventListener("message", recvMsgFromApp);
 
@@ -101,10 +103,10 @@ setTimeout(() => {
 
     showProblemPopup(
         <div>
-            {`window.hasInjectedModules: ${typeof (window.hasInjectedModules)} ${window.hasInjectedModules}`}<br />
-            {`window.injectWebsiteOK: ${typeof (window.injectWebsiteOK)} ${window.injectWebsiteOK}`}<br />
-            {`window.injectBackgroundOK: ${typeof (window.injectBackgroundOK)} ${window.injectBackgroundOK}`}<br />
-            {`window.bootstrapTable: ${typeof (window.bootstrapTable)} ${window.bootstrapTable}`}<br />
+            {`window.hasInjectedModules: ${typeof (window.hasInjectedModules)} ${window.hasInjectedModules}`}<br/>
+            {`window.injectWebsiteOK: ${typeof (window.injectWebsiteOK)} ${window.injectWebsiteOK}`}<br/>
+            {`window.injectBackgroundOK: ${typeof (window.injectBackgroundOK)} ${window.injectBackgroundOK}`}<br/>
+            {`window.bootstrapTable: ${typeof (window.bootstrapTable)} ${window.bootstrapTable}`}<br/>
         </div>
     );
 

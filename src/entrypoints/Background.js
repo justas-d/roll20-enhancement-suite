@@ -1,7 +1,7 @@
 import configs from '../Configs'
-import { getBrowser, replaceAll } from '../tools/MiscUtils';
-import { Config } from '../tools/Config';
-import isChrome from "../tools/IsChrome";
+import {getBrowser, replaceAll} from '../tools/MiscUtils';
+import {Config} from '../tools/Config';
+import {doesBrowserNotSupportResponseFiltering} from "../tools/BrowserDetection";
 
 const getHooks = (hooks, url) => {
 
@@ -9,9 +9,9 @@ const getHooks = (hooks, url) => {
 
     const addModToQueueIfOk = (mod, hook) => {
         if (mod.includes && url.includes(mod.includes) && mod.find && mod.patch) {
-            hookQueue.push({ mod, hook });
+            hookQueue.push({mod, hook});
         }
-    }
+    };
 
     for (let id in hooks) {
         let hook = hooks[id];
@@ -26,7 +26,7 @@ const getHooks = (hooks, url) => {
     }
 
     return hookQueue;
-}
+};
 
 const injectHooks = (intoWhat, hookQueue, replaceFunc) => {
     if (hookQueue.length <= 0) return intoWhat;
@@ -42,7 +42,7 @@ const injectHooks = (intoWhat, hookQueue, replaceFunc) => {
     }
 
     return intoWhat;
-}
+};
 
 window.redirectTargets = [
     "https://app.roll20.net/v2/js/jquery",
@@ -63,18 +63,19 @@ window.editorUrls = [
     "https://app.roll20.net/editor#*",
     "https://app.roll20.net/editor/?*", // handle all queries
     "https://app.roll20.net/editor?*"
-]
+];
 
 const isEditorUrl = (url) => {
-    return typeof(window.editorUrls.find(f => f === url)) !== "undefined" 
-            || url.startsWith("https://app.roll20.net/editor/#") 
-            || url.startsWith("https://app.roll20.net/editor#")
-            || url.startsWith("https://app.roll20.net/editor/?")
-            || url.startsWith("https://app.roll20.net/editor?")
-}
+    return typeof(window.editorUrls.find(f => f === url)) !== "undefined"
+        || url.startsWith("https://app.roll20.net/editor/#")
+        || url.startsWith("https://app.roll20.net/editor#")
+        || url.startsWith("https://app.roll20.net/editor/?")
+        || url.startsWith("https://app.roll20.net/editor?")
+};
+
 const isRedirectTarget = (url) => typeof(window.redirectTargets.find(f => url.startsWith(f))) !== "undefined";
 
-if (isChrome()) {
+if (doesBrowserNotSupportResponseFiltering()) {
 
     window.redirectCount = 0;
     window.hasBeenRedirected = {};
@@ -101,7 +102,15 @@ if (isChrome()) {
         ];
 
         window.r20esChrome.fetchAndInject = function (localUrl) {
-            fetch(localUrl, { cache: "no-store", method: "GET", mode: "same-origin", headers: { "Accept": "application/javascript" } })
+            fetch(localUrl, {
+                cache: "no-store",
+                method: "GET",
+                mode: "same-origin",
+                credentials: 'include',
+                headers: {
+                    "Accept": "application/javascript"
+                }
+            })
                 .then(response => {
 
                     console.log(response);
@@ -123,7 +132,7 @@ if (isChrome()) {
                         const hookQueue = window["getHooks"](window.r20esChrome.hooks, localUrl);
                         text = window["injectHooks"](text, hookQueue, window["replaceAll"]);
 
-                        const blob = new Blob([text], { type: "application/json" });
+                        const blob = new Blob([text], {type: "application/json"});
 
                         const url = window.URL.createObjectURL(blob);
                         window.r20esChrome.urlsToFree.push(url);
@@ -157,7 +166,7 @@ if (isChrome()) {
                             const cleanupPayload = `
                             window.r20esChrome.urlsToFree.forEach(window.URL.revokeObjectURL); 
                             console.log('freed blob URLs')
-
+                            
                             var DOMContentLoaded_event = document.createEvent("Event");
                             DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
                             window.document.dispatchEvent(DOMContentLoaded_event);
@@ -171,15 +180,18 @@ if (isChrome()) {
                             console.log("Scripts injected. Now waiting for dependencies.");
 
                             let waitedFor = 0;
+
                             (function waitForDepts() {
+
 
                                     const hasJQuery = typeof(window.$) !== "undefined";
                                     const hasSoundManager = typeof(window.soundManager) !== "undefined";
                                     const hasD20 = typeof(window.d20) !== "undefined";
 
-                                    if(!hasJQuery || !hasSoundManager || !hasD20) {
+                                    if (!hasJQuery || !hasSoundManager || !hasD20) {
                                         waitedFor += 50;
                                         setTimeout(waitForDepts, 50);
+                                        console.log("WAITING FOR DEPTS.");
                                         return;
                                     }
 
@@ -195,19 +207,41 @@ if (isChrome()) {
                                         Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
                                         contrary to what happens on Firefox.
                                     */
-                                    window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
+                                    const sendDoneMessage = () => {
+                                        window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
+                                        window.injectBackgroundOK = true;
+                                    };
+
+                                    sendDoneMessage();
+                                    console.log("SENT r20esChromeInjectionDone");
+
+                                    /*
+                                        NOTE(Justas):
+                                        The second message here is in case the first one doesn't land.
+                                        That can actually happen.
+                                        ContentScript may not be running by the first message yet,
+                                        and setting window.injectBackgroundOK = true; doesn't update the content
+                                        script window value.
+
+                                        So we just have to setTimeout it as I dont want to touch the timing of
+                                        ContentScript.
+                                     */
+                                    setTimeout(() => {
+                                        sendDoneMessage();
+                                        console.log("SENT SECOND r20esChromeInjectionDone");
+                                    }, 1000);
                                 }
                             )();
                         }
                     })
                 });
-        }
+        };
 
         console.log("init environment");
-    }
+    };
 
     window.requestListener = function (dt) {
-        if(isEditorUrl(dt.url)) {
+        if (isEditorUrl(dt.url)) {
             console.log("RESET REDIRECT TABLE");
             window.hasBeenRedirected = {};
             window.redirectCount = 0;
@@ -225,7 +259,7 @@ if (isChrome()) {
                 payload = `
                 var setupEnvironment = ${setupEnvironment.toString()}
                 setupEnvironment("${Config.appUrl}");
-                window.r20esChrome.hooks = ${JSON.stringify(configs,0,4)};
+                window.r20esChrome.hooks = ${JSON.stringify(configs, 0, 4)};
                 console.log("window.r20esChrome.hooks:");
                 console.log(window.r20esChrome.hooks);
                 var getHooks = ${getHooks.toString()}
@@ -242,9 +276,9 @@ if (isChrome()) {
 
             console.log(`redirecting ${dt.url}`);
 
-            return { redirectUrl: `data:applicabtion/javascript;base64,${btoa(payload)}` };
+            return {redirectUrl: `data:applicabtion/javascript;base64,${btoa(payload)}`};
         }
-    }
+    };
 
     const headerCallback = (req) => {
         if (!isEditorUrl(req.url)) return;
@@ -266,18 +300,18 @@ if (isChrome()) {
 
     chrome.webRequest.onHeadersReceived.addListener(
         headerCallback,
-        { urls: window.editorUrls },
+        {urls: window.editorUrls},
         ["blocking", "responseHeaders"]);
 
 } else {
 
     // thanks, Firefox.
     window.requestListener = function (dt) {
-        
-        
+
+
         const isRedir = isRedirectTarget(dt.url);
         console.log(`${isRedir}: ${dt.url}`);
-        if(!isRedir) return;
+        if (!isRedir) return;
 
         const hookQueue = getHooks(configs, dt.url);
         const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
@@ -288,11 +322,11 @@ if (isChrome()) {
         let stringBuffer = `console.log("running ${dt.url}");`;
 
         filter.ondata = e => {
-            stringBuffer += decoder.decode(e.data, { stream: true });
+            stringBuffer += decoder.decode(e.data, {stream: true});
         };
 
         filter.onstop = e => {
-            
+
             const hookedData = injectHooks(stringBuffer, hookQueue, replaceAll);
 
             filter.write(new TextEncoder().encode(hookedData));
@@ -303,7 +337,7 @@ if (isChrome()) {
 
 getBrowser().webRequest.onBeforeRequest.addListener(
     window.requestListener,
-    { urls: ["*://app.roll20.net/*"] },
+    {urls: ["*://app.roll20.net/*"]},
     ["blocking"]);
 
 console.log("window.r20es Background hook script initialized");

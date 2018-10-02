@@ -84,6 +84,7 @@ window.r20es.recvPluginMsg = function (e) {
         }
 
         console.log("WebsiteBootstrap.js applied INITIAL configs.");
+        window.injectWebsiteOK = true;
         window.postMessage({ r20esLoadModules: true }, Config.appUrl);
         window.postMessage({ r20esAppWantsSync: configs }, Config.appUrl);
     }
