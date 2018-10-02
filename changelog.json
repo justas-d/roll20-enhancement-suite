@@ -1,44 +1,105 @@
 {
-    "info": {
+  "current": "1.3.2",
+  "versions": {
+    "1.3.2": {
+      "info": {
         "title": "Bug squashin'",
         "media": ""
-    },
-    "changes": [
+      },
+      "changes": [
         {
-            "id": "",
-            "content": "TokenEditor: add a special hint for when the user is not a GM."
+          "id": "",
+          "content": "TokenEditor: add a special hint for when the user is not a GM."
         },
         {
-            "id": "",
-            "content": "TokenEditor: update bar current/max values when linking bar to an attribute."
+          "id": "",
+          "content": "TokenEditor: update bar current/max values when linking bar to an attribute."
         },
         {
-            "id": "",
-            "content": "TokenEditor: replace attribute dropdown with search box that autocompletes."
+          "id": "",
+          "content": "TokenEditor: replace attribute dropdown with search box that autocompletes."
         },
         {
-            "id": "",
-            "content": "TokenEditor: sort attributes lexicographically (thanks @DoomRice for the report)."
+          "id": "",
+          "content": "TokenEditor: sort attributes lexicographically (thanks @DoomRice for the report)."
         },
         {
-            "id": "",
-            "content": "TokenLayerDrawing: fix improper overlay positioning on mirrored tokens (thanks @DoomRice for the report)."
+          "id": "",
+          "content": "TokenLayerDrawing: fix improper overlay positioning on mirrored tokens (thanks @DoomRice for the report)."
         },
         {
-            "id": "",
-            "content": "New welcome message."
+          "id": "",
+          "content": "New welcome message."
         },
         {
-            "id": "",
-            "content": "Dialog: fix invalid success value when ESCaping out of a dialog"
+          "id": "",
+          "content": "Dialog: fix invalid success value when ESCaping out of a dialog"
         },
         {
-            "id": "",
-            "content": "Dialog: improved visuals, sizes."
+          "id": "",
+          "content": "Dialog: improved visuals, sizes."
         },
         {
-            "id": "",
-            "content": "TableIO: add a table repo URL to the paste dialog."
+          "id": "",
+          "content": "TableIO: add a table repo URL to the paste dialog."
         }
-    ]
+      ]
+    },
+    "1.3.1": {
+      "info": {
+        "title": "Token editor bug fixes",
+        "media": ""
+      },
+      "changes": [
+        {
+          "id": "",
+          "content": "Fixed a typo in the token editor message for not having permissions to view the default token."
+        },
+        {
+          "id": "",
+          "content": "Fixed a case where the token editor would not update the default token fully."
+        },
+        {
+          "id": "",
+          "content": "Fixed the token editor assuming the player cannot view the default token when the character simply doesn't have a default token."
+        }
+      ]
+    },
+    "1.3.0": {
+      "info": {
+        "title": "Token Editor Update",
+        "media": "token_editor.png"
+      },
+      "changes": [
+        {
+          "id": "characterTokenModifier",
+          "content": "Added Token Editor: a new character sheet tab for fast token editing."
+        },
+        {
+          "id": "",
+          "content": "Added the Hide Player List module: it hides the player list."
+        },
+        {
+          "id": "",
+          "content": "Added an option to use units instead of squares in TokenResize."
+        },
+        {
+          "id": "",
+          "content": "Added a checkbox to the TokenResize dialog for moving the current selection."
+        },
+        {
+          "id": "",
+          "content": "Fixed TokenResize allowing the resizing of tokens to a size of 0."
+        },
+        {
+          "id": "",
+          "content": "Fixed potential memory leak when disabling modules."
+        },
+        {
+          "id": "",
+          "content": "Fixed player avatars in the alternative page toolbar menu."
+        }
+      ]
+    }
+  }
 }

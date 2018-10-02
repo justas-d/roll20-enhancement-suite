@@ -5,7 +5,11 @@ import MediaWidget from "../MediaWidget";
 
 declare namespace build {
     export const R20ES_CHANGELOG: string;
-    export const R20ES_VERSION: string;
+}
+
+interface IChangelog {
+    current: string;
+    versions: IVersion[];
 }
 
 interface IChange {
@@ -18,29 +22,67 @@ interface IChangelogInfo {
     media: string;
 }
 
-interface IChangelog {
+interface IVersion {
     info: IChangelogInfo;
     changes: IChange[];
 }
 
+interface PreparedVersion {
+    data: IVersion;
+    semverString: string;
+    mediaUrl: string | null;
+}
+
 class ChangelogWidget extends DOM.ElementBase {
+    private preparedData: PreparedVersion[] = [];
+    private isLoading: boolean = true;
 
-    private changelogData: IChangelog;
-    private mediaUrl: string;
-
-    public constructor() {
+    public constructor({listAllVersions}: any) {
         super();
 
-        this.changelogData = JSON.parse(build.R20ES_CHANGELOG);
+        const changelogData: IChangelog = JSON.parse(build.R20ES_CHANGELOG)
+        console.log(changelogData);
 
-        if (!strIsNullOrEmpty(this.changelogData.info.media)) {
-            getExtUrlFromPage(this.changelogData.info.media, 5000)
-                .then(url => {
-                    this.mediaUrl = url;
-                    this.rerender();
-                })
-                .catch(err => console.error(`Failed to get ${this.changelogData.info.media}: ${err}`));
+        const promises = [];
+
+        if (listAllVersions) {
+            console.log("in list all");
+            console.log(changelogData.versions);
+            for (const versionName in changelogData.versions) {
+                promises.push(this.prepareChanges(changelogData.versions[versionName], versionName));
+            }
+
+        } else {
+            console.log("in else");
+            const current = changelogData.versions[changelogData.current];
+            promises.push(this.prepareChanges(current, changelogData.current));
         }
+
+        console.log(promises);
+        (Promise.all(promises) as any).finally(() => {
+            this.isLoading = false;
+            this.rerender();
+        })
+    }
+
+    private prepareChanges(version: IVersion, semverString: string) {
+        console.log(`prep ${version.info.title}`);
+        const pushData = (url: string | null) => {
+            this.preparedData.push({
+                data: version,
+                mediaUrl: url,
+                semverString: semverString
+            })
+        };
+
+        if (!strIsNullOrEmpty(version.info.media)) {
+            return getExtUrlFromPage(version.info.media, 5000)
+                .then(pushData)
+                .catch(err => console.error(`Failed to get media ${version.info.media}: ${err}`));
+        }
+
+        pushData(null);
+        return Promise.resolve();
     }
 
     private onClickLine = (e) => {
@@ -52,36 +94,50 @@ class ChangelogWidget extends DOM.ElementBase {
 
     protected internalRender(): HTMLElement {
 
-        const list = [];
-        for (const data of this.changelogData.changes) {
-            list.push(strIsNullOrEmpty(data.id)
-                ? <li>{data.content}</li>
-                : <li><a data-url={Config.websiteFeatureUrlTemplate + data.id} href="javascript:void(0)"
-                         onClick={this.onClickLine}>{data.content}</a></li>);
+        if (this.preparedData.length <= 0) {
+            return (
+                <div>
+                    {this.isLoading ? "Loading..." : "We have no changes to display :/... What?"}
+                </div>
+            )
         }
 
-        const headerWidget = this.changelogData.info.title
-            ? <div>
-                <h2>{this.changelogData.info.title}</h2>
-                <h3>{build.R20ES_VERSION}</h3>
-            </div>
-            : <div>
-                <h2>{build.R20ES_VERSION}</h2>
-            </div>;
+        const buildVersionHtml = (version: PreparedVersion): HTMLElement => {
+            const list = [];
 
-        return (
-            <ul>
-                {headerWidget}
+            for (const change of version.data.changes) {
+                list.push(strIsNullOrEmpty(change.id)
+                    ? <li>{change.content}</li>
+                    : <li><a data-url={Config.websiteFeatureUrlTemplate + change.id} href="javascript:void(0)"
+                             onClick={this.onClickLine}>{change.content}</a></li>);
+            }
 
-                {!strIsNullOrEmpty(this.mediaUrl) &&
-                <MediaWidget url={this.mediaUrl} description=""/>
-                }
+            const headerWidget = version.data.info.title
+                ? <div>
+                    <h2>{version.data.info.title}</h2>
+                    <h3>{version.semverString}</h3>
+                </div>
+                : <div>
+                    <h2>{version.semverString}</h2>
+                </div>;
 
-                {list}
+            return (
+                <ul>
+                    {headerWidget}
 
+                    {!strIsNullOrEmpty(version.mediaUrl) &&
+                    <MediaWidget url={version.mediaUrl} description=""/>
+                    }
 
-            </ul>
-        );
+                    {list}
+                    <hr/>
+                </ul>
+            );
+        };
+
+        return <div>
+            {this.preparedData.map(buildVersionHtml)}
+        </div>
     }
 
 }

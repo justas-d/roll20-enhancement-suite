@@ -4,6 +4,14 @@ import { Dialog, DialogHeader, DialogBody} from "../../tools/DialogComponents";
 import ChangelogWidget from "../ChangelogWidget";
 
 export default class ChangelogDialog extends DialogBase<null> {
+
+    constructor() {
+        super(null, {
+            maxWidth: "40%",
+            maxHeight: "85%"
+        });
+    }
+
     public show() {
         setTimeout(() => {
             this.recenter()
@@ -20,7 +28,7 @@ export default class ChangelogDialog extends DialogBase<null> {
 
 
                 <DialogBody>
-                    <ChangelogWidget/>
+                    <ChangelogWidget listAllVersions={true}/>
                 </DialogBody>
 
                 <section style={{ margin: "20px" }}>
