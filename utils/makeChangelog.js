@@ -11,8 +11,6 @@ const changes = shell.exec("sh utils/makeChangelog.sh")
     };
 });
 
-const version = shell.exec("git describe --abbrev=0").trim();
-
 let prevChangelog = {
     versions: {}
 };
@@ -25,8 +23,8 @@ try {
     console.log(`Failed parsing changelog ${err}`);
 }
 
-prevChangelog.current = version;
-prevChangelog.versions[version] = {
+prevChangelog.current = "TODO";
+prevChangelog.versions[prevChangelog.current] = {
     info: {
         title: "",
         media: ""
