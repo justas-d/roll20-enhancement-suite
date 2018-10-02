@@ -116,17 +116,32 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
         this.createWidget();
 
-        for(const item in ToolClasses) {
-            $(`#editinglayer li.${ToolClasses[item]}`).on("click", this.onToolChange);
+        const getButton = (className: string) => $(`#editinglayer li.${className}`);
+
+        const hookListeners = (button: JQuery) => {
+            // @ts-ignore
+            button.off("click", this.onToolChange);
+            button.on("click", this.onToolChange);
+        };
+
+        for (const item in ToolClasses) {
+            const btn = getButton(ToolClasses[item]);
+            hookListeners(btn);
         }
 
         window.r20es.setModePrologue = this.updateModeIndicator;
+
+        // Note(Justas): betteR20 only adds the dynamic lighting button a bit later after setup is called
+        // which means we've got to wait a while.
+        if(getButton(ToolClasses.Lighting).length <= 0) {
+            setTimeout(() => {
+                hookListeners(getButton(ToolClasses.Lighting));
+            }, 10000);
+        }
     }
 
     private onToolChange = (e: Event) => {
         const target = e.target as HTMLElement;
-
-        console.log(target.classList);
 
         const map = {
             [ToolClasses.GMTokens]: R20.CanvasLayer.GMTokens,
