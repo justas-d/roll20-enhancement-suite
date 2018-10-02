@@ -28,6 +28,7 @@ import TokenResize from "./modules/TokenResize/Config"
 import HidePlayerList from "./modules/HidePlayerList/Config";
 import CharacterTokenModifier from "./modules/CharacterTokenModifier/Config";
 import SeenAd from "./modules/SeenAd/Config";
+import DarkMode from "./modules/DarkMode/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -41,6 +42,7 @@ addCfg(AutoSortInitiative);
 addCfg(BulkMacro);
 addCfg(ChangeIdWhenDuplicating);
 addCfg(CharacterIO);
+addCfg(DarkMode);
 addCfg(DrawCurrentLayer);
 addCfg(DuplicateButton);
 addCfg(ExposeD20);

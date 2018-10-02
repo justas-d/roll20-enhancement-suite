@@ -32,7 +32,9 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 
 <a style="color: orange" href="${Config.discordInvite}">
     <img style="width: 26px; height: 26px" src="https://discordapp.com/assets/1c8a54f25d101bdc607cec7228247a9a.svg"/>
-    Discord Server
+    <span style="margin-left:5px"> 
+        Discord Server
+    </span>
 </a>
 
 <br/>
