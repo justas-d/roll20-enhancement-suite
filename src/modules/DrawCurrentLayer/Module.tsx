@@ -1,8 +1,15 @@
-import { R20Module } from '../../tools/R20Module'
-import { R20 } from '../../tools/R20';
-import { LayerData } from '../../tools/LayerData';
-import { DOM } from '../../tools/DOM';
-import { copy, findByIdAndRemove } from '../../tools/MiscUtils';
+import {R20Module} from '../../tools/R20Module'
+import {R20} from '../../tools/R20';
+import {LayerData} from '../../tools/LayerData';
+import {DOM} from '../../tools/DOM';
+import {copy, findByIdAndRemove} from '../../tools/MiscUtils';
+
+enum ToolClasses {
+    GMTokens = "choosegmlayer",
+    Map = "choosemap",
+    PlayerTokens = "chooseobjects",
+    Lighting = "choosewalls",
+}
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     private static readonly selectId = "r20es-select";
@@ -15,7 +22,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
     private createWidget() {
         console.log("Creating widget");
-        
+
         const root = document.getElementById("playerzone");
         console.log(root);
 
@@ -53,19 +60,23 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
                 rootStyle.bottom = "0";
                 rootStyle.right = "0";
                 break;
-            } case ("bottomLeft"): {
+            }
+            case ("bottomLeft"): {
                 rootStyle.bottom = "0";
                 rootStyle.left = "0";
                 break;
-            } case ("topRight"): {
+            }
+            case ("topRight"): {
                 rootStyle.top = "0";
                 rootStyle.right = "0";
                 break;
-            } case ("topLeft"): {
+            }
+            case ("topLeft"): {
                 rootStyle.top = "0";
                 rootStyle.left = "0";
                 break;
-            } default: {
+            }
+            default: {
                 console.error(`Unknown DCL module corner: ${cfg.corner}`);
             }
         }
@@ -73,9 +84,10 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         const widget = <div id={DrawCurrentLayerModule.rootId} style={rootStyle}>
 
             {cfg.showNotSelecting &&
-                <div id={DrawCurrentLayerModule.selectId} style={copy(divStyle, { background: `rgba(255,0,0,${cfg.notSelectingOpacity})` })}>
-                    <p style={textStyle}>Not selecting!</p>
-                </div>
+            <div id={DrawCurrentLayerModule.selectId}
+                 style={copy(divStyle, {background: `rgba(255,0,0,${cfg.notSelectingOpacity})`})}>
+                <p style={textStyle}>Not selecting!</p>
+            </div>
             }
 
             <div id={DrawCurrentLayerModule.layerId} style={divStyle}>
@@ -104,22 +116,31 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
         this.createWidget();
 
-        $("#editinglayer li.chooseobjects").on("click", this.onToolChange);
-        $("#editinglayer li.choosemap").on("click", this.onToolChange);
-        $("#editinglayer li.choosegmlayer").on("click", this.onToolChange);
+        for(const item in ToolClasses) {
+            $(`#editinglayer li.${ToolClasses[item]}`).on("click", this.onToolChange);
+        }
 
         window.r20es.setModePrologue = this.updateModeIndicator;
     }
 
-    private onToolChange = (e) => {
-        let l = null;
+    private onToolChange = (e: Event) => {
+        const target = e.target as HTMLElement;
 
-        if (e.target.className === "choosegmlayer") { l = "gmlayer"; }
-        else if (e.target.className === "choosemap") { l = "map"; }
-        else if (e.target.className === "chooseobjects") { l = "objects"; }
+        console.log(target.classList);
 
-        this.render(l);
-    }
+        const map = {
+            [ToolClasses.GMTokens]: R20.CanvasLayer.GMTokens,
+            [ToolClasses.Map]: R20.CanvasLayer.Map,
+            [ToolClasses.PlayerTokens]: R20.CanvasLayer.PlayerTokens,
+            [ToolClasses.Lighting]: R20.CanvasLayer.Lighting,
+        };
+
+        for (const key in map) {
+            if (!target.classList.contains(key)) continue;
+            this.render(map[key]);
+            break;
+        }
+    };
 
     private updateModeIndicator = (mode: string) => {
         const div = document.getElementById(DrawCurrentLayerModule.selectId);
@@ -140,9 +161,10 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     public dispose() {
         super.dispose();
 
-        $("#editinglayer li.chooseobjects").off("click", this.onToolChange);
-        $("#editinglayer li.choosemap").off("click", this.onToolChange);
-        $("#editinglayer li.choosegmlayer").off("click", this.onToolChange);
+        for(const item in ToolClasses) {
+            // @ts-ignore
+            $(`#editinglayer li.${ToolClasses[item]}`).off("click", this.onToolChange);
+        }
 
         window.r20es.setModePrologue = null;
         this.removeWidget();
