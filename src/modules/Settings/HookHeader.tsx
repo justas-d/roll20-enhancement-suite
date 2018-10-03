@@ -6,6 +6,8 @@ export default class HookHeader extends DOM.ElementBase {
     private onSelect: (hook: any) => void = null;
     private selected: boolean;
     private hook: any;
+    private static readonly SELECTED_STYLE = "selected";
+    private static readonly DISABLED_STYLE = "disabled";
 
     public constructor(props) {
         super();
@@ -31,26 +33,25 @@ export default class HookHeader extends DOM.ElementBase {
     }
 
     protected internalRender = (): HTMLElement => {
-        let style: any = {};
         const isDisabled = !R20.isGM() && this.hook.gmOnly;
 
+        const widget = (
+            <div className="r20es-clickable-text" onClick={this.onClick} title={isDisabled ? "This module is GM only." : ""}>
+                {!this.hook.force &&
+                <input onChange={this.onCheckboxChange} checked={this.hook.config.enabled} type="checkbox" />
+                }
+                <span className="text">{this.hook.name}</span>
+            </div> as HTMLElement
+        );
+
         if (isDisabled) {
-            style.color = "rgb(200,200,200)";
+            widget.classList.add(HookHeader.DISABLED_STYLE);
         }
 
         if (this.selected) {
-            style.backgroundColor = "rgb(220,220,220)";
+            widget.classList.add(HookHeader.SELECTED_STYLE);
         }
 
-        return (
-            <div>
-                <div style={style} className="r20es-clickable-text" onClick={this.onClick} title={isDisabled ? "This module is GM only." : ""}>
-                    {!this.hook.force &&
-                        <input onChange={this.onCheckboxChange} checked={this.hook.config.enabled} type="checkbox" />
-                    }
-                    <span className="text">{this.hook.name}</span>
-                </div>
-            </div> as any
-        );
+        return widget;
     }
 }

@@ -397,11 +397,12 @@ declare namespace Roll20 {
         pings: { [uuid: string]: PingData };
         pinging: LocalPingData;
 
-        mode: string; // current tool name todo
+        mode: string;
         canvas: Canvas;
         canvasZoom: number;
         canvasHeight: number;
         canvasWidth: number;
+        backgroundColor: string;
     }
 
     export interface TokenEditor {
