@@ -72,7 +72,9 @@ R20Module.Base = class ModuleBase {
         config[key] = value;
         hook.saveConfig();
 
-        if ("onSettingChange" in this && typeof (this.onSettingChange) === "function") {
+        if (config.enabled &&
+            "onSettingChange" in this
+            && typeof (this.onSettingChange) === "function") {
             this.onSettingChange(key, oldVal, value);
         }
     }
