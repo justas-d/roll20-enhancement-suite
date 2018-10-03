@@ -83,6 +83,8 @@ $textHighContrast: #d8d3d0;
   background: none;
 }
 
+
+
 .ui-dialog .ui-dialog-buttonpane,
 .ui-widget-content,
 .ui-dialog .ui-dialog-titlebar {
@@ -133,12 +135,20 @@ dialog,
   background-color: $bg900 !important;
 }
 
-div#showndecks:hover {
-  background-color: rgba($bg600, 0.8);
+.dd-item .playerdots,
+#imagedialog #librarysearchroot .googleresult,
+#imagedialog .expandsearch,
+#imagedialog #librarysearchroot .marketplacead,
+#initiativewindow ul li {
+  background-color: $bg900;
 }
 
-.dd-item .playerdots {
-  background-color: $bg900;
+#initiativewindow ul li {
+  border-bottom-color: $bg600;
+}
+
+div#showndecks:hover {
+  background-color: rgba($bg600, 0.8);
 }
 
 /* Tables */
@@ -663,8 +673,6 @@ div#color_selector {
   background-color: $bg700;
 }
 
-#imagedialog #librarysearchroot .googleresult,
-#imagedialog .expandsearch,
-#imagedialog #librarysearchroot .marketplacead {
-  background-color: $bg900;
+#initiativewindow ul li:first-child {
+  background-color: $bg500;
 }
