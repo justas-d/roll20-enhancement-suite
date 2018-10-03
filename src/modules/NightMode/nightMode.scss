@@ -662,3 +662,9 @@ div#color_custom label {
 div#color_selector {
   background-color: $bg700;
 }
+
+#imagedialog #librarysearchroot .googleresult,
+#imagedialog .expandsearch,
+#imagedialog #librarysearchroot .marketplacead {
+  background-color: $bg900;
+}
