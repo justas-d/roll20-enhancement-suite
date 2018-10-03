@@ -6,5 +6,8 @@ export default MakeConfig(__dirname, {
     description: `Hides the player list.`,
     category: Category.canvas,
     gmOnly: false,
-    enabledByDefault: false,
+
+    config: {
+        enabled: false
+    }
 });

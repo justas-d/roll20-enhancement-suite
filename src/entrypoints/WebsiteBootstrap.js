@@ -70,13 +70,14 @@ window.r20es.recvPluginMsg = function (e) {
             if (!hook) continue;
 
             if (hook.config) {
-                configs[id] = Object.assign(hook.config, cfg);// overwrite defaults
+                // overwrite defaults
+                Object.assign(hook.config, cfg);
             } else {
                 hook.config = cfg;
             }
 
-            if("enabledByDefault" in hook) {
-                hook.config.enabled = hook.enabledByDefault;
+            if(!("enabled" in hook.config)) {
+                hook.config.enabled = true;
             }
 
             console.log(id);
@@ -86,7 +87,8 @@ window.r20es.recvPluginMsg = function (e) {
         console.log("WebsiteBootstrap.js applied INITIAL configs.");
         window.injectWebsiteOK = true;
         window.postMessage({ r20esLoadModules: true }, Config.appUrl);
-        window.postMessage({ r20esAppWantsSync: configs }, Config.appUrl);
+
+        window.r20es.syncConfigs();
     }
 };
 

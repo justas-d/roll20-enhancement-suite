@@ -17,12 +17,7 @@ class LocalStorageBootstrapper extends R20Bootstrapper.Base {
             console.log(p);
 
             for (const key of ids) {
-
                 patch[key] = key in p ? p[key] : {};
-
-                if (!("enabled" in patch[key])) {
-                    patch[key].enabled = true;
-                }
             }
 
             console.log("done!");

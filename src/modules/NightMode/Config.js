@@ -5,7 +5,7 @@ export default MakeConfig(__dirname, {
     id: "nightMode",
     name: "Night Mode",
     description: "Activates the dark night style. WARNING: some sheets might clash with the style changes resulting in ugly sheets.",
-    //enabledByDefault: false, TODO : DISABLE ME
+    category: Category.canvas,
 
     media: {
         "night_mode.png": "The night style in action."
@@ -20,7 +20,6 @@ export default MakeConfig(__dirname, {
 
     config: {
         overrideBackground: true,
+        enabled: false,
     },
-
-    category: Category.canvas,
 });
