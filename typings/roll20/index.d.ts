@@ -231,9 +231,9 @@ declare namespace Roll20 {
     }
 
     export interface Page extends SyncObject<PageAttributes> {
-        thepaths: ObjectStorage<PathToken>;
-        thegraphics: ObjectStorage<Token>;
-        thetexts: ObjectStorage<TextToken>;
+        thepaths: ObjectStorage<PathToken> | null;
+        thegraphics: ObjectStorage<Token> | null;
+        thetexts: ObjectStorage<TextToken> | null;
     }
 
     export interface TextTokenAttributes extends MapTokenAttributes {}

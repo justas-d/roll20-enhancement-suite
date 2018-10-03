@@ -416,6 +416,9 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
             const pages = R20.getAllPages();
             for (const page of pages) {
+                // Note(Justas): sometimes this is undefined. I cannot repro this at all.
+                if(!page.thegraphics) continue;
+
                 for (const token of page.thegraphics.models) {
                     if (!token.character) continue;
                     if (token.character.id !== data.char.id) continue;
