@@ -23,6 +23,10 @@ namespace R20 {
         Lighting = "walls",
     }
 
+    export function setBackgroundStyle(bgStyle: string) {
+        window.d20.engine.backgroundColor = bgStyle;
+    }
+
     export function setupImageDropTarget(element: JQuery<any>,
                                          saveCallback: ({avatar}: {avatar: string}) => void,
                                          updateModelCallback: () => void) {

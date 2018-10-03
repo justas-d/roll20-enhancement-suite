@@ -101,7 +101,7 @@ export default class AboutDialog extends DialogBase<null> {
                         <span style={{marginRight: "8px"}}>
                             <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
                                onClick={() => this.openUrl(Config.discordInvite)}>
-                                <img height="32" width="32"
+                                <img height="32" width="32" className="discord-logo"
                                      src="https://discordapp.com/assets/41484d92c876f76b20c7f746221e8151.svg"/>
                             </a>
                         </span>
@@ -109,7 +109,7 @@ export default class AboutDialog extends DialogBase<null> {
                         <span style={{marginRight: "8px"}}>
                             <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
                                onClick={() => this.openUrl("https://github.com/SSStormy/roll20-enhancement-suite/")}>
-                                <img height="32" width="32"
+                                <img height="32" width="32" className="github-logo"
                                      src="https://unpkg.com/simple-icons@latest/icons/github.svg"/>
                             </a>
                         </span>

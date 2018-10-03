@@ -59,6 +59,14 @@
     width: 100%;
 }
 
+.r20es-clickable-text.selected {
+    background-color: rgb(220,220,220);
+}
+
+.r20es-clickable-text.disabled span {
+    color: rgb(200,200,200);
+}
+
 .r20es-clickable-text:hover {
     background-color: rgb(245,245,245);
 }
