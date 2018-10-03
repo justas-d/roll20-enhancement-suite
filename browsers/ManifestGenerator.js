@@ -1,8 +1,8 @@
 const VersionNameGen = require("./VersionNameGen");
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const editorUrls = require("../src/tools/EditorURLs");
 
 const gen = (browser, origVersionName) => {
-    
     let manifest = {
         manifest_version: 2,
         name: 'Roll20 Enhancement Suite',
@@ -23,23 +23,19 @@ const gen = (browser, origVersionName) => {
         },
         content_scripts: [
             {
-                matches: [
-                    '*://app.roll20.net/editor*'
-                ],
+                matches: editorUrls,
                 js: [
                     'ContentScript.js'
                 ]
             },
 
             {
-                matches: [
-                    '*://app.roll20.net/editor*'
-                ],
+                matches: editorUrls,
                 js: [
                     "EarlyContentScript.js",
                 ],
                 run_at: "document_start"
-            }
+            },
         ],
         background: {
             scripts: [

@@ -2,6 +2,7 @@ import configs from '../Configs'
 import {getBrowser, replaceAll} from '../tools/MiscUtils';
 import {Config} from '../tools/Config';
 import {doesBrowserNotSupportResponseFiltering} from "../tools/BrowserDetection";
+import editorUrls from "../tools/EditorURLs";
 
 const getHooks = (hooks, url) => {
 
@@ -56,24 +57,15 @@ window.redirectTargets = [
     "https://app.roll20.net/js/tutorial_tips.js",
 ];
 
-window.editorUrls = [
-    "https://app.roll20.net/editor",
-    "https://app.roll20.net/editor/",
-    "https://app.roll20.net/editor/#*", // handle all fragments
-    "https://app.roll20.net/editor#*",
-    "https://app.roll20.net/editor/?*", // handle all queries
-    "https://app.roll20.net/editor?*"
-];
-
 const isEditorUrl = (url) => {
-    return typeof(window.editorUrls.find(f => f === url)) !== "undefined"
+    return typeof(editorUrls.find(f => f === url)) !== "undefined"
         || url.startsWith("https://app.roll20.net/editor/#")
         || url.startsWith("https://app.roll20.net/editor#")
         || url.startsWith("https://app.roll20.net/editor/?")
         || url.startsWith("https://app.roll20.net/editor?")
 };
 
-const isRedirectTarget = (url) => typeof(window.redirectTargets.find(f => url.startsWith(f))) !== "undefined";
+const isRedirectTarget = (url) => typeof(redirectTargets.find(f => url.startsWith(f))) !== "undefined";
 
 if (doesBrowserNotSupportResponseFiltering()) {
 
@@ -300,7 +292,7 @@ if (doesBrowserNotSupportResponseFiltering()) {
 
     chrome.webRequest.onHeadersReceived.addListener(
         headerCallback,
-        {urls: window.editorUrls},
+        {urls: editorUrls},
         ["blocking", "responseHeaders"]);
 
 } else {
