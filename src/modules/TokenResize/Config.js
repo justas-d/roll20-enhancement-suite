@@ -9,7 +9,7 @@ export default MakeConfig(__dirname, {
     gmOnly: false,
 
     media: {
-        "token_resize.webm": "Two map tokens being resized to fit the canvas."
+        "token_resize2.webm": "Two map tokens being resized to fit the canvas."
     },
 
     configView: {
