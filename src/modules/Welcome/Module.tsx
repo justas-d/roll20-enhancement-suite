@@ -30,16 +30,18 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 <br/>
 <br/>
 
-<a style="color: orange" href="${Config.discordInvite}">
+<a href="${Config.discordInvite}">
     <img style="width: 26px; height: 26px" src="https://discordapp.com/assets/1c8a54f25d101bdc607cec7228247a9a.svg"/>
-    Discord Server
+    <span style="color: orange;  margin-left:5px"> 
+        Discord Server
+    </span>
 </a>
 
 <br/>
 
-<a style="color: orange" class="bmc-button" target="_blank" href=${Config.buyMeACoffee}>
+<a class="bmc-button" target="_blank" href=${Config.buyMeACoffee}>
     <img src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"/>
-    <span style="margin-left:5px">
+    <span style="color: orange; margin-left:5px">
         Buy me a coffee
     </span>
 </a>
