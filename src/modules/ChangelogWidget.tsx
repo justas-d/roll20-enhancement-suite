@@ -2,6 +2,7 @@ import {DOM} from "../tools/DOM";
 import {getExtUrlFromPage, strIsNullOrEmpty} from "../tools/MiscUtils";
 import {Config} from "../tools/Config";
 import MediaWidget from "../MediaWidget";
+import * as semverCompare from "semver-compare";
 
 declare namespace build {
     export const R20ES_CHANGELOG: string;
@@ -9,7 +10,7 @@ declare namespace build {
 
 interface IChangelog {
     current: string;
-    versions: IVersion[];
+    versions: {[version: string]: IVersion};
 }
 
 interface IChange {
@@ -40,8 +41,7 @@ class ChangelogWidget extends DOM.ElementBase {
     public constructor({listAllVersions}: any) {
         super();
 
-        const changelogData: IChangelog = JSON.parse(build.R20ES_CHANGELOG)
-        console.log(changelogData);
+        const changelogData: IChangelog = JSON.parse(build.R20ES_CHANGELOG);
 
         const promises = [];
 
@@ -60,6 +60,10 @@ class ChangelogWidget extends DOM.ElementBase {
 
         console.log(promises);
         (Promise.all(promises) as any).finally(() => {
+            this.preparedData.sort((a, b) => {
+                return semverCompare(b.semverString, a.semverString);
+            });
+
             this.isLoading = false;
             this.rerender();
         })

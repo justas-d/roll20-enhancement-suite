@@ -63,6 +63,7 @@
         "request": "2.88.0",
         "sass-loader": "7.1.0",
         "save-as": "0.1.8",
+        "semver-compare": "1.0.0",
         "shelljs": "0.8.2",
         "source-map-loader": "0.2.4",
         "tmp": "0.0.33",
