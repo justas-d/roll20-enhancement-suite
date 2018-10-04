@@ -70,7 +70,7 @@ export default class AboutDialog extends DialogBase<null> {
                             </div>
 
                             <div>
-                                Mike, Aaron, Blurn Glanstone
+                                Mike, Aaron, Blurn Glanstone, Tobyn
                             </div>
                         </div>
 
