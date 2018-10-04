@@ -59,11 +59,9 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 
         this.sendWelcomeMessage();
 
-        console.table({
-            "showChangelog": cfg.showChangelog,
-            "cfg.previousVersion": cfg.previousVersion,
-            "R20ES_VERSION": build.R20ES_VERSION,
-        });
+        console.log(`showChangelog: ${cfg.showChangelog}`);
+        console.log(`cfg.previousVersion": ${cfg.previousVersion}`);
+        console.log(`R20ES_VERSION": ${build.R20ES_VERSION}`);
 
         if (cfg.showStartupGuide) {
             this.welcome = new WelcomePopup(this);
