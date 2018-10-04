@@ -59,6 +59,15 @@ module.exports = (_env, argv) => {
 
     // if packaging
     if (isInRepo && isProd && wantsZip) {
+
+        const gitState = shell.exec("git diff-index --quiet HEAD -- && true");
+        if(gitState.code !== 0) {
+            console.error("Uncommited changes found in the working directory.");
+            console.error("Packaging is not allowed.");
+            console.error("Resolve the uncommited changes and try packaging in a clean working directory.");
+            process.exit(0);
+        }
+
         // prep source code
         const filename = `r20es_${git.version}_source.zip`;
         shell.exec(`git archive -o ${filename} HEAD`);
