@@ -1,208 +1,54 @@
 import { R20Module } from "../../tools/R20Module"
 import { createCSSElement, findByIdAndRemove } from "../../tools/MiscUtils";
+const constantStyle = require("./alternativePageToolbar.scss");
 
 class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
 
-    readonly sheetId: string = "r20es-alternative-page-toolbar-menu-sheet";
+    private static readonly constantSheetId: string = "r20es-alternative-page-toolbar-menu-constant-sheet";
+    private static readonly variableSheetId: string = "r20es-alternative-page-toolbar-menu-variable-sheet";
+    private static readonly textChangeSelector = "#page-toolbar .pages .availablepage span";
 
     constructor() {
         super(__dirname);
     }
 
-    onSettingChange(name: string, oldVal: any, newVal: any) {
+    private addStyleAsElement(id: string, style: string) {
+        const el = createCSSElement(style, id);
+        document.body.appendChild(el);
+    }
+
+    public onSettingChange(name: string, oldVal: any, newVal: any) {
         this.removeStyle();
         this.addStyle();
     }
 
-    addStyle() {
+    private addStyle() {
         const cfg = this.getHook().config;
-        let style = `
+
+        let variableStyle = `
 #page-toolbar {
-    right: unset;
-    left: unset;
     ${cfg.location === "right"
             ? "right: 400px"
             : "left: 128px"};
-    max-width: 486px;
-    
-    max-height: 90%;
-    width: 100%;
-    height: 100%;
-    
     opacity: ${cfg.opacity};
-    background-color: #222;
-    
-    border-radius: unset;
-}
-
-#page-toolbar .activepage {
-    background-color: rgb(47, 135, 209) !important;
-}
-
-#page-toolbar .pages .availablepage img.pagethumb {
-    width: 32px;
-    height: 32px;
-    order: 0;
-    margin-top: 0;
-    cursor: pointer;
-    
-    box-shadow: unset;
-    max-width: unset;
-    max-height: unset;
-    background-color: unset;
-}
-
-#page-toolbar .pages .availablepage .duplicate {
-    display: inline;
-    position: relative;
-    order: 1;
-    margin-left: 8px;
-    right: unset;
-    top: unset;
-    cursor: pointer;
-}
-
-#page-toolbar .pages .availablepage .settings {
-    position: relative;
-    display: inline;
-    order: 2;
-    margin-left: 8px;
-    cursor: pointer;
-    
-    top: unset;
-    left: unset;
-    font-size: 20px;
-    background-color: unset;
-    padding: 0;
-    border-radius: 0
-    
-}
-
-#page-toolbar .playerspecificbookmark.ui-draggable-dragging {
-    
-}
-
-#page-toolbar .playerspecificbookmark {
-    position: relative;
-    order: 4;
-    left: 0 !important;
-    top: 0 !important;
-}
-
-#page-toolbar .playerbookmark.dropping {
-    left: 0;
-    border: none;
-    border: 3px solid yellow;
-}
-
-#page-toolbar .playerbookmark {    
-    position: relative;
-    display: inline;
-    order: 5;
-    left: 0;
-    cursor: pointer;
-    width: 75px;    
-    margin-left: 8px;
-    height: 30px;
-     box-sizing: border-box;
-}
-
-#page-toolbar .playerbookmark img {
-    transform: rotate(90deg) translateY(-15px) translateX(-25px);
-}
-
-#page-toolbar .pages .availablepage {
-    width: 100%;
-    height: 32px;
-    display: flex;
-    align-items: center;
-
-    text-align: unset;
-    margin-right: unset;
-    margin-top: unset;
-    position: unset;
-    cursor: unset;
-    vertical-align: unset;
-}
-
-#page-toolbar .pages .availablepage:nth-child(even) {
-    background-color: #333;
-}
-
-#page-toolbar .pages .availablepage span {
-    position: relative;
-    display: inline;
-    max-width: unset;
-    width: auto;
-    flex: 10;
-    order: 3;
-    margin-left: 8px;
-    font-size: 1.1em;
-    white-space: pre;
-    
-    
-    text-align: unset;
-    bottom:unset;
-    cursor: pointer;
 }
 
 #page-toolbar .handle {
-    
     ${cfg.location === "right"
             ? "right: -30px !important; left: unset;"
             : "left: -30px; right: unset !important;"};
 }
-
-div#page-toolbar:not(.closed) > div.handle.showtip {
-    top: -3px;
-    bottom: unset !important;
-}
-
-
-#page-toolbar .activepage img.pagethumb {
-    border: none;
-}
-
-#page-toolbar .availablepage:hover {
-    background-color: rgba(47, 135, 209, 0.2) !important;
-}
-
-#page-toolbar .pages div.availablepage:hover img.pagethumb {
-    filter: contrast(120%);
-    box-shadow: unset;
-}
-
-#page-toolbar .ui-sortable {
-    display: flex !important;
-    flex-direction: column;
-    height: auto;
-    width: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    
-    padding-bottom: 32px;
-}
-    
-#page-toolbar .container {
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    padding: 0;
-    margin: 0;
-  
-    white-space: unset;
-    
-}
-
 `;
-        const el = createCSSElement(style, this.sheetId);
-        document.body.appendChild(el);
+
+        this.addStyleAsElement(AlternativePageToolbarMenu.constantSheetId, constantStyle);
+        this.addStyleAsElement(AlternativePageToolbarMenu.variableSheetId, variableStyle);
 
         console.log("adding style");
     }
 
-    removeStyle() {
-        findByIdAndRemove(this.sheetId);
+    private removeStyle() {
+        findByIdAndRemove(AlternativePageToolbarMenu.constantSheetId);
+        findByIdAndRemove(AlternativePageToolbarMenu.variableSheetId);
     }
 
     private updateToolbarTop() {
@@ -214,7 +60,63 @@ div#page-toolbar:not(.closed) > div.handle.showtip {
         }
     }
 
-    setup() {
+    private originalTextEditHandler: () => void;
+
+    private overrideHandler = (e) => {
+        // right-clicks only
+        if(e.which !== 3)  return;
+        e.stopPropagation();
+        e.preventDefault();
+
+        console.log(this.originalTextEditHandler);
+        this.originalTextEditHandler.call(e.target);
+        console.log(e.which);
+    };
+
+    private noContextMenu = (e) => false;
+
+    public setup() {
+
+        /*
+        const $toolbar = this.getEventToolbarRoot();
+        this.oldToolbarEvents = $toolbar.data("events");
+
+        this.forEachEvent(this.oldToolbarEvents, (type, cb) => {
+            $toolbar.off(type, cb);
+        });
+        */
+
+        const clickEvents = $("body").data("events").click;
+
+
+        if(clickEvents) {
+
+            for(const eventHandler of clickEvents) {
+                if(eventHandler.selector === AlternativePageToolbarMenu.textChangeSelector) {
+                    this.originalTextEditHandler = eventHandler.handler;
+                    break;
+                }
+            }
+
+            if(!this.originalTextEditHandler) {
+                console.error("Failed to find page name text change click event");
+            }
+
+        } else {
+            console.error("Failed to find 'click' event in the body element.");
+        }
+
+        if(this.originalTextEditHandler) {
+            $("body").off("click", AlternativePageToolbarMenu.textChangeSelector, this.originalTextEditHandler);
+            $("body").on("mousedown", AlternativePageToolbarMenu.textChangeSelector, this.overrideHandler);
+            $("body").on("contextmenu", AlternativePageToolbarMenu.textChangeSelector, this.noContextMenu);
+
+            console.log("isntalled new text edit handler");
+            console.log(this.originalTextEditHandler)
+
+            //$("body").off("click", textChangeSelector, this.originalTextEditHandler);
+        }
+
         this.addStyle();
         this.updateToolbarTop();
 
@@ -228,9 +130,31 @@ div#page-toolbar:not(.closed) > div.handle.showtip {
         }, 1000);
     }
 
-    dispose() {
+    private forEachEvent(jqueryEvents: any, fx: (eventType: string, eventCallback: any) => void) {
+        for(const eventType in jqueryEvents) {
+            const jqueryEvent = jqueryEvents[eventType];
+
+            for(const eventData of jqueryEvent) {
+                fx(eventType, eventData.handler);
+            }
+        }
+    }
+
+    public dispose() {
         this.removeStyle();
         this.updateToolbarTop();
+
+        $("body").off("mousedown", AlternativePageToolbarMenu.textChangeSelector, this.overrideHandler);
+        $("body").on("click", AlternativePageToolbarMenu.textChangeSelector, this.originalTextEditHandler);
+        $("body").off("contextmenu", AlternativePageToolbarMenu.textChangeSelector, this.noContextMenu);
+
+        /*
+        // reattach original events
+        const $toolbar = this.getEventToolbarRoot();
+        this.forEachEvent(this.oldToolbarEvents, (type, cb) => {
+            $toolbar.on(type, cb);
+        });
+        */
     }
 }
 

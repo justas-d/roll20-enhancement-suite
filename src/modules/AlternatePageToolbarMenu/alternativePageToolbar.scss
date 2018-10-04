@@ -1,0 +1,166 @@
+#page-toolbar {
+  right: unset;
+  left: unset;
+  max-width: 486px;
+
+  max-height: 90%;
+  width: 100%;
+  height: 100%;
+
+  background-color: #222;
+
+  border-radius: unset;
+}
+#page-toolbar .pages .availablepage span input {
+  top: 5px;
+  height: 16px;
+  width: 90%;
+}
+
+#page-toolbar .activepage {
+  background-color: rgb(47, 135, 209) !important;
+}
+
+#page-toolbar .pages .availablepage img.pagethumb {
+  width: 32px;
+  height: 32px;
+  order: 0;
+  margin-top: 0;
+  cursor: pointer;
+
+  box-shadow: unset;
+  max-width: unset;
+  max-height: unset;
+  background-color: unset;
+}
+
+#page-toolbar .pages .availablepage .duplicate {
+  display: inline;
+  position: relative;
+  order: 1;
+  margin-left: 8px;
+  right: unset;
+  top: unset;
+  cursor: pointer;
+}
+
+#page-toolbar .pages .availablepage .settings {
+  position: relative;
+  display: inline;
+  order: 2;
+  margin-left: 8px;
+  cursor: pointer;
+
+  top: unset;
+  left: unset;
+  font-size: 20px;
+  background-color: unset;
+  padding: 0;
+  border-radius: 0
+
+}
+
+#page-toolbar .playerspecificbookmark {
+  position: relative;
+  order: 4;
+  left: 0 !important;
+  top: 0 !important;
+}
+
+#page-toolbar .playerbookmark.dropping {
+  left: 0;
+  border: none;
+  border: 3px solid yellow;
+}
+
+#page-toolbar .playerbookmark {
+  position: relative;
+  display: inline;
+  order: 5;
+  left: 0;
+  cursor: pointer;
+  width: 75px;
+  margin-left: 8px;
+  height: 30px;
+  box-sizing: border-box;
+}
+
+#page-toolbar .playerbookmark img {
+  transform: rotate(90deg) translateY(-15px) translateX(-25px);
+}
+
+#page-toolbar .pages .availablepage {
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: center;
+
+  text-align: unset;
+  margin-right: unset;
+  margin-top: unset;
+  position: unset;
+  cursor: unset;
+  vertical-align: unset;
+}
+
+#page-toolbar .pages .availablepage:nth-child(even) {
+  background-color: #333;
+}
+
+#page-toolbar .pages .availablepage span {
+  position: relative;
+  display: inline;
+  max-width: unset;
+  width: auto;
+  flex: 10;
+  order: 3;
+  margin-left: 8px;
+  font-size: 1.1em;
+  white-space: pre;
+
+
+  text-align: unset;
+  bottom:unset;
+  cursor: pointer;
+}
+
+div#page-toolbar:not(.closed) > div.handle.showtip {
+  top: -3px;
+  bottom: unset !important;
+}
+
+
+#page-toolbar .activepage img.pagethumb {
+  border: none;
+}
+
+#page-toolbar .availablepage:hover {
+  background-color: rgba(47, 135, 209, 0.2) !important;
+}
+
+#page-toolbar .pages div.availablepage:hover img.pagethumb {
+  filter: contrast(120%);
+  box-shadow: unset;
+}
+
+#page-toolbar .ui-sortable {
+  display: flex !important;
+  flex-direction: column;
+  height: auto;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-bottom: 32px;
+}
+
+#page-toolbar .container {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+
+  white-space: unset;
+
+}
