@@ -68,6 +68,12 @@ module.exports = (_env, argv) => {
             process.exit(0);
         }
 
+        if(changelog.current === "TODO") {
+            console.error("Current version in the changelog file is set to TODO.");
+            console.error("Update the current version to the proper value before packaging.");
+            process.exit(0);
+        }
+
         // prep source code
         const filename = `r20es_${git.version}_source.zip`;
         shell.exec(`git archive -o ${filename} HEAD`);
