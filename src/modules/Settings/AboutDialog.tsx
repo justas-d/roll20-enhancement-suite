@@ -69,7 +69,7 @@ export default class AboutDialog extends DialogBase<null> {
                                 <b>With contributions from</b>
                             </div>
 
-                            <div>
+                            <div style={{maxWidth: "180px"}}>
                                 Mike, Aaron, Blurn Glanstone, Tobyn
                             </div>
                         </div>
