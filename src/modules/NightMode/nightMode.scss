@@ -676,3 +676,7 @@ div#color_selector {
 #initiativewindow ul li:first-child {
   background-color: $bg500;
 }
+
+#page-toolbar .activepage span {
+  color: $textHighContrast;
+}
