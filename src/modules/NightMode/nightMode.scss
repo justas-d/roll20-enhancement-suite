@@ -1,18 +1,5 @@
-$bg900: #0d0e0f;
-$bg800: #191b1e;
-$bg700: #23252b;
-$bg600: #292a35;
-$bg500: #313242;
-$bg400: #464770;
-
-$brand900: #022947;
-$brand800: #013160;
-$brand700: #082891;
-
-$text900: #87817d;
-$text800: #7f7874;
-$text700: #68625d;
-$textHighContrast: #d8d3d0;
+@import "./inputAndWidgets";
+@import "./colors";
 
 @mixin paper-shadow($color) {
   -webkit-box-shadow: 0px 3px 5px -1px $color;
@@ -108,7 +95,15 @@ $textHighContrast: #d8d3d0;
   border-bottom: none;
 }
 
+.charsheet .sheet-charmancer .sheet-bottombar,
+.charsheet .sheet-charmancer .sheet-row {
+  border: none;
+}
+
+.charsheet .sheet-charmancer .sheet-bottombar,
+.charsheet .sheet-charmancer .sheet-steps,
 .r20es-welcome,
+.charsheet .sheet-charmancer .sheet-hilite,
 dialog,
 .dialog-footer > .dialog-footer-content,
 .r20es-dialog,
@@ -131,6 +126,7 @@ dialog,
 .searchbox,
 .clear,
 .dropdown-menu,
+.charsheet .sheet-charmancer.sheet-container .sheet-cancel-prompt,
 .tabmenu {
   background-color: $bg900 !important;
 }
@@ -216,50 +212,6 @@ pre {
   color: $textHighContrast !important;
 }
 
-.macrobox > button {
-
-}
-
-/* Form input */
-.ui-state-default,
-.ui-widget-content .ui-state-default,
-.ui-widget-header .ui-state-default,
-.textchatcontainer a[href^="!"],
-.textchatcontainer a[href^="~"],
-.btn-group > .btn,
-.button,
-.ui-dialog .ui-dialog-buttonpane button,
-.btn {
-  background-image: none;
-  background-color: $brand900;
-  border: 1px solid $bg900;
-  color: $textHighContrast !important;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
-
-.btn-primary {
-  background-color: #375a7f;
-  border-color: #375a7f;
-}
-
-.btn-info {
-  background-color: #3780a8;
-  border-color: #3780a8;
-}
-
-.btn-danger {
-  background-color: #8f2220;
-  border-color: #8f2220;
-}
-
-.btn-success {
-  background-color: #00bc8c;
-  border-color: #00bc8c;
-}
-
 .ui-dialog-content {
   background-color: red;
 }
@@ -299,43 +251,6 @@ button, select, input[type="text"],
 .textchatcontainer a[href^="!"],
 .textchatcontainer a[href^="~"] {
   @include paper-shadow($bg900);
-}
-
-.btn-default:active:hover,
-.btn-default.active:hover,
-.open > .dropdown-toggle.btn-default:hover,
-.btn-default:active:focus,
-.btn-default.active:focus,
-.open > .dropdown-toggle.btn-default:focus,
-.btn-default:active.focus,
-.btn-default.active.focus,
-.open > .dropdown-toggle.btn-default.focus,
-.btn:active,
-.btn.active,
-.btn.btn-default:active,
-.btn.btn-default.active,
-.btn-group > .btn:active,
-.note-editor .btn-default.active,
-.note-editor .btn-group > .btn.active {
-  background-color: $brand700;
-  border: 1px solid $brand700;
-  color: $textHighContrast !important;
-}
-
-s,
-.nav > li > a:hover, .nav > li > a:focus,
-.no-touch .textchatcontainer a[href^="!"]:hover,
-.textchatcontainer a[href^="~"]:hover,
-.btn:hover,
-.btn.btn-default:hover {
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
-  background-color: $brand800;
-  border: 1px solid $brand800;
-  color: $textHighContrast !important;
-}
-
-.btn:disabled {
-  background-color: $bg700;
 }
 
 .chosen-container .chosen-results li.result-selected {
