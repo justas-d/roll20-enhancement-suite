@@ -4,3 +4,4 @@
 * **Aaron** - A coffee.
 * **Blurn Glanstone** - 5 coffees.
 * **Tobyn** - 5 coffees.
+* **Fredrik** - A coffee.
