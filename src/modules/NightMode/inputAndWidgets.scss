@@ -1,19 +1,7 @@
 @import "./colors";
 @import "./scssMixins";
 
-#secondary-toolbar,
-.btn-group > .btn,
-button, select, input[type="text"],
-.sheet-container,
-.ui-state-default,
-.ui-widget-content .ui-state-default,
-.ui-widget-header .ui-state-default,
-.textchatcontainer a[href^="!"],
-.textchatcontainer a[href^="~"] {
-    @include paper-shadow($bg900);
-}
-
-.ui-slider {
+ .ui-slider {
     background: none;
     background-color: $bg700;
     border: 1px solid $bg700;
@@ -170,15 +158,6 @@ input[type="text"] {
     background-image: none;
     background-color: $bg700;
     color: $text900;
-}
-
-.textboxlist,
-.textboxlist-bits,
-button,
-select,
-input,
-input[type="text"] {
-    border: 1px solid $bg700;
 }
 
 .tokenizer {

@@ -1,4 +1,5 @@
 @import "./colors";
+@import "./scssMixins";
 
 .charsheet .sheet-charmancer .sheet-bottombar,
 .charsheet .sheet-charmancer .sheet-steps,
@@ -121,7 +122,8 @@
 }
 
 .charsheet .repcontrol .btn {
-    color: $text700 !important;
+    color: $bg900 !important;
+    text-shadow: none;
 }
 
 .charsheet .sheet-attacks .sheet-attack:hover .sheet-options-flag + span,
@@ -163,18 +165,9 @@
     color: $text900;
 }
 
-
-
-.sheet-rolltemplate-atk .sheet-desc,
-.sheet-rolltemplate-atkdmg .sheet-desc,
-.sheet-rolltemplate-dmg .sheet-desc,
-.sheet-rolltemplate-desc .sheet-desc {
-    background-color: $bg900;
-    border: none;
-}
-
 .sheet-rolltemplate-spell .sheet-container {
     background: none;
+    background-color: $bg600;
 }
 
 .charsheet .sheet-charmancer button[type="back"]:disabled:not(.sheet-here) {
@@ -208,4 +201,94 @@
 
 .abilities .body .rollabil {
     color: $textHighContrast
+}
+
+.sheet-container {
+    @include paper-shadow($bg900);
+}
+
+.sheet-rolltemplate-dmg .sheet-container,
+.sheet-rolltemplate-atkdmg .sheet-container.sheet-damagetemplate,
+.sheet-rolltemplate-atk .sheet-desc,
+.sheet-rolltemplate-atkdmg .sheet-desc,
+.sheet-rolltemplate-dmg .sheet-desc,
+.sheet-rolltemplate-desc .sheet-desc,
+.sheet-rolltemplate-atk .sheet-container,
+.sheet-rolltemplate-atkdmg .sheet-container.sheet-atk,
+.sheet-rolltemplate-dmg .sheet-atk {
+    background-color: $bg600;
+    border: none;
+}
+
+.sheet-rolltemplate-npc,
+.sheet-rolltemplate-npcaction .sheet-container,
+.sheet-rolltemplate-npcatk,
+.sheet-rolltemplate-npcdmg,
+.sheet-rolltemplate-traits {
+    background-color: $bg600;
+    border: none;
+    padding: 12px;
+
+    span {
+        color: $textHighContrast;
+    }
+}
+
+.sheet-rolltemplate-simple .sheet-adv span,
+.sheet-rolltemplate-simple .sheet-solo span,
+.sheet-rolltemplate-atk .sheet-adv span,
+.sheet-rolltemplate-atk .sheet-solo span,
+.sheet-rolltemplate-atkdmg .sheet-adv span,
+.sheet-rolltemplate-atkdmg .sheet-solo span,
+.sheet-rolltemplate-dmg .sheet-adv span,
+.sheet-rolltemplate-dmg .sheet-solo span {
+    background-color: $bg500;
+    padding: 4px;
+}
+
+.sheet-rolltemplate-atkdmg .sheet-damagetemplate .sheet-sublabel,
+.sheet-rolltemplate-dmg .sheet-damagetemplate .sheet-sublabel,
+.sheet-rolltemplate-atkdmg .sheet-desc .sheet-sublabel,
+.sheet-rolltemplate-dmg .sheet-desc .sheet-sublabel {
+    background-color: unset;
+    padding: unset;
+}
+
+.sheet-rolltemplate-atk .sheet-sublabel span,
+.sheet-rolltemplate-atkdmg .sheet-sublabel span,
+.sheet-rolltemplate-dmg .sheet-sublabel span, .charsheet {
+    color: $text900;
+}
+
+.sheet-rolltemplate-simple .sheet-container {
+    background-color: $bg600;
+    border: none;
+}
+
+.charsheet .sheet-tool .sheet-options select,
+.charsheet .sheet-attack .sheet-options select,
+.charsheet .sheet-spell .sheet-options select,
+.charsheet .sheet-options .sheet-body select,
+.charsheet .sheet-proficiencies .sheet-options select,
+.charsheet .sheet-traits .sheet-options select {
+    color: $text900;
+}
+
+.textchatcontainer {
+    .inlinerollresult {
+        background-color: $bg400;
+        color: $textHighContrast;
+        border: none;
+        @include paper-shadow($bg800);
+    }
+}
+
+.sheet-rolltemplate-mancerroll .sheet-container {
+    background-color: $bg600;
+    border: none;
+    padding: 8px;
+}
+
+.sheet-rolltemplate-mancerroll .sheet-row.sheet-header .inlinerollresult {
+    padding: 2px;
 }

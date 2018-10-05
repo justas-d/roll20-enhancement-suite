@@ -1,47 +1,75 @@
 @import "./colors";
 
-.textchatcontainer .message {
-    background-color: $bg700;
+.textchatcontainer {
+
+    .message {
+        background-color: $bg700;
+        padding-bottom: 10px;
+    }
+
+    .message.system {
+        background-color: $bg800;
+    }
+
+    .message.you {
+        background-color: $bg700;
+    }
+
+    .message.private {
+        background-color: $bg600;
+    }
+
+    .spacer {
+        visibility: hidden;
+    }
+
+
+
 }
 
-.textchatcontainer .message.system {
-    background-color: $bg800;
-}
+#textchat {
+    .userscript-sharelink {
+        background-color: $bg400;
+    }
 
-.textchatcontainer .message.you {
-    background-color: $bg700;
-}
+    .userscript-sharelink a {
+        background-color: $bg400 !important;
+        color: $bg400 !important;
+    }
 
-.textchatcontainer .message.private {
-    background-color: $bg600;
-}
-
-.textchatcontainer .spacer {
-    visibility: hidden;
-}
-
-.textchatcontainer .inlinerollresult {
-    background-color: $bg400;
-    color: $text900;
-    border: none;
-    @include paper-shadow($bg800);
-}
-
-#textchat .userscript-sharelink {
-    background-color: $bg400;
-}
-
-#textchat .userscript-sharelink a {
-    background-color: $bg400 !important;
-    color: $bg400 !important;
-}
-
-#textchat .userscript-sharelink:hover a {
-    color: $textHighContrast !important;
-    background-color: $bg900 !important;
+    .userscript-sharelink:hover a {
+        color: $textHighContrast !important;
+        background-color: $bg900 !important;
+    }
 }
 
 #textchat,
 #textchat-input {
     background-color: $bg900;
+}
+
+.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.fullcrit,
+.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.fullfail,
+.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.importantroll,
+.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.fullcrit,
+.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.fullfail,
+.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.importantroll,
+.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.fullcrit,
+.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.fullfail,
+.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.importantroll,
+.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.fullcrit,
+.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.fullfail,
+.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.importantroll,
+.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.fullcrit,
+.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.importantroll,
+.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.fullfail,
+.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.fullcrit,
+.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.importantroll,
+.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.fullfail .sheet-rolltemplate-atk .sheet-desc .inlinerollresult.fullcrit,
+.sheet-rolltemplate-atk .sheet-desc .inlinerollresult.importantroll,
+.sheet-rolltemplate-atk .sheet-desc .inlinerollresult.fullfail,
+.sheet-rolltemplate-mancerroll .inlinerollresult.fullcrit,
+.sheet-rolltemplate-mancerroll .inlinerollresult.importantroll,
+.sheet-rolltemplate-mancerroll .inlinerollresult.fullfail {
+    color: $text900;
 }

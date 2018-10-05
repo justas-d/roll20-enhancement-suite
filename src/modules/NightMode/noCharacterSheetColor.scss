@@ -1,0 +1,46 @@
+
+.charsheet {
+    .textboxlist,
+    .textboxlist-bits,
+    button,
+    select,
+    input,
+    input[type="text"] {
+        background-image: unset;
+        background-color: unset;
+        color: unset;
+
+    }
+
+    h1, h2, h3, h4, h5, p, i, b, small, label, span, div {
+        color: unset;
+    }
+
+    textarea,
+    code,
+    pre {
+        color: unset;
+        background-color: unset;
+        border: unset;
+    }
+
+    hr {
+        border-color: unset;
+    }
+}
+
+.sheet-rolltemplate-simple .sheet-adv span,
+.sheet-rolltemplate-simple .sheet-solo span,
+.sheet-rolltemplate-atk .sheet-adv span,
+.sheet-rolltemplate-atk .sheet-solo span,
+.sheet-rolltemplate-atkdmg .sheet-adv span,
+.sheet-rolltemplate-atkdmg .sheet-solo span,
+.sheet-rolltemplate-dmg .sheet-adv span,
+.sheet-rolltemplate-dmg .sheet-solo span,
+.sheet-row span {
+    color: initial;
+}
+
+.sheet-container span {
+    color: initial;
+}
