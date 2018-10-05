@@ -1,0 +1,51 @@
+@import "./colors";
+
+.textchatcontainer {
+
+    .message {
+        background-color: $bg700;
+        padding-bottom: 10px;
+    }
+
+    .message.system {
+        background-color: $bg800;
+    }
+
+    .message.you {
+        background-color: $bg700;
+    }
+
+    .message.private {
+        background-color: $bg600;
+    }
+
+    .spacer {
+        visibility: hidden;
+    }
+}
+
+.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.fullcrit,
+.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.fullfail,
+.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.importantroll,
+.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.fullcrit,
+.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.fullfail,
+.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.importantroll,
+.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.fullcrit,
+.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.fullfail,
+.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.importantroll,
+.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.fullcrit,
+.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.fullfail,
+.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.importantroll,
+.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.fullcrit,
+.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.importantroll,
+.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.fullfail,
+.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.fullcrit,
+.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.importantroll,
+.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.fullfail .sheet-rolltemplate-atk .sheet-desc .inlinerollresult.fullcrit,
+.sheet-rolltemplate-atk .sheet-desc .inlinerollresult.importantroll,
+.sheet-rolltemplate-atk .sheet-desc .inlinerollresult.fullfail,
+.sheet-rolltemplate-mancerroll .inlinerollresult.fullcrit,
+.sheet-rolltemplate-mancerroll .inlinerollresult.importantroll,
+.sheet-rolltemplate-mancerroll .inlinerollresult.fullfail {
+    color: $text900;
+}

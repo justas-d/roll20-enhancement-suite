@@ -99,13 +99,13 @@ div#showndecks:hover {
     ul li {
         border-bottom: none;
 
-        .active {
+        &.active {
             background-color: $brand700;
             color: $textHighContrast;
         }
 
-        .hasSub:hover,
-        :hover {
+        &.hasSub:hover,
+        &:hover {
             background-color: $brand800;
             color: $textHighContrast;
         }

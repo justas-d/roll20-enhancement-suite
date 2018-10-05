@@ -6,11 +6,13 @@ import {R20} from "../../tools/R20";
 const css = require("./nightMode.scss");
 const ogl5ecss = require("./5eOGLNightMode.scss");
 const noSheetCss = require("./noCharacterSheetColor.scss");
+const chatCss = require("./chatMessages.scss");
 
 class DarkModeModule extends R20Module.OnAppLoadBase {
     private static readonly styleId = "r20es-dark-mode-style-id";
     private static readonly ogl5estyleId = "r20es-dark-mode-ogl-5e-style-id";
     private static readonly noSheetStyleId = "r20es-dark-mode-no-sheets-id";
+    private static readonly chatStyleId= "r20es-dark-mode-chat-style-id";
 
     constructor() {
         super(__dirname);
@@ -48,6 +50,10 @@ class DarkModeModule extends R20Module.OnAppLoadBase {
 
         this.addStyleWidget(css, DarkModeModule.styleId);
 
+        if(cfg.styleChat) {
+            this.addStyleWidget(chatCss, DarkModeModule.chatStyleId);
+        }
+
         if(cfg.ogl5ESheet) {
             this.addStyleWidget(ogl5ecss, DarkModeModule.ogl5estyleId);
         } else {
@@ -59,6 +65,7 @@ class DarkModeModule extends R20Module.OnAppLoadBase {
 
     private removeWidget() {
         findByIdAndRemove(DarkModeModule.styleId);
+        findByIdAndRemove(DarkModeModule.chatStyleId);
         findByIdAndRemove(DarkModeModule.ogl5estyleId);
         findByIdAndRemove(DarkModeModule.noSheetStyleId);
     }

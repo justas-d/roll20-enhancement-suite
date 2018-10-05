@@ -1,13 +1,12 @@
 @import "./inputAndWidgets";
 @import "./colors";
-@import "./chat";
 @import "./tables";
 @import "./editor";
 @import "./dialog";
 @import "./sidebar";
 @import "./internalOverrides";
 @import "./complexDialogs";
-
+@import "./chat";
 
 dialog {
   background-color: $bg900

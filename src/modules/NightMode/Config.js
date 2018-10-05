@@ -19,6 +19,10 @@ export default MakeConfig(__dirname, {
         ogl5ESheet: {
             display: "OGL D&D 5E Night Mode",
             type: ConfigViews.Checkbox,
+        },
+        styleChat: {
+            display: "Style chat?",
+            type: ConfigViews.Checkbox,
         }
     },
 
@@ -26,5 +30,6 @@ export default MakeConfig(__dirname, {
         overrideBackground: true,
         enabled: false,
         ogl5ESheet: false,
+        styleChat: true,
     },
 });
