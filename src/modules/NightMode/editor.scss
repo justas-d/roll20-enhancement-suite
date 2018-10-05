@@ -1,0 +1,120 @@
+@import "./colors";
+@import "./scssMixins";
+
+#editor-wrapper {
+    background-color: $bg800;
+}
+
+#editinglayer.gmlayer div.submenu li.choosegmlayer,
+#editinglayer.map div.submenu li.choosemap,
+#editinglayer.objects div.submenu li.chooseobjects,
+#measure li.activerulermode,
+#floatingtoolbar li.activebutton {
+    background-color: $brand700;
+    color: $text900;
+}
+
+#floatingtoolbar div.submenu ul,
+#floatingtoolbar {
+    background-color: $bg600;
+    border: none;
+    @include paper-shadow($bg900)
+}
+
+#floatingtoolbar div.submenu ul {
+    border: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+#floatingtoolbar li {
+    border-bottom: none;
+
+    &:nth-child(2n) {
+        background-color: $bg500;
+    }
+
+    &:hover {
+        background-color: $brand800;
+        color: $text900;
+    }
+}
+
+#measure img {
+    filter: invert(1);
+}
+
+
+div#showndecks:hover {
+    background-color: rgba($bg600, 0.8);
+}
+
+#initiativewindow ul li {
+    background-color: $bg900;
+    border-bottom-color: $bg600;
+
+    &:first-child {
+        background-color: $bg500;
+    }
+}
+
+#page-toolbar .activepage span {
+    color: $textHighContrast;
+}
+
+#radial-menu {
+    .button {
+        border: none;
+
+        div.inner span.pictos,
+        div.inner.hasnumber span {
+            color: $textHighContrast;
+
+        }
+    }
+
+    .markermenu {
+        background-color: $bg700;
+
+        .markericon,
+        .markercolor {
+            border-color: $bg700;
+        }
+    }
+}
+
+.d20contextmenu {
+    opacity: 1;
+
+    ul li ul.submenu,
+    > ul {
+        background-color: $bg600;
+        opacity: 1;
+    }
+
+    ul li {
+        border-bottom: none;
+
+        .active {
+            background-color: $brand700;
+            color: $textHighContrast;
+        }
+
+        .hasSub:hover,
+        :hover {
+            background-color: $brand800;
+            color: $textHighContrast;
+        }
+    }
+}
+
+#secondary-toolbar,
+#secondary-toolbar li {
+    background-color: $bg800;
+    overflow: unset;
+    border: none;
+}

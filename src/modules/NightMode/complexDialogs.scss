@@ -1,0 +1,87 @@
+@import "./colors";
+
+.note-editor {
+    .dropdown-menu {
+        background-color: $bg900;
+    }
+
+    &.note-frame {
+        border: none;
+
+        .note-statusbar .note-resizebar {
+            background-color: $bg600;
+        }
+    }
+}
+
+.note-editing-area,
+.note-editor.note-frame .note-editing-area .note-editable,
+.note-editor .panel-default > .panel-heading {
+    background-color: $bg700;
+    border-bottom: none;
+    color: $text900;
+}
+
+.charactereditor {
+    .defaulttoken,
+    .avatar {
+        border-color: $bg900;
+        background-color: $bg800;
+        @include paper-shadow(black);
+    }
+
+    .defaulttoken {
+        margin-bottom: 8px;
+    }
+
+}
+
+.attributesabilities .abil {
+    background-color: $bg900;
+}
+
+
+.chosen-container {
+    .chosen-results li.result-selected {
+        background-color: $brand900;
+    }
+}
+
+.chosen-container-multi .chosen-choices,
+.chosen-container .chosen-drop,
+.chosen-container .chosen-results li {
+    background-image: none;
+    background-color: $bg700;
+    color: $text900;
+}
+
+.chosen-container-multi .chosen-choices,
+.chosen-container .chosen-drop {
+    border: 1px solid $bg700;
+}
+
+.chosen-container-multi .chosen-choices li.search-choice {
+    background-image: none;
+    border-radius: 0;
+    background-color: $brand800;
+    box-shadow: none;
+    border: none;
+}
+
+
+.cardeditor .avatar,
+.deckeditor .avatar{
+    background-color: $bg800;
+}
+
+.dropbox.filled {
+    border-color: $bg800;
+}
+
+
+.tokenslot .remove,
+.dropbox .remove {
+    background-color: $brand800;
+    padding: 0;
+    margin: 3px;
+}

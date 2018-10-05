@@ -1,0 +1,47 @@
+@import "./colors";
+
+.textchatcontainer .message {
+    background-color: $bg700;
+}
+
+.textchatcontainer .message.system {
+    background-color: $bg800;
+}
+
+.textchatcontainer .message.you {
+    background-color: $bg700;
+}
+
+.textchatcontainer .message.private {
+    background-color: $bg600;
+}
+
+.textchatcontainer .spacer {
+    visibility: hidden;
+}
+
+.textchatcontainer .inlinerollresult {
+    background-color: $bg400;
+    color: $text900;
+    border: none;
+    @include paper-shadow($bg800);
+}
+
+#textchat .userscript-sharelink {
+    background-color: $bg400;
+}
+
+#textchat .userscript-sharelink a {
+    background-color: $bg400 !important;
+    color: $bg400 !important;
+}
+
+#textchat .userscript-sharelink:hover a {
+    color: $textHighContrast !important;
+    background-color: $bg900 !important;
+}
+
+#textchat,
+#textchat-input {
+    background-color: $bg900;
+}

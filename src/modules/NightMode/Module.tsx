@@ -4,9 +4,11 @@ import {findByIdAndRemove} from '../../tools/MiscUtils';
 import {R20} from "../../tools/R20";
 
 const css = require("./nightMode.scss");
+const ogl5ecss = require("./5eOGLNightMode.scss");
 
 class DarkModeModule extends R20Module.OnAppLoadBase {
     private static readonly styleId = "r20es-dark-mode-style-id";
+    private static readonly ogl5estyleId = "r20es-dark-mode-ogl-5e-style-id";
 
     constructor() {
         super(__dirname);
@@ -33,14 +35,27 @@ class DarkModeModule extends R20Module.OnAppLoadBase {
         R20.setBackgroundStyle(page.attributes.background_color);
     }
 
-    private createWidget() {
-        this.updatePageBackground();
-        const widget = <style id={DarkModeModule.styleId}>{css}</style>;
+    private addStyleWidget(style: string, id:string) {
+        const widget = <style id={id}>{style}</style>;
         document.head.appendChild(widget);
+    }
+
+    private createWidget() {
+
+        const cfg = this.getHook().config;
+
+        this.addStyleWidget(css, DarkModeModule.styleId);
+
+        if(cfg.ogl5ESheet) {
+            this.addStyleWidget(ogl5ecss, DarkModeModule.ogl5estyleId);
+        }
+
+        this.updatePageBackground();
     }
 
     private removeWidget() {
         findByIdAndRemove(DarkModeModule.styleId);
+        findByIdAndRemove(DarkModeModule.ogl5estyleId);
     }
 
     public onSettingChange(name, oldVal, newVal) {

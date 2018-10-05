@@ -1,8 +1,29 @@
 @import "./colors";
+@import "./scssMixins";
+
+#secondary-toolbar,
+.btn-group > .btn,
+button, select, input[type="text"],
+.sheet-container,
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default,
+.textchatcontainer a[href^="!"],
+.textchatcontainer a[href^="~"] {
+    @include paper-shadow($bg900);
+}
+
+.ui-slider {
+    background: none;
+    background-color: $bg700;
+    border: 1px solid $bg700;
+}
 
 //
 //  ACTIVE BUTTONS
 //
+.ui-widget-content a.btn:active,
+.ui-widget-content a.btn.active,
 .charsheet .sheet-charmancer button.sheet-step.sheet-here,
 .btn-default:active:hover,
 .btn-default.active:hover,
@@ -14,6 +35,7 @@
 .btn-default.active.focus,
 .open > .dropdown-toggle.btn-default.focus,
 .btn:active,
+.nav-tabs > li.active > a:focus,
 .btn.active,
 .btn.btn-default:active,
 .btn.btn-default.active,
@@ -22,12 +44,16 @@
 .note-editor .btn-group > .btn.active {
   background-color: $brand700;
   border: 1px solid $brand700;
-  color: $textHighContrast !important;
+  color: $textHighContrast;
 }
 
 //
 // HOVER BUTTONS
 //
+
+.nav > li > a:hover,
+.ui-widget-content a.btn:hover,
+.ui-widget-content a.btn.hover,
 .charsheet .sheet-charmancer button:hover.sheet-warning,
 .charsheet .sheet-charmancer button:hover,
 .charsheet .sheet-charmancer button:hover.sheet-exit,
@@ -36,7 +62,7 @@
 .charsheet .sheet-charmancer button[type="roll"]:hover,
 .charsheet .sheet-charmancer button[type="roll"]:hover *,
 s,
-.nav > li > a:hover, .nav > li > a:focus,
+.nav-tabs > li.active > a:hover,
 .no-touch .textchatcontainer a[href^="!"]:hover,
 .textchatcontainer a[href^="~"]:hover,
 .btn:hover,
@@ -44,11 +70,15 @@ s,
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
   background-color: $brand800;
   border: 1px solid $brand800;
-  color: $textHighContrast !important;
+  color: $textHighContrast;
 }
 
 //
 // IDLE BUTTONS
+//
+
+.ui-widget-content a.btn,
+.nav-tabs > li.active > a,
 .charsheet .sheet-charmancer button,
 .charsheet .sheet-charmancer button[type="roll"],
 .charsheet .sheet-charmancer button.sheet-warning,
@@ -69,7 +99,7 @@ s,
   background-image: none;
   background-color: $brand900;
   border: 1px solid $bg900;
-  color: $textHighContrast !important;
+  color: $textHighContrast;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -106,7 +136,59 @@ textarea[readonly] {
   background-color: $bg800;
 }
 
-.charsheet .sheet-charmancer button[type="back"]:disabled:not(.sheet-here),
 .btn:disabled {
   background-color: $bg700;
+}
+
+.nav-tabs {
+    border-bottom: none;
+
+    & > li {
+        a {
+            color: $textHighContrast;
+        }
+
+        .active > a,
+        .active > a:hover,
+        .active > a:focus {
+            background-color: $brand700;
+            border: 1px solid $brand700;
+        }
+    }
+}
+
+div#color_selector {
+    background-color: $bg700;
+}
+
+.textboxlist,
+.textboxlist-bits,
+button,
+select,
+input,
+input[type="text"] {
+    background-image: none;
+    background-color: $bg700;
+    color: $text900;
+}
+
+.textboxlist,
+.textboxlist-bits,
+button,
+select,
+input,
+input[type="text"] {
+    border: 1px solid $bg700;
+}
+
+.tokenizer {
+    border: none;
+}
+
+.dropbox {
+    border-color: $bg800;
+}
+
+.tableitemeditor .avatar {
+    background-color: $bg800;
 }

@@ -1,0 +1,68 @@
+@import "./colors";
+
+.ui-dialog {
+    background-color: $bg900;
+    padding: 0;
+
+    .ui-dialog-titlebar,
+    .ui-widget-content {
+        background-color: $bg900;
+    }
+}
+
+.ui-dialog,
+.ui-widget {
+    background-color: $bg900;
+}
+
+.ui-widget-content {
+    a {
+        color: $textHighContrast;
+        background-color: $bg700;
+    }
+
+    background: $bg900;
+}
+
+.ui-widget-content,
+.ui-dialog .ui-dialog-buttonpane,
+.ui-dialog .ui-dialog-titlebar {
+    border: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.ui-dialog {
+    .ui-dialog-buttonpane {
+        background-color: $bg700;
+    }
+
+    .ui-dialog-title {
+        color: $text900;
+    }
+}
+
+.ui-widget-content .ui-icon {
+    filter: invert(1);
+}
+
+.ui-tabs .ui-tabs-nav {
+    border: none;
+
+    li:hover,
+    li a:hover {
+        border-bottom: none;
+    }
+}
+
+.modal-content {
+    background-color: $bg900;
+}
+
+.modal-footer,
+.modal-header {
+    border-top: none;
+    border-bottom: none;
+}
+

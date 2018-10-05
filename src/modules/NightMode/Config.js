@@ -15,11 +15,16 @@ export default MakeConfig(__dirname, {
         overrideBackground: {
             display: "Force the canvas background to be black?",
             type: ConfigViews.Checkbox,
+        },
+        ogl5ESheet: {
+            display: "OGL D&D 5E Night Mode",
+            type: ConfigViews.Checkbox,
         }
     },
 
     config: {
         overrideBackground: true,
         enabled: false,
+        ogl5ESheet: false,
     },
 });

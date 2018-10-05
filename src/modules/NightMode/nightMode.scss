@@ -1,201 +1,22 @@
 @import "./inputAndWidgets";
 @import "./colors";
+@import "./chat";
+@import "./tables";
+@import "./editor";
+@import "./dialog";
+@import "./sidebar";
+@import "./internalOverrides";
+@import "./complexDialogs";
 
-@mixin paper-shadow($color) {
-  -webkit-box-shadow: 0px 3px 5px -1px $color;
-  -moz-box-shadow: 0px 3px 5px -1px $color;
-  box-shadow: 0px 5px 3px -1px $color;
+
+dialog {
+  background-color: $bg900
 }
 
-/* Editor */
-#editor-wrapper {
-  background-color: $bg800;
-}
-
-#editinglayer.gmlayer div.submenu li.choosegmlayer,
-#editinglayer.map div.submenu li.choosemap,
-#editinglayer.objects div.submenu li.chooseobjects,
-#measure li.activerulermode,
-#floatingtoolbar li.activebutton {
-  background-color: $brand700;
-  color: $text900;
-}
-
-#floatingtoolbar div.submenu ul,
-#floatingtoolbar {
-  background-color: $bg600;
-  border: none;
-  @include paper-shadow($bg900)
-}
-
-#floatingtoolbar li {
-  border-bottom: none;
-}
-
-#floatingtoolbar li:nth-child(2n) {
-  background-color: $bg500;
-}
-
-#floatingtoolbar li:hover {
-  background-color: $brand800;
-  color: $text900;
-}
-
-#measure img {
-  filter: invert(1);
-}
-
-#floatingtoolbar div.submenu ul {
-  border: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-}
-
-.ui-tabs .ui-tabs-nav li:hover,
-.ui-tabs .ui-tabs-nav li a:hover {
-  background-color: $brand900;
-  border-bottom: none;
-}
-
-#rightsidebar .ui-tabs-nav li.ui-state-active a {
-  background-color: $brand800;
-}
-
-/* Dialog */
-.ui-widget-content {
-  background: none;
-}
-
-
-
-.ui-dialog .ui-dialog-buttonpane,
-.ui-widget-content,
-.ui-dialog .ui-dialog-titlebar {
-  border: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
-
-.ui-dialog .ui-dialog-buttonpane {
-  background-color: $bg700 !important;
-}
-
-.ui-widget-content .ui-icon {
-  filter: invert(1);
-}
-
-/* Backgrounds */
-
-.attributesabilities .abil {
-  border-bottom: none;
-}
-
-.charsheet .sheet-charmancer .sheet-bottombar,
-.charsheet .sheet-charmancer .sheet-row {
-  border: none;
-}
-
-.charsheet .sheet-charmancer .sheet-bottombar,
-.charsheet .sheet-charmancer .sheet-steps,
-.r20es-welcome,
-.charsheet .sheet-charmancer .sheet-hilite,
-dialog,
-.dialog-footer > .dialog-footer-content,
-.r20es-dialog,
-.attributesabilities .abil,
-.modal-content,
-#showndecks .deckstack .controls,
-.ui-dialog-titlebar,
-.ui-widget-content,
-.ui-dialog,
-.ui-widget,
-#rightsidebar,
-#mysettings,
-#deckstables,
-#jukebox,
-#compendium,
-#journal,
-#imagedialog,
-#textchat,
-#textchat-input,
-.searchbox,
-.clear,
-.dropdown-menu,
-.charsheet .sheet-charmancer.sheet-container .sheet-cancel-prompt,
-.tabmenu {
-  background-color: $bg900 !important;
-}
-
-.dd-item .playerdots,
-#imagedialog #librarysearchroot .googleresult,
-#imagedialog .expandsearch,
-#imagedialog #librarysearchroot .marketplacead,
-#initiativewindow ul li {
-  background-color: $bg900;
-}
-
-#initiativewindow ul li {
-  border-bottom-color: $bg600;
-}
-
-div#showndecks:hover {
-  background-color: rgba($bg600, 0.8);
-}
-
-/* Tables */
-.table-striped > tbody > tr:nth-of-type(2n+1) {
-  background-color: $bg800;
-}
-
-.folderroot .dd-content,
-.table > thead > tr > th,
-.table > tbody > tr > th,
-.table > tfoot > tr > th,
-.table > thead > tr > td,
-.table > tbody > tr > td,
-.table > tfoot > tr > td {
-  border-top: none;
-}
-
-/* Primary text */
-.ui-dialog .ui-dialog-title,
-.no-touch .dd-content,
 h1, h2, h3, h4, h5, p, i, b, small, label, span, div {
   color: $text900;
 }
 
-.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.fullcrit,
-.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.fullfail,
-.sheet-rolltemplate-atkdmg .sheet-damagetemplate .inlinerollresult.importantroll,
-.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.fullcrit,
-.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.fullfail,
-.sheet-rolltemplate-dmg .sheet-damagetemplate .inlinerollresult.importantroll,
-.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.fullcrit,
-.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.fullfail,
-.sheet-rolltemplate-npcaction .sheet-damagetemplate .inlinerollresult.importantroll,
-.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.fullcrit,
-.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.fullfail,
-.sheet-rolltemplate-npcdmg .sheet-damagetemplate .inlinerollresult.importantroll,
-.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.fullcrit,
-.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.importantroll,
-.sheet-rolltemplate-atkdmg .sheet-desc .inlinerollresult.fullfail,
-.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.fullcrit,
-.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.importantroll,
-.sheet-rolltemplate-dmg .sheet-desc .inlinerollresult.fullfail .sheet-rolltemplate-atk .sheet-desc .inlinerollresult.fullcrit,
-.sheet-rolltemplate-atk .sheet-desc .inlinerollresult.importantroll,
-.sheet-rolltemplate-atk .sheet-desc .inlinerollresult.fullfail,
-.sheet-rolltemplate-mancerroll .inlinerollresult.fullcrit,
-.sheet-rolltemplate-mancerroll .inlinerollresult.importantroll,
-.sheet-rolltemplate-mancerroll .inlinerollresult.fullfail {
-  color: $text900;
-}
-
-/* High-contrast text */
 textarea,
 code,
 pre {
@@ -204,220 +25,15 @@ pre {
   border: none;
 }
 
-/* Secondary, lighter text */
-.switchtomarketplacelibrary,
-.switchtouserlibrary,
-.ui-widget-content a,
-#rightsidebar small {
-  color: $textHighContrast !important;
-}
-
-.ui-dialog-content {
-  background-color: red;
-}
-
-.nav-tabs {
-  border-bottom: none;
-}
-
-.nav-tabs > li a {
-  color: $textHighContrast !important;
-}
-
-.nav-tabs > li {
-  background-color: $brand900;
-  border: 1px solid $bg900;
-}
-
-.nav > li > a:hover {
-  background-color: $brand800;
-  border: 1px solid $brand800;
-}
-
-.nav-tabs > li.active > a,
-.nav-tabs > li.active > a:hover,
-.nav-tabs > li.active > a:focus {
-  background-color: $brand700;
-  border: 1px solid $brand700;
-}
-
-#secondary-toolbar,
-.btn-group > .btn,
-button, select, input[type="text"],
-.sheet-container,
-.ui-state-default,
-.ui-widget-content .ui-state-default,
-.ui-widget-header .ui-state-default,
-.textchatcontainer a[href^="!"],
-.textchatcontainer a[href^="~"] {
-  @include paper-shadow($bg900);
-}
-
-.chosen-container .chosen-results li.result-selected {
-  background-color: $brand900;
-}
-
-.textboxlist,
-.textboxlist-bits,
-.chosen-container-multi .chosen-choices,
-.chosen-container .chosen-drop,
-.chosen-container .chosen-results li,
-button,
-select,
-input,
-input[type="text"] {
-  background-image: none;
-  background-color: $bg700;
-  color: $text900 !important;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice {
-  background-image: none;
-  border-radius: 0;
-  background-color: $brand800;
-  box-shadow: none;
-  border: none;
-}
-
-.textboxlist,
-.chosen-container-multi .chosen-choices,
-.chosen-container .chosen-drop,
-.textboxlist-bits,
-button,
-select,
-input,
-input[type="text"] {
-  border: 1px solid $bg700;
-}
-
-.ui-slider {
-  background: none;
-  background-color: $bg700;
-  border: 1px solid $bg700;
-}
-
-/* Misc Components */
-#compendium .searchroot .dd-item .dd-content .sourcefooter {
-  filter: invert(1);
-}
-
-#jukeboxwhatsplaying {
-  border: 1px solid $bg700;
-  background-color: $bg700;
-}
-
-.ui-tabs .ui-tabs-nav {
-  border: none;
-}
 
 hr {
   border-color: $bg800;
-}
-
-#textchat-input {
-  border-top: none;
-}
-
-.dd-placeholder,
-.dd-handle,
-.dd-handle::before {
-  color: $text900;
-  background-color: $bg700;
-}
-
-.sheet-rolltemplate-atk .sheet-desc,
-.sheet-rolltemplate-atkdmg .sheet-desc,
-.sheet-rolltemplate-dmg .sheet-desc,
-.sheet-rolltemplate-desc .sheet-desc,
-.sheet-container {
-  background-color: $bg900 !important;
-  border: none !important;
-}
-
-.sheet-rolltemplate-spell .sheet-container {
-  background: none;
-}
-
-.textchatcontainer .message {
-  background-color: $bg700;
-}
-
-.textchatcontainer .message.system {
-  background-color: $bg800;
-}
-
-.textchatcontainer .message.you {
-  background-color: $bg700;
-}
-
-.textchatcontainer .message.private {
-  background-color: $bg600;
-}
-
-.textchatcontainer .spacer {
-  visibility: hidden;
-}
-
-.textchatcontainer .inlinerollresult {
-  background-color: $bg400;
-  color: $text900;
-  border: none;
-  @include paper-shadow($bg800);
-}
-
-.rollabletable .actions {
-  display: flex;
-}
-
-#textchat .userscript-sharelink {
-  background-color: $bg400;
-  @include paper-shadow($bg800);
-}
-
-#textchat .userscript-sharelink a {
-  color: $bg400 !important;
-}
-
-#textchat .userscript-sharelink:hover a {
-  color: orange !important;
-}
-
-.note-editor.note-frame {
-  border: none;
 }
 
 .panel,
 .panel-default {
   border-radius: 0;
   background-color: $bg900;
-}
-
-.note-editing-area,
-.note-editor.note-frame .note-editing-area .note-editable,
-.note-editor .panel-default > .panel-heading {
-  background-color: $bg700;
-  border-bottom: none;
-}
-
-.modal-footer,
-.modal-header {
-  border-top: none;
-  border-bottom: none;
-}
-
-.note-editor.note-frame .note-statusbar .note-resizebar {
-  background-color: $bg600;
-}
-
-.charactereditor .defaulttoken,
-.charactereditor .avatar {
-  border-color: $bg900;
-  background-color: $bg800;
-  @include paper-shadow(black);
-}
-
-.charactereditor .defaulttoken {
-  margin-bottom: 8px;
 }
 
 .textboxlist-bit-box {
@@ -428,12 +44,13 @@ hr {
 
 .textboxlist-bit-editable-input,
 .textboxlist-bit-editable {
-  background-color: $brand800 !important;
-  border-color: $brand800 !important;
+  background-color: $brand800;
+  border-color: $brand800;
 }
 
 .textboxlist-autocomplete-result,
-.textboxlist-autocomplete-placeholder, .textboxlist-autocomplete-results {
+.textboxlist-autocomplete-placeholder,
+.textboxlist-autocomplete-results {
   box-shadow: none;
   border: none;
   background-color: $bg700;
@@ -444,154 +61,11 @@ hr {
   background-color: $brand900;
 }
 
-.tool-row:nth-child(2n+1) {
-  background-color: $bg800;
-}
-
-.charsheet .sheet-options .sheet-row > span {
-  color: $text900;
-}
-
-.charsheet .sheet-attacks .sheet-display input, .charsheet .sheet-tool .sheet-display input, .charsheet .sheet-equipment .sheet-item input, .charsheet .sheet-attacks .sheet-display span, .charsheet .sheet-tool .sheet-display span, .charsheet .sheet-equipment .sheet-item span, .charsheet .sheet-proficiencies .sheet-display span,
-.charsheet .sheet-coin,
-.charsheet .sheet-attr-mod,
-.charsheet .sheet-insp-prof-container .sheet-value {
-  background-color: $bg700;
-}
-
-.charsheet .sheet-spell-level .sheet-total, .charsheet .sheet-spell-level .sheet-expended {
-  background-color: $bg800;
-}
-
-.charsheet .sheet-level::after, .charsheet .sheet-level::before {
-  border-left-color: $bg700;
-}
-
-.charsheet .sheet-attacks .sheet-attack:hover .sheet-options-flag + span, .charsheet .sheet-spell:hover .sheet-options-flag + span, .charsheet .sheet-tool:hover .sheet-options-flag + span, .charsheet .sheet-npc:hover > .sheet-npc_options-flag + span, .charsheet .sheet-trait:hover .sheet-options-flag + span, .charsheet .sheet-global-mod:hover .sheet-options-flag + span, .charsheet .sheet-action:hover .sheet-npc_options-flag + span, .charsheet .sheet-textbox:hover > .sheet-options-flag + span, .charsheet .sheet-proficiency:hover .sheet-options-flag + span, .charsheet .sheet-item:hover .sheet-inventorysubflag + span, .charsheet .sheet-pc .sheet-trait:hover .sheet-output, .charsheet .sheet-pc .sheet-header:hover .sheet-options-flag + span {
-  color: $textHighContrast;
-}
-
-.charsheet .sheet-spell .sheet-display button[type="roll"] {
-  border-bottom: none;
-}
-
-.charsheet .sheet-spell .sheet-prep {
-  background-color: $brand800;
-}
-
-.charsheet input[type="radio"].sheet-tab-button + span {
-  background-color: $brand900;
-  color: $textHighContrast;
-}
-
-.charsheet .sheet-advantagetoggle input[type="radio"]:checked + span, .charsheet input[type="radio"].sheet-tab-button:checked + span {
-  background-color: $brand700;
-  color: $textHighContrast;
-}
-
-.table > thead > tr > th {
-  border-bottom: none;
-}
-
-#radial-menu .markermenu {
-  background-color: $bg700;
-}
-
-#radial-menu .markermenu .markericon,
-#radial-menu .markermenu .markercolor {
-  border-color: $bg700;
-}
-
-.charsheet .sheet-advantagetoggle input.sheet-toggle-left, .charsheet .sheet-advantagetoggle input.sheet-toggle-left + span,
-.charsheet .sheet-advantagetoggle input.sheet-toggle-right, .charsheet .sheet-advantagetoggle input.sheet-toggle-right + span,
-.charsheet .sheet-advantagetoggle input.sheet-toggle-center, .charsheet .sheet-advantagetoggle input.sheet-toggle-center + span,
-.charsheet .sheet-advantagetoggle.sheet-whispertoggle input.sheet-toggle-left, .charsheet .sheet-advantagetoggle.sheet-whispertoggle input.sheet-toggle-left + span {
-  color: $textHighContrast;
-}
-
-table.config-table tbody tr:nth-child(2n+1),
-.r20es-dialog tr:nth-child(2n),
-.r20es-dialog .table-head {
-  background-color: $bg800;
-}
-
-.r20es-dialog tr {
-  background-color: $bg700;
-}
-
-.r20es-clickable-text.selected {
-  background-color: $brand800;
-}
-
-.r20es-clickable-text.disabled span {
-  color: $text700;
-}
-
-.r20es-clickable-text:hover {
-  background-color: $brand900;
-}
-
-.sheet-rolltemplate-spell .sheet-title span {
-  color: rgb(126, 45, 64);
-}
-
 .github-logo,
 .discord-logo {
   filter: invert(1)
 }
 
-#radial-menu .button {
-  border: none;
-}
-
-#secondary-toolbar,
-#secondary-toolbar li {
-  background-color: $bg800;
-  overflow: unset;
-  border: none;
-}
-
-.d20contextmenu {
-  opacity: 1;
-}
-
-.d20contextmenu ul li.active {
-  background-color: $brand700;
-  color: $textHighContrast;
-}
-
-.d20contextmenu ul li ul.submenu,
-.d20contextmenu > ul {
-  background-color: $bg600;
-  opacity: 1;
-}
-.d20contextmenu ul li {
-  border-bottom: none;
-}
-
-.d20contextmenu ul li.hasSub:hover,
-.d20contextmenu ul li:hover {
-  background-color: $brand800;
-  color: $textHighContrast;
-}
-
 div#color_custom label {
   color: $text900;
-}
-
-#radial-menu .button div.inner span.pictos,
-#radial-menu .button div.inner.hasnumber span {
-  color: $textHighContrast;
-}
-
-div#color_selector {
-  background-color: $bg700;
-}
-
-#initiativewindow ul li:first-child {
-  background-color: $bg500;
-}
-
-#page-toolbar .activepage span {
-  color: $textHighContrast;
 }

@@ -1,0 +1,119 @@
+@import "./colors";
+
+#rightsidebar {
+    ul.tabmenu {
+        background-color: $bg900;
+        border: none;
+    }
+
+    small {
+        color: $textHighContrast;
+    }
+
+    &.ui-tabs .ui-tabs-nav li,
+    &.ui-tabs .ui-tabs-nav li a {
+        color: $text800;
+        background-color: $brand900;
+    }
+
+    &.ui-tabs .ui-tabs-nav li:hover,
+    &.ui-tabs .ui-tabs-nav li.hover,
+    &.ui-tabs .ui-tabs-nav li a:hover,
+    &.ui-tabs .ui-tabs-nav li a.hover {
+        color: $textHighContrast;
+        background-color: $brand800;
+    }
+
+    .ui-tabs-nav li.ui-state-active a {
+        color: $textHighContrast;
+    }
+
+    &.ui-tabs .ui-tabs-nav li:active:hover,
+    &.ui-tabs .ui-tabs-nav li.active:hover,
+    &.ui-tabs .ui-tabs-nav li a:active:hover,
+    &.ui-tabs .ui-tabs-nav li a.active:hover {
+        color: $textHighContrast;
+        background-color: $brand800;
+    }
+}
+
+.no-touch .dd-content {
+    color: $text900;
+}
+
+.switchtomarketplacelibrary,
+.switchtouserlibrary {
+    color: $textHighContrast;
+}
+
+#rightsidebar,
+#mysettings,
+#deckstables,
+#jukebox,
+#compendium,
+#journal,
+#imagedialog {
+    background-color: $bg900;
+
+    .searchbox {
+        background-color: $bg900;
+    }
+
+    .tabcontainer a {
+        background-color: $bg900;
+
+        &.active {
+            color: $textHighContrast;
+        }
+    }
+}
+
+
+.dd-item .playerdots,
+#imagedialog #librarysearchroot .googleresult,
+#imagedialog .expandsearch,
+#imagedialog #librarysearchroot .marketplacead {
+    background-color: $bg900;
+}
+
+.folderroot .dd-content {
+    border-top: none;
+}
+
+#compendium .searchroot .dd-item .dd-content .sourcefooter {
+    filter: invert(1);
+}
+
+#jukeboxwhatsplaying {
+    border: 1px solid $bg700;
+    background-color: $bg700;
+}
+
+#textchat-input {
+    border-top: none;
+}
+
+.dd-placeholder,
+.dd-handle,
+.dd-handle::before {
+    color: $text900;
+    background-color: $bg700;
+}
+
+.rollabletable .actions {
+    display: flex;
+}
+
+#showndecks .deckstack .controls {
+    background-color: $bg900;
+}
+
+#jukeboxfolderroot div.title:hover {
+    background-color: $brand800;
+}
+
+.alert-info {
+    background-color: $bg500;
+    color: $textHighContrast;
+    border: $bg600;
+}
