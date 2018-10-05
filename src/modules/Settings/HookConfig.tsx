@@ -1,6 +1,7 @@
 import { DOM } from "../../tools/DOM";
 import { getExtUrlFromPage, strIsNullOrEmpty } from "../../tools/MiscUtils";
 import { R20 } from "../../tools/R20";
+import {Config }from "../../tools/Config";
 import StringEdit from "./StringEdit";
 import DropdownEdit from "./DropdownEdit";
 import CheckboxEdit from "./CheckboxEdit";
@@ -29,12 +30,11 @@ export default class HookConfig extends DOM.ElementBase {
 
             for (const url in this.hook.media) {
                 console.log(url);
-                getExtUrlFromPage(url, 5000)
-                    .then((e: string) => {
-                        this.media.push({ url: e, description: this.hook.media[url] });
-                        this.rerender();
-                    })
-                    .catch(err => console.error(`Failed to get ${url}: ${err}`));
+
+                this.media.push({
+                    url: Config.website + url,
+                    description: this.hook.media[url]
+                });
             }
         }
     }

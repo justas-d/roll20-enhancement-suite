@@ -116,11 +116,10 @@ module.exports = (_env, argv) => {
                 if (fs.lstatSync(rootFile).isDirectory()) return;
                 addStaticFile(f, rootFile);
             });
-        }
+        };
 
         addStaticFolder("./css/");
         addStaticFolder("./assets/logo/");
-        addStaticFolder("./assets/settings/");
 
         {
             const root = "./src/modules/";
