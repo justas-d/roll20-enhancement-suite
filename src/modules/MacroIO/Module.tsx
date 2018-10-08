@@ -1,129 +1,52 @@
 import { R20Module } from "../../tools/R20Module"
-import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../../tools/DOM'
-import { findByIdAndRemove, readFile } from "../../tools/MiscUtils";
 import { R20 } from "../../tools/R20";
 import { MacroIO, IApplyableMacroData } from "../../tools/MacroIO";
 import { saveAs } from 'save-as'
-import PickObjectsDialog from "../PickObjectsDialog";
+import {IOModuleCommon} from "../IOModuleCommon";
+import {IResult} from "../../tools/Result";
 
-type FilterTableType = { [id: number]: boolean };
-
-class MacroIOModule extends R20Module.OnAppLoadBase {
-    readonly widgetId = "r20es-macro-io-widget";
-
-    private pickMacrosDialog: PickObjectsDialog<IApplyableMacroData>;
-    private macroBuffer: IApplyableMacroData[];
-
+class MacroIOModule extends IOModuleCommon<IApplyableMacroData> {
     constructor() {
-        super(__dirname);
+        super(__dirname, "r20es-macro-io-widget", "Import/Export Macro", "Select Macros", "r20es-big-dialog");
     }
 
-    private onFileChange(e: any) {
-        e.stopPropagation();
-        const targ = e.target;
-
-        ($(targ.parentNode).find("button.import")[0] as any).disabled = targ.files.length <= 0;
-    }
-
-    private showPickMacrosDialog(continueCallback: (data: IApplyableMacroData[]) => void) {
-        this.pickMacrosDialog.show("Select Macros",
-            this.macroBuffer,
-            (d) => d.attributes.name,
-            (d) => d.attributes.action,
-            continueCallback);
-    }
-
-    private onImportClick = (e: any) => {
-        e.stopPropagation();
-
-        const fs = $((e.target).parentNode.parentNode).find("input[type='file']")[0];
-
-        const file = fs.files[0];
-        fs.value = "";
-        (e.target as any).disabled = true
-
-        readFile(file)
-            .then((payload: string) => {
-                const result = MacroIO.deserialize(payload);
-                if (result.isErr()) throw new Error(result.err().unwrap());
-
-                this.macroBuffer = result.ok().unwrap();
-                this.showPickMacrosDialog(this.continueImporting);
-            })
-            .catch(alert);
-    }
-
-    private continueImporting(finalMacros: IApplyableMacroData[]) {
-        MacroIO.applyToPlayer(R20.getCurrentPlayer(), finalMacros);
+    protected continueImporting(finalData: IApplyableMacroData[]) {
+        MacroIO.applyToPlayer(R20.getCurrentPlayer(), finalData);
 
         R20.rerenderJournalMacros();
         R20.rerenderMacroBar();
     }
 
-    private onExportClick = (e: any) => {
-        e.stopPropagation();
+    protected nameGetter(d: IApplyableMacroData): string {
+        return d.attributes.name
+    }
 
+    protected descGetter(d: IApplyableMacroData): string {
+        return d.attributes.action;
+    }
+
+    protected getExportData(): IApplyableMacroData[] {
         const player = R20.getCurrentPlayer();
-        const macros = MacroIO.prepareMacroList(player);
-
-        if (macros.length <= 0) {
-            alert("No macros found.")
-            return;
-        }
-
-        this.macroBuffer = macros;
-        this.showPickMacrosDialog(this.continueExporting);
+        return MacroIO.prepareMacroList(player);
     }
 
-    private continueExporting(finalMacros: IApplyableMacroData[]) {
-        const result = MacroIO.serialize(finalMacros);
-
-        const jsonBlob = new Blob([result], { type: 'data:application/json;charset=utf-8' });
-        saveAs(jsonBlob, R20.getCurrentPlayer().attributes.displayname + "_macros.json");
-    }
-
-    public setup() {
-        this.pickMacrosDialog = new PickObjectsDialog<IApplyableMacroData>("r20es-big-dialog");
-        const root = $("#deckstables")[0].firstElementChild;
-        const nextTo = $("#deckstables").find("#adddeck")[0];
-
-        const widget = (
-            <div id={this.widgetId}>
-                <div>
-                    <SidebarCategoryTitle>
-                        Import/Export Macros
-                </SidebarCategoryTitle>
-
-                    <input
-                        type="file"
-                        style={{ width: "95%" }}
-                        onChange={this.onFileChange}
-                    />
-
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <button disabled className="import btn" style={{ marginRight: "8px", width: "100%" }} onClick={this.onImportClick}>
-                            Import
-                    </button>
-
-                        <button className="btn" style={{ width: "100%" }} onClick={this.onExportClick}>
-                            Export
-                    </button>
-                    </div>
-
-                </div>
-
-                <SidebarSeparator big="1px" />
-            </div>
-        );
+    protected injectWidget(widget: HTMLElement) {
+        const $deckstables = $("#deckstables");
+        const root = $deckstables[0].firstElementChild;
+        const nextTo = $deckstables.find("#adddeck")[0];
 
         root.insertBefore(widget, nextTo);
     }
 
-    public dispose() {
-        if (this.pickMacrosDialog) this.pickMacrosDialog.dispose();
+    protected serializeExportData(finalData: IApplyableMacroData[]): { json: string; filename: string } {
+        return {
+            filename: R20.getCurrentPlayer().attributes.displayname + "_macros.json",
+            json: MacroIO.serialize(finalData)
+        };
+    }
 
-        findByIdAndRemove(this.widgetId);
-        super.dispose();
+    protected tryDeserialize(data: string): IResult<IApplyableMacroData[], string> {
+        return MacroIO.deserialize(data);
     }
 }
 

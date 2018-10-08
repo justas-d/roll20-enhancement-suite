@@ -191,6 +191,7 @@ namespace R20 {
 
     export interface JukeboxPlaylist {
         name: string;
+        mode: string;
         songs: JukeboxSong[];
     }
 
@@ -215,6 +216,7 @@ namespace R20 {
 
             const playlist: JukeboxPlaylist = {
                 name: rawPlaylist.n,
+                mode: rawPlaylist.s,
                 songs: [],
             };
 
@@ -239,11 +241,11 @@ namespace R20 {
         return window.Jukebox.playlist.create();
     }
 
-    export function createPlaylist(name: string): JukeboxFileStructure {
+    export function createPlaylist(name: string, mode: string): JukeboxFileStructure {
         const data: JukeboxFileStructure = {
             id: window.generateUUID(),
             n: name,
-            s: "s",
+            s: mode,
             i: []
         };
 

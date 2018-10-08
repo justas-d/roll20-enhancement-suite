@@ -29,6 +29,7 @@ import HidePlayerList from "./modules/HidePlayerList/Config";
 import CharacterTokenModifier from "./modules/CharacterTokenModifier/Config";
 import SeenAd from "./modules/SeenAd/Config";
 import NightMode from "./modules/NightMode/Config";
+import JukeboxIO from "./modules/JukeboxIO/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -47,6 +48,7 @@ addCfg(DrawCurrentLayer);
 addCfg(DuplicateButton);
 addCfg(ExposeD20);
 addCfg(InitiativeAdvanceShortcut);
+addCfg(JukeboxIO);
 addCfg(MacroGenerator);
 addCfg(CharacterTokenModifier);
 addCfg(MacroIO);
@@ -66,3 +68,4 @@ addCfg(HidePlayerList);
 addCfg(Welcome);
 
 export default configs;
+

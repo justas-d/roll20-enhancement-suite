@@ -1,12 +1,13 @@
 import {IResult, Err, Ok} from './Result'
 import {R20} from "./R20";
+import IOCommon from "./IOCommon";
 
-interface ICreateStrategy {
-    create: (data: any) => IResult<boolean, string>;
+interface IParseStrategy {
+    parse: (data: any) => IResult<IApplyableJukeboxPlaylist[], string>;
 }
 
-class CreateV1 implements ICreateStrategy {
-    create = (data: any): IResult<boolean, string> => {
+class ParseV1 implements IParseStrategy {
+    parse = (data: any): IResult<IApplyableJukeboxPlaylist[], string> => {
 
         const hasNot = what => !(what in data);
 
@@ -33,23 +34,11 @@ class CreateV1 implements ICreateStrategy {
         }
 
         const shapedData: Version1 = data;
-
-        for(const rawPlaylist of shapedData.playlists) {
-            const playlist = R20.createPlaylist(rawPlaylist.name);
-
-            for(const rawSong of rawPlaylist.songs) {
-                const song = R20.createSong();
-                song.save(rawSong);
-
-                R20.addSongToPlaylist(song, playlist);
-            }
-        }
-
-        return new Ok(true);
+        return new Ok(shapedData.playlists);
     }
 }
 
-interface IApplyableSong {
+export interface IApplyableSong {
     loop: boolean;
     playing: boolean;
     softstop: boolean;
@@ -60,8 +49,9 @@ interface IApplyableSong {
     volume: number;
 }
 
-interface IApplyableJukeboxPlaylist {
+export interface IApplyableJukeboxPlaylist {
     name: string;
+    mode: string;
     songs: IApplyableSong[];
 }
 
@@ -70,37 +60,67 @@ interface Version1 {
     playlists: IApplyableJukeboxPlaylist[];
 }
 
-namespace JukeboxIO {
+export namespace JukeboxIO {
 
     import JukeboxPlaylist = R20.JukeboxPlaylist;
-    export const formatVersions: { [id: number]: ICreateStrategy } = {
-        1: new CreateV1(),
+    const parseStrategies: { [id: number]: ParseV1 } = {
+        1: new ParseV1(),
     };
 
-    export const exportPlaylist = (playlist: JukeboxPlaylist[]) => {
+    // TODO ; refactor this as it's duped between multiple IO things
+    export const deserialize = (rawData: string): IResult<IApplyableJukeboxPlaylist[], string> => {
+        const dataResult = IOCommon.parseRaw(rawData);
+        if(dataResult.isErr()) return dataResult.map();
+        const data = dataResult.ok().unwrap();
+
+        const stratLookup = IOCommon.lookupStrategy(data, parseStrategies);
+        if(stratLookup.isErr()) return stratLookup.map();
+
+        return stratLookup.ok().unwrap().parse(data);
+    }
+
+    export const applyData = (playlists: IApplyableJukeboxPlaylist[]) => {
+        for(const rawPlaylist of playlists) {
+            const playlist = R20.createPlaylist(rawPlaylist.name, rawPlaylist.mode);
+
+            for(const rawSong of rawPlaylist.songs) {
+                const song = R20.createSong();
+                song.save(rawSong);
+
+                R20.addSongToPlaylist(song, playlist);
+            }
+        }
+    };
+
+    export const makeApplyablePlaylists = (playlists: JukeboxPlaylist[]): IApplyableJukeboxPlaylist[] => {
+        return playlists.map(p => {
+            const playlistRet: IApplyableJukeboxPlaylist = {
+                name: p.name,
+                mode: p.mode,
+                songs: p.songs.map(s => {
+                    const songRet: IApplyableSong = {
+                        loop: s.attributes.loop,
+                        playing: s.attributes.playing,
+                        softstop: s.attributes.softstop,
+                        source: s.attributes.source,
+                        tags: s.attributes.tags,
+                        title: s.attributes.title,
+                        track_id: s.attributes.track_id,
+                        volume: s.attributes.volume,
+                    } ;
+                    return songRet;
+                }),
+            };
+            return playlistRet;
+        })
+    };
+
+    export const serialize = (playlist: IApplyableJukeboxPlaylist[]) => {
         const payload: Version1 = {
             schema_version: 1,
-            playlists: playlist.map(p => {
-                const playlistRet: IApplyableJukeboxPlaylist = {
-                    name: p.name,
-                    songs: p.songs.map(s => {
-                        const songRet: IApplyableSong = {
-                            loop: s.attributes.loop,
-                            playing: s.attributes.playing,
-                            softstop: s.attributes.softstop,
-                            source: s.attributes.source,
-                            tags: s.attributes.tags,
-                            title: s.attributes.title,
-                            track_id: s.attributes.track_id,
-                            volume: s.attributes.volume,
-                        } ;
-                        return songRet;
-                    }),
-                };
-                return playlistRet;
-            })
+            playlists: playlist
         };
 
-        return payload;
+        return JSON.stringify(payload, null, 4);
     };
 }
