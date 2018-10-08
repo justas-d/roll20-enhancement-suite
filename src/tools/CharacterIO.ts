@@ -71,6 +71,7 @@ class OverwriteV2 implements IOverwriteStrategy {
             if (!("current" in el)) return new Err(`Attribute index ${idx} doesn't have current`);
             if (!("max" in el)) return new Err(`Attribute index ${idx} doesn't have max`);
             if (!("id" in el)) return new Err(`Attribute index ${idx} doesn't have id`);
+            idx++;
         }
 
         idx = 0;
@@ -80,6 +81,7 @@ class OverwriteV2 implements IOverwriteStrategy {
             if (!("istokenaction" in el)) return new Err(`Ability index ${idx} doesn't have istokenaction`);
             if (!("action" in el)) return new Err(`Ability index ${idx} doesn't have action`);
             if (!("order" in el)) return new Err(`Ability index ${idx} doesn't have order`);
+            idx++;
         }
 
         CharacterIO.wipeCharacter(pc);
