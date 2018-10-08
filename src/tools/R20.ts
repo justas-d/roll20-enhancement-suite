@@ -3,7 +3,7 @@
 import {
     ObjectStorage, SyncObject, PlayerAttributes, Character, CanvasObject, Handout, RollableTable, InitiativeTracker,
     InitiativeData,
-    Page, IBlobObject, Campaign
+    Page, IBlobObject, Campaign, JukeboxSong, JukeboxFileStructure
 } from "roll20";
 
 namespace R20 {
@@ -187,6 +187,79 @@ namespace R20 {
 
     export function getInitiativeWindow(): InitiativeTracker {
         return window.d20.Campaign.initiativewindow;
+    }
+
+    export interface JukeboxPlaylist {
+        name: string;
+        songs: JukeboxSong[];
+    }
+
+    export function getJukeboxFileStructure(): (JukeboxFileStructure | string)[] {
+        return window.d20.jukebox.lastFolderStructure;
+    }
+
+    export function getSongById(id: string): JukeboxSong | null {
+        return window.Jukebox.playlist.get(id);
+    }
+
+    export function getJukeboxPlaylists(): JukeboxPlaylist[] {
+        const fs = getJukeboxFileStructure();
+        const retvals: JukeboxPlaylist[] = [];
+
+        for(const fsItem of fs) {
+
+            if(typeof(fsItem) === "string")
+                continue;
+
+            const rawPlaylist: JukeboxFileStructure = fsItem;
+
+            const playlist: JukeboxPlaylist = {
+                name: rawPlaylist.n,
+                songs: [],
+            };
+
+            for(const songId of rawPlaylist.i) {
+
+                const song = getSongById(songId);
+                if(!song) {
+                    console.warn(`Tried to get song id ${songId} but the query returned a falsy value. Skipping`);
+                    continue;
+                }
+
+                playlist.songs.push(song);
+            }
+
+            retvals.push(playlist);
+        }
+
+        return retvals;
+    }
+
+    export function createSong(): JukeboxSong {
+        return window.Jukebox.playlist.create();
+    }
+
+    export function createPlaylist(name: string): JukeboxFileStructure {
+        const data: JukeboxFileStructure = {
+            id: window.generateUUID(),
+            n: name,
+            s: "s",
+            i: []
+        };
+
+        const campaign = getCampaign();
+        const fs: (JukeboxFileStructure | string)[] = JSON.parse(campaign.attributes.jukeboxfolder);
+        fs.push(data);
+
+        getCampaign().save({
+            jukeboxfolder: JSON.stringify(fs)
+        });
+
+        return data;
+    }
+
+    export function addSongToPlaylist(song: JukeboxSong, playlist: JukeboxFileStructure) {
+        window.d20.jukebox.addItemToFolderStructure(song.id, playlist.id);
     }
 
     export function getInitiativeData(): InitiativeData[] {

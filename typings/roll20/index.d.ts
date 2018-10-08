@@ -18,6 +18,32 @@ declare namespace Roll20 {
 
     export function generateUUID(): string;
 
+    export interface JukeboxFileStructure {
+        id: string;
+        // name
+        n: string;
+        // no clue
+        s: string;
+        // song ids
+        i: string[];
+    }
+
+    export interface JukeboxSongAttributes {
+        id: string;
+        loop: boolean;
+        playing: boolean;
+        softstop: boolean;
+        source: string;
+        tags: string;
+        title: string;
+        track_id: string;
+        volume: number;
+    }
+
+    export interface JukeboxSong extends SyncObject<JukeboxSongAttributes> {
+
+    }
+
     export interface SyncObject<TAttribs> {
         save: (data?: TAttribs | any) => TAttribs;
         get: <T>(attrib: string) => T;
@@ -177,6 +203,7 @@ declare namespace Roll20 {
     export interface CampaignAttributes {
         turnorder: string;
         playerpageid: string;
+        jukeboxfolder: string;
         bar1_color: string;
         bar2_color: string;
         bar3_color: string;
@@ -431,6 +458,16 @@ declare namespace Roll20 {
         textchat: Chat;
         player_settings: PlayerSettings;
         utils: Utils;
+        jukebox: D20Jukebox;
+    }
+
+    export interface D20Jukebox {
+        lastFolderStructure: JukeboxFileStructure[];
+        addItemToFolderStructure: (songId: string, folderId: string) => void;
+    }
+
+    export interface GlobalJukebox {
+        playlist: ObjectStorage<JukeboxSong>;
     }
 
     export interface ObjectStorage<T> {
@@ -438,7 +475,7 @@ declare namespace Roll20 {
         models: T[];
         get: (uuid: string) => T;
         getByCid: (cid: string) => T;
-        create: (initialState: T | any) => T;
+        create: (initialState?: T | any) => T;
         find: (predicate: (element: T) => boolean) => T;
         map: <TOut>(selector: (element: T) => TOut)=> TOut[];
         
@@ -475,6 +512,7 @@ declare namespace Roll20 {
 
 
 interface Window {
+    Jukebox: Roll20.GlobalJukebox;
     Campaign: Roll20.Campaign;
     d20: Roll20.D20;
     currentPlayer: Roll20.Player;
