@@ -30,11 +30,13 @@ import CharacterTokenModifier from "./modules/CharacterTokenModifier/Config";
 import SeenAd from "./modules/SeenAd/Config";
 import NightMode from "./modules/NightMode/Config";
 import JukeboxIO from "./modules/JukeboxIO/Config";
+import ArrowKeysMoveCanvas from "./modules/ArrowKeysMoveCanvas/Config"
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
 addCfg(AlternativeRadialMenu);
+addCfg(ArrowKeysMoveCanvas);
 addCfg(AlternatePageToolbarMenu);
 addCfg(AnimationDisable);
 addCfg(AutoPingNextToken);
