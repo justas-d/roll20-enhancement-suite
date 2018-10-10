@@ -1,5 +1,5 @@
-import { R20Bootstrapper } from "../../tools/R20Bootstrapper";
-import { getBrowser, findByIdAndRemove } from "../../tools/MiscUtils";
+import { R20Bootstrapper } from "../../utils/R20Bootstrapper";
+import { getBrowser, findByIdAndRemove } from "../../utils/MiscUtils";
 
 class SettingsBootstrapper extends R20Bootstrapper.Base {
     constructor() {

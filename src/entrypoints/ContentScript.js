@@ -1,12 +1,12 @@
-import {Config} from "../tools/Config";
+import {Config} from "../utils/Config";
 import hooks from "../Configs";
-import {injectScript, getBrowser} from "../tools/MiscUtils";
+import {injectScript, getBrowser} from "../utils/MiscUtils";
 import SettingsBootstrapper from "../modules/Settings/Bootstrapper"
 import {DialogFormsBootstrapper} from "../modules/Dialog/Bootstrapper";
 import {LocalStorageBootstrapper} from "../modules/LocalStorage/Bootstrapper";
-import {DOM} from "../tools/DOM";
-import showProblemPopup from "../tools/ProblemPopup";
-import {doesBrowserNotSupportResponseFiltering} from "../tools/BrowserDetection";
+import {DOM} from "../utils/DOM";
+import showProblemPopup from "../utils/ProblemPopup";
+import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection";
 
 console.log("====================");
 console.log("R20ES ContentScript");

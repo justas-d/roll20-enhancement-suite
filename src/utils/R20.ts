@@ -1,9 +1,20 @@
 /// <reference path="../../typings/roll20/index.d.ts"/>
 
 import {
-    ObjectStorage, SyncObject, PlayerAttributes, Character, CanvasObject, Handout, RollableTable, InitiativeTracker,
+    Campaign,
+    CanvasObject,
+    Character,
+    Handout,
+    IBlobObject,
     InitiativeData,
-    Page, IBlobObject, Campaign, JukeboxSong, JukeboxFileStructure
+    InitiativeTracker,
+    JukeboxFileStructure,
+    JukeboxSong,
+    ObjectStorage,
+    Page,
+    PlayerAttributes,
+    RollableTable,
+    SyncObject
 } from "roll20";
 
 namespace R20 {
@@ -28,7 +39,7 @@ namespace R20 {
     }
 
     export function setupImageDropTarget(element: JQuery<any>,
-                                         saveCallback: ({avatar}: {avatar: string}) => void,
+                                         saveCallback: ({avatar}: { avatar: string }) => void,
                                          updateModelCallback: () => void) {
 
         const r20AvatarContext: any = {
@@ -207,9 +218,9 @@ namespace R20 {
         const fs = getJukeboxFileStructure();
         const retvals: JukeboxPlaylist[] = [];
 
-        for(const fsItem of fs) {
+        for (const fsItem of fs) {
 
-            if(typeof(fsItem) === "string")
+            if (typeof(fsItem) === "string")
                 continue;
 
             const rawPlaylist: JukeboxFileStructure = fsItem;
@@ -220,10 +231,10 @@ namespace R20 {
                 songs: [],
             };
 
-            for(const songId of rawPlaylist.i) {
+            for (const songId of rawPlaylist.i) {
 
                 const song = getSongById(songId);
-                if(!song) {
+                if (!song) {
                     console.warn(`Tried to get song id ${songId} but the query returned a falsy value. Skipping`);
                     continue;
                 }
@@ -296,6 +307,14 @@ namespace R20 {
             }
         }
         return null;
+    }
+
+    export function isUsing5EOGLSheet() {
+        try {
+            return window.d20.journal.customSheets.workerScripts[0].includes("5th Edition OGL by Roll20");
+        } catch (err) {
+            return false;
+        }
     }
 
     export function moveCameraToTokenByUUID(uuid: string) {

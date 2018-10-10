@@ -1,5 +1,5 @@
 import { ConfigEditBase } from "./ConfigEditBase";
-import { DOM } from "../../tools/DOM";
+import { DOM } from "../../utils/DOM";
 
 export default class DropdownEdit extends ConfigEditBase {
     public constructor(props) {

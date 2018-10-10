@@ -1,6 +1,6 @@
-import {DOM} from "../tools/DOM";
-import {getExtUrlFromPage, strIsNullOrEmpty} from "../tools/MiscUtils";
-import {Config} from "../tools/Config";
+import {DOM} from "../utils/DOM";
+import {getExtUrlFromPage, strIsNullOrEmpty} from "../utils/MiscUtils";
+import {Config} from "../utils/Config";
 import MediaWidget from "../MediaWidget";
 import * as semverCompare from "semver-compare";
 

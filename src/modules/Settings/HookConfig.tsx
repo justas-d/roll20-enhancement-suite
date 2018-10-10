@@ -1,7 +1,7 @@
-import { DOM } from "../../tools/DOM";
-import { getExtUrlFromPage, strIsNullOrEmpty } from "../../tools/MiscUtils";
-import { R20 } from "../../tools/R20";
-import {Config }from "../../tools/Config";
+import { DOM } from "../../utils/DOM";
+import { getExtUrlFromPage, strIsNullOrEmpty } from "../../utils/MiscUtils";
+import { R20 } from "../../utils/R20";
+import {Config }from "../../utils/Config";
 import StringEdit from "./StringEdit";
 import DropdownEdit from "./DropdownEdit";
 import CheckboxEdit from "./CheckboxEdit";

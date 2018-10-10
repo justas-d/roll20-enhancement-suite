@@ -1,10 +1,10 @@
-import {R20Module} from "../../tools/R20Module";
-import {DOM} from "../../tools/DOM";
-import {getExtUrlFromPage} from "../../tools/MiscUtils";
+import {R20Module} from "../../utils/R20Module";
+import {DOM} from "../../utils/DOM";
+import {getExtUrlFromPage} from "../../utils/MiscUtils";
 import WelcomePopup from "./WelcomePopup";
 import ChangelogPopup from "./ChangelogPopup";
-import {R20} from "../../tools/R20";
-import {Config} from "../../tools/Config";
+import {R20} from "../../utils/R20";
+import {Config} from "../../utils/Config";
 
 declare namespace build {
     export const R20ES_VERSION: string;

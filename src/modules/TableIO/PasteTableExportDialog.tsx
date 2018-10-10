@@ -1,7 +1,7 @@
-import {DialogBase} from "../../tools/DialogBase";
-import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../tools/DialogComponents";
-import {DOM} from "../../tools/DOM";
-import { TableExportLang } from "../../tools/TableExportLang";
+import {DialogBase} from "../../utils/DialogBase";
+import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../utils/DialogComponents";
+import {DOM} from "../../utils/DOM";
+import { TableExportLang } from "../../utils/TableExportLang";
 
 export default class PasteTableExportDialog extends DialogBase<string> {
 

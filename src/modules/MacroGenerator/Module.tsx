@@ -1,9 +1,9 @@
-import { R20Module } from "../../tools/R20Module";
-import { R20 } from "../../tools/R20";
-import { LoadingDialog } from "../../tools/DialogComponents";
-import { DOM } from "../../tools/DOM";
-import { SheetTab } from "../../tools/SheetTab";
-import { replaceAll } from "../../tools/MiscUtils";
+import { R20Module } from "../../utils/R20Module";
+import { R20 } from "../../utils/R20";
+import { LoadingDialog } from "../../utils/DialogComponents";
+import { DOM } from "../../utils/DOM";
+import { SheetTab } from "../../utils/SheetTab";
+import { replaceAll } from "../../utils/MiscUtils";
 import { IMacroGenerator, IGeneratedMacro, IMacroDiff } from "./IMacroGenerator";
 import OGL5eByRoll20 from "../../macro/OGL5eByRoll20";
 import PickMacroGeneratorsDialog from "./PickMacroGeneratorsDialog";
@@ -11,7 +11,7 @@ import { Character, CharacterAbility } from "roll20";
 import DuplicateResolveDialog from "./DuplicateResolveDialog";
 import VerifyMacrosDialog from "./VerifyMacrosDialog";
 import NoMacrosDialog from "./NoMacrosDialog";
-import lexCompare from "../../tools/LexicographicalComparator";
+import lexCompare from "../../utils/LexicographicalComparator";
 
 class MacroGeneratorModule extends R20Module.SimpleBase {
     private pickerDialog: PickMacroGeneratorsDialog;

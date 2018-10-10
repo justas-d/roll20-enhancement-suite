@@ -1,6 +1,6 @@
-import {DOM} from "../../tools/DOM";
-import {DialogBase} from "../../tools/DialogBase";
-import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../tools/DialogComponents";
+import {DOM} from "../../utils/DOM";
+import {DialogBase} from "../../utils/DialogBase";
+import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../utils/DialogComponents";
 import { ISlimMacro, TableOfMacrosByCategoryAndId  } from './Types';
 
 export default class MacroSelectDialog extends DialogBase<string> {

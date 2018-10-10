@@ -1,5 +1,5 @@
-import { R20Module } from "../../tools/R20Module"
-import { createCSSElement, findByIdAndRemove } from "../../tools/MiscUtils";
+import { R20Module } from "../../utils/R20Module"
+import { createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
 
 class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
 

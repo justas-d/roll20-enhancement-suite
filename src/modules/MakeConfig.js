@@ -1,4 +1,4 @@
-import TransformDirname from '../tools/TransformDirname'
+import TransformDirname from '../utils/TransformDirname'
 
 export default function (dirname, hook) {
 

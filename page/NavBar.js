@@ -1,5 +1,5 @@
 import React from "react";
-import {Config} from "../src/tools/Config";
+import {Config} from "../src/utils/Config";
 
 const NavBar = ({noLanding}) => {
     return (

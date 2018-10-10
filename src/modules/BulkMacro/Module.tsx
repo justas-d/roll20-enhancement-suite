@@ -1,8 +1,8 @@
-import {R20Module} from "../../tools/R20Module"
-import {R20} from '../../tools/R20';
-import {DialogBase} from "../../tools/DialogBase";
-import {DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent} from "../../tools/DialogComponents";
-import {TokenContextMenu} from '../../tools/TokenContextMenu';
+import {R20Module} from "../../utils/R20Module"
+import {R20} from '../../utils/R20';
+import {DialogBase} from "../../utils/DialogBase";
+import {DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent} from "../../utils/DialogComponents";
+import {TokenContextMenu} from '../../utils/TokenContextMenu';
 import MacroSelectDialog from './MacroSelectDialog';
 import {ISlimMacro, TableOfMacrosByCategoryAndId} from './Types';
 import {Macro} from 'roll20';

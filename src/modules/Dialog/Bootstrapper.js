@@ -1,5 +1,5 @@
-import { R20Bootstrapper } from "../../tools/R20Bootstrapper";
-import { findByIdAndRemove, getBrowser } from "../../tools/MiscUtils";
+import { R20Bootstrapper } from "../../utils/R20Bootstrapper";
+import { findByIdAndRemove, getBrowser } from "../../utils/MiscUtils";
 
 
 class DialogFormsBootstrapper extends R20Bootstrapper.Base {

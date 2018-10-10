@@ -1,4 +1,4 @@
-import {DOM} from "../../tools/DOM";
+import {DOM} from "../../utils/DOM";
 
 const EditComponentWrapper = ({Component, cfgId, display, hook}) => {
     return (

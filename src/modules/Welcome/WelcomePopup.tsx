@@ -1,7 +1,7 @@
-import { DOM } from "../../tools/DOM";
-import { DialogBase } from "../../tools/DialogBase";
-import { getExtUrlFromPage } from "../../tools/MiscUtils";
-import { R20Module } from "../../tools/R20Module";
+import { DOM } from "../../utils/DOM";
+import { DialogBase } from "../../utils/DialogBase";
+import { getExtUrlFromPage } from "../../utils/MiscUtils";
+import { R20Module } from "../../utils/R20Module";
 import SettingsModuleButtonId from "../Settings/Vars";
 
 export default class WelcomePopup extends DOM.ElementBase {

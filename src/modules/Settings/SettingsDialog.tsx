@@ -1,9 +1,9 @@
-import { DialogBase } from "../../tools/DialogBase";
+import { DialogBase } from "../../utils/DialogBase";
 import AboutDialog from "./AboutDialog";
-import { Dialog, DialogFooter, DialogFooterContent, DialogHeader, DialogBody } from "../../tools/DialogComponents";
-import { DOM } from "../../tools/DOM";
+import { Dialog, DialogFooter, DialogFooterContent, DialogHeader, DialogBody } from "../../utils/DialogComponents";
+import { DOM } from "../../utils/DOM";
 import * as _ from 'underscore'
-import { mapObj } from "../../tools/MiscUtils";
+import { mapObj } from "../../utils/MiscUtils";
 import HookHeader from "./HookHeader";
 import HookConfig from "./HookConfig";
 import ChangelogDialog from "./ChangelogDialog";

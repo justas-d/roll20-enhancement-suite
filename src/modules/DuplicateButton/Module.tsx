@@ -1,7 +1,7 @@
-import { R20Module } from "../../tools/R20Module"
-import { DOM } from "../../tools/DOM"
-import { R20 } from "../../tools/R20";
-import { findByIdAndRemove } from "../../tools/MiscUtils";
+import { R20Module } from "../../utils/R20Module"
+import { DOM } from "../../utils/DOM"
+import { R20 } from "../../utils/R20";
+import { findByIdAndRemove } from "../../utils/MiscUtils";
 import {HandoutBlobs, IBlobObject} from "roll20";
 
 class DuplicateButtonModule extends R20Module.SimpleBase {

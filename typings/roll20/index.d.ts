@@ -459,6 +459,13 @@ declare namespace Roll20 {
         player_settings: PlayerSettings;
         utils: Utils;
         jukebox: D20Jukebox;
+        journal: D20Journal;
+    }
+
+    export interface D20Journal {
+        customSheets: {
+            workerScripts: string[];
+        }
     }
 
     export interface D20Jukebox {

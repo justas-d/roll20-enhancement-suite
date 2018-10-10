@@ -1,5 +1,5 @@
 import MakeConfig from "../MakeConfig";
-import ConfigViews from "../../tools/ConfigViews";
+import ConfigViews from "../../utils/ConfigViews";
 import Category from "../Category";
 
 export default MakeConfig(__dirname, {

@@ -1,9 +1,9 @@
-import { R20Module } from "../../tools/R20Module"
-import { R20 } from "../../tools/R20";
-import { MacroIO, IApplyableMacroData } from "../../tools/MacroIO";
+import { R20Module } from "../../utils/R20Module"
+import { R20 } from "../../utils/R20";
+import { MacroIO, IApplyableMacroData } from "../../utils/MacroIO";
 import { saveAs } from 'save-as'
 import {IOModuleCommon} from "../IOModuleCommon";
-import {IResult} from "../../tools/Result";
+import {IResult} from "../../utils/Result";
 
 class MacroIOModule extends IOModuleCommon<IApplyableMacroData> {
     constructor() {

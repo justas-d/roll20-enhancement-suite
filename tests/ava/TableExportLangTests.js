@@ -1,4 +1,4 @@
-import { TableExportLang } from "../../src/tools/TableExportLang.js"
+import { TableExportLang } from "../../src/utils/TableExportLang.js"
 import test from "ava";
 
 function testTable(t, table, expTable, expItems) {

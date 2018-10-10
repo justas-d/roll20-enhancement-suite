@@ -1,10 +1,10 @@
-import {DOM} from "../../tools/DOM";
-import {DialogBase} from "../../tools/DialogBase";
-import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../tools/DialogComponents";
+import {DOM} from "../../utils/DOM";
+import {DialogBase} from "../../utils/DialogBase";
+import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../utils/DialogComponents";
 import NumberEdit from "../Settings/NumberEdit";
 import EditComponentWrapper from "../Settings/EditComponentWrapper";
 import CheckboxEdit from "../Settings/CheckboxEdit";
-import {R20} from "../../tools/R20";
+import {R20} from "../../utils/R20";
 
 export default class TokenResizeDialog extends DialogBase<string> {
     private moduleConfig: any;

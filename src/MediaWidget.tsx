@@ -1,4 +1,4 @@
-import {DOM} from "./tools/DOM";
+import {DOM} from "./utils/DOM";
 
 const MediaWidget = ({url, description}) => {
     return (

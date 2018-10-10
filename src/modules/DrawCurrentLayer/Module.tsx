@@ -1,8 +1,8 @@
-import {R20Module} from '../../tools/R20Module'
-import {R20} from '../../tools/R20';
-import {LayerData} from '../../tools/LayerData';
-import {DOM} from '../../tools/DOM';
-import {copy, findByIdAndRemove} from '../../tools/MiscUtils';
+import {R20Module} from '../../utils/R20Module'
+import {R20} from '../../utils/R20';
+import {LayerData} from '../../utils/LayerData';
+import {DOM} from '../../utils/DOM';
+import {copy, findByIdAndRemove} from '../../utils/MiscUtils';
 
 enum ToolClasses {
     GMTokens = "choosegmlayer",

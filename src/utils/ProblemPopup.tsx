@@ -1,4 +1,4 @@
-import { DOM } from "../tools/DOM";
+import { DOM } from ".//DOM";
 import {Config} from "./Config";
 
 export default function showProblemPopup(debugCode) {

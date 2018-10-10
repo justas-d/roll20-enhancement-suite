@@ -1,8 +1,8 @@
-import {DialogBase} from "../../tools/DialogBase";
-import {getExtUrlFromPage} from "../../tools/MiscUtils";
-import {Dialog, DialogHeader, DialogBody} from "../../tools/DialogComponents";
-import {DOM} from "../../tools/DOM";
-import {Config} from "../../tools/Config";
+import {DialogBase} from "../../utils/DialogBase";
+import {getExtUrlFromPage} from "../../utils/MiscUtils";
+import {Dialog, DialogHeader, DialogBody} from "../../utils/DialogComponents";
+import {DOM} from "../../utils/DOM";
+import {Config} from "../../utils/Config";
 
 declare namespace build {
     export const R20ES_VERSION: string;

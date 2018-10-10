@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import NavBar from 'NavBar.js'
-import {Config} from "../src/tools/Config";
+import {Config} from "../src/utils/Config";
 
 function About() {
 

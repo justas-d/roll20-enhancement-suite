@@ -1,5 +1,5 @@
-import { DOM } from "../../tools/DOM";
-import { R20Module } from "../../tools/R20Module";
+import { DOM } from "../../utils/DOM";
+import { R20Module } from "../../utils/R20Module";
 
 export abstract class ConfigEditBase extends DOM.ElementBase {
     protected hook: any;

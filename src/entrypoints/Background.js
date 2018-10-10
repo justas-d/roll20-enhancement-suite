@@ -1,8 +1,8 @@
 import configs from '../Configs'
-import {getBrowser, replaceAll} from '../tools/MiscUtils';
-import {Config} from '../tools/Config';
-import {doesBrowserNotSupportResponseFiltering} from "../tools/BrowserDetection";
-import editorUrls from "../tools/EditorURLs";
+import {getBrowser, replaceAll} from '../utils/MiscUtils';
+import {Config} from '../utils/Config';
+import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection";
+import editorUrls from "../utils/EditorURLs";
 
 const getHooks = (hooks, url) => {
 

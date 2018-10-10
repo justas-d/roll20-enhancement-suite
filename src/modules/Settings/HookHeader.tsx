@@ -1,6 +1,6 @@
-import { DOM } from "../../tools/DOM";
-import { R20 } from "../../tools/R20";
-import { R20Module } from "../../tools/R20Module";
+import { DOM } from "../../utils/DOM";
+import { R20 } from "../../utils/R20";
+import { R20Module } from "../../utils/R20Module";
 
 export default class HookHeader extends DOM.ElementBase {
     private onSelect: (hook: any) => void = null;

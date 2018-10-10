@@ -1,8 +1,8 @@
-import { R20Module } from "../../tools/R20Module";
-import { R20 } from "../../tools/R20";
-import { DOM } from "../../tools/DOM";
-import { findByIdAndRemove } from "../../tools/MiscUtils";
-import { TokenContextMenu } from "../../tools/TokenContextMenu";
+import { R20Module } from "../../utils/R20Module";
+import { R20 } from "../../utils/R20";
+import { DOM } from "../../utils/DOM";
+import { findByIdAndRemove } from "../../utils/MiscUtils";
+import { TokenContextMenu } from "../../utils/TokenContextMenu";
 
 class TokenContextMenuApiModule extends R20Module.SimpleBase {
     constructor() {

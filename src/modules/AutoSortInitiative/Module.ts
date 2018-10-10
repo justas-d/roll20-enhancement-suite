@@ -1,5 +1,5 @@
-import { R20Module } from "../../tools/R20Module";
-import { R20 } from "../../tools/R20";
+import { R20Module } from "../../utils/R20Module";
+import { R20 } from "../../utils/R20";
 import { InitiativeData} from "roll20";
 import * as _ from 'underscore'
 

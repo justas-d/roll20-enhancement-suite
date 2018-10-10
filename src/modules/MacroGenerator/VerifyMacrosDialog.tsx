@@ -1,7 +1,7 @@
-import { DialogBase } from "../../tools/DialogBase";
+import { DialogBase } from "../../utils/DialogBase";
 import { IGeneratedMacro, IMacroDiff } from "./IMacroGenerator";
-import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../tools/DialogComponents";
-import { DOM } from "../../tools/DOM";
+import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../utils/DialogComponents";
+import { DOM } from "../../utils/DOM";
 
 export default class VerifyMacrosDialog extends DialogBase<null> {
 

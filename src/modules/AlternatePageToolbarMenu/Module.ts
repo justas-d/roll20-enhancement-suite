@@ -1,5 +1,5 @@
-import { R20Module } from "../../tools/R20Module"
-import { createCSSElement, findByIdAndRemove } from "../../tools/MiscUtils";
+import { R20Module } from "../../utils/R20Module"
+import { createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
 const constantStyle = require("./alternativePageToolbar.scss");
 
 class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {

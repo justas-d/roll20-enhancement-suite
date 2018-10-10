@@ -1,5 +1,5 @@
-import {R20Module} from "../../tools/R20Module"
-import {createCSSElement, findByIdAndRemove} from "../../tools/MiscUtils";
+import {R20Module} from "../../utils/R20Module"
+import {createCSSElement, findByIdAndRemove} from "../../utils/MiscUtils";
 
 class HidePlayerListModule extends R20Module.SimpleBase {
     private static readonly styleId = "r20es-hide-player-list-style";

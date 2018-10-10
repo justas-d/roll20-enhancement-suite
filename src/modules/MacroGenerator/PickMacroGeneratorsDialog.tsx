@@ -1,8 +1,8 @@
-import { DialogBase } from "../../tools/DialogBase";
-import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../tools/DialogComponents";
+import { DialogBase } from "../../utils/DialogBase";
+import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../utils/DialogComponents";
 import MacroGeneratorModule from "./Module";
-import { DOM } from "../../tools/DOM";
-import {isChromium} from "../../tools/BrowserDetection";
+import { DOM } from "../../utils/DOM";
+import {isChromium} from "../../utils/BrowserDetection";
 
 export default class PickMacroGeneratorsDialog extends DialogBase<null> {
     private parent: MacroGeneratorModule;

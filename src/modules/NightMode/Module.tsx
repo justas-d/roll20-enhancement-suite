@@ -1,7 +1,7 @@
-import {R20Module} from '../../tools/R20Module'
-import {DOM} from '../../tools/DOM';
-import {findByIdAndRemove} from '../../tools/MiscUtils';
-import {R20} from "../../tools/R20";
+import {R20Module} from '../../utils/R20Module'
+import {DOM} from '../../utils/DOM';
+import {findByIdAndRemove} from '../../utils/MiscUtils';
+import {R20} from "../../utils/R20";
 
 const css = require("./nightMode.scss");
 const ogl5ecss = require("./5eOGLNightMode.scss");

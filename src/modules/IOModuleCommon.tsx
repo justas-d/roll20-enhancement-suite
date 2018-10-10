@@ -1,9 +1,9 @@
-import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../tools/DOM'
-import { R20Module } from "../tools/R20Module"
+import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../utils/DOM'
+import { R20Module } from "../utils/R20Module"
 import { saveAs } from 'save-as'
 import PickObjectsDialog from "./PickObjectsDialog";
-import {findByIdAndRemove, readFile} from "../tools/MiscUtils";
-import {IResult} from "../tools/Result";
+import {findByIdAndRemove, readFile} from "../utils/MiscUtils";
+import {IResult} from "../utils/Result";
 
 export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
 

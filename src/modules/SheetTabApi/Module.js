@@ -1,6 +1,6 @@
-import { R20Module } from '../../tools/R20Module'
-import { DOM } from '../../tools/DOM'
-import { SheetTab } from '../../tools/SheetTab';
+import { R20Module } from '../../utils/R20Module'
+import { DOM } from '../../utils/DOM'
+import { SheetTab } from '../../utils/SheetTab';
 
 const charIdAttribute = "data-characterid";
 

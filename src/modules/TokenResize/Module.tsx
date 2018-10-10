@@ -1,6 +1,6 @@
-import {R20Module} from "../../tools/R20Module";
-import {R20} from "../../tools/R20";
-import {TokenContextMenu} from "../../tools/TokenContextMenu";
+import {R20Module} from "../../utils/R20Module";
+import {R20} from "../../utils/R20";
+import {TokenContextMenu} from "../../utils/TokenContextMenu";
 import TokenResizeDialog from "./TokenResizeDialog";
 import {CanvasObject} from "roll20";
 

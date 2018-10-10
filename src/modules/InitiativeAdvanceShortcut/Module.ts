@@ -1,5 +1,5 @@
-import { R20Module } from "../../tools/R20Module";
-import { R20 } from "../../tools/R20";
+import { R20Module } from "../../utils/R20Module";
+import { R20 } from "../../utils/R20";
 
 class InitiativeAdvanceShortcutModule extends R20Module.OnAppLoadBase {
     private wasBound: boolean = false;

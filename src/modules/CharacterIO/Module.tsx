@@ -1,11 +1,11 @@
-import { R20Module } from '../../tools/R20Module'
-import { CharacterIO, IOverwriteStrategy } from '../../tools/CharacterIO'
-import { R20 } from '../../tools/R20'
-import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../../tools/DOM'
+import { R20Module } from '../../utils/R20Module'
+import { CharacterIO, IOverwriteStrategy } from '../../utils/CharacterIO'
+import { R20 } from '../../utils/R20'
+import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../../utils/DOM'
 import { saveAs } from 'save-as'
-import { findByIdAndRemove, readFile, safeParseJson } from '../../tools/MiscUtils';
-import { SheetTab } from '../../tools/SheetTab';
-import { LoadingDialog } from '../../tools/DialogComponents';
+import { findByIdAndRemove, readFile, safeParseJson } from '../../utils/MiscUtils';
+import { SheetTab } from '../../utils/SheetTab';
+import { LoadingDialog } from '../../utils/DialogComponents';
 
 interface IProcessResultData {
     strategy: IOverwriteStrategy,

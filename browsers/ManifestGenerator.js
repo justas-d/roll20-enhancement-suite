@@ -1,6 +1,6 @@
 const VersionNameGen = require("./VersionNameGen");
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
-const editorUrls = require("../src/tools/EditorURLs");
+const editorUrls = require("../src/utils/EditorURLs");
 
 const gen = (browser, origVersionName) => {
     let manifest = {

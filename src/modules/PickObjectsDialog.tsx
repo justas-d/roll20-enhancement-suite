@@ -1,6 +1,6 @@
-import { DialogBase } from "../tools/DialogBase";
-import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../tools/DialogComponents";
-import { DOM } from "../tools/DOM";
+import { DialogBase } from "../utils/DialogBase";
+import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../utils/DialogComponents";
+import { DOM } from "../utils/DOM";
 
 type FilterTableType = { [id: number]: boolean };
 

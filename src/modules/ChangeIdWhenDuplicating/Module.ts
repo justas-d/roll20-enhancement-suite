@@ -1,6 +1,6 @@
-import { R20Module } from "../../tools/R20Module";
-import { replaceAll } from "../../tools/MiscUtils";
-import { R20 } from "../../tools/R20";
+import { R20Module } from "../../utils/R20Module";
+import { replaceAll } from "../../utils/MiscUtils";
+import { R20 } from "../../utils/R20";
 import {Character,CharacterEditor} from "roll20";
 
 class ChangeIdWhenDuplicatingModule extends R20Module.SimpleBase {

@@ -1,5 +1,5 @@
-import { R20Module } from "../../tools/R20Module"
-import { findByIdAndRemove, createCSSElement } from "../../tools/MiscUtils";
+import { R20Module } from "../../utils/R20Module"
+import { findByIdAndRemove, createCSSElement } from "../../utils/MiscUtils";
 
 class TransparentPaperModule extends R20Module.OnAppLoadBase {
     private static readonly styleId = "r20es-transparent-paper-style";

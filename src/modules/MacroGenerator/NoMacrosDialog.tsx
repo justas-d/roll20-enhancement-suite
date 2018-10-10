@@ -1,6 +1,6 @@
-import { DialogBase } from "../../tools/DialogBase";
-import { DOM } from "../../tools/DOM";
-import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../tools/DialogComponents";
+import { DialogBase } from "../../utils/DialogBase";
+import { DOM } from "../../utils/DOM";
+import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../../utils/DialogComponents";
 
 export default class NoMacrosDialog extends DialogBase<null> {
     public show = this.internalShow;

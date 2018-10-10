@@ -1,6 +1,6 @@
-import { DOM } from "../../tools/DOM";
-import { DialogBase } from "../../tools/DialogBase";
-import { Dialog, DialogHeader, DialogBody } from "../../tools/DialogComponents";
+import { DOM } from "../../utils/DOM";
+import { DialogBase } from "../../utils/DialogBase";
+import { Dialog, DialogHeader, DialogBody } from "../../utils/DialogComponents";
 import ChangelogWidget from "../ChangelogWidget";
 
 export default class ChangelogPopup extends DOM.ElementBase {

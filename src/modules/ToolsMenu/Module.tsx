@@ -1,13 +1,13 @@
 import {R20Module} from "../../utils/R20Module";
 import {DOM} from "../../utils/DOM";
 import {findByIdAndRemove} from "../../utils/MiscUtils";
-import SettingsDialog from "./SettingsDialog";
-import ButtonId from "./Vars";
 import {SettingsSidebarButton} from "../../Components/SettingsSidebarButton";
 import {insertButtonIntoSettings} from "../../utils/InsertButtonIntoSettings";
+import {ToolsDialog} from "./ToolsDialog";
 
-class SettingsModule extends R20Module.OnAppLoadBase {
-    private dialog: SettingsDialog = null;
+class ToolsModule extends R20Module.OnAppLoadBase {
+    private dialog: ToolsDialog = null;
+    private static readonly TOOLS_ID = "r20es-tools-button";
 
     constructor() {
         super(__dirname);
@@ -19,23 +19,25 @@ class SettingsModule extends R20Module.OnAppLoadBase {
     };
 
     setup() {
-        this.dialog = new SettingsDialog(this.getAllHooks());
+        this.dialog = new ToolsDialog();
 
         const button = (
             <SettingsSidebarButton
-                text="R20ES Settings"
-                id={ButtonId}
+                id={ToolsModule.TOOLS_ID}
+                text="R20ES Tools"
                 onClick={this.onButtonClick}
             />);
 
+        console.log("da fuq");
         insertButtonIntoSettings(button);
     }
 
     dispose() {
         super.dispose();
-        findByIdAndRemove(ButtonId);
+        findByIdAndRemove(ToolsModule.TOOLS_ID);
         if (this.dialog) this.dialog.dispose();
     }
 }
 
-if (R20Module.canInstall()) new SettingsModule().install();
+if (R20Module.canInstall()) new ToolsModule().install();
+console.log("TOOLS");

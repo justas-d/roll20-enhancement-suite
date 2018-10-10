@@ -1,11 +1,11 @@
-import { R20Module } from "../../tools/R20Module";
-import { R20 } from "../../tools/R20";
-import { TableIO } from "../../tools/TableIO";
+import { R20Module } from "../../utils/R20Module";
+import { R20 } from "../../utils/R20";
+import { TableIO } from "../../utils/TableIO";
 import { saveAs } from 'save-as'
-import { DOM, SidebarSeparator, SidebarCategoryTitle } from "../../tools/DOM";
-import { TableExportLang } from "../../tools/TableExportLang";
-import { readFile, safeParseJson, findByIdAndRemove } from "../../tools/MiscUtils";
-import { LoadingDialog } from "../../tools/DialogComponents";
+import { DOM, SidebarSeparator, SidebarCategoryTitle } from "../../utils/DOM";
+import { TableExportLang } from "../../utils/TableExportLang";
+import { readFile, safeParseJson, findByIdAndRemove } from "../../utils/MiscUtils";
+import { LoadingDialog } from "../../utils/DialogComponents";
 import Vars from './Vars';
 import PasteTableExportDialog from "./PasteTableExportDialog";
 

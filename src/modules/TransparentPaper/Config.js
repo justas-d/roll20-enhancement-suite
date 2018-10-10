@@ -1,7 +1,7 @@
 
 import MakeConfig from '../MakeConfig'; 
 import Category from '../Category';
-import ConfigViews from '../../tools/ConfigViews';
+import ConfigViews from '../../utils/ConfigViews';
 
 export default MakeConfig(__dirname, {
     id: "transparentPaperDivs",

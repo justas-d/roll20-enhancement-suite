@@ -1,8 +1,8 @@
 import hooks from "../Configs";
-import { Config } from "../tools/Config";
-import { safeCall } from "../tools/MiscUtils";
-import showProblemPopup from "../tools/ProblemPopup";
-import { DOM } from "../tools/DOM";
+import { Config } from "../utils/Config";
+import { safeCall } from "../utils/MiscUtils";
+import showProblemPopup from "../utils/ProblemPopup";
+import { DOM } from "../utils/DOM";
 
 setTimeout(() => {
 

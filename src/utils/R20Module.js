@@ -1,4 +1,4 @@
-import TransformDirname from '../tools/TransformDirname'
+import TransformDirname from './/TransformDirname'
 
 let R20Module = {};
 

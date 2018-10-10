@@ -1,12 +1,12 @@
-import {R20Module} from '../../tools/R20Module'
-import {DOM} from '../../tools/DOM'
-import {SheetTab, SheetTabSheetInstanceData} from '../../tools/SheetTab';
-import {R20} from "../../tools/R20";
+import {R20Module} from '../../utils/R20Module'
+import {DOM} from '../../utils/DOM'
+import {SheetTab, SheetTabSheetInstanceData} from '../../utils/SheetTab';
+import {R20} from "../../utils/R20";
 import {Character, CharacterSheetAttribute, TokenAttributes} from 'roll20';
 import getBlob = R20.getBlob;
-import {strIsNullOrEmpty} from "../../tools/MiscUtils";
-import lexCompare from "../../tools/LexicographicalComparator";
-import {isChromium} from "../../tools/BrowserDetection";
+import {strIsNullOrEmpty} from "../../utils/MiscUtils";
+import lexCompare from "../../utils/LexicographicalComparator";
+import {isChromium} from "../../utils/BrowserDetection";
 
 const AuraEditor = ({tokenAttribs, name, index}) => {
     const radius = `aura${index}_radius`;
