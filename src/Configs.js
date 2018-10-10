@@ -30,7 +30,8 @@ import CharacterTokenModifier from "./modules/CharacterTokenModifier/Config";
 import SeenAd from "./modules/SeenAd/Config";
 import NightMode from "./modules/NightMode/Config";
 import JukeboxIO from "./modules/JukeboxIO/Config";
-import ArrowKeysMoveCanvas from "./modules/ArrowKeysMoveCanvas/Config"
+import ArrowKeysMoveCanvas from "./modules/ArrowKeysMoveCanvas/Config";
+import ToolsMenu from "./modules/ToolsMenu/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -43,6 +44,7 @@ addCfg(AutoPingNextToken);
 addCfg(AutoSelectNextToken);
 addCfg(AutoSortInitiative);
 addCfg(BulkMacro);
+addCfg(ToolsMenu);
 addCfg(ChangeIdWhenDuplicating);
 addCfg(CharacterIO);
 addCfg(NightMode);
