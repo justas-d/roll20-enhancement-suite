@@ -1,5 +1,5 @@
 {
-    "current": "1.4.1",
+    "current": "1.5.0",
     "versions": {
         "1.4.0": {
             "info": {
@@ -194,6 +194,41 @@
                 {
                     "id": "",
                     "content": "Lowered extension size (5MiB -> 350KiB!): settings media is no longer packaged with the extension and is now served from the website."
+                }
+            ]
+        },
+        "1.5.0": {
+            "info": {
+                "title": "Jukebox & Tools & Arrow keys",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added a tools menu. Can be found in the settings tab."
+                },
+                {
+                    "id": "",
+                    "content": "Tools: added bulk roll type setter for the OGL 5e sheet."
+                },
+                {
+                    "id": "",
+                    "content": "Added ArrowKeysMoveCanvas: allows moving the canvas camera with arrow keys when there is no default token selected. Try this out with the ruler tool!"
+                },{
+                    "id": "",
+                    "content": "Added Jukebox playlist importing/exporting."
+                },
+                {
+                    "id": "",
+                    "content": "Updated contributors."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed NightMode not styling dialog footers"
+                },
+                {
+                    "id": "",
+                    "content": "Fixed improver error messages when processing an invalid Character."
                 }
             ]
         }
