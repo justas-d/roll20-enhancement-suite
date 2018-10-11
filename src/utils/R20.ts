@@ -14,8 +14,10 @@ import {
     Page,
     PlayerAttributes,
     RollableTable,
-    SyncObject
+    SyncObject,
+    JukeboxSongAttributes
 } from "roll20";
+import {IApplyableSong} from "./JukeboxIO";
 
 namespace R20 {
 
@@ -248,31 +250,17 @@ namespace R20 {
         return retvals;
     }
 
-    export function createSong(): JukeboxSong {
-        return window.Jukebox.playlist.create();
+    export function createSong(data: any | IApplyableSong | JukeboxSongAttributes): JukeboxSong {
+        return window.Jukebox.playlist.create(data);
     }
 
-    export function createPlaylist(name: string, mode: string): JukeboxFileStructure {
-        const data: JukeboxFileStructure = {
+    export function makePlaylistStructure(name: string, mode: string, songIds?: string[]): JukeboxFileStructure {
+        return {
             id: window.generateUUID(),
             n: name,
             s: mode,
-            i: []
+            i: songIds || []
         };
-
-        const campaign = getCampaign();
-        const fs: (JukeboxFileStructure | string)[] = JSON.parse(campaign.attributes.jukeboxfolder);
-        fs.push(data);
-
-        getCampaign().save({
-            jukeboxfolder: JSON.stringify(fs)
-        });
-
-        return data;
-    }
-
-    export function addSongToPlaylist(song: JukeboxSong, playlist: JukeboxFileStructure) {
-        window.d20.jukebox.addItemToFolderStructure(song.id, playlist.id);
     }
 
     export function getInitiativeData(): InitiativeData[] {

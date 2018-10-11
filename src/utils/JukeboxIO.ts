@@ -77,19 +77,23 @@ export namespace JukeboxIO {
         if(stratLookup.isErr()) return stratLookup.map();
 
         return stratLookup.ok().unwrap().parse(data);
-    }
+    };
 
     export const applyData = (playlists: IApplyableJukeboxPlaylist[]) => {
-        for(const rawPlaylist of playlists) {
-            const playlist = R20.createPlaylist(rawPlaylist.name, rawPlaylist.mode);
+        const playlistsStructures = playlists.map(rawPlaylist => {
 
-            for(const rawSong of rawPlaylist.songs) {
-                const song = R20.createSong();
-                song.save(rawSong);
+            const songIds = rawPlaylist.songs.map(s => R20.createSong(s).id);
+            return R20.makePlaylistStructure(rawPlaylist.name, rawPlaylist.mode, songIds);
+        });
 
-                R20.addSongToPlaylist(song, playlist);
-            }
-        }
+        const campaign = R20.getCampaign();
+        let fs: any[] = JSON.parse(campaign.attributes.jukeboxfolder);
+        fs = fs.concat(playlistsStructures);
+        console.log(fs);
+
+        R20.getCampaign().save({
+            jukeboxfolder: JSON.stringify(fs)
+        });
     };
 
     export const makeApplyablePlaylists = (playlists: JukeboxPlaylist[]): IApplyableJukeboxPlaylist[] => {
