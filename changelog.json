@@ -1,5 +1,5 @@
 {
-    "current": "1.5.2",
+    "current": "1.5.4",
     "versions": {
         "1.4.0": {
             "info": {
@@ -258,6 +258,22 @@
                 {
                     "id": "",
                     "content": "Possibly™ Fixed™ a Bug™ on Chrome (thanks @ Angor de Redjak for the report & help!)"
+                }
+            ]
+        },
+        "1.5.4": {
+            "info": {
+                "title": "",
+                "media": "Night mode tweak"
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "NightMode(5e OGL): fix unreadable text on NPC edit sheets, color adv btn (thanks @ Scrybaby for the report!)."
+                },
+                {
+                    "id": "",
+                    "content": "NightMode(5e OGL): style character sheet advantage toggle buttons."
                 }
             ]
         }
