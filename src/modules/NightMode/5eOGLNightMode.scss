@@ -292,3 +292,18 @@
 .sheet-rolltemplate-mancerroll .sheet-row.sheet-header .inlinerollresult {
     padding: 2px;
 }
+
+.charsheet .sheet-advantagetoggle input.sheet-toggle-left,
+.charsheet .sheet-advantagetoggle input.sheet-toggle-left + span,
+.charsheet .sheet-advantagetoggle input.sheet-toggle-right,
+.charsheet .sheet-advantagetoggle input.sheet-toggle-right + span,
+.charsheet .sheet-advantagetoggle input.sheet-toggle-center, .charsheet .sheet-advantagetoggle input.sheet-toggle-center + span,
+.charsheet .sheet-advantagetoggle.sheet-whispertoggle input.sheet-toggle-left,
+.charsheet .sheet-advantagetoggle.sheet-whispertoggle input.sheet-toggle-left + span {
+    color: $text900;
+    background-color: $brand900;
+}
+.charsheet .sheet-npc select,
+.charsheet .sheet-npc .sheet-npc_options input {
+    color: whitesmoke;
+}
