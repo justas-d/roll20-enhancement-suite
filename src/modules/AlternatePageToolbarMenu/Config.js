@@ -5,7 +5,7 @@ import ConfigViews from '../../utils/ConfigViews';
 export default MakeConfig(__dirname, {
     id: "alternativePageToolbarMenu",
     name: "Alternative Page Toolbar Menu",
-    description: "Replaces the default page toolbar menu with a more concise one. Right clicking the name of the page will enable you to edit it.",
+    description: "Replaces the default page toolbar menu with a more concise one. Right clicking the name of the page will enable you to edit it. Vivaldi users: double right-click to edit name.",
     category: Category.canvas,
 
     media: {
