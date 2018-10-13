@@ -94,6 +94,8 @@ if (doesBrowserNotSupportResponseFiltering()) {
         ];
 
         window.r20esChrome.fetchAndInject = function (localUrl) {
+            console.log(`FETCH & INJECT ${localUrl}`);
+
             fetch(localUrl, {
                 cache: "no-store",
                 method: "GET",
@@ -246,19 +248,18 @@ if (doesBrowserNotSupportResponseFiltering()) {
             const scriptString = _ => `window.r20esChrome.fetchAndInject("${dt.url}");`;
 
             let payload = null;
-            if (window.redirectCount <= 0) {
+            const isInitial = window.redirectCount <= 0;
 
-                payload = `
-                var setupEnvironment = ${setupEnvironment.toString()}
-                setupEnvironment("${Config.appUrl}");
-                window.r20esChrome.hooks = ${JSON.stringify(configs, 0, 4)};
-                console.log("window.r20esChrome.hooks:");
-                console.log(window.r20esChrome.hooks);
-                var getHooks = ${getHooks.toString()}
-                var replaceAll = ${replaceAll.toString()}
-                var injectHooks = ${injectHooks.toString()}
-                ${scriptString()}
-                `
+            if (isInitial) {
+                payload = `var setupEnvironment = ${setupEnvironment.toString()}
+setupEnvironment("${Config.appUrl}");
+window.r20esChrome.hooks = ${JSON.stringify(configs, 0, 4)};
+console.log("window.r20esChrome.hooks:");
+console.log(window.r20esChrome.hooks);
+var getHooks = ${getHooks.toString()}
+var replaceAll = ${replaceAll.toString()}
+var injectHooks = ${injectHooks.toString()}
+${scriptString()}`;
             } else {
                 payload = scriptString();
             }
@@ -266,13 +267,15 @@ if (doesBrowserNotSupportResponseFiltering()) {
             window.hasBeenRedirected[dt.url] = true;
             ++window.redirectCount;
 
-            console.log(`redirecting ${dt.url}`);
+            const finalPayload = `data:application/javascript;base64,${btoa(payload)}`;
 
-            return {redirectUrl: `data:applicabtion/javascript;base64,${btoa(payload)}`};
+            console.log(`${window.redirectCount} redirecting ${dt.url} ${isInitial ? "(CARRIES INITIAL ENVIRONMENT)" : ""}`, finalPayload);
+            return {redirectUrl: finalPayload};
         }
     };
 
     const headerCallback = (req) => {
+        console.log("HEADER CALLBACK for", req);
         if (!isEditorUrl(req.url)) return;
 
         const headers = JSON.parse(JSON.stringify(req.responseHeaders));
@@ -284,6 +287,9 @@ if (doesBrowserNotSupportResponseFiltering()) {
             if (header.name !== "content-security-policy") continue;
 
             header.value += " data: blob:";
+            console.log("!!MODIFIED HEADERS!!");
+            window.r20esDidModifyHeaders = true;
+
             break;
         }
 
@@ -299,8 +305,6 @@ if (doesBrowserNotSupportResponseFiltering()) {
 
     // thanks, Firefox.
     window.requestListener = function (dt) {
-
-
         const isRedir = isRedirectTarget(dt.url);
         console.log(`${isRedir}: ${dt.url}`);
         if (!isRedir) return;
