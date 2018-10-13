@@ -68,9 +68,7 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
         e.stopPropagation();
         e.preventDefault();
 
-        console.log(this.originalTextEditHandler);
         this.originalTextEditHandler.call(e.target);
-        console.log(e.which);
     };
 
     private noContextMenu = (e) => false;
@@ -159,3 +157,12 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
 }
 
 if (R20Module.canInstall()) new AlternativePageToolbarMenu().install();
+
+(function() {
+    const style = document.createElement("style")
+    style.innerText = `#page-toolbar .pages .availablepage span {
+    min-width: 20px;
+    min-height: 20px;
+}`;
+    document.head.appendChild(style);
+})();
