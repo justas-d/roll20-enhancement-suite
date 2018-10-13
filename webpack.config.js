@@ -17,7 +17,7 @@ const isInRepo = fs.existsSync("./.git/");
 
 const genZipName = (version, target) => `r20es_${version}_${target}.zip`;
 
-let git = {}
+let git = {};
 let gitPlugin = null;
 
 if (isInRepo) {
@@ -27,7 +27,7 @@ if (isInRepo) {
     });
 
     git.version = gitPlugin.version();
-    git.commit = gitPlugin.commithash()
+    git.commit = gitPlugin.commithash();
     git.branch = gitPlugin.branch();
     // cache git data for source code zip
     fs.writeFileSync(gitDataCacheFile, JSON.stringify(git), "utf8");
@@ -68,9 +68,26 @@ module.exports = (_env, argv) => {
             process.exit(0);
         }
 
+        const changelogJson = JSON.parse(changelog);
         if(changelog.current === "TODO") {
             console.error("Current version in the changelog file is set to TODO.");
             console.error("Update the current version to the proper value before packaging.");
+            process.exit(0);
+        }
+
+        if(!changelogJson.versions[changelogJson.current].info.title) {
+            console.error(`Current version (${changelogJson.current}) has no title.`);
+            console.error("Set a valid title before packaging");
+            process.exit(0);
+        }
+
+        const gitLastTag = shell.exec("git describe --abbrev=0").stdout.trim();
+        const numCommitsSinceLastTag = parseInt(shell.exec(`git rev-list "${gitLastTag}..HEAD" --count`).stdout.trim());
+
+        if(numCommitsSinceLastTag > 0) {
+            console.error("Cannot package when there are commits that do not fall under a tag.");
+            console.error(`There are ${numCommitsSinceLastTag} commits since the last tag (${gitLastTag}).`);
+            console.error(`Tag a new release before packaging.`);
             process.exit(0);
         }
 
