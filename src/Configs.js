@@ -31,11 +31,13 @@ import SeenAd from "./modules/SeenAd/Config";
 import NightMode from "./modules/NightMode/Config";
 import JukeboxIO from "./modules/JukeboxIO/Config";
 import ArrowKeysMoveCanvas from "./modules/ArrowKeysMoveCanvas/Config";
+import AutoOpenInitiativeTracker from "./modules/AutoOpenInitiativeTracker/Config";
 import ToolsMenu from "./modules/ToolsMenu/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
+addCfg(AutoOpenInitiativeTracker);
 addCfg(AlternativeRadialMenu);
 addCfg(ArrowKeysMoveCanvas);
 addCfg(AlternatePageToolbarMenu);

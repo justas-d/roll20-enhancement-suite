@@ -18,6 +18,7 @@ import {
     JukeboxSongAttributes
 } from "roll20";
 import {IApplyableSong} from "./JukeboxIO";
+import {EventSubscriber} from "./EventSubscriber";
 
 namespace R20 {
 
@@ -52,6 +53,11 @@ namespace R20 {
         };
 
         window.d20.utils.setupAvatar(element, r20AvatarContext);
+    }
+
+    export function onInitiativeChange(callback: any): EventSubscriber {
+        const getter = () => R20.getInitiativeWindow().model;
+        return new EventSubscriber("change:turnorder", callback, getter);
     }
 
     export function setCanvasObjectLocation(obj: CanvasObject, left: number, top: number) {

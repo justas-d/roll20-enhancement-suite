@@ -204,6 +204,7 @@ declare namespace Roll20 {
         turnorder: string;
         playerpageid: string;
         jukeboxfolder: string;
+        initiativepage: boolean; // show initiative
         bar1_color: string;
         bar2_color: string;
         bar3_color: string;

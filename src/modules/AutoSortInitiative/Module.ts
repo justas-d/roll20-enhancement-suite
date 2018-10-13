@@ -2,22 +2,24 @@ import { R20Module } from "../../utils/R20Module";
 import { R20 } from "../../utils/R20";
 import { InitiativeData} from "roll20";
 import * as _ from 'underscore'
+import {EventSubscriber} from "../../utils/EventSubscriber";
 
 class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
-    private isWorking: boolean = false;
     private localInitiativeData: InitiativeData[] = [];
     private debouncedDoSorting: () => void;
+
+    private _sub: EventSubscriber;
 
     public constructor() {
         super(__dirname);
 
-        this.doSorting = this.doSorting.bind(this);
-        this.onTurnOrderChanged = this.onTurnOrderChanged.bind(this);
-
         this.debouncedDoSorting = _.debounce(this.doSorting, 1000);
+        this._sub = R20.onInitiativeChange(this.onTurnOrderChanged);
     }
 
-    private getNew(a: InitiativeData[], b: InitiativeData[]): InitiativeData[] {
+    private onTurnOrderChanged = (e) => this.debouncedDoSorting();
+
+    private static getNew(a: InitiativeData[], b: InitiativeData[]): InitiativeData[] {
         let added: InitiativeData[] = [];
 
         for(const bObj of b) {
@@ -39,16 +41,14 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
     }
 
     private setLocalInitiative(initiative: InitiativeData[]) {
-        const clone = JSON.parse(JSON.stringify(initiative));
-        this.localInitiativeData = clone;
+        // Note(Justas): clone or else it ain't workin'
+        this.localInitiativeData = JSON.parse(JSON.stringify(initiative));
     }
 
-    private doSorting() {
-
-        const old = this.localInitiativeData;
+    private doSorting = () => {
         let initiative = R20.getInitiativeData();
 
-        const newData = this.getNew(old, initiative);
+        const newData = AutoSortInitiativeModule.getNew(this.localInitiativeData, initiative);
         this.setLocalInitiative(initiative);
 
         if (newData.length <= 0) return;
@@ -57,7 +57,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
         const cfg = this.getHook().config;
 
         try {
-            if (old.length <= 0 || !cfg.respectFirstTokenPosition) {
+            if (this.localInitiativeData.length <= 0 || !cfg.respectFirstTokenPosition) {
                 console.log("NEW INITIATIVE");
 
                 // Note(Justas): we added the very first tokens to the initiative.
@@ -114,20 +114,18 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
             console.error(err);
             this.setLocalInitiative(R20.getInitiativeData());
         }
-    }
-
-    private onTurnOrderChanged = (e) => this.debouncedDoSorting();
+    };
 
     public setup() {
         if (!R20.isGM()) return;
 
-        R20.getInitiativeWindow().model.on("change:turnorder", this.onTurnOrderChanged);
+        this._sub.subscribe();
         this.setLocalInitiative(R20.getInitiativeData());
     }
 
     public dispose() {
         super.dispose();
-        R20.getInitiativeWindow().model.off("change:turnorder", this.onTurnOrderChanged);
+        this._sub.unsubscribe();
     }
 }
 
