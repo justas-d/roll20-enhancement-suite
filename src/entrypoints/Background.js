@@ -284,7 +284,11 @@ ${scriptString()}`;
         while (idx-- > 0) {
             const header = headers[idx];
 
-            if (header.name !== "content-security-policy") continue;
+            const name = header.name.toLowerCase();
+            if (name !== "content-security-policy") {
+                console.log(`ignoring header ${name}`);
+                continue;
+            }
 
             header.value += " data: blob:";
             console.log("!!MODIFIED HEADERS!!");
