@@ -103,7 +103,7 @@ export default MakeConfig(__dirname, {
             onlyWhenHasB20: true,
         },
 
-        drawOnWeatherLayerLayer: {
+        drawOnWeatherLayer: {
             display: "Draw on tokens in the weather layer",
             type: ConfigViews.Checkbox,
 

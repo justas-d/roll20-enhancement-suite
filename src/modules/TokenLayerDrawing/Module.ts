@@ -19,7 +19,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
                 [R20.CanvasLayer.PlayerTokens]: config.drawOnTokenLayer,
                 [R20.CanvasLayer.Map]: config.drawOnMapLayer,
                 [R20.CanvasLayer.Lighting]: config.drawOnLightsLayer,
-                [R20.CanvasLayer.B20Weather]: config.drawOnWeatherLayerLayer,
+                [R20.CanvasLayer.B20Weather]: config.drawOnWeatherLayer,
                 [R20.CanvasLayer.B20Foreground]: config.drawOnForegroundLayer,
             };
 
