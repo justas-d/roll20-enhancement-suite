@@ -1,5 +1,5 @@
 {
-    "current": "1.5.2",
+    "current": "1.6.0",
     "versions": {
         "1.4.0": {
             "info": {
@@ -258,6 +258,42 @@
                 {
                     "id": "",
                     "content": "Possibly™ Fixed™ a Bug™ on Chrome (thanks @ Angor de Redjak for the report & help!)"
+                }
+            ]
+        },
+        "1.6.0": {
+            "info": {
+                "title": "Scale Token Names & Auto Initiative Window",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added Scale Token Names by Size module"
+                },
+                {
+                    "id": "",
+                    "content": "Added Auto Open Initiative Tracker module"
+                },
+                {
+                    "id": "",
+                    "content": "NightMode(5e OGL): fix npc reaction header text color"
+                },
+                {
+                    "id": "",
+                    "content": "NightMode(5e OGL): fix unreadable text on NPC edit sheets, color adv btn"
+                },
+                {
+                    "id": "",
+                    "content": "NightMode: tweak brand colors"
+                },
+                {
+                    "id": "",
+                    "content": "NightMode: add baseStyle config option"
+                },
+                {
+                    "id": "",
+                    "content": "AlternativePageToolbarMenu: fix rename on empty spans, indent properly"
                 }
             ]
         }
