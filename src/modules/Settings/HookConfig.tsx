@@ -11,6 +11,7 @@ import ColorEdit from "./ColorEdit";
 import MouseButtonEdit from "./MouseButtonEdit";
 import MediaWidget from "../../MediaWidget";
 import EditComponentWrapper from "./EditComponentWrapper";
+import hasBetteR20 = R20.hasBetteR20;
 
 interface IMediaData {
     url: string;
@@ -53,10 +54,15 @@ export default class HookConfig extends DOM.ElementBase {
 
         let elems = [];
 
-        if (this.hook.configView) {
+        if (this.hook.configView ) {
             for (let cfgId in this.hook.configView) {
 
                 const cfg = this.hook.configView[cfgId];
+
+                if(!hasBetteR20() && cfg.onlyWhenHasB20) {
+                    continue;
+                }
+
                 if (!(cfg.type in elemMap)) {
                     alert(`Unknown config type: ${cfg.type}`);
                     continue;

@@ -1,6 +1,6 @@
 import { R20Module } from "../../utils/R20Module";
 import { R20 } from "../../utils/R20";
-import { LayerData } from "../../utils/LayerData";
+import {layerInfo, makeLayerButtonSelector} from "../../utils/LayerInfo";
 
 class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     constructor() {
@@ -13,6 +13,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
         const cfg: any = this.getHook().config;
 
         if (e.button !== cfg.mouseButtonIndex) return;
+
         if(cfg.modAlt && !window.r20es.keys.altDown) return;
         if(cfg.modShift && !window.r20es.keys.shiftDown) return;
         if(cfg.modCtrl && !window.r20es.keys.ctrlDown) return;
@@ -23,6 +24,8 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
             [R20.CanvasLayer.PlayerTokens]: cfg.switchToTokenLayer,
             [R20.CanvasLayer.Map]: cfg.switchToMapLayer,
             [R20.CanvasLayer.Lighting]: cfg.switchToLightsLayer,
+            [R20.CanvasLayer.B20Foreground]: cfg.switchToForegroundLayer,
+            [R20.CanvasLayer.B20Weather]: cfg.switchToWeatherLayer,
         };
 
         let idx = objs.length;
@@ -43,8 +46,8 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
                 }
 
                 if (R20.getCurrentLayer() !== layer) {
-                    const selector = LayerData.getLayerData(layer).selector;
-                    $(selector).trigger("click");
+                    const layerData = layerInfo[layer];
+                    $(makeLayerButtonSelector(layerData)).trigger("click");
                 }
 
                 if (cfg.select) {
@@ -54,7 +57,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
                 break;
             }
         }
-    }
+    };
 
     setup() {
         if (!R20.isGM()) return;

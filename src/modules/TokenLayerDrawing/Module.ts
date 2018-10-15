@@ -1,7 +1,6 @@
 import {R20Module} from "../../utils/R20Module";
-import {LayerData} from "../../utils/LayerData";
-import {getRotation} from "../../utils/MiscUtils";
 import {R20} from "../../utils/R20";
+import {layerInfo} from "../../utils/LayerInfo";
 
 const DEG_TO_RAD = Math.PI / 180.0;
 
@@ -20,13 +19,15 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
                 [R20.CanvasLayer.PlayerTokens]: config.drawOnTokenLayer,
                 [R20.CanvasLayer.Map]: config.drawOnMapLayer,
                 [R20.CanvasLayer.Lighting]: config.drawOnLightsLayer,
+                [R20.CanvasLayer.B20Weather]: config.drawOnWeatherLayerLayer,
+                [R20.CanvasLayer.B20Foreground]: config.drawOnForegroundLayer,
             };
 
-            const layer: CanvasLayer = graphic.model.get("layer");
+            const layer: R20.CanvasLayer = graphic.model.get("layer");
 
             if (!bitmap[layer]) return;
 
-            const data = LayerData.getLayerData(layer);
+            const layerData = layerInfo[layer];
 
             ctx.globalAlpha = config.globalAlpha;
             ctx.lineWidth = config.textStrokeWidth;
@@ -50,7 +51,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
             let sz = config.textFontSize;
             ctx.font = "bold " + sz + "px Arial";
 
-            let txtWidth = ctx.measureText(data.txt).width;
+            let txtWidth = ctx.measureText(layerData.txt).width;
 
             const pxOffsetFromFloor = txtWidth * 0.08;
             const pxWallPadding = txtWidth * 0.18;
@@ -58,15 +59,15 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
             let offX = Math.floor(graphic.get<number>("width") / 2) - txtWidth;
             let offY = Math.floor(graphic.get<number>("height") / 2);
 
-            ctx.fillStyle = data.makeBgStyle(config.backgroundOpacity);
+            ctx.fillStyle = `rgba(${layerData.bgColors[0]}, ${layerData.bgColors[1]}, ${layerData.bgColors[2]}, ${config.backgroundOpacity})`;
             ctx.fillRect(offX - (pxWallPadding * 0.5), offY - sz, txtWidth + pxWallPadding, sz);
 
             ctx.strokeStyle = `rgba(${config.textStrokeColor[0]}, ${config.textStrokeColor[1]}, ${config.textStrokeColor[2]}, ${config.textStrokeOpacity})`;
 
-            ctx.fillStyle = `rgba(${config.textFillColor[0]},${config.textFillColor[1]},${config.textFillColor[2]}, ${config.textFillOpacity})`;
+            ctx.fillStyle = `rgba(${config.textFillColor[0]}, ${config.textFillColor[1]},${config.textFillColor[2]}, ${config.textFillOpacity})`;
 
-            ctx.strokeText(data.txt, offX, offY - pxOffsetFromFloor);
-            ctx.fillText(data.txt, offX, offY - pxOffsetFromFloor);
+            ctx.strokeText(layerData.txt, offX, offY - pxOffsetFromFloor);
+            ctx.fillText(layerData.txt, offX, offY - pxOffsetFromFloor);
 
             ctx.restore();
         } catch (err) {

@@ -35,6 +35,8 @@ namespace R20 {
         PlayerTokens = "objects",
         GMTokens = "gmlayer",
         Lighting = "walls",
+        B20Foreground = "foreground",
+        B20Weather = "weather"
     }
 
     export function setBackgroundStyle(bgStyle: string) {
@@ -145,7 +147,7 @@ namespace R20 {
     }
 
     export function getCurrentLayer(): CanvasLayer {
-        return window.currentEditingLayer;
+        return window.currentEditingLayer as CanvasLayer;
     }
 
     export function getCurrentToolName(): string {
@@ -400,6 +402,10 @@ ${content}
     export function renderAll() {
         window.d20.engine.renderAll();
     }
+
+    export const hasBetteR20 = (): boolean => {
+        return window["d20plus"] !== undefined;
+    };
 
     export const wipeObjectStorage = <T>(storage: ObjectStorage<SyncObject<T>>): void => {
 

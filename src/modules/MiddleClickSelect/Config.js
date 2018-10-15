@@ -39,6 +39,20 @@ export default MakeConfig(__dirname,{
             type: ConfigViews.Checkbox
         },
 
+        switchToForegroundLayer: {
+            display: "Allow switching to tokens in the betteR20 foreground layer",
+            type: ConfigViews.Checkbox,
+
+            onlyWhenHasB20: true,
+        },
+
+        switchToWeatherLayer: {
+            display: "Allow switching to tokens in the betteR20 weather layer",
+            type: ConfigViews.Checkbox,
+
+            onlyWhenHasB20: true,
+        },
+
         modAlt: {
             display: "Must hold down the ALT key",
             type:   ConfigViews.Checkbox
@@ -71,6 +85,10 @@ export default MakeConfig(__dirname,{
         switchToTokenLayer: true,
         switchToMapLayer: false,
         switchToLightsLayer: false,
+
+        switchToForegroundLayer: false,
+        switchToWeatherLayer: false,
+
         modAlt: false,
         modShift: false,
         modCtrl: false,
@@ -78,3 +96,4 @@ export default MakeConfig(__dirname,{
         mouseButtonIndex: 1,
     }
 });
+

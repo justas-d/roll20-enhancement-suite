@@ -1,15 +1,8 @@
 import {R20Module} from '../../utils/R20Module'
 import {R20} from '../../utils/R20';
-import {LayerData} from '../../utils/LayerData';
-import {DOM} from '../../utils/DOM';
 import {copy, findByIdAndRemove} from '../../utils/MiscUtils';
-
-enum ToolClasses {
-    GMTokens = "choosegmlayer",
-    Map = "choosemap",
-    PlayerTokens = "chooseobjects",
-    Lighting = "choosewalls",
-}
+import {ILayerInfo, layerInfo, makeLayerButtonSelector} from "../../utils/LayerInfo";
+import {DOM} from "../../utils/DOM";
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     private static readonly selectId = "r20es-select";
@@ -81,24 +74,26 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
             }
         }
 
-        const widget = <div id={DrawCurrentLayerModule.rootId} style={rootStyle}>
+        const widget = (
+            <div id={DrawCurrentLayerModule.rootId} style={rootStyle}>
 
-            {cfg.showNotSelecting &&
-            <div id={DrawCurrentLayerModule.selectId}
-                 style={copy(divStyle, {background: `rgba(255,0,0,${cfg.notSelectingOpacity})`})}>
-                <p style={textStyle}>Not selecting!</p>
-            </div>
-            }
+                {cfg.showNotSelecting &&
+                <div id={DrawCurrentLayerModule.selectId}
+                     style={copy(divStyle, {background: `rgba(255,0,0,${cfg.notSelectingOpacity})`})}>
+                    <p style={textStyle}>Not selecting!</p>
+                </div>
+                }
 
-            <div id={DrawCurrentLayerModule.layerId} style={divStyle}>
-                <p style={textStyle}></p>
+                <div id={DrawCurrentLayerModule.layerId} style={divStyle}>
+                    <p style={textStyle}></p>
+                </div>
             </div>
-        </div>
+        );
 
         root.appendChild(widget);
 
 
-        this.render(R20.getCurrentLayer());
+        this.render(layerInfo[R20.getCurrentLayer()]);
         this.updateModeIndicator(R20.getCurrentToolName());
     }
 
@@ -111,21 +106,26 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         this.createWidget();
     }
 
+    private getButton = (layer: ILayerInfo) => $(makeLayerButtonSelector(layer));
+
+    private turnOffListener(button: JQuery<HTMLElement>) {
+        // @ts-ignore
+        button.off("click", this.onToolChange);
+    }
+
     public setup() {
         if (!R20.isGM) return;
 
         this.createWidget();
 
-        const getButton = (className: string) => $(`#editinglayer li.${className}`);
-
         const hookListeners = (button: JQuery) => {
-            // @ts-ignore
-            button.off("click", this.onToolChange);
+            this.turnOffListener(button);
             button.on("click", this.onToolChange);
         };
 
-        for (const item in ToolClasses) {
-            const btn = getButton(ToolClasses[item]);
+        for (const key in layerInfo) {
+            const layer = layerInfo[key];
+            const btn = this.getButton(layer);
             hookListeners(btn);
         }
 
@@ -133,26 +133,24 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
         // Note(Justas): betteR20 only adds the dynamic lighting button a bit later after setup is called
         // which means we've got to wait a while.
-        if(getButton(ToolClasses.Lighting).length <= 0) {
+        if (this.getButton(layerInfo[R20.CanvasLayer.B20Foreground]).length <= 0) {
             setTimeout(() => {
-                hookListeners(getButton(ToolClasses.Lighting));
+                hookListeners(this.getButton(layerInfo[R20.CanvasLayer.B20Foreground]));
+                hookListeners(this.getButton(layerInfo[R20.CanvasLayer.B20Weather]));
+                hookListeners(this.getButton(layerInfo[R20.CanvasLayer.Lighting]));
             }, 10000);
         }
     }
 
     private onToolChange = (e: Event) => {
+        console.log("tool changed!");
         const target = e.target as HTMLElement;
 
-        const map = {
-            [ToolClasses.GMTokens]: R20.CanvasLayer.GMTokens,
-            [ToolClasses.Map]: R20.CanvasLayer.Map,
-            [ToolClasses.PlayerTokens]: R20.CanvasLayer.PlayerTokens,
-            [ToolClasses.Lighting]: R20.CanvasLayer.Lighting,
-        };
+        for (const key in layerInfo) {
+            const layer = layerInfo[key];
+            if (!target.classList.contains(layer.toolName)) continue;
 
-        for (const key in map) {
-            if (!target.classList.contains(key)) continue;
-            this.render(map[key]);
+            this.render(layerInfo[key]);
             break;
         }
     };
@@ -162,28 +160,27 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
         if (!div) return;
 
         div.style.display = (mode === "select" ? "none" : "block");
-    }
+    };
 
-    private render = (layer: R20.CanvasLayer) => {
-        const data = LayerData.getLayerData(layer);
+    private render = (layer: ILayerInfo) => {
         const div = document.getElementById(DrawCurrentLayerModule.layerId);
         const text = $(div).find("p")[0];
 
-        div.style.backgroundColor = data.makeBgStyle(this.getHook().config.backgroundOpacity);
-        text.innerHTML = data.bigTxt;
-    }
+        div.style.backgroundColor = `rgba(${layer.bgColors[0]}, ${layer.bgColors[1]}, ${layer.bgColors[2]}, ${this.getHook().config.backgroundOpacity})`;
+        text.innerHTML = layer.bigTxt;
+    };
 
     public dispose() {
         super.dispose();
 
-        for(const item in ToolClasses) {
-            // @ts-ignore
-            $(`#editinglayer li.${ToolClasses[item]}`).off("click", this.onToolChange);
+        for (const key in layerInfo) {
+            const layer = layerInfo[key];
+
+            this.turnOffListener(this.getButton(layer));
         }
 
         window.r20es.setModePrologue = null;
         this.removeWidget();
-
     }
 }
 

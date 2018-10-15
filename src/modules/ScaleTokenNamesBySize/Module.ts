@@ -19,11 +19,6 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
             if(scale < 1 && !cfg.scaleIfSmaller) scale = 1;
             if(scale > 1 && !cfg.scaleIfLarger) scale = 1;
 
-            console.log("textWidth", textWidth);
-            console.log("tokenHeight", tokenHeight);
-            console.log("fontSize", fontSize);
-            console.log("text", text);
-
             const scaledFontSize = fontSize * scale;
             const scaledWidth = textWidth * scale;
 
@@ -36,8 +31,6 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
 
             const rectX = -1 * Math.ceil((scaledWidth + scaledBackplatePadX) / 2);
             const rectY = tokenHeight + 8;
-
-
 
             n.fillRect(rectX, rectY, scaledWidth + scaledBackplatePadX, scaledFontSize + scaledBackplatePadY);
             n.fillStyle = "rgb(0,0,0)";

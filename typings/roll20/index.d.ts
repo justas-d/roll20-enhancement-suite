@@ -1,18 +1,3 @@
-declare enum InitiativeOrdering {
-    NumericAscending = 0,
-    NumericDescending = 1,
-    Alphabetical = 2,
-    AlphabeticalDescending = 3,
-    Card = 4,
-}
-
-declare enum CanvasLayer {
-    Map = "map",
-    PlayerTokens = "objects",
-    GMTokens = "gmlayer",
-    Lighting = "walls",
-}
-
 declare namespace Roll20 {
 
 
@@ -407,7 +392,7 @@ declare namespace Roll20 {
         radius: number;
         player: string; // id
         pageid: string;
-        currentLayer: CanvasLayer;
+        currentLayer: string;
     }
 
     export interface LocalPingData {
@@ -525,7 +510,7 @@ interface Window {
     d20: Roll20.D20;
     currentPlayer: Roll20.Player;
     is_gm: boolean;
-    currentEditingLayer: CanvasLayer;
+    currentEditingLayer: string;
     generateUUID: () => string;
     r20es: Roll20.R20ES;
     Mousetrap: Roll20.Mousetrap;

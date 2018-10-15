@@ -94,6 +94,20 @@ export default MakeConfig(__dirname, {
         drawOnLightsLayer: {
             display: "Draw on tokens in the lights layer",
             type: ConfigViews.Checkbox
+        },
+
+        drawOnForegroundLayer: {
+            display: "Draw on tokens in the foreground layer",
+            type: ConfigViews.Checkbox,
+
+            onlyWhenHasB20: true,
+        },
+
+        drawOnWeatherLayerLayer: {
+            display: "Draw on tokens in the weather layer",
+            type: ConfigViews.Checkbox,
+
+            onlyWhenHasB20: true,
         }
 
     },
@@ -112,6 +126,9 @@ export default MakeConfig(__dirname, {
         drawOnGmLayer: true,
         drawOnTokenLayer: true,
         drawOnMapLayer: true,
-        drawOnLightsLayer: true
+        drawOnLightsLayer: true,
+
+        drawOnWeatherLayer: true,
+        drawOnForegroundLayer: true,
     },
 });
