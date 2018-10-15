@@ -22,7 +22,7 @@ class ParseV1 implements IParseStrategy {
                 if (!("loop" in song)) return new Err(`song index ${songIdx} in playlist idx ${idx} doesn't have loop`);
                 if (!("playing" in song)) return new Err(`song index ${songIdx} in playlist idx ${idx} doesn't have playing`);
                 if (!("softstop" in song)) return new Err(`song index ${songIdx} in playlist idx ${idx} doesn't have softstop`);
-                if (!("source" in song)) return new Err(`song index ${songIdx} in playlist idx ${idx} doesn't have source`);
+               //if (!("source" in song)) return new Err(`song index ${songIdx} in playlist idx ${idx} doesn't have source`);
                 if (!("tags" in song)) return new Err(`song index ${songIdx} in playlist idx ${idx} doesn't have tags`);
                 if (!("title" in song)) return new Err(`song index ${songIdx} in playlist idx ${idx} doesn't have title`);
                 if (!("track_id" in song)) return new Err(`song index ${songIdx} in playlist idx ${idx} doesn't have track_id`);
