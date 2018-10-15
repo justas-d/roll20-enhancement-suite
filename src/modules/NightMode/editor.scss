@@ -8,19 +8,38 @@
 #editinglayer.gmlayer div.submenu li.choosegmlayer,
 #editinglayer.map div.submenu li.choosemap,
 #editinglayer.objects div.submenu li.chooseobjects,
+#editinglayer.foreground div.submenu li.chooseforeground,
+#editinglayer.weather div.submenu li.chooseweather,
 #measure li.activerulermode,
+#floatinglayerbar.map li.choosemap,
+#floatinglayerbar.objects li.chooseobjects,
+#floatinglayerbar.gmlayer li.choosegmlayer,
+#floatinglayerbar.walls li.choosewalls,
+#floatinglayerbar.weather li.chooseweather,
+#floatinglayerbar.foreground li.chooseforeground,
+#floatinglayerbar  li.activebutton,
 #floatingtoolbar li.activebutton {
     background-color: $brand700;
     color: $text900;
 }
 
+
+
+#floatinglayerbar {
+    background-color: $bg600 !important;
+    border: none !important;
+    box-shadow: unset !important;
+}
+
+#floatinglayerbar div.submenu ul,
 #floatingtoolbar div.submenu ul,
 #floatingtoolbar {
     background-color: $bg600;
     border: none;
-    @include paper-shadow($bg900)
+    box-shadow: unset;
 }
 
+#floatinglayerbar div.submenu ul,
 #floatingtoolbar div.submenu ul {
     border: none;
     -webkit-box-shadow: none;
@@ -31,6 +50,7 @@
     border-radius: 0;
 }
 
+#floatinglayerbar li,
 #floatingtoolbar li {
     border-bottom: none;
 
