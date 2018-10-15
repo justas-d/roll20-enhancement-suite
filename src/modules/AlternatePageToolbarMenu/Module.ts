@@ -74,18 +74,7 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
     private noContextMenu = (e) => false;
 
     public setup() {
-
-        /*
-        const $toolbar = this.getEventToolbarRoot();
-        this.oldToolbarEvents = $toolbar.data("events");
-
-        this.forEachEvent(this.oldToolbarEvents, (type, cb) => {
-            $toolbar.off(type, cb);
-        });
-        */
-
         const clickEvents = $("body").data("events").click;
-
 
         if(clickEvents) {
 
@@ -146,13 +135,6 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
         $("body").on("click", AlternativePageToolbarMenu.textChangeSelector, this.originalTextEditHandler);
         $("body").off("contextmenu", AlternativePageToolbarMenu.textChangeSelector, this.noContextMenu);
 
-        /*
-        // reattach original events
-        const $toolbar = this.getEventToolbarRoot();
-        this.forEachEvent(this.oldToolbarEvents, (type, cb) => {
-            $toolbar.on(type, cb);
-        });
-        */
     }
 }
 
