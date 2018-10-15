@@ -48,7 +48,9 @@ class DarkModeModule extends R20Module.OnAppLoadBase {
 
         const cfg = this.getHook().config;
 
-        this.addStyleWidget(css, DarkModeModule.styleId);
+        if(cfg.baseStyle) {
+            this.addStyleWidget(css, DarkModeModule.styleId);
+        }
 
         if(cfg.styleChat) {
             this.addStyleWidget(chatCss, DarkModeModule.chatStyleId);

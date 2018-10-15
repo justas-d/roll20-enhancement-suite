@@ -23,10 +23,15 @@ export default MakeConfig(__dirname, {
         styleChat: {
             display: "Style chat?",
             type: ConfigViews.Checkbox,
+        },
+        baseStyle: {
+            display: "Base style (disable this if you only want a dark canvas)",
+            type: ConfigViews.Checkbox,
         }
     },
 
     config: {
+        baseStyle: true,
         overrideBackground: true,
         enabled: false,
         ogl5ESheet: false,
