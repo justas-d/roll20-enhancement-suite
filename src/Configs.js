@@ -33,6 +33,7 @@ import JukeboxIO from "./modules/JukeboxIO/Config";
 import ArrowKeysMoveCanvas from "./modules/ArrowKeysMoveCanvas/Config";
 import AutoOpenInitiativeTracker from "./modules/AutoOpenInitiativeTracker/Config";
 import ToolsMenu from "./modules/ToolsMenu/Config";
+import ScaleTokenNamesBySize from "./modules/ScaleTokenNamesBySize/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -63,6 +64,7 @@ addCfg(MoveCameraToToken);
 addCfg(PageLoadEvent);
 addCfg(RollAndApplyHitDice);
 addCfg(Settings);
+addCfg(ScaleTokenNamesBySize);
 addCfg(SheetTabApi);
 addCfg(SeenAd);
 addCfg(TableIO);

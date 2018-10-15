@@ -498,6 +498,7 @@ declare namespace Roll20 {
     }
 
     export interface R20ES {
+        drawNameplate: (token: Token, n: CanvasRenderingContext2D, textWidth: number, tokenHeight: number, fontSize: number, text: any) => void;
         togglePageToolbar: () => void;
         tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
         pingInitiativeToken: (token: Token) => void;
@@ -508,7 +509,6 @@ declare namespace Roll20 {
         onJournalDuplicate: (id: string) => void;
         moveCameraTo: (tokenId: string) => void;
         hooks: {[id: string]: any};
-
         shouldDoCustomAnim: (key: string) => boolean;
     }
 
