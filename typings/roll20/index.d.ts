@@ -418,6 +418,9 @@ declare namespace Roll20 {
         backgroundColor: string;
 
         currentCanvasOffset: number[];
+
+        setCanvasSize: (width: number, height: number) => void;
+        setZoom: (coef: number, b: any, c: any) => void;
     }
 
     export interface TokenEditor {
@@ -500,6 +503,8 @@ declare namespace Roll20 {
         shouldDoCustomAnim: (key: string) => boolean;
         onPageChange: {on: (fx: Function) => void, off: (fx: Function) => void};
         isWindowLoaded: boolean;
+        onResizeCanvas: (width: number, height: number) => void;
+        onZoomChange: (zoomCoef: number) => void;
     }
 
     export interface Mousetrap {
