@@ -3,6 +3,7 @@ import { Config } from "../utils/Config";
 import { safeCall } from "../utils/MiscUtils";
 import showProblemPopup from "../utils/ProblemPopup";
 import { DOM } from "../utils/DOM";
+import {EventEmitter} from "../utils/EventEmitter";
 
 setTimeout(() => {
 
@@ -109,31 +110,8 @@ for (const id in window.r20es.hooks) {
     window.r20es.hooks[id].saveConfig = window.r20es.syncConfigs;
 }
 
-window.r20es.onAppLoad = window.r20es.onAppLoad || { listeners: [] };
-
-window.r20es.onAppLoad.fire = function () {
-    if (window.r20es.isWindowLoaded) return;
-    window.r20es.isWindowLoaded = true;
-
-    for (let listener of window.r20es.onAppLoad.listeners) {
-        safeCall(listener);
-    }
-};
-
-window.r20es.onAppLoad.addEventListener = function (fx) {
-    window.r20es.onAppLoad.listeners.push(fx);
-};
-
-window.r20es.onAppLoad.removeEventListener = function (fx) {
-    let idx = window.r20es.onAppLoad.listeners.length;
-
-    while (idx-- > 0) {
-        let cur = window.r20es.onAppLoad.listeners[idx];
-        if (cur === fx) {
-            window.r20es.onAppLoad.listeners.splice(idx, 1);
-        }
-    }
-};
+window.r20es.onAppLoad = EventEmitter.copyExisting(window.r20es.onAppLoad);
+window.r20es.onPageChange = EventEmitter.copyExisting(window.r20es.onPageChange);
 
 function setIsLoadingToFalse() {
     window.r20es.isLoading = false;
@@ -146,7 +124,14 @@ if (window.r20es.isLoading) {
 
 window.r20es.onLoadingOverlayHide = function () {
     if ("r20es" in window) {
-        window.r20es.onAppLoad.fire();
+
+        if (!window.r20es.isWindowLoaded) {
+            window.r20es.isWindowLoaded = true;
+            window.r20es.onAppLoad.fire();
+        }
+
+        window.r20es.onPageChange.fire();
+
     } else {
         alert("R20ES global state is undefined. R20ES will not function properly.");
     }

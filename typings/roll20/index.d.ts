@@ -416,6 +416,8 @@ declare namespace Roll20 {
         canvasHeight: number;
         canvasWidth: number;
         backgroundColor: string;
+
+        currentCanvasOffset: number[];
     }
 
     export interface TokenEditor {
@@ -428,9 +430,10 @@ declare namespace Roll20 {
         collection: ObjectStorage<Character>
     }
     export interface Canvas {
-        macros
         getObjects: () => CanvasObject[];
         containsPoint: (e: MouseEvent, obj: CanvasObject) => boolean;
+        width: number;
+        height: number;
     }
 
     export interface Utils {
@@ -495,6 +498,8 @@ declare namespace Roll20 {
         moveCameraTo: (tokenId: string) => void;
         hooks: {[id: string]: any};
         shouldDoCustomAnim: (key: string) => boolean;
+        onPageChange: {on: (fx: Function) => void, off: (fx: Function) => void};
+        isWindowLoaded: boolean;
     }
 
     export interface Mousetrap {
