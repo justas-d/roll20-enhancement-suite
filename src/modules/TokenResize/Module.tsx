@@ -3,6 +3,7 @@ import {R20} from "../../utils/R20";
 import {TokenContextMenu} from "../../utils/TokenContextMenu";
 import TokenResizeDialog from "./TokenResizeDialog";
 import {CanvasObject} from "roll20";
+import {scaleToFit} from "../../utils/FitWithinTools";
 
 class TokenResizeModule extends R20Module.SimpleBase {
 
@@ -28,19 +29,9 @@ class TokenResizeModule extends R20Module.SimpleBase {
 
         for (const obj of objects) {
 
-            const smaller = obj._element.width > obj._element.height ? "height" : "width";
-            const bigger = obj._element.width > obj._element.height ? "width" : "height";
-
-            const ratio = obj._element[smaller] / obj._element[bigger];
-            const biggerVal = page.attributes[bigger] * squareSize;
-            const smallerVal = biggerVal * ratio;
-
-            const data: any = {
-                [bigger]: biggerVal,
-                [smaller]: smallerVal,
-            };
-
-            R20.setCanvasObjectDimensions(obj, data.width, data.height);
+            const fit = scaleToFit(obj._element.width, obj._element.height, page.attributes.width * squareSize, page.attributes.height * squareSize);
+            
+            R20.setCanvasObjectDimensions(obj, fit.x, fit.y);
             this.tryPlaceTopLeft(obj);
         }
 
