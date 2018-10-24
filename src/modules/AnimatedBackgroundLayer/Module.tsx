@@ -1,17 +1,14 @@
 import {R20Module} from "../../utils/R20Module"
-import { DOM } from '../../utils/DOM'
-import {findByIdAndRemove} from "../../utils/MiscUtils";
+import {DOM} from '../../utils/DOM'
 import {R20} from "../../utils/R20";
 import {EventSubscriber} from "../../utils/EventSubscriber";
+import {scaleToFit} from "../../utils/FitWithinTools";
 
 class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
-
-    private static readonly layerId: string = "r20es-animated-background";
-    private static readonly videoId: string = "r20es-animated-background-video";
     private static readonly propVideoSource = "r20es_video_src";
     private static readonly propVideoEnabled = "r20es_video_enabled";
 
-    private _renderLoopShouldStopFlag: boolean = false;
+    private _isPlaying: boolean = false;
     private _videoCanvas: HTMLCanvasElement;
     private _videoCtx: CanvasRenderingContext2D;
     private _videoElement: HTMLVideoElement;
@@ -27,15 +24,23 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     }
 
     renderLoop = () => {
-        this._videoCtx.drawImage(this._videoElement,
-            -window.d20.engine.currentCanvasOffset[0],
-            -window.d20.engine.currentCanvasOffset[1],
-            window.d20.engine.canvas.width,
-            window.d20.engine.canvas.height);
+        if (this._videoCtx && this._isPlaying && this._currentPage) {
 
-        R20.setBackgroundStyle("#00000000");
+            R20.setBackgroundStyle("rgba(0,0,0,0)");
 
-        if (!this._renderLoopShouldStopFlag) {
+            this._videoCtx.fillStyle = this._currentPage.attributes.background_color;
+            this._videoCtx.fillRect(0, 0, Math.ceil(R20.getCanvasWidth() / R20.getCanvasZoom()), R20.getCanvasHeight() / R20.getCanvasZoom());
+
+            const bbX = this._currentPage.attributes.width * 70;
+            const bbY = this._currentPage.attributes.height * 70;
+
+            const fitted = scaleToFit(this._videoElement.videoWidth, this._videoElement.videoHeight, bbX, bbY);
+
+            this._videoCtx.drawImage(this._videoElement,
+                -R20.getCanvasOffsetX(),
+                -R20.getCanvasOffsetY(),
+                fitted.x, fitted.y);
+
             requestAnimationFrame(this.renderLoop);
         }
     };
@@ -43,32 +48,54 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     beginVideo() {
         console.log("video BEGIN VIDEO");
 
-        this._renderLoopShouldStopFlag = false;
+        this._isPlaying = true;
+
+        this._videoCanvas.style.display = "block";
+
         this._videoElement.src = this.getVideoSrc();
+        this._videoElement.play();
+
+        this.onResizeCanvas(R20.getCanvasWidth(), R20.getCanvasHeight());
+        this.onSetZoom(R20.getCanvasZoom());
 
         this.renderLoop();
+
+        R20.setBackgroundStyle("rgba(0,0,0,0)");
         R20.renderAll();
     }
 
     endVideo() {
         console.log("video END VIDEO");
-        this._renderLoopShouldStopFlag = true;
+        this._isPlaying = false;
+
+        this._videoCanvas.style.display = "none";
+
         this._videoElement.pause();
+        this._videoElement.src = "";
+
+        // reset background style
+        if(this._currentPage) {
+            R20.setBackgroundStyle(this._currentPage.attributes.background_color);
+        }
+        R20.renderAll();
     }
 
-    onPropChange() {
+    onPropChange = () => {
         console.log("video ON {PROP CHANGE");
+
         this.endVideo();
 
         if (this.canPlayVideo()) {
             this.beginVideo();
         }
-    }
+    };
 
     cleanupPage() {
         console.log("video CLEANUP PAGE");
 
-        for(const ev of this._events) {
+        this.endVideo();
+
+        for (const ev of this._events) {
             ev.unsubscribe();
         }
     }
@@ -102,23 +129,22 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     }
 
     initPage = () => {
-        console.log("video INITPAGE");
-
-        this.endVideo();
         this.cleanupPage();
+
+        console.log("video INITPAGE");
 
         const page = R20.getCurrentPage();
 
-        const pageGetter= () => page;
+        const pageGetter = () => page;
         this._events = [
             EventSubscriber.subscribe(`change`, this.onPropChange, pageGetter),
-            //EventSubscriber.subscribe(`change:${AnimatedBackgroundLayer.propVideoSource}`, this.onPropChange, pageGetter),
-            //EventSubscriber.subscribe(`change:${AnimatedBackgroundLayer.propVideoEnabled}`, this.onPropChange, pageGetter),
         ];
 
         this._currentPage = page;
 
-        this.onResizeCanvas(window.d20.engine.canvas.width, window.d20.engine.canvas.height);
+        // reset background style
+        R20.setBackgroundStyle(this._currentPage.attributes.background_color);
+        R20.renderAll();
 
         if (this.canPlayVideo()) {
             this.beginVideo();
@@ -126,9 +152,15 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     onResizeCanvas = (width: number, height: number) => {
-        console.log("video RESIZE CANVAS", width, height);
-        this._videoCanvas.width = width;
-        this._videoCanvas.height = height;
+        if(this._isPlaying) {
+            console.log("video RESIZE CANVAS", width, height);
+
+            this._videoCanvas.width = width;
+            this._videoCanvas.height = height;
+
+            // fixes scale resets after resize
+            this.onSetZoom(R20.getCanvasZoom());
+        }
     };
 
     overrideSetCanvasSize = (width: number, height: number) => {
@@ -137,21 +169,25 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     onSetZoom = (coef: number) => {
-        this._videoCtx.restore();
-        this._videoCtx.scale(coef, coef);
-        console.log("video ZOOM CANVAS", coef);
+        if(this._isPlaying) {
+            console.log("video SET ZOOM", coef);
+
+            this._videoCtx.restore();
+            this._videoCtx.save();
+
+            this._videoCtx.scale(coef, coef);
+        }
     };
 
     setup() {
         /*
             TODO
                 Disable background clearing
-                Disable grid
                 UI
          */
 
-        this._videoCanvas= <canvas id={AnimatedBackgroundLayer.layerId}/>;
-        this._videoElement = <video id={AnimatedBackgroundLayer.videoId} loop={true} autoplay={true} muted={true}/>;
+        this._videoCanvas = <canvas/>;
+        this._videoElement = <video loop={true} autoplay={true} muted={true}/>;
         this._videoCtx = this._videoCanvas.getContext("2d");
         this._videoCtx.save();
 
@@ -165,15 +201,13 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         window.r20es.onZoomChange = this.onSetZoom;
         window.r20es.onResizeCanvas = this.onResizeCanvas;
 
-        if (window.r20es.isWindowLoaded) {
-            window.r20es.onPageChange.on(this.initPage);
-        } else {
-            this.initPage();
-        }
+        this.initPage();
+        window.r20es.onPageChange.on(this.initPage);
     }
 
     dispose() {
         super.dispose();
+
         this.cleanupPage();
 
         window.d20.engine.setCanvasSize = this._originalResize;
@@ -181,8 +215,16 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         window.r20es.onZoomChange = null;
         window.r20es.onResizeCanvas = null;
 
-        findByIdAndRemove(AnimatedBackgroundLayer.layerId);
-        findByIdAndRemove(AnimatedBackgroundLayer.videoId);
+        if (this._videoCanvas) {
+            this._videoCtx = null;
+            this._videoCanvas.remove();
+            this._videoCanvas = null;
+        }
+
+        if (this._videoElement) {
+            this._videoElement.remove();
+            this._videoElement = null;
+        }
 
         window.r20es.onPageChange.off(this.initPage);
     }

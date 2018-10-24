@@ -142,6 +142,26 @@ namespace R20 {
         return window.currentPlayer;
     }
 
+    export const getCanvasZoom = (): number => {
+        return window.d20.engine.canvasZoom;
+    };
+
+    export const getCanvasWidth = (): number => {
+        return window.d20.engine.canvas.width;
+    };
+
+    export const getCanvasHeight = (): number => {
+        return window.d20.engine.canvas.height;
+    };
+
+    export const getCanvasOffsetX= (): number => {
+        return window.d20.engine.currentCanvasOffset[0];
+    };
+
+    export const getCanvasOffsetY= (): number => {
+        return window.d20.engine.currentCanvasOffset[1];
+    };
+
     export function isGM(): boolean {
         return window.is_gm;
     }
