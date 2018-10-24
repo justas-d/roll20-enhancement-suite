@@ -30,7 +30,7 @@ class TokenResizeModule extends R20Module.SimpleBase {
         for (const obj of objects) {
 
             const fit = scaleToFit(obj._element.width, obj._element.height, page.attributes.width * squareSize, page.attributes.height * squareSize);
-            
+
             R20.setCanvasObjectDimensions(obj, fit.x, fit.y);
             this.tryPlaceTopLeft(obj);
         }

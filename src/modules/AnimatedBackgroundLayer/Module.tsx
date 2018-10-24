@@ -3,6 +3,7 @@ import {DOM} from '../../utils/DOM'
 import {R20} from "../../utils/R20";
 import {EventSubscriber} from "../../utils/EventSubscriber";
 import {scaleToFit} from "../../utils/FitWithinTools";
+import {AnimBackgroundSetup} from "./AnimBackgroundSetup";
 
 class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     private static readonly propVideoSource = "r20es_video_src";
@@ -14,6 +15,8 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     private _videoElement: HTMLVideoElement;
 
     private _originalResize: (width: number, height: number) => void;
+    private _showSettingsWidget: HTMLElement;
+    private _dialog: AnimBackgroundSetup;
 
     private _currentPage: Roll20.Page;
 
@@ -112,17 +115,17 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         return val;
     }
 
-    setVideoSrc(source: string) {
+    setVideoSrc = (source: string) => {
         return this._currentPage.save({
             [AnimatedBackgroundLayer.propVideoSource]: source,
         });
-    }
+    };
 
-    setVideoEnabled(state: boolean) {
+    setVideoEnabled = (state: boolean) => {
         return this._currentPage.save({
             [AnimatedBackgroundLayer.propVideoEnabled]: state,
         });
-    }
+    };
 
     canPlayVideo() {
         return this.getVideoSrc().length > 0 && this.getVideoEnabled();
@@ -137,7 +140,10 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
         const pageGetter = () => page;
         this._events = [
-            EventSubscriber.subscribe(`change`, this.onPropChange, pageGetter),
+            EventSubscriber.subscribe(`change:${AnimatedBackgroundLayer.propVideoSource}`, this.onPropChange, pageGetter),
+            EventSubscriber.subscribe(`change:${AnimatedBackgroundLayer.propVideoEnabled}`, this.onPropChange, pageGetter),
+            EventSubscriber.subscribe(`change:height`, this.onPropChange, pageGetter),
+            EventSubscriber.subscribe(`change:width`, this.onPropChange, pageGetter),
         ];
 
         this._currentPage = page;
@@ -179,12 +185,17 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         }
     };
 
+    showConfigurationDialog = () => {
+        this._dialog.show(this.getVideoSrc(), this.getVideoEnabled(), this.setVideoSrc, this.setVideoEnabled);
+    };
+
     setup() {
         /*
             TODO
                 Disable background clearing
                 UI
          */
+        console.log("video before ==================================");
 
         this._videoCanvas = <canvas/>;
         this._videoElement = <video loop={true} autoplay={true} muted={true}/>;
@@ -203,6 +214,22 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
         this.initPage();
         window.r20es.onPageChange.on(this.initPage);
+
+
+        {
+            this._showSettingsWidget = (
+                <div title="Animated Background Setup (R20ES)" style={{cursor: "pointer", position: "absolute", top: "0", left: "5%", maxWidth: "32px", maxHeight: "32px", zIndex: "10", backgroundColor: "#e18e42", borderRadius: "2px"}}
+                     onClick={this.showConfigurationDialog}
+                >
+                    <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/32/film.png" width="28" height="28" alt="ANIM"/>
+                </div>
+            );
+
+            document.body.appendChild(this._showSettingsWidget);
+            console.log(this._showSettingsWidget);
+        }
+
+        this._dialog = new AnimBackgroundSetup();
     }
 
     dispose() {
@@ -214,6 +241,11 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
         window.r20es.onZoomChange = null;
         window.r20es.onResizeCanvas = null;
+
+        this._showSettingsWidget.remove();
+        this._showSettingsWidget = null;
+
+        this._dialog.dispose();
 
         if (this._videoCanvas) {
             this._videoCtx = null;
