@@ -13,6 +13,7 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
 
     private drawNameplate = (token: Token, n: CanvasRenderingContext2D, textWidth: number, tokenHeight: number, fontSize: number, text: any) => {
         const cfg = this.getHook().config;
+
         try {
             let scale = token.attributes.width / cfg.widthThreshold;
 
@@ -23,7 +24,6 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
             const scaledWidth = textWidth * scale;
 
             n.font = `bold ${scaledFontSize}px Arial`;
-
             n.fillStyle = "rgba(255,255,255,0.50)";
 
             const scaledBackplatePadY = 6 * scale;
@@ -46,7 +46,7 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
     }
 
     public dispose() {
-        window.r20es.drawNameplate = this.drawNameplate;
+        window.r20es.drawNameplate = null;
     }
 }
 
