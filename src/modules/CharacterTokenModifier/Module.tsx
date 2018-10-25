@@ -3,10 +3,18 @@ import {DOM} from '../../utils/DOM'
 import {SheetTab, SheetTabSheetInstanceData} from '../../utils/SheetTab';
 import {R20} from "../../utils/R20";
 import {Character, CharacterSheetAttribute, TokenAttributes} from 'roll20';
-import getBlob = R20.getBlob;
 import {strIsNullOrEmpty} from "../../utils/MiscUtils";
 import lexCompare from "../../utils/LexicographicalComparator";
 import {isChromium} from "../../utils/BrowserDetection";
+
+const InputCheckbox = ({defaultVal = undefined, propName, token, label, wrapperStyle = {}}) => {
+    return (
+        <span style={{display: "inline-flex", alignItems: "center", ...wrapperStyle}}>
+            <InputWrapper defaultVal={defaultVal} style={{marginRight: "4px"}} propName={propName} type="checkbox" token={token}/>
+            <span>{label}</span>
+        </span>
+    )
+};
 
 const AuraEditor = ({tokenAttribs, name, index}) => {
     const radius = `aura${index}_radius`;
@@ -14,7 +22,7 @@ const AuraEditor = ({tokenAttribs, name, index}) => {
     const square = `aura${index}_square`;
 
     return (
-        <div className="inlineinputs" style={{marginTop: "5px"}}>
+        <div className="inlineinputs" style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
             <b>{name}</b>
 
             <InputWrapper propName={radius} type="text" token={tokenAttribs}/>
@@ -23,14 +31,12 @@ const AuraEditor = ({tokenAttribs, name, index}) => {
             ft.
             </span>
 
+
             <span style={{marginRight: "16px"}}>
                 <ColorWidget propName={color} token={tokenAttribs}/>
             </span>
 
-            <span>
-                <InputWrapper propName={square} type="checkbox" token={tokenAttribs}/>
-                Square
-            </span>
+            <InputCheckbox label="Square" propName={square} token={tokenAttribs}/>
         </div>
     );
 };
@@ -66,7 +72,7 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     };
 
     const searchWidget = (
-        <input type="text" style={{width: "120px"}} placeholder="Search for attribute"/>
+        <input type="text" style={{flex: "1"}} placeholder="Search for attribute"/>
     );
 
     const attribAutocompleteData = char.attribs.models
@@ -80,6 +86,8 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
 
     // @ts-ignore
     $(searchWidget).autocomplete({
+        minLength: 0,
+        delay: 0,
         source: attribAutocompleteData,
         change: (e, ui) => {
             if (!ui.item) return;
@@ -95,10 +103,16 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
         }
     });
 
+    // Note(justas): show autocomplete menu on focus
+    $(searchWidget).focus(() => {
+        // @ts-ignore
+        $(searchWidget).autocomplete('search', $(searchWidget).val())
+    });
+
     setTokenAttributeDataKey(searchWidget, link);
 
     return (
-        <div className="inlineinputs" style={{marginTop: "5px", marginBottom: "5px"}}>
+        <div className="inlineinputs" style={{marginTop: "5px", marginBottom: "5px", display: "flex", alignItems: "center"}}>
 
             <b>
                 {name}
@@ -124,20 +138,13 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
 const TokenPermission = ({name, tokenAttribs, propName}) => {
     const seeProp = `showplayers_${propName}`;
     const editProp = `playersedit_${propName}`;
-    return (
-        <div className="inlineinputs">
 
+    return (
+        <div className="inlineinputs" style={{display: "flex", alignItems: "center"}}>
             <b style={{display: "inline-block", width: "60px"}}>{name}</b>
 
-            <span style={{marginRight: "16px"}}>
-                <InputWrapper defaultVal={false} propName={seeProp} type="checkbox" token={tokenAttribs}/>
-                See
-            </span>
-
-            <span>
-                <InputWrapper defaultVal={true} propName={editProp} type="checkbox" token={tokenAttribs}/>
-                Edit
-            </span>
+            <InputCheckbox label="See" defaultVal={false} propName={seeProp} token={tokenAttribs} wrapperStyle={{marginRight: "16px"}}/>
+            <InputCheckbox label="Edit" defaultVal={true} propName={editProp} token={tokenAttribs}/>
         </div>
     )
 };
@@ -414,6 +421,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                 return;
             console.log(data.token);
 
+            beginWork();
             const pages = R20.getAllPages();
             for (const page of pages) {
                 // Note(Justas): sometimes this is undefined. I cannot repro this at all.
@@ -426,9 +434,11 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                     token.save(data.token);
                 }
             }
+            endWork();
         };
 
         const onUpdateDefaultToken = () => {
+            beginWork();
             const rawToken = JSON.stringify(data.token);
             data.char.updateBlobs({
                 defaulttoken: rawToken
@@ -437,6 +447,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
             data.char.save({
                 defaulttoken: new Date().getTime()
             });
+            endWork();
         };
 
         const setFromUrl = (e: Event) => {
@@ -446,6 +457,21 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
             data.token.imgsrc = url;
             instance.rerender();
+        };
+
+        const setCharacterName = (e: Event) => {
+            beginWork();
+            data.char.save({
+                name: data.token.name
+            });
+
+            const npcNameAttrib = data.char.attribs.find(a => a.attributes.name === "npc_name");
+            if(npcNameAttrib) {
+                npcNameAttrib.save({
+                    current:  data.token.name
+                });
+            }
+            endWork()
         };
 
         const removeAvatar = (e: Event) => {
@@ -477,6 +503,19 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
         const updateDefaultTokenButton = (
             <button onClick={onUpdateDefaultToken} className="btn">Update default token</button>
         ) as HTMLInputElement;
+
+        const progressWidget = (
+            <span style={{marginLeft: "auto", marginRight: "auto"}}>
+            </span>
+        ) as HTMLSpanElement;
+
+        const beginWork = () => {
+            progressWidget.innerText = "Saving...";
+        };
+
+        const endWork = () => {
+            progressWidget.innerText = "Done!";
+        };
 
         if (!R20.isGM()) {
             const addTooltip = (elem: HTMLElement) => {
@@ -537,8 +576,10 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                             <div style={{marginRight: "16px"}}>
                                 <div>Name</div>
 
-                                <InputWrapper propName="name" type="text" style={{width: "210px"}}
-                                              token={data.token}/>
+                                <div style={{display: "flex"}}>
+                                    <InputWrapper propName="name" type="text" style={{width: "210px"}} token={data.token}/>
+                                    <button onClick={setCharacterName} className="btn" title="Updates the name of the character on the sheet with the name in the input box.">Set</button>
+                                </div>
 
                                 <div>
                                     <InputWrapper propName="showname" type="checkbox"
@@ -604,14 +645,16 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                     </div>
                 </div>
 
-                <div style={{marginTop: "16px", marginBottom: "16px"}}>
+                <div style={{marginTop: "16px", marginBottom: "16px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr"}}>
 
                     <span style="float: left">
                         {refreshButton}
                     </span>
 
+                    {progressWidget}
+
                     <span style="float: right">
-                    <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn btn-info">Update all tokens</button>
+                        <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn btn-info">Update all tokens</button>
                         {updateDefaultTokenButton}
                     </span>
                 </div>
