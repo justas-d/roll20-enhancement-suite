@@ -35,10 +35,12 @@ import AutoOpenInitiativeTracker from "./modules/AutoOpenInitiativeTracker/Confi
 import ToolsMenu from "./modules/ToolsMenu/Config";
 import ScaleTokenNamesBySize from "./modules/ScaleTokenNamesBySize/Config";
 import AnimatedBackgroundLayer from "./modules/AnimatedBackgroundLayer/Config";
+import RememberTextToolSettings from "./modules/RememberTextToolSettings/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
+addCfg(RememberTextToolSettings);
 addCfg(AnimatedBackgroundLayer);
 addCfg(AutoOpenInitiativeTracker);
 addCfg(AlternativeRadialMenu);
