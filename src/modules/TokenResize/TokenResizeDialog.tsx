@@ -1,6 +1,13 @@
 import {DOM} from "../../utils/DOM";
 import {DialogBase} from "../../utils/DialogBase";
-import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../utils/DialogComponents";
+import {
+    CheckboxWithText,
+    Dialog,
+    DialogBody,
+    DialogFooter,
+    DialogFooterContent,
+    DialogHeader
+} from "../../utils/DialogComponents";
 import NumberEdit from "../Settings/NumberEdit";
 import EditComponentWrapper from "../Settings/EditComponentWrapper";
 import CheckboxEdit from "../Settings/CheckboxEdit";
@@ -21,10 +28,21 @@ export default class TokenResizeDialog extends DialogBase<string> {
         super.internalShow();
     };
 
+    private getCheckbox = (): HTMLInputElement => {
+        return (document.getElementById(TokenResizeDialog.checkboxId) as HTMLInputElement)
+    };
+
     private onSubmit = (e) => {
         this.close(true);
-        const moveTokens = (document.getElementById(TokenResizeDialog.checkboxId) as HTMLInputElement).checked;
+        const moveTokens = this.getCheckbox().checked;
         this.cont(moveTokens);
+    };
+
+    private onClickCheckboxDiv = (e) => {
+        if(e.target.id === TokenResizeDialog.checkboxId) return;
+
+        const checkbox = this.getCheckbox();
+        checkbox.checked = !checkbox.checked;
     };
 
     protected render() {
@@ -68,13 +86,13 @@ export default class TokenResizeDialog extends DialogBase<string> {
                             hook={this.moduleConfig}
                         />
 
-                        <span>
-                        <input type="checkbox"
-                               id={TokenResizeDialog.checkboxId}
-                               checked={this.moduleConfig.config.placeTopLeft}
-                        />
-                            <span>Position tokens in the top-left corner.</span>
-                        </span>
+                        <div style={{cursor: "pointer", display: "flex", alignItems: "center"}} onClick={this.onClickCheckboxDiv}>
+                            <input type="checkbox"
+                                   id={TokenResizeDialog.checkboxId}
+                                   checked={this.moduleConfig.config.placeTopLeft}
+                            />
+                            <span style={{ marginLeft: "4px"}}>Position tokens in the top-left corner.</span>
+                        </div>
                     </div>
                 </DialogBody>
 
