@@ -79,8 +79,8 @@ export default class AboutDialog extends DialogBase<null> {
                                 <b>And other work by</b>
                             </div>
 
-                            <div>
-                                Jay "Vanguard" Fothergill
+                            <div style={{maxWidth: "180px"}}>
+                                Jay "Vanguard" Fothergill, Ryan Wenneker
                             </div>
                         </div>
 
