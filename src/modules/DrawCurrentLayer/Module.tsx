@@ -114,7 +114,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     }
 
     public setup() {
-        if (!R20.isGM) return;
+        if (!R20.isGM()) return;
 
         this.createWidget();
 
