@@ -31,9 +31,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
             R20.setBackgroundStyle("rgba(0,0,0,0)");
 
-            this._videoCtx.fillStyle = this._currentPage.attributes.background_color;
-            this._videoCtx.fillRect(0, 0, Math.ceil(R20.getCanvasWidth() / R20.getCanvasZoom()), R20.getCanvasHeight() / R20.getCanvasZoom());
-
             const bbX = this._currentPage.attributes.width * 70;
             const bbY = this._currentPage.attributes.height * 70;
 
@@ -43,6 +40,14 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
                 -R20.getCanvasOffsetX(),
                 -R20.getCanvasOffsetY(),
                 fitted.x, fitted.y);
+
+            // fill in the blanks
+            const fillMaxX = Math.ceil(R20.getCanvasWidth() / R20.getCanvasZoom());
+            const fillMaxY = R20.getCanvasHeight() / R20.getCanvasZoom();
+
+            this._videoCtx.fillStyle = this._currentPage.attributes.background_color;
+            this._videoCtx.fillRect(0, fitted.y - R20.getCanvasOffsetY(), fillMaxX, fillMaxY);
+            this._videoCtx.fillRect(fitted.x - R20.getCanvasOffsetX(), 0, fillMaxX, fillMaxY);
 
             requestAnimationFrame(this.renderLoop);
         }
@@ -190,11 +195,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     setup() {
-        /*
-            TODO
-                Disable background clearing
-                UI
-         */
         console.log("video before ==================================");
 
         this._videoCanvas = <canvas/>;
@@ -216,6 +216,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         window.r20es.onPageChange.on(this.initPage);
 
 
+        if(R20.isGM())
         {
             this._showSettingsWidget = (
                 <div title="Animated Background Setup (R20ES)" style={{cursor: "pointer", position: "absolute", top: "0", left: "5%", maxWidth: "32px", maxHeight: "32px", zIndex: "10", backgroundColor: "#e18e42", borderRadius: "2px"}}
