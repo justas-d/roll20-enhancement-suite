@@ -8,4 +8,4 @@
 * **Fredrik** - A coffee.
 * **BuckeyeFan79** - A coffee.
 * **Jakob** - A coffee.
-
+* **Daniel (Daj)** - 3 coffees.
