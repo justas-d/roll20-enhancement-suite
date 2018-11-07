@@ -1,5 +1,5 @@
 {
-    "current": "TODO",
+    "current": "1.7.0",
     "versions": {
         "1.4.0": {
             "info": {
@@ -297,15 +297,39 @@
                 }
             ]
         },
-        "TODO": {
+        "1.7.0": {
             "info": {
-                "title": "JukeboxIO hotfix",
-                "media": ""
+                "title": "Animated Backgrounds",
+                "media": "animated_bg.webm"
             },
             "changes": [
                 {
                     "id": "",
-                    "content": "JukeboxIO: fix 'doesn't have source' issues when importing playlists"
+                    "content": "Added the Animated Backgrounds module."
+                },
+                {
+                    "id": "",
+                    "content": "Added the Remember Text Tool Settings module."
+                },
+                {
+                    "id": "",
+                    "content": "Update contributors"
+                },
+                {
+                    "id": "",
+                    "content": "NightMode: remove color reset on sheet containers"
+                },
+                {
+                    "id": "",
+                    "content": "CharacterTokenModifier: improved styling, added 'set' button for names"
+                },
+                {
+                    "id": "",
+                    "content": "Fixed DrawCurrentLayer being active when not a GM"
+                },
+                {
+                    "id": "",
+                    "content": "Fixed size inconsistencies in TokenResize"
                 }
             ]
         }
