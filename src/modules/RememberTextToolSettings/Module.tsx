@@ -30,13 +30,13 @@ class RememberTextToolSettingsModule extends R20Module.OnAppLoadBase {
 
     onChangeProp = (e: Event) => {
         const target = e.target as HTMLInputElement;
-        if(!target.id) {
+        if (!target.id) {
             return;
         }
 
         const configKey = RememberTextToolSettingsModule.idToConfig[target.id];
 
-        if(!configKey) {
+        if (!configKey) {
             return;
         }
 
@@ -45,24 +45,35 @@ class RememberTextToolSettingsModule extends R20Module.OnAppLoadBase {
         this.setConfigValue(configKey, value);
     };
 
+    private onSettingChange = (key, oldVal, value) => {
+        const expectedKey = "copyTextSettingsOnSelect";
+        if (key !== expectedKey) return;
+
+        window.r20es[expectedKey] = value;
+    };
+
     private setFontSettingValueFromConfig(id: string) {
         const cfgValue = this.getHook().config[RememberTextToolSettingsModule.idToConfig[id]];
 
-        $(`#${id}`).val(cfgValue);
+        const $widget = $(`#${id}`);
+        $widget.val(cfgValue);
+        return $widget;
     }
 
     public setup() {
-        this.setFontSettingValueFromConfig(RememberTextToolSettingsModule.colorSelectId);
-        this.setFontSettingValueFromConfig(RememberTextToolSettingsModule.sizeSelectId);
-        this.setFontSettingValueFromConfig(RememberTextToolSettingsModule.fontSelectId);
-
-        for(const event of this._events) {
+        for (const event of this._events) {
             event.subscribe();
         }
+
+        const $col = this.setFontSettingValueFromConfig(RememberTextToolSettingsModule.colorSelectId);
+        $col.trigger("change-silent");
+
+        this.setFontSettingValueFromConfig(RememberTextToolSettingsModule.sizeSelectId);
+        this.setFontSettingValueFromConfig(RememberTextToolSettingsModule.fontSelectId);
     }
 
     public dispose() {
-        for(const event of this._events) {
+        for (const event of this._events) {
             event.unsubscribe();
         }
     }
