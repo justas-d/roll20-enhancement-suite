@@ -1,5 +1,5 @@
 import {DOM} from "../utils/DOM";
-import {getExtUrlFromPage, strIsNullOrEmpty} from "../utils/MiscUtils";
+import {strIsNullOrEmpty} from "../utils/MiscUtils";
 import {Config} from "../utils/Config";
 import MediaWidget from "../MediaWidget";
 import * as semverCompare from "semver-compare";
@@ -10,7 +10,7 @@ declare namespace build {
 
 interface IChangelog {
     current: string;
-    versions: {[version: string]: IVersion};
+    versions: { [version: string]: IVersion };
 }
 
 interface IChange {
@@ -43,50 +43,32 @@ class ChangelogWidget extends DOM.ElementBase {
 
         const changelogData: IChangelog = JSON.parse(build.R20ES_CHANGELOG);
 
-        const promises = [];
-
         if (listAllVersions) {
             console.log("in list all");
             console.log(changelogData.versions);
             for (const versionName in changelogData.versions) {
-                promises.push(this.prepareChanges(changelogData.versions[versionName], versionName));
+                this.prepareChanges(changelogData.versions[versionName], versionName)
             }
 
         } else {
             console.log("in else");
             const current = changelogData.versions[changelogData.current];
-            promises.push(this.prepareChanges(current, changelogData.current));
+            this.prepareChanges(current, changelogData.current)
         }
 
-        console.log(promises);
-        (Promise.all(promises) as any).finally(() => {
-            this.preparedData.sort((a, b) => {
-                return semverCompare(b.semverString, a.semverString);
-            });
+        this.preparedData.sort((a, b) => {
+            return semverCompare(b.semverString, a.semverString);
+        });
 
-            this.isLoading = false;
-            this.rerender();
-        })
     }
 
     private prepareChanges(version: IVersion, semverString: string) {
         console.log(`prep ${version.info.title}`);
-        const pushData = (url: string | null) => {
-            this.preparedData.push({
-                data: version,
-                mediaUrl: url,
-                semverString: semverString
-            })
-        };
-
-        if (!strIsNullOrEmpty(version.info.media)) {
-            return getExtUrlFromPage(version.info.media, 5000)
-                .then(pushData)
-                .catch(err => console.error(`Failed to get media ${version.info.media}: ${err}`));
-        }
-
-        pushData(null);
-        return Promise.resolve();
+        this.preparedData.push({
+            data: version,
+            mediaUrl: strIsNullOrEmpty(version.info.media) ? "" : Config.website + version.info.media,
+            semverString: semverString
+        })
     }
 
     private onClickLine = (e) => {
@@ -139,9 +121,11 @@ class ChangelogWidget extends DOM.ElementBase {
             );
         };
 
-        return <div>
-            {this.preparedData.map(buildVersionHtml)}
-        </div>
+        return (
+            <div>
+                {this.preparedData.map(buildVersionHtml)}
+            </div> as HTMLElement
+        );
     }
 
 }

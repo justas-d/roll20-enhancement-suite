@@ -14,7 +14,8 @@ export default class ChangelogDialog extends DialogBase<null> {
 
     public show() {
         setTimeout(() => {
-            this.recenter()
+            this.recenter();
+            this.getRoot().scrollTop = 0;
         }, 100);
 
         this.internalShow();
