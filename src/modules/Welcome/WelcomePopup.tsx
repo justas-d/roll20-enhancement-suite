@@ -66,7 +66,7 @@ export default class WelcomePopup extends DOM.ElementBase {
             <div className="r20es-welcome">
                 <section style={{ display: "flex", justifyContent: "space-between" }}>
                     <section>
-                        <h3>Welcome to the Roll20 Enhancement Suite!</h3>
+                        <h3>Welcome to the VTT Enhancement Suite!</h3>
                         <hr style={{ margin: "5px 0 15px 0" }} />
 
                         <p>To get started, we recommend taking a look at the settings menu. There you can discover, learn and configure the modules this plugin provides.</p>

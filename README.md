@@ -1,5 +1,5 @@
 <h1 align="center">
-    <a href="https://ssstormy.github.io/roll20-enhancement-suite/">Roll20 Enhancement Suite</a>
+    <a href="https://ssstormy.github.io/roll20-enhancement-suite/">VTT Enhancement Suite</a>
 </h1>
 
 <p align="center">
@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-    <b>A quality of life and workflow extension for Roll20</b>
+    <b>An unofficial quality of life and workflow extension for Roll20</b>
 </p>
 
 <p align="center">

@@ -25,8 +25,8 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 
             if (cfg.showWelcomePopup) {
                 R20.saySystem(`
-<h2 style="color: whitesmoke">Roll20 Enhancement Suite</h2>
-<span>R20ES has been loaded!</span>
+<h2 style="color: whitesmoke">VTT Enhancement Suite</h2>
+<span>The enhancement suite (aka R20ES) has been loaded!</span>
 <br/>
 <br/>
 

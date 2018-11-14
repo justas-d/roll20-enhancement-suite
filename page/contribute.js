@@ -13,7 +13,7 @@ const Contribute = () => {
                 <h1>Contributing</h1>
                 <hr style={{marginTop: "0"}}/>
 
-                <p>Roll20 Enhancement Suite is free and open source. Consider buying me a coffee so I can continue working on it.</p>
+                <p>VTT Enhancement Suite is free and open source. Consider buying me a coffee so I can continue working on it.</p>
 
                 <h3>Donation Methods I pay a fee on</h3>
 

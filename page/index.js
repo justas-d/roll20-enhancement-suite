@@ -12,22 +12,27 @@ function Index() {
             </div>
 
             <div className="text-bg">
-                <h1 style={{ textAlign: "center" }}>Roll20 Enhancement Suite</h1>
-                <b>A quality of life and workflow extension for Roll20</b>
+                <h1 style={{textAlign: "center"}}>VTT Enhancement Suite</h1>
+
+                <b>An unofficial quality of life and workflow extension for Roll20</b>
+
+                <div>
+                    <small>aka R20ES</small>
+                </div>
 
                 <div className="browser-icons">
 
                     <span className="background">
                         <a href="https://addons.mozilla.org/en-US/firefox/addon/roll20-enhancement-suite/">
-                            <img src="firefox.png" alt="" />
+                            <img src="firefox.png" alt=""/>
                         </a>
 
                         <a href="https://chrome.google.com/webstore/detail/roll20-enhancement-suite/fadcomaehamhdhekodcpiglabcjkepff">
-                            <img src="chrome.png" alt="" />
+                            <img src="chrome.png" alt=""/>
                         </a>
 
                         <a href="https://github.com/SSStormy/roll20-enhancement-suite">
-                            <img className="invert" src="github.png" alt="" />
+                            <img className="invert" src="github.png" alt=""/>
                         </a>
                     </span>
                 </div>
@@ -39,7 +44,7 @@ function Index() {
 }
 
 if (typeof (window) !== "undefined" && window.document) {
-    ReactDOM.render(<Index />, document.getElementById("root"));
+    ReactDOM.render(<Index/>, document.getElementById("root"));
 }
 
 export default Index;

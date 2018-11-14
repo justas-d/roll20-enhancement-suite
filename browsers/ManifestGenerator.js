@@ -5,9 +5,9 @@ const editorUrls = require("../src/utils/EditorURLs");
 const gen = (browser, origVersionName) => {
     let manifest = {
         manifest_version: 2,
-        name: 'Roll20 Enhancement Suite',
+        name: 'VTT Enhancement Suite',
         version: VersionNameGen(origVersionName),
-        description: 'Provides quality-of-life and workflow speed improvements to Roll20.',
+        description: 'aka R20ES. Provides quality-of-life and workflow speed improvements to Roll20.',
 
         permissions: [
             '*://app.roll20.net/editor*',

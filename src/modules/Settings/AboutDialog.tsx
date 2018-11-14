@@ -43,10 +43,11 @@ export default class AboutDialog extends DialogBase<null> {
                 <DialogHeader style={{textAlign: "center"}}>
                     <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
                        onClick={() => this.openUrl(Config.website)}>
-                        <h1 style="color: blue">Roll20 Enhancement Suite</h1>
+                        <h1 style="color: blue">VTT Enhancement Suite</h1>
+                        <small>aka R20ES</small>
                     </a>
                     <h2>Version {build.R20ES_VERSION}</h2>
-                    <h3>Built for {build.R20ES_BROWSER}</h3>
+                    <h3>Built for {build.R20ES_BROWSER}, <i>Roll20</i></h3>
                 </DialogHeader>
 
 

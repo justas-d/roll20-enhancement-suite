@@ -47,7 +47,7 @@ protected render = (): HTMLElement => {
         return (
             <Dialog className="r20es-settings-flex-wrapper">
                 <DialogHeader>
-                    <h2>Roll20 Enhancement Suite Module Settings</h2>
+                    <h2>VTT Enhancement Suite Module Settings</h2>
                 </DialogHeader>
 
                 <DialogBody>

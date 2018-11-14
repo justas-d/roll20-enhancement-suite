@@ -14,7 +14,7 @@ function About() {
                 <h1>About</h1>
                 <hr style={{ marginTop: "0" }} />
 
-                <p>Roll20 Enhancement Suite is a browser extention for Firefox 57+ and Chrome. It is licensed under GPL-3.0 and the source code for it can be found on <a href="https://github.com/SSStormy/roll20-enhancement-suite">GitHub</a>. R20ES is community driven and is independant from and not affiliated with Roll20.</p>
+                <p>VTT Enhancement Suite (R20ES) is a browser extention usable on Firefox 57+ and Chrome made to enhance Roll20. It is licensed under GPL-3.0 and the source code for it can be found on <a href="https://github.com/SSStormy/roll20-enhancement-suite">GitHub</a>. R20ES is community driven and is independant from and not affiliated with Roll20.</p>
                 <p>We also have a <a href={Config.discordInvite}>Discord server!</a></p>
 
                 <p>It started as something I threw together in the span of a weekend to fix some annoyances with Roll20 and quickly grew into a fully fledged browser plugin.</p>
