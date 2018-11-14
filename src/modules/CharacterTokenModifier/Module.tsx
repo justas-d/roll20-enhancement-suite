@@ -56,10 +56,14 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
         <InputWrapper propName={max} type="text" token={tokenAttribs}/>
     ) as HTMLInputElement;
 
+    let linkId = tokenAttribs[link];
+
     const updateBarValues = (id: string) => {
 
         const attrib = char.attribs.get(id);
         if (!attrib) return;
+
+        linkId = id;
 
         searchWidget.value = attrib.attributes.name;
         setOverrideTokenData(searchWidget, attrib.id);
@@ -86,7 +90,7 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
 
     // @ts-ignore
     $(searchWidget).autocomplete({
-        minLength: 0,
+        minLength: 1,
         delay: 0,
         source: attribAutocompleteData,
         change: (e, ui) => {
@@ -110,6 +114,16 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     });
 
     setTokenAttributeDataKey(searchWidget, link);
+    updateBarValues(linkId);
+
+    const onClickLink = () => {
+        tokenAttribs[link] = linkId;
+    };
+
+    const onClickUnlink = () => {
+        tokenAttribs[link] = "";
+        searchWidget.value = "";
+    };
 
     return (
         <div className="inlineinputs" style={{marginTop: "5px", marginBottom: "5px", display: "flex", alignItems: "center"}}>
@@ -130,6 +144,8 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
             {currentWidget}
             /
             {maxWidget}
+            <button className="btn" onClick={onClickLink}>Link</button>
+            <button className="btn" onClick={onClickUnlink}>Unlink</button>
         </div>
 
     )
