@@ -364,6 +364,8 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                     // @ts-ignore
                     data.token = {
+                        represents: defaultToken.represents,
+                        name: defaultToken.name,
                         imgsrc: defaultToken.imgsrc,
                         showname: defaultToken.showname,
                         tint_color: defaultToken.tint_color,
@@ -517,6 +519,9 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
         const onUpdateDefaultToken = () => {
             beginWork();
             const rawToken = JSON.stringify(data.token);
+
+
+            console.log(data.token);
             data.char.updateBlobs({
                 defaulttoken: rawToken
             });
