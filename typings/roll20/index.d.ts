@@ -322,6 +322,8 @@ declare namespace Roll20 {
         tint_color: string;
         top: number;
         width: number;
+        z_index: number;
+        type: string;
     }
 
     export interface Token extends SyncObject<TokenAttributes> {
