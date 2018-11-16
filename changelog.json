@@ -1,5 +1,5 @@
 {
-    "current": "1.7.3",
+    "current": "1.7.4",
     "versions": {
         "1.4.0": {
             "info": {
@@ -378,6 +378,22 @@
                 {
                     "id": "",
                     "content": "Fixed the token editor repositioning tokens & setting random values (thanks RoscoMcqueen and Melty for the report!)"
+                }
+            ]
+        },
+        "1.7.4": {
+            "info": {
+                "title": "More token editor fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed token editor not properly setting name and represents id"
+                },
+                {
+                    "id": "",
+                    "content": "Token editor no longer sets current bar values for default tokens."
                 }
             ]
         }
