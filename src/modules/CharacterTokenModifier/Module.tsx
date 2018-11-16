@@ -518,8 +518,15 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         const onUpdateDefaultToken = () => {
             beginWork();
-            const rawToken = JSON.stringify(data.token);
+            const modifiedToken = {
+                ...data.token
+            };
 
+            delete modifiedToken.bar1_value;
+            delete modifiedToken.bar2_value;
+            delete modifiedToken.bar3_value;
+
+            const rawToken = JSON.stringify(modifiedToken);
 
             console.log(data.token);
             data.char.updateBlobs({
