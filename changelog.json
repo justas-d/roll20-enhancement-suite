@@ -1,5 +1,5 @@
 {
-    "current": "1.7.4",
+    "current": "1.7.5",
     "versions": {
         "1.4.0": {
             "info": {
@@ -394,6 +394,18 @@
                 {
                     "id": "",
                     "content": "Token editor no longer sets current bar values for default tokens."
+                }
+            ]
+        },
+        "1.7.5": {
+            "info": {
+                "title": "Critical Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed a critical bug that prevented the extension & similar tools from working."
                 }
             ]
         }
