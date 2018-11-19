@@ -40,7 +40,6 @@ const AuraEditor = ({tokenAttribs, name, index}) => {
         </div>
     );
 };
-7
 
 const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     const char: Character = character;
