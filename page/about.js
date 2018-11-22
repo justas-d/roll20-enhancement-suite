@@ -25,9 +25,9 @@ function About() {
  
                 <p>The primary and only goal of R20ES is to save people's time. Not only when preparing for games, but also when running them and playing in them. Roll20 is not perfect and I have had some repeating frusturating moments (why can't I select this darn token?). R20ES fixes the major quirks I've experienced.</p>
 
-                <h2>Privacy</h2>
-                R20ES does not collect any of your private information, it does not track you etc or sell any kind of personal data.
-
+                <h2 id="privacy-policy">Privacy</h2>
+                The VTT Enhancement Suite does not collect any personally identifiable or otherwise any personal or campaign data.
+                Campaign data is accessed and used to allow The VTT Enhancement Suite to function during a session.
             </div>
         </div>
     );
