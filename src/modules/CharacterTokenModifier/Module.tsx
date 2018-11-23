@@ -569,17 +569,28 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
         };
 
         const onExternalAvatarDrop = (e: DragEvent) => {
-            let url = null;
+            let url = undefined;
+            let error = null;
+
             try {
                 const data = e.dataTransfer.getData('text/html');
                 // matches src="": 1st group is the inside of those quotes.
                 const regex = /src="?([^"\s]+)"?\s*/;
                 url = regex.exec(data)[1];
+
             } catch (err) {
-                alert(`Drag & Drop image failed: ${err}`);
+                error = err;
             }
 
-            if (!url) return;
+            if(url === null || url === undefined) {
+                // @ts-ignore
+                url = e.url;
+            }
+
+            if (!url) {
+                alert(`Drag & Drop image failed: ${error}`);
+                return;
+            }
 
             data.token.imgsrc = url;
             instance.rerender();
