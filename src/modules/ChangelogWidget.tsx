@@ -16,6 +16,7 @@ interface IChangelog {
 interface IChange {
     id: string;
     content: string;
+    urls: {[id: string]: string};
 }
 
 interface IChangelogInfo {
@@ -92,10 +93,17 @@ class ChangelogWidget extends DOM.ElementBase {
             const list = [];
 
             for (const change of version.data.changes) {
+                let urlHyperlinks = [];
+                for(const msg in change.urls) {
+                    const url = change.urls[msg];
+
+                    urlHyperlinks.push(<div><a href={url}>{msg}</a></div>);
+                }
+
                 list.push(strIsNullOrEmpty(change.id)
-                    ? <li>{change.content}</li>
+                    ? <li>{change.content}{urlHyperlinks}</li>
                     : <li><a data-url={Config.websiteFeatureUrlTemplate + change.id} href="javascript:void(0)"
-                             onClick={this.onClickLine}>{change.content}</a></li>);
+                             onClick={this.onClickLine}>{change.content}</a>{urlHyperlinks}</li>);
             }
 
             const headerWidget = version.data.info.title

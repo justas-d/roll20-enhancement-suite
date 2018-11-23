@@ -1,5 +1,5 @@
 {
-    "current": "1.7.6",
+    "current": "1.7.7",
     "versions": {
         "1.4.0": {
             "info": {
@@ -418,6 +418,29 @@
                 {
                     "id": "",
                     "content": "Added experimental Opera support"
+                }
+            ]
+        },
+        "1.7.7": {
+            "info": {
+                "title": "Night Mode Deprecation",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "NightMode is being phased out in favor of Red Reign's Dark Theme.",
+                    "urls": {
+                        "Grab it here": "https://github.com/RedReign/Roll20-Dark-Theme"
+                    }
+                },
+                {
+                    "id": "",
+                    "content": "Possibly fixed an issue when dragging in an image in the the token editor."
+                },
+                {
+                    "id": "",
+                    "content": "Updated contributors"
                 }
             ]
         }
