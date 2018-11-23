@@ -60,31 +60,23 @@ export default class AboutDialog extends DialogBase<null> {
                         <div>
                             <div>
                                 <b>Built by</b>
+                                <p>SSStormy, Giddy</p>
                             </div>
 
                             <div>
-                                SSStormy, Giddy
-                            </div>
-
-                            <div>
-                                <b>With contributions from</b>
-                            </div>
-
-                            <div style={{maxWidth: "180px"}}>
-                                Mike, Aaron, Blurn Glanstone, Tobyn, Fredrik, Ryan Wenneker, BuckeyeFan79, Jakob, Daniel (Daj),
+                                <b>And other work by</b>
+                                <div style={{maxWidth: "180px"}}>
+                                    Jay "Vanguard" Fothergill, Ryan Wenneker
+                                </div>
                             </div>
                         </div>
 
                         <div>
-                            <div>
-                                <b>And other work by</b>
-                            </div>
-
+                            <b>With contributions from</b>
                             <div style={{maxWidth: "180px"}}>
-                                Jay "Vanguard" Fothergill, Ryan Wenneker
+                                Mike, Aaron, Blurn Glanstone, Tobyn, Fredrik, Ryan Wenneker, BuckeyeFan79, Jakob, Daniel (Daj), Morris Kennedy, KarateHawk
                             </div>
                         </div>
-
                     </div>
 
                     <hr/>

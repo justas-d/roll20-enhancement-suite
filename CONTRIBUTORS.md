@@ -9,3 +9,5 @@
 * **BuckeyeFan79** - A coffee.
 * **Jakob** - A coffee.
 * **Daniel (Daj)** - 3 coffees.
+* **Morris Kennedy** - 10 coffees.
+* **KarateHawk** - A coffee.
