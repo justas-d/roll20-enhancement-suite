@@ -1,5 +1,5 @@
 {
-    "current": "1.7.7",
+    "current": "1.7.8",
     "versions": {
         "1.4.0": {
             "info": {
@@ -441,6 +441,18 @@
                 {
                     "id": "",
                     "content": "Updated contributors"
+                }
+            ]
+        },
+        "1.7.8": {
+            "info": {
+                "title": "Animated Background Audio",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Animated Backgrounds: Add audio support + settings for audio. (thanks Ryan for pointing it out!)"
                 }
             ]
         }
