@@ -36,10 +36,10 @@ export default MakeConfig(__dirname, {
     },
 
     config: {
-        baseStyle: true,
+        baseStyle: false,
         overrideBackground: true,
         enabled: false,
         ogl5ESheet: false,
-        styleChat: true,
+        styleChat: false,
     },
 });
