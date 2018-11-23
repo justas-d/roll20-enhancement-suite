@@ -194,11 +194,36 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         this._dialog.show(this.getVideoSrc(), this.getVideoEnabled(), this.setVideoSrc, this.setVideoEnabled);
     };
 
+    onSettingChange(name: string, oldVal: any, newVal: any) {
+        if(name === "muteAudio" && this._videoElement) {
+            this._videoElement.muted = newVal;
+        }
+
+        if(name === "audioVolume" && this._videoElement) {
+            this.setVolume(newVal);
+        }
+    }
+
+    setVolume(newVolume: number) {
+        if(!this._videoElement) return;
+
+        try {
+            this._videoElement.volume = newVolume;
+        } catch(e) {
+            this._videoElement.volume = 0.1;
+        }
+    }
+
     setup() {
         console.log("video before ==================================");
 
+        const cfg = this.getHook().config;
+
         this._videoCanvas = <canvas/>;
-        this._videoElement = <video loop={true} autoplay={true} muted={true}/>;
+
+        this._videoElement = <video loop={true} autoplay={true} muted={cfg.muteAudio}/>;
+        this.setVolume(cfg.audioVolume);
+
         this._videoCtx = this._videoCanvas.getContext("2d");
         this._videoCtx.save();
 

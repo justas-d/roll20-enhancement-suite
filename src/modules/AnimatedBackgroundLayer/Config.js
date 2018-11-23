@@ -12,6 +12,25 @@ export default MakeConfig(__dirname, {
         "animated_bg.webm": "Setup & usage"
     },
 
+    config: {
+        muteAudio: false,
+        audioVolume: 0.1
+    },
+
+    configView: {
+        muteAudio: {
+            display: "Mute Audio?",
+            type: ConfigViews.Checkbox
+        },
+
+        audioVolume: {
+            display: "Audio Volume",
+            type: ConfigViews.Slider,
+            sliderMin: 0,
+            sliderMax: 1,
+        }
+    },
+
     includes: "assets/app.js",
     find: `var o=e/d20.engine.canvasZoom;`,
     patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.onZoomChange) window,r20es.onZoomChange(e);`,
