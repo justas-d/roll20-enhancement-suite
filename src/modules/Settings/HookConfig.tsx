@@ -80,6 +80,17 @@ export default class HookConfig extends DOM.ElementBase {
             }
         }
 
+        const urlHyperlinks = [];
+
+        if(this.hook.urls) {
+
+            for(const msg in this.hook.urls) {
+                const url = this.hook.urls[msg];
+
+                urlHyperlinks.push(<a href="javascript:void(0)" onClick={() => window.open(url, "_blank")}>{msg}</a>);
+            }
+        }
+
         return (
             <div className="more-settings">
 
@@ -90,6 +101,8 @@ export default class HookConfig extends DOM.ElementBase {
 
                         <div className="r20es-indent description">
                             <p>{this.hook.description}</p>
+
+                            <p>{urlHyperlinks}</p>
 
                             {this.hook.gmOnly &&
                                 <p>This module is only usable by GMs (which you {R20.isGM() ? "are" : "aren't"})</p>

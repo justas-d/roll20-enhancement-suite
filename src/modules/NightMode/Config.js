@@ -3,8 +3,13 @@ import ConfigViews from "../../utils/ConfigViews";
 
 export default MakeConfig(__dirname, {
     id: "nightMode",
-    name: "Night Mode",
-    description: "Activates the dark night style. WARNING: some sheets might clash with the style changes resulting in ugly sheets.",
+    name: "Night Mode (Force dark background)",
+    description: "The Night Mode is being phased out in favor of Red Reign's Dark Theme",
+
+    urls: {
+        "You can find it here": "https://github.com/RedReign/Roll20-Dark-Theme"
+    },
+
     category: Category.canvas,
 
     media: {
@@ -17,15 +22,15 @@ export default MakeConfig(__dirname, {
             type: ConfigViews.Checkbox,
         },
         ogl5ESheet: {
-            display: "OGL D&D 5E Night Mode",
+            display: "(Deprecated) OGL D&D 5E Night Mode ",
             type: ConfigViews.Checkbox,
         },
         styleChat: {
-            display: "Style chat?",
+            display: "(Deprecated) Style chat?",
             type: ConfigViews.Checkbox,
         },
         baseStyle: {
-            display: "Base style (disable this if you only want a dark canvas)",
+            display: "(Deprecated) Base style (disable this if you only want a dark canvas)",
             type: ConfigViews.Checkbox,
         }
     },
