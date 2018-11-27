@@ -1,5 +1,5 @@
 import {R20Module} from "../../utils/R20Module"
-import {DOM} from '../../utils/DOM'
+import { DOM } from "../../utils/DOM";
 import {R20} from "../../utils/R20";
 import {EventSubscriber} from "../../utils/EventSubscriber";
 import {scaleToFit} from "../../utils/FitWithinTools";
@@ -82,7 +82,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         this._videoElement.src = "";
 
         // reset background style
-        if(this._currentPage) {
+        if (this._currentPage) {
             R20.setBackgroundStyle(this._currentPage.attributes.background_color);
         }
         R20.renderAll();
@@ -163,7 +163,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     onResizeCanvas = (width: number, height: number) => {
-        if(this._isPlaying) {
+        if (this._isPlaying) {
             console.log("video RESIZE CANVAS", width, height);
 
             this._videoCanvas.width = width;
@@ -180,7 +180,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     onSetZoom = (coef: number) => {
-        if(this._isPlaying) {
+        if (this._isPlaying) {
             console.log("video SET ZOOM", coef);
 
             this._videoCtx.restore();
@@ -195,21 +195,21 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     onSettingChange(name: string, oldVal: any, newVal: any) {
-        if(name === "muteAudio" && this._videoElement) {
+        if (name === "muteAudio" && this._videoElement) {
             this._videoElement.muted = newVal;
         }
 
-        if(name === "audioVolume" && this._videoElement) {
+        if (name === "audioVolume" && this._videoElement) {
             this.setVolume(newVal);
         }
     }
 
     setVolume(newVolume: number) {
-        if(!this._videoElement) return;
+        if (!this._videoElement) return;
 
         try {
             this._videoElement.volume = newVolume;
-        } catch(e) {
+        } catch (e) {
             this._videoElement.volume = 0.1;
         }
     }
@@ -241,13 +241,25 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         window.r20es.onPageChange.on(this.initPage);
 
 
-        if(R20.isGM())
-        {
+        if (R20.isGM()) {
+            const widgetStyle = {
+                cursor: "pointer",
+                position: "absolute",
+                top: "0",
+                right: "400px",
+                maxWidth: "32px",
+                maxHeight: "32px",
+                zIndex: "10",
+                backgroundColor: "#e18e42",
+                borderRadius: "2px"
+            };
+
             this._showSettingsWidget = (
-                <div title="Animated Background Setup (R20ES)" style={{cursor: "pointer", position: "absolute", top: "0", left: "5%", maxWidth: "32px", maxHeight: "32px", zIndex: "10", backgroundColor: "#e18e42", borderRadius: "2px"}}
+                <div title="Animated Background Setup (R20ES)" style={widgetStyle}
                      onClick={this.showConfigurationDialog}
                 >
-                    <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/32/film.png" width="28" height="28" alt="ANIM"/>
+                    <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/32/film.png"
+                         width="28" height="28" alt="ANIM"/>
                 </div>
             );
 

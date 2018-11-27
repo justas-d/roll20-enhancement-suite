@@ -1,7 +1,6 @@
 import {DialogBase} from "../../utils/DialogBase";
 import { DOM } from "../../utils/DOM";
 import {
-    CheckboxWithText,
     Dialog,
     DialogBody,
     DialogFooter,
