@@ -39,42 +39,7 @@ Or <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet">
 
 ## Building
 
-### For Development
-
-Pull dependencies:
-```
-npm install
-```
-
-Start the webpack build process for Firefox:
-```
-npm run build -- --env.browsers=firefox --mode development
-```
-
-Or for Chrome:
-```
-npm run build -- --env.browsers=chrome --mode development
-```
-
-Or both:
-```
-npm run build -- --env.browsers=firefox,chrome --mode development
-```
-
-The built extension can be found in `builds/(firefox|chome)/(dev|prod)/`.
-
-
-When devloping with firefox, use web-ext to automatically install and reload the extension:
-```
-npm run start
-```
-This will use the `r20esdev` profile.
-
-### Packaging
-```
-npm run package
-```
-This will build prod .zip packages and place them in `dist/(firefox|chome)/prod`.
+See [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS.md)
 
 ---
 
