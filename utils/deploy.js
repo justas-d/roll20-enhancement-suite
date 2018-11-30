@@ -8,6 +8,9 @@ const deployData = JSON.parse(fs.readFileSync("deploy_data.json", "utf8"));
 const chromeZipPath = `./dist/chrome/prod/${deployData.chrome}`;
 const firefoxZipPath = `./dist/firefox/prod/${deployData.firefox}`;
 
+console.log("Pushing commits to master...");
+shell.exec("git push origin master");
+
 console.log("Pushing tags...");
 shell.exec("git push --tags");
 
