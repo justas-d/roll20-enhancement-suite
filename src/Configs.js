@@ -36,10 +36,12 @@ import ToolsMenu from "./modules/ToolsMenu/Config";
 import ScaleTokenNamesBySize from "./modules/ScaleTokenNamesBySize/Config";
 import AnimatedBackgroundLayer from "./modules/AnimatedBackgroundLayer/Config";
 import RememberTextToolSettings from "./modules/RememberTextToolSettings/Config";
+import AdjustableOpacity from "./modules/AdjustableOpacity/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
+addCfg(AdjustableOpacity);
 addCfg(RememberTextToolSettings);
 addCfg(AnimatedBackgroundLayer);
 addCfg(AutoOpenInitiativeTracker);

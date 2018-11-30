@@ -1,0 +1,1 @@
+export const ADJUSTABLE_OPACITY_PASSIVE_GM_LAYER_CONFIG_KEY = "passiveGMLayerOpacity";
