@@ -12,3 +12,4 @@
 * **Morris Kennedy** - 10 coffees.
 * **KarateHawk** - A coffee.
 * **Jason Backus** - A coffee.
+* **Jeremy** - A coffee.
