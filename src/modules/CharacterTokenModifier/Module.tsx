@@ -6,6 +6,7 @@ import {Character, CharacterSheetAttribute, TokenAttributes} from 'roll20';
 import {strIsNullOrEmpty} from "../../utils/MiscUtils";
 import lexCompare from "../../utils/LexicographicalComparator";
 import {isChromium} from "../../utils/BrowserDetection";
+import {Optional} from "../../utils/TypescriptUtils";
 
 const InputCheckbox = ({defaultVal = undefined, propName, token, label, wrapperStyle = {}}) => {
     return (
@@ -47,24 +48,38 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     const max = `bar${index}_max`;
     const link = `bar${index}_link`;
 
+    const EDIT_WIDGET_TITLE = "You can only edit the current and max values when the bar is not linked.";
+
     const currentWidget = (
-        <InputWrapper propName={value} type="text" token={tokenAttribs}/>
+        <InputWrapper title={EDIT_WIDGET_TITLE} propName={value} type="text" token={tokenAttribs}/>
     ) as HTMLInputElement;
 
     const maxWidget = (
-        <InputWrapper propName={max} type="text" token={tokenAttribs}/>
+        <InputWrapper title={EDIT_WIDGET_TITLE} propName={max} type="text" token={tokenAttribs}/>
     ) as HTMLInputElement;
 
     let linkId = tokenAttribs[link];
 
-    const updateBarValues = (id: string) => {
+    const updateBarValues = (id: Optional<string>) => {
 
         const attrib = char.attribs.get(id);
-        if (!attrib) return;
+
+        if (!id || !attrib) {
+
+            currentWidget.disabled = false;
+            maxWidget.disabled = false;
+
+            searchWidget.value = "";
+            return;
+        }
+
+        currentWidget.disabled = true;
+        maxWidget.disabled = true;
 
         linkId = id;
 
         searchWidget.value = attrib.attributes.name;
+
         setOverrideTokenData(searchWidget, attrib.id);
 
         currentWidget.value = attrib.attributes.current;
@@ -93,8 +108,8 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
         delay: 0,
         source: attribAutocompleteData,
         change: (e, ui) => {
-            if (!ui.item) return;
-            updateBarValues(ui.item.value);
+            const val = (ui && ui.item && ui.item.value) || undefined;
+            updateBarValues(val);
         },
         focus: (e, ui) => {
             e.preventDefault();
@@ -106,23 +121,14 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
         }
     });
 
-    // Note(justas): show autocomplete menu on focus
-    $(searchWidget).focus(() => {
-        // @ts-ignore
-        $(searchWidget).autocomplete('search', $(searchWidget).val())
+    $(searchWidget).blur(() => {
+        if(searchWidget.value.trim() === "") {
+            updateBarValues(undefined);
+        }
     });
 
     setTokenAttributeDataKey(searchWidget, link);
     updateBarValues(linkId);
-
-    const onClickLink = () => {
-        tokenAttribs[link] = linkId;
-    };
-
-    const onClickUnlink = () => {
-        tokenAttribs[link] = "";
-        searchWidget.value = "";
-    };
 
     return (
         <div className="inlineinputs" style={{marginTop: "5px", marginBottom: "5px", display: "flex", alignItems: "center"}}>
@@ -143,8 +149,6 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
             {currentWidget}
             /
             {maxWidget}
-            <button className="btn" onClick={onClickLink}>Link</button>
-            <button className="btn" onClick={onClickUnlink}>Unlink</button>
         </div>
 
     )
@@ -471,7 +475,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
             }
 
             const overrideValue = target.getAttribute(tokenAttributeValueOverrideDataKey);
-            console.log(overrideValue);
+
             if (overrideValue) {
                 val = overrideValue;
             }
@@ -521,13 +525,22 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                 ...data.token
             };
 
-            delete modifiedToken.bar1_value;
-            delete modifiedToken.bar2_value;
-            delete modifiedToken.bar3_value;
+            if(modifiedToken.bar1_link) {
+                delete modifiedToken.bar1_value;
+            }
+
+            if(modifiedToken.bar2_link) {
+                delete modifiedToken.bar2_value;
+            }
+
+            if(modifiedToken.bar3_link) {
+                delete modifiedToken.bar3_value;
+            }
 
             const rawToken = JSON.stringify(modifiedToken);
 
-            console.log(data.token);
+            console.log(modifiedToken);
+
             data.char.updateBlobs({
                 defaulttoken: rawToken
             });
@@ -692,7 +705,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                             </div>
                         </div>
 
-                        <div>
+                        <div style={{marginBottom: "4px"}}>
                             <span style={{display: "inline-block", marginRight: "4px"}}>Width (px)</span>
                             <InputWrapper propName="width" style={{width: "48px", marginRight: "12px"}} type="number"
                                           token={data.token}/>
@@ -700,6 +713,17 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                             <span style={{display: "inline-block", marginRight: "4px"}}>Height (px)</span>
                             <InputWrapper propName="height" style={{width: "48px"}} type="number" token={data.token}/>
 
+                        </div>
+
+                        <div style={{marginBottom: "4px"}}>
+                            <span style={{display: "inline-block", marginRight: "4px"}}>Rotation (angles)</span>
+                            <InputWrapper propName="rotation" type="number" token={data.token}/>
+                        </div>
+
+
+                        <div>
+                            <InputCheckbox label="Flip Horizontal" defaultVal={false} propName={"fliph"} token={data.token} wrapperStyle={{marginRight: "16px"}}/>
+                            <InputCheckbox label="Flip Vertical" defaultVal={false} propName={"flipv"} token={data.token}/>
                         </div>
 
                         <hr/>
