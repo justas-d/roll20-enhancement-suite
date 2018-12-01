@@ -412,6 +412,7 @@ declare namespace Roll20 {
         pings: { [uuid: string]: PingData };
         pinging: LocalPingData;
 
+        mousePos: number[];
         mode: string;
         canvas: Canvas;
         canvasZoom: number;

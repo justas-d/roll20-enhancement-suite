@@ -57,6 +57,10 @@ namespace R20 {
         window.d20.utils.setupAvatar(element, r20AvatarContext);
     }
 
+    export const getCanvasMousePos = (): number[] => {
+        return [...window.d20.engine.mousePos];
+    };
+
     export function onInitiativeChange(callback: any): EventSubscriber {
         const getter = () => R20.getInitiativeWindow().model;
         return new EventSubscriber("change:turnorder", callback, getter);
@@ -169,6 +173,10 @@ namespace R20 {
     export function getCurrentLayer(): CanvasLayer {
         return window.currentEditingLayer as CanvasLayer;
     }
+
+    export const generateUUID = (): string => {
+        return window.generateUUID();
+    };
 
     export function getCurrentToolName(): string {
         return window.d20.engine.mode;

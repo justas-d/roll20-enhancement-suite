@@ -37,10 +37,12 @@ import ScaleTokenNamesBySize from "./modules/ScaleTokenNamesBySize/Config";
 import AnimatedBackgroundLayer from "./modules/AnimatedBackgroundLayer/Config";
 import RememberTextToolSettings from "./modules/RememberTextToolSettings/Config";
 import AdjustableOpacity from "./modules/AdjustableOpacity/Config";
+import TokenFromImg from "./modules/TokenFromImg/Config";
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
+addCfg(TokenFromImg);
 addCfg(AdjustableOpacity);
 addCfg(RememberTextToolSettings);
 addCfg(AnimatedBackgroundLayer);
