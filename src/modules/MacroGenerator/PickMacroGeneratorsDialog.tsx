@@ -8,7 +8,7 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
     private parent: MacroGeneratorModule;
     
     constructor(parent: MacroGeneratorModule) {
-        super();
+        super("r20es-big-dialog");
         this.parent = parent;
     }
 
@@ -95,8 +95,15 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
                                 ignoreToggleAll
                                 checked={this.parent.setIsTokenAction}
                                 onChange={this.onTokenActionChecked}
-                                checkboxText={"Show as Token Action"}
+                                checkboxText="Show as Token Action"
                             />
+
+                            <CheckboxWithText
+                                ignoreToggleAll
+                                checked={this.parent.sortLex}
+                                onChange={(e) => this.parent.sortLex = e.target.checked}
+                                checkboxText="Sort lexicographically"
+                                />
                         </div>
 
                     }

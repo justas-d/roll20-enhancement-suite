@@ -25,6 +25,8 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
     private activePc: Character;
     public activeGenerator: IMacroGenerator;
     public setIsTokenAction: boolean = true;
+    public sortLex: boolean = true;
+
     public categoryFilter: { [id: string]: boolean } = {};
     public byNameMacroTable: { [name: string]: IGeneratedMacro[] } = {};
 
@@ -94,7 +96,9 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         }
 
         // sort lexicographically
-        data.sort((a, b) => lexCompare(a, b, (d) => d.name));
+        if(this.sortLex) {
+            data.sort((a, b) => lexCompare(a, b, (d) => d.name));
+        }
 
         // make a by-name table
         for (const obj of data) {
@@ -147,7 +151,6 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
         this.activePc = pc;
         this.activeGenerator = null;
-        this.setIsTokenAction = true;
         this.categoryFilter = {};
         this.byNameMacroTable = {};
         this.macroBuffer = [];
