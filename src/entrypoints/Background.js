@@ -209,6 +209,13 @@ if (doesBrowserNotSupportResponseFiltering()) {
                                     sendDoneMessage();
                                     console.log("SENT r20esChromeInjectionDone");
 
+                                    const delayDoneMessage = (ms, msg) => {
+                                        setTimeout(() => {
+                                            sendDoneMessage();
+                                            console.log(msg);
+                                        }, ms);
+                                    };
+
                                     /*
                                         NOTE(Justas):
                                         The second message here is in case the first one doesn't land.
@@ -220,10 +227,11 @@ if (doesBrowserNotSupportResponseFiltering()) {
                                         So we just have to setTimeout it as I dont want to touch the timing of
                                         ContentScript.
                                      */
-                                    setTimeout(() => {
-                                        sendDoneMessage();
-                                        console.log("SENT SECOND r20esChromeInjectionDone");
-                                    }, 1000);
+
+                                    delayDoneMessage(1000, "SENT SECOND r20esChromeInjectionDone");
+
+                                    // and a third one for good measure
+                                    delayDoneMessage(5000, "SENT THIRD r20esChromeInjectionDone");
                                 }
                             )();
                         }
