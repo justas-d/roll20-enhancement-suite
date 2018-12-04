@@ -50,6 +50,7 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
             alert("Selection is empty.");
             return;
         }
+
         this.continueCallback(finalData);
     };
 

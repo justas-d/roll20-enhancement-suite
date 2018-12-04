@@ -39,14 +39,14 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
 
         const jsonBlob = new Blob([data.json], {type: 'data:application/json;charset=utf-8'});
         saveAs(jsonBlob, data.filename);
-    }
+    };
 
     private onFileChange = (e: any) => {
         e.stopPropagation();
         const targ = e.target;
 
         ($(targ.parentNode).find("button.import")[0] as any).disabled = targ.files.length <= 0;
-    }
+    };
 
     private showPickDialog(continueCallback: (data: T[]) => void) {
         this.pickMacrosDialog.show(this.pickDialogTitle,

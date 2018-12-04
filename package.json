@@ -62,7 +62,6 @@
         "raw-loader": "0.5.1",
         "request": "2.88.0",
         "sass-loader": "7.1.0",
-        "save-as": "0.1.8",
         "semver-compare": "1.0.0",
         "shelljs": "0.8.2",
         "source-map-loader": "0.2.4",
@@ -78,7 +77,8 @@
     "dependencies": {
         "browser-detect": "0.2.28",
         "react": "16.4.2",
-        "react-dom": "16.4.2"
+        "react-dom": "16.4.2",
+        "save-as": "0.1.8"
     },
     "ava": {
         "require": [

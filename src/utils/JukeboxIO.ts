@@ -80,6 +80,7 @@ export namespace JukeboxIO {
     };
 
     export const applyData = (playlists: IApplyableJukeboxPlaylist[]) => {
+
         const playlistsStructures = playlists.map(rawPlaylist => {
 
             const songIds = rawPlaylist.songs.map(s => R20.createSong(s).id);
@@ -87,8 +88,16 @@ export namespace JukeboxIO {
         });
 
         const campaign = R20.getCampaign();
-        let fs: any[] = JSON.parse(campaign.attributes.jukeboxfolder);
-        fs = fs.concat(playlistsStructures);
+
+        let fs: any[];
+        try {
+             fs = JSON.parse(campaign.attributes.jukeboxfolder);
+            fs = fs.concat(playlistsStructures);
+        } catch(e) {
+            console.log("Failed to parse jukeboxfolder:", e);
+            fs = playlistsStructures;
+        }
+
         console.log(fs);
 
         R20.getCampaign().save({
