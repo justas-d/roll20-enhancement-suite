@@ -1,5 +1,5 @@
 {
-    "current": "1.9.1",
+    "current": "1.9.2",
     "versions": {
         "1.4.0": {
             "info": {
@@ -525,6 +525,22 @@
                 {
                     "id": "",
                     "content": "Fixed playlist importing not preserving the file structure."
+                }
+            ]
+        },
+        "1.9.2": {
+            "info": {
+                "title": "Minor tweak.",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added secret essay for mozilla addon reviewers."
+                },
+                {
+                    "id": "",
+                    "content": "AdjustableOpacity: disable by default"
                 }
             ]
         }
