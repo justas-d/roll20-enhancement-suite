@@ -20,6 +20,7 @@ export default MakeConfig(__dirname, {
     },
 
     config: {
+        enabled: false,
         [ADJUSTABLE_OPACITY_PASSIVE_GM_LAYER_CONFIG_KEY]: 1,
     },
 
