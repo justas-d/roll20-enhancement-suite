@@ -33,7 +33,7 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
                 data.callback();
             };
 
-            const widget = <li id={data.id} onClick={clicked} class='head hasSub'>{data.text}</li>;
+            const widget = <li style={{maxWidth: "99px"}} id={data.id} onClick={clicked} class='head hasSub'>{data.text}</li>;
             target.firstElementChild.appendChild(widget);
         }
 
