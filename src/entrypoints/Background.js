@@ -93,8 +93,10 @@ if (doesBrowserNotSupportResponseFiltering()) {
             "https://app.roll20.net/js/tutorial_tips.js",
         ];
 
-        window.r20esChrome.fetchAndInject = function (localUrl) {
-            console.log(`FETCH & INJECT ${localUrl}`);
+        window.r20esChrome.fetchAndInject = function (id, localUrl) {
+            window.r20esChrome.startWaitingForScriptQueueToBeDumpableThenDumpIt();
+
+            console.log(`(${id}) FETCH & INJECT ${localUrl}`);
 
             fetch(localUrl, {
                 cache: "no-store",
@@ -137,27 +139,79 @@ if (doesBrowserNotSupportResponseFiltering()) {
                             blobUrl: url
                         });
 
-                        console.log(`content script done: ${window.r20esChrome.scriptQueue.length}/${window.r20esChrome.scriptOrder.length}`);
-                        if (window.r20esChrome.scriptQueue.length >= window.r20esChrome.scriptOrder.length) {
-                            console.log("Dumping script queue...");
+                        console.log(`${id} content script done: ${window.r20esChrome.scriptQueue.length}/${window.r20esChrome.scriptOrder.length}`);
 
-                            for (const scriptUrl of window.r20esChrome.scriptOrder) {
 
-                                for (const queued of window.r20esChrome.scriptQueue) {
+                    })
+                });
+        };
 
-                                    if (queued.localUrl.startsWith(scriptUrl)) {
+        window.r20esChrome.startWaitingForScriptQueueToBeDumpableThenDumpIt = function () {
+            if (window.r20esChrome.isWaitingForScriptQueue) {
+                return;
+            }
+            window.r20esChrome.isWaitingForScriptQueue = true;
 
-                                        let s = document.createElement("script");
-                                        s.src = queued.blobUrl;
-                                        s.async = false;
+            console.log("STARTING TO WAIT FOR SCRIPT QUEUE TO BE DUMPABLE!");
 
-                                        document.body.appendChild(s);
-                                        break;
-                                    }
-                                }
-                            }
+            let waitedFor = 0;
+            const panicDumpAfterMs = 8000;
+            const waitInterval = 200;
 
-                            const cleanupPayload = `
+            (function waitForDepts() {
+                    const shouldPanicDump = waitedFor >= panicDumpAfterMs;
+                    const queueFull = window.r20esChrome.scriptQueue.length >= window.r20esChrome.scriptOrder.length;
+
+                    if (!queueFull && !shouldPanicDump) {
+                        setTimeout(waitForDepts, waitInterval);
+                        waitedFor += waitInterval;
+                        return;
+                    }
+
+                    if (shouldPanicDump) {
+                        console.log("===============================");
+                        console.log("!!!!!PANIC DUMPING SCRIPTS!!!!!");
+                        console.log("===============================");
+                    }
+
+                    window.r20esChrome.dumpScriptQueue();
+                }
+            )();
+        };
+
+        window.r20esChrome.dumpScriptQueue = function () {
+
+            console.log("Dumping script queue...");
+
+            for (const scriptUrl of window.r20esChrome.scriptOrder) {
+
+                for (const queued of window.r20esChrome.scriptQueue) {
+
+                    if (queued.localUrl.startsWith(scriptUrl)) {
+
+                        let s = document.createElement("script");
+                        s.src = queued.blobUrl;
+                        s.async = false;
+
+                        // ===== FOR REVIEWERS =====
+                        // The following scripts are GUARANTEED to be sourced from the
+                        // window.redirectTargets list, more specifically, the roll20 domain,
+                        // which is the only domain that the extension has permissions to access.
+                        //
+                        // No remote script injection stuffs are happening, they are only being modified.
+                        //
+                        // All the modifications are contained withing the addon source code.
+                        //
+                        // I reiterate: NO SCRIPTS FROM OUTSIDE THE EXTENSION OR THE TARGET DOMAIN ARE INJECTED.
+                        //
+                        // ===== FOR REVIEWERS =====
+                        document.body.appendChild(s);
+                        break;
+                    }
+                }
+            }
+
+            const cleanupPayload = `
                             window.r20esChrome.urlsToFree.forEach(window.URL.revokeObjectURL); 
                             console.log('freed blob URLs')
                             
@@ -166,90 +220,74 @@ if (doesBrowserNotSupportResponseFiltering()) {
                             window.document.dispatchEvent(DOMContentLoaded_event);
 
 							`;
-                            let s = document.createElement("script");
-                            s.src = `data:application/javascript;base64,${btoa(cleanupPayload)}`;
-                            s.async = false;
+            let s = document.createElement("script");
+            s.src = `data:application/javascript;base64,${btoa(cleanupPayload)}`;
+            s.async = false;
 
-                            // ===== FOR REVIEWERS =====
-                            // The following scripts are GUARANTEED to be sourced from the
-                            // window.redirectTargets list, more specifically, the roll20 domain,
-                            // which is the only domain that the extension has permissions to access.
-                            //
-                            // No remote script injection stuffs are happening, they are only being modified.
-                            //
-                            // All the modifications are contained withing the addon source code.
-                            //
-                            // I reiterate: NO SCRIPTS FROM OUTSIDE THE EXTENSION OR THE TARGET DOMAIN ARE INJECTED.
-                            //
-                            // ===== FOR REVIEWERS =====
-                            document.body.appendChild(s);
+            document.body.appendChild(s);
 
-                            console.log("Scripts injected. Now waiting for dependencies.");
+            console.log("Scripts injected. Now waiting for dependencies.");
 
-                            let waitedFor = 0;
+            let waitedFor = 0;
 
-                            (function waitForDepts() {
+            (function waitForDepts() {
+                    const hasJQuery = typeof(window.$) !== "undefined";
+                    const hasSoundManager = typeof(window.soundManager) !== "undefined";
+                    const hasD20 = typeof(window.d20) !== "undefined";
+                    const waitTime = 200;
 
+                    if (!hasJQuery || !hasSoundManager || !hasD20) {
+                        waitedFor += waitTime;
+                        setTimeout(waitForDepts, waitTime);
 
-                                    const hasJQuery = typeof(window.$) !== "undefined";
-                                    const hasSoundManager = typeof(window.soundManager) !== "undefined";
-                                    const hasD20 = typeof(window.d20) !== "undefined";
+                        console.log("WAITING FOR DEPTS.");
+                        return;
+                    }
 
-                                    if (!hasJQuery || !hasSoundManager || !hasD20) {
-                                        waitedFor += 50;
-                                        setTimeout(waitForDepts, 50);
-                                        console.log("WAITING FOR DEPTS.");
-                                        return;
-                                    }
+                    console.log(`All dependencies fulfilled after ${waitedFor}ms`);
 
-                                    console.log(`All dependencies fulfilled after ${waitedFor}ms`);
+                    for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
+                        window.r20esChrome.readyCallbacks[i]();
+                    }
 
-                                    for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
-                                        window.r20esChrome.readyCallbacks[i]();
-                                    }
+                    /*
+                        NOTE(Justas):
+                        This notifies ContentScript.js to inject module scripts.
+                        Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
+                        contrary to what happens on Firefox.
+                    */
+                    const sendDoneMessage = () => {
+                        window.postMessage({r20esChromeInjectionDone: true}, appUrl);
+                        window.injectBackgroundOK = true;
+                    };
 
-                                    /*
-                                        NOTE(Justas):
-                                        This notifies ContentScript.js to inject module scripts.
-                                        Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
-                                        contrary to what happens on Firefox.
-                                    */
-                                    const sendDoneMessage = () => {
-                                        window.postMessage({ r20esChromeInjectionDone: true }, appUrl);
-                                        window.injectBackgroundOK = true;
-                                    };
+                    sendDoneMessage();
+                    console.log("SENT r20esChromeInjectionDone");
 
-                                    sendDoneMessage();
-                                    console.log("SENT r20esChromeInjectionDone");
+                    const delayDoneMessage = (ms, msg) => {
+                        setTimeout(() => {
+                            sendDoneMessage();
+                            console.log(msg);
+                        }, ms);
+                    };
 
-                                    const delayDoneMessage = (ms, msg) => {
-                                        setTimeout(() => {
-                                            sendDoneMessage();
-                                            console.log(msg);
-                                        }, ms);
-                                    };
+                    /*
+                        NOTE(Justas):
+                        The second message here is in case the first one doesn't land.
+                        That can actually happen.
+                        ContentScript may not be running by the first message yet,
+                        and setting window.injectBackgroundOK = true; doesn't update the content
+                        script window value.
 
-                                    /*
-                                        NOTE(Justas):
-                                        The second message here is in case the first one doesn't land.
-                                        That can actually happen.
-                                        ContentScript may not be running by the first message yet,
-                                        and setting window.injectBackgroundOK = true; doesn't update the content
-                                        script window value.
+                        So we just have to setTimeout it as I dont want to touch the timing of
+                        ContentScript.
+                     */
+                    delayDoneMessage(1000, "SENT SECOND r20esChromeInjectionDone");
 
-                                        So we just have to setTimeout it as I dont want to touch the timing of
-                                        ContentScript.
-                                     */
-
-                                    delayDoneMessage(1000, "SENT SECOND r20esChromeInjectionDone");
-
-                                    // and a third one for good measure
-                                    delayDoneMessage(5000, "SENT THIRD r20esChromeInjectionDone");
-                                }
-                            )();
-                        }
-                    })
-                });
+                    // and a third one for good measure
+                    delayDoneMessage(5000, "SENT THIRD r20esChromeInjectionDone");
+                }
+            )();
         };
 
         console.log("init environment");
@@ -266,13 +304,43 @@ if (doesBrowserNotSupportResponseFiltering()) {
                 return;
             }
 
-            const scriptString = _ => `window.r20esChrome.fetchAndInject("${dt.url}");`;
+            const scriptString = () => `
+(function() {
+    if(window.r20esNumScriptString === undefined) {
+        window.r20esNumScriptString = 0;
+    }
+    
+    const id = window.r20esNumScriptString++;
+      
+    console.log("running scriptString for ${dt.url}, waiting for dependencies"); 
+    let waitedFor = 0;
+    
+    const continueWaiting = () => {
+    
+        if(!("r20esChrome" in window)
+        || !("fetchAndInject" in window.r20esChrome)) {
+            const waitFor = 50;
+            waitedFor += waitFor;
+            setTimeout(continueWaiting, waitFor);
+        }
+        
+        console.log("(" + String(id) + ") dependencies satisfied after " + String(waitedFor) + " for ${dt.url}");
+        
+        window.r20esChrome.fetchAndInject(id, "${dt.url}");
+        
+    }
+    
+    continueWaiting();
+})()
+`;
 
             let payload = null;
             const isInitial = window.redirectCount <= 0;
 
             if (isInitial) {
-                payload = `var setupEnvironment = ${setupEnvironment.toString()}
+                payload = `
+console.log("RUNNING SETUP ENVIRONMENT SCRIPT");
+var setupEnvironment = ${setupEnvironment.toString()}
 setupEnvironment("${Config.appUrl}");
 window.r20esChrome.hooks = ${JSON.stringify(configs, 0, 4)};
 console.log("window.r20esChrome.hooks:");
@@ -290,14 +358,17 @@ ${scriptString()}`;
 
             const finalPayload = `data:application/javascript;base64,${btoa(payload)}`;
 
-            console.log(`${window.redirectCount} redirecting ${dt.url} ${isInitial ? "(CARRIES INITIAL ENVIRONMENT)" : ""}`, finalPayload);
+            console.log(`${window.redirectCount} redirecting ${dt.url} ${isInitial ? "(CARRIES INITIAL ENVIRONMENT)" : ""}`);
             return {redirectUrl: finalPayload};
         }
     };
 
     const headerCallback = (req) => {
-        console.log("HEADER CALLBACK for", req);
-        if (!isEditorUrl(req.url)) return;
+        if (!isEditorUrl(req.url)) {
+            return;
+        }
+
+        console.log(`HEADER CALLBACK (processing headers) for ${req.url}`, req);
 
         const headers = JSON.parse(JSON.stringify(req.responseHeaders));
 
@@ -313,8 +384,6 @@ ${scriptString()}`;
 
             header.value += " data: blob:";
             console.log("!!MODIFIED HEADERS!!");
-            window.r20esDidModifyHeaders = true;
-
             break;
         }
 
