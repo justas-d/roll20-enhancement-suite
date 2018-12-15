@@ -70,6 +70,7 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
             maxWidget.disabled = false;
 
             searchWidget.value = "";
+            setOverrideTokenData(searchWidget, "");
             return;
         }
 
@@ -122,6 +123,12 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     });
 
     $(searchWidget).blur(() => {
+        if(searchWidget.value.trim() === "") {
+            updateBarValues(undefined);
+        }
+    });
+
+    $(searchWidget).change(() => {
         if(searchWidget.value.trim() === "") {
             updateBarValues(undefined);
         }
