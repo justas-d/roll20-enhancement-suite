@@ -1,5 +1,6 @@
 import MakeConfig from '../MakeConfig'; import Category from '../Category';
 import ConfigViews from '../../utils/ConfigViews';
+import { DIALOG_OPEN_DELAY_KEY } from "./Constants";
 
 export default MakeConfig(__dirname, {
     id: "autoOpenInitiativeTracker",
@@ -10,13 +11,14 @@ export default MakeConfig(__dirname, {
 
 
     configView: {
-        onlyOpenIfTokenIsVisible: {
-            display: "Only open tracker if the initiative token is on the player token layer.",
-            type: ConfigViews.Checkbox
-        }
+        [DIALOG_OPEN_DELAY_KEY]: {
+            display: "Delay between opening the initiative dialog in milliseconds (low values may cause issues)",
+            type: ConfigViews.Number
+        },
     },
 
     config: {
-        onlyOpenIfTokenIsVisible: true,
+        [DIALOG_OPEN_DELAY_KEY]: 500,
+
     },
 });
