@@ -28,7 +28,6 @@ class ToolsModule extends R20Module.OnAppLoadBase {
                 onClick={this.onButtonClick}
             />);
 
-        console.log("da fuq");
         insertButtonIntoSettings(button);
     }
 

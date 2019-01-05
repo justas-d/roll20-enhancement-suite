@@ -4,6 +4,7 @@ import { safeCall } from "../utils/MiscUtils";
 import showProblemPopup from "../utils/ProblemPopup";
 import { DOM } from "../utils/DOM";
 import {EventEmitter} from "../utils/EventEmitter";
+import { saveAs } from 'save-as'
 
 setTimeout(() => {
 
@@ -157,5 +158,75 @@ window.r20es.onDocumentMouseUp = e => {
 
 document.addEventListener("keyup", window.r20es.onDocumentMouseUp);
 document.addEventListener("keydown", window.r20es.onDocumentMouseUp);
+
+window.r20es.dumpLogs = () => {
+    const logSyncBuffer = [];
+
+    window.postMessage({ r20esWantsLogSync: true }, Config.appUrl);
+
+    let didDump = false;
+    const doTheDumping = () => {
+        if(didDump) return;
+        didDump = true;
+
+        let buffer = "";
+
+        const allLogs = [...window.r20es.logging.logs];
+
+        // rebase log time
+        for(const context of logSyncBuffer) {
+            const tDelta = context.startTime - window.r20es.logging.startTime;
+            const modifiedLogs = [...context.logs];
+
+            for(const log of modifiedLogs) {
+                log.time -= tDelta;
+
+                allLogs.push(log);
+            }
+        }
+
+        allLogs.sort((a, b) => {
+            if(a.time < b.time) return -1;
+            if(a.time > b.time) return 1;
+            return 0;
+        });
+
+        for(const log of allLogs) {
+            buffer += `[${log.time}] [${log.type}] `;
+            for(const obj of log.data) {
+                buffer += `${JSON.stringify(obj)} `
+            }
+            buffer += "\n";
+        }
+
+        const blob = new Blob([buffer]);
+        saveAs(blob, "log.txt");
+    };
+
+    doTheDumping();
+
+    /*
+    const listener = (e) => {
+        if (e.origin !== Config.appUrl) return;
+        if(!e.data.r20esGivesLogSync) return;
+
+        logSyncBuffer.push(e.data.r20esGivesLogSync);
+
+        if(logSyncBuffer.length >= 2) {
+            window.removeEventListener("message", listener);
+            doTheDumping();
+        }
+    };
+
+    window.addEventListener("message", listener);
+
+    setTimeout(() => {
+        if(logSyncBuffer.length < 2) {
+            console.error("failed to sync logs, receiver buffers:", logSyncBuffer, "while we needed 2");
+            window.removeEventListener("message", listener);
+        }
+    }, 2000);
+    */
+};
 
 console.log("WebsiteBootstrap.js done.");

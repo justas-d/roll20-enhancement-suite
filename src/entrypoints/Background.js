@@ -3,6 +3,9 @@ import {getBrowser, replaceAll} from '../utils/MiscUtils';
 import {Config} from '../utils/Config';
 import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection";
 import editorUrls from "../utils/EditorURLs";
+import {initializeDefaultLogWrapperOrReusePreviousInThisContext} from "../utils/LogWrapper";
+
+initializeDefaultLogWrapperOrReusePreviousInThisContext();
 
 const getHooks = (hooks, url) => {
 
@@ -134,14 +137,20 @@ if (doesBrowserNotSupportResponseFiltering()) {
                         window.r20esChrome.urlsToFree.push(url);
                         console.log(blob);
 
-                        window.r20esChrome.scriptQueue.push({
-                            localUrl,
-                            blobUrl: url
-                        });
+                        {
+                            const msg = `${id} content script done: ${window.r20esChrome.scriptQueue.length}/${window.r20esChrome.scriptOrder.length}`;
+                            if (!window.r20esChrome.didDumpScriptQueue) {
+                                window.r20esChrome.scriptQueue.push({
+                                    localUrl,
+                                    blobUrl: url
+                                });
 
-                        console.log(`${id} content script done: ${window.r20esChrome.scriptQueue.length}/${window.r20esChrome.scriptOrder.length}`);
-
-
+                                console.log(`${msg} (pushed to script queue)`);
+                            } else {
+                                window.r20esChrome.dumpScript(url);
+                                console.log(`${msg} (already scripts dumped, so we're dumping this too)`);
+                            }
+                        }
                     })
                 });
         };
@@ -155,7 +164,7 @@ if (doesBrowserNotSupportResponseFiltering()) {
             console.log("STARTING TO WAIT FOR SCRIPT QUEUE TO BE DUMPABLE!");
 
             let waitedFor = 0;
-            const panicDumpAfterMs = 8000;
+            const panicDumpAfterMs = 15000;
             const waitInterval = 200;
 
             (function waitForDepts() {
@@ -179,33 +188,37 @@ if (doesBrowserNotSupportResponseFiltering()) {
             )();
         };
 
+        window.r20esChrome.dumpScript = function(url) {
+            let s = document.createElement("script");
+            s.src = url;
+            s.async = false;
+
+            // ===== FOR REVIEWERS =====
+            // The following scripts are GUARANTEED to be sourced from the
+            // window.redirectTargets list, more specifically, the roll20 domain,
+            // which is the only domain that the extension has permissions to access.
+            //
+            // No remote script injection stuffs are happening, they are only being modified.
+            //
+            // All the modifications are contained withing the addon source code.
+            //
+            // I reiterate: NO SCRIPTS FROM OUTSIDE THE EXTENSION OR THE TARGET DOMAIN ARE INJECTED.
+            //
+            // ===== FOR REVIEWERS =====
+            document.body.appendChild(s);
+        };
+
         window.r20esChrome.dumpScriptQueue = function () {
 
             console.log("Dumping script queue...");
+            window.r20esChrome.didDumpScriptQueue = true;
 
             for (const scriptUrl of window.r20esChrome.scriptOrder) {
 
                 for (const queued of window.r20esChrome.scriptQueue) {
 
                     if (queued.localUrl.startsWith(scriptUrl)) {
-
-                        let s = document.createElement("script");
-                        s.src = queued.blobUrl;
-                        s.async = false;
-
-                        // ===== FOR REVIEWERS =====
-                        // The following scripts are GUARANTEED to be sourced from the
-                        // window.redirectTargets list, more specifically, the roll20 domain,
-                        // which is the only domain that the extension has permissions to access.
-                        //
-                        // No remote script injection stuffs are happening, they are only being modified.
-                        //
-                        // All the modifications are contained withing the addon source code.
-                        //
-                        // I reiterate: NO SCRIPTS FROM OUTSIDE THE EXTENSION OR THE TARGET DOMAIN ARE INJECTED.
-                        //
-                        // ===== FOR REVIEWERS =====
-                        document.body.appendChild(s);
+                        window.r20esChrome.dumpScript(queued.blobUrl);
                         break;
                     }
                 }
