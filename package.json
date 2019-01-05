@@ -15,7 +15,7 @@
         "package": "webpack --display-error-details --progress --colors --env.zip --env.browsers=chrome,firefox --mode production",
         "package-select": "webpack --display-error-details --progress --colors --env.zip --mode production",
         "start": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
-        "start-dev": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --browser-console --firefox=/usr/bin/firefox-developer-edition --start-url https://app.roll20.net/sessions/new",
+        "start-dev": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --browser-console --start-url https://app.roll20.net/sessions/new",
         "test-firefox": "SALENIUM_PORT=4444 nightwatch --env firefox",
         "test": "ava tests/ava",
         "deploy": "node utils/deploy.js"
