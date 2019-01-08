@@ -1,17 +1,19 @@
-import { R20Module } from "../../utils/R20Module";
-import { R20 } from "../../utils/R20";
-import { LoadingDialog } from "../../utils/DialogComponents";
-import { DOM } from "../../utils/DOM";
-import { SheetTab } from "../../utils/SheetTab";
-import { replaceAll } from "../../utils/MiscUtils";
-import { IMacroGenerator, IGeneratedMacro, IMacroDiff } from "./IMacroGenerator";
+import {R20Module} from "../../utils/R20Module";
+import {DOM} from "../../utils/DOM";
+import {R20} from "../../utils/R20";
+import {LoadingDialog} from "../../utils/DialogComponents";
+import {SheetTab} from "../../utils/SheetTab";
+import {replaceAll} from "../../utils/MiscUtils";
+import {IGeneratedMacro, IMacroDiff, IMacroGenerator} from "./IMacroGenerator";
 import OGL5eByRoll20 from "../../macro/OGL5eByRoll20";
 import PickMacroGeneratorsDialog from "./PickMacroGeneratorsDialog";
-import { Character, CharacterAbility } from "roll20";
+import {Character, CharacterAbility} from "roll20";
 import DuplicateResolveDialog from "./DuplicateResolveDialog";
 import VerifyMacrosDialog from "./VerifyMacrosDialog";
 import NoMacrosDialog from "./NoMacrosDialog";
 import lexCompare from "../../utils/LexicographicalComparator";
+import {FolderingMethod} from "./FolderingMethod";
+import {exhaustTypeSafe} from "../../utils/TypescriptUtils";
 
 class MacroGeneratorModule extends R20Module.SimpleBase {
     private pickerDialog: PickMacroGeneratorsDialog;
@@ -24,8 +26,10 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
     private activePc: Character;
     public activeGenerator: IMacroGenerator;
+
     public setIsTokenAction: boolean = true;
     public sortLex: boolean = true;
+    public folderingMethod: FolderingMethod = FolderingMethod.NoFolder;
 
     public categoryFilter: { [id: string]: boolean } = {};
     public byNameMacroTable: { [name: string]: IGeneratedMacro[] } = {};
@@ -83,11 +87,74 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
         // generate an array of macros in wanted categories
         let data: IGeneratedMacro[] = [];
+
+        // @COPY-PASTE
+        let uberFolderBuffer = `@{wtype} &{template:default}{{name=@{character_name}}}`;
+        let numUberFolderMacros = 0;
+
         for (let factoryId in this.activeGenerator.macroFactories) {
             if (!this.categoryFilter[factoryId]) continue;
 
             const factory = this.activeGenerator.macroFactories[factoryId];
-            data = data.concat(factory(this.activePc));
+
+            const doSmallFolder = this.folderingMethod === FolderingMethod.SmallFolders;
+            const doUberFolder = this.folderingMethod === FolderingMethod.UberFolder;
+
+            if((doSmallFolder || doUberFolder) && factory.createFolderEntries) {
+
+                const folder = factory.createFolderEntries(this.activePc);
+
+                if (folder.length <= 0) {
+                    continue;
+                }
+
+                switch(this.folderingMethod) {
+                    case FolderingMethod.NoFolder: break;
+                    case FolderingMethod.SmallFolders: {
+                        let buffer = `@{wtype} &{template:default}{{name=@{character_name} ${factory.name}}}`;
+
+                        for (const str of folder) {
+                            buffer += `{{${str}}}`;
+                        }
+
+                        data.push({
+                            name: factory.name,
+                            macro: buffer
+                        });
+                        break;
+                    }
+
+                    case FolderingMethod.UberFolder: {
+                        numUberFolderMacros += folder.length;
+
+                        let buffer = "";
+
+                        for (const str of folder) {
+                            buffer += str;
+                        }
+
+                        uberFolderBuffer += `{{• ${factory.name}=${buffer}}}`;
+
+                        break;
+                    }
+
+                    default:
+                        exhaustTypeSafe(this.folderingMethod);
+                        break;
+                }
+
+            } else {
+                const macros = factory.create(this.activePc);
+                data = data.concat(macros);
+            }
+        }
+
+        if(numUberFolderMacros > 0) {
+            // @COPY-PASTE
+            data.push({
+                name: "Uber-Folder",
+                macro: uberFolderBuffer
+            })
         }
 
         // r20 forbids spaces in abilities

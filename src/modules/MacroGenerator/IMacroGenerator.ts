@@ -1,23 +1,23 @@
 import { Character } from "roll20";
 
-type FactoryLambda = (character: Character) => IGeneratedMacro[];
-type MacroFactoryTable = { [id: string]: FactoryLambda };
-type ActionTypeTable = {[id: string]: string};
-
-interface IMacroGenerator {
-    actionTypes: ActionTypeTable // id -> name
-    id: string;
+export interface IMacroFactory {
     name: string;
-    macroFactories: MacroFactoryTable;
+    create: (char: Character) => IGeneratedMacro[];
+    createFolderEntries: (char: Character) => string[];
 }
 
-interface IGeneratedMacro {
+export interface IMacroGenerator {
+    id: string;
+    name: string;
+    macroFactories: IMacroFactory[];
+}
+
+export interface IGeneratedMacro {
     name: string;
     macro: string;
 }
 
-interface IMacroDiff extends IGeneratedMacro {
+export interface IMacroDiff extends IGeneratedMacro {
     oldMacro: string;
 }
 
-export { IMacroDiff, IMacroGenerator, IGeneratedMacro, FactoryLambda, MacroFactoryTable, ActionTypeTable};

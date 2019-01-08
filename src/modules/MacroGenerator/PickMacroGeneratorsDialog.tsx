@@ -3,6 +3,8 @@ import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, Ch
 import MacroGeneratorModule from "./Module";
 import { DOM } from "../../utils/DOM";
 import {isChromium} from "../../utils/BrowserDetection";
+import {FolderingMethod} from "./FolderingMethod";
+import {copy} from "../../utils/MiscUtils";
 
 export default class PickMacroGeneratorsDialog extends DialogBase<null> {
     private parent: MacroGeneratorModule;
@@ -42,10 +44,20 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
         let elems = [];
         let checkboxes = [];
 
-        for (const type in this.parent.activeGenerator.actionTypes) {
-            const name = this.parent.activeGenerator.actionTypes[type];
+        for(let factoryIndex = 0; factoryIndex < this.parent.activeGenerator.macroFactories.length; factoryIndex++) {
+            const data = this.parent.activeGenerator.macroFactories[factoryIndex]
 
-            const root = <CheckboxWithText value={type} checkboxText={name} checked /> as any;
+            const root = (
+                <div>
+                    <input style={{ verticalAlign: "middle", marginRight: "4px" }} type="checkbox" value={factoryIndex} checked/>
+                    <span style={{ verticalAlign: "middle" }}>{data.name}</span>
+                    { data.createFolderEntries &&
+                        <span style={{float: "right", paddingRight: "16px", color: "lightgray"}}>Folderable</span>
+                    }
+                </div>
+
+            ) as any;
+
             elems.push(root);
             checkboxes.push(root.firstElementChild);
         }
@@ -59,12 +71,24 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
             input.checked = !input.checked; 
         });
         e.stopPropagation();
-    }
+    };
+
+    onChangeFolderStatus = (e: any) => {
+        this.parent.folderingMethod = e.target.value;
+    };
 
     public render(): HTMLElement {
         const data: any = this.parent.activeGenerator ? this.generateCheckboxes() : {};
         const checkboxDivs = data.elems;
         const checkboxes = data.checkboxes;
+
+        const folderingOptions = [];
+        {
+            for(const key in FolderingMethod) {
+                const val = FolderingMethod[key];
+                folderingOptions.push(<option value={val}>{val}</option>)
+            }
+        }
 
         const selectionOptions = [];
         {
@@ -91,6 +115,11 @@ export default class PickMacroGeneratorsDialog extends DialogBase<null> {
                             <button className="btn" onClick={this.onToggleAll}>Toggle All</button>
                             {checkboxDivs}
                             <hr />
+
+                            <select value={this.parent.folderingMethod} onChange={this.onChangeFolderStatus}>
+                                {folderingOptions}
+                            </select>
+
                             <CheckboxWithText
                                 ignoreToggleAll
                                 checked={this.parent.setIsTokenAction}

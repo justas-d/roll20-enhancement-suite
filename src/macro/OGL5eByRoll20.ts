@@ -1,84 +1,75 @@
-import { IMacroGenerator, MacroFactoryTable, ActionTypeTable} from '../modules/MacroGenerator/IMacroGenerator'
+import {
+    IMacroGenerator,
+    IMacroFactory, IGeneratedMacro
+} from '../modules/MacroGenerator/IMacroGenerator'
 import { Character } from 'roll20';
-
-const types: ActionTypeTable = {
-    npcAction: "NPC Actions",
-    npcLegendaryAction: "NPC Legendary Actions",
-    npcTrait: "NPC Traits",
-    npcReaction: "NPC Reactions",
-    playerAttack: "Player Attacks",
-    playerTool: "Player Tools",
-    playerTrait: "Player Traits",
-    spellbookCantrip: "Spellbook Cantrips",
-    spellbookLvl1: "Spellbook Level 1",
-    spellbookLvl2: "Spellbook Level 2",
-    spellbookLvl3: "Spellbook Level 3",
-    spellbookLvl4: "Spellbook Level 4",
-    spellbookLvl5: "Spellbook Level 5",
-    spellbookLvl6: "Spellbook Level 6",
-    spellbookLvl7: "Spellbook Level 7",
-    spellbookLvl8: "Spellbook Level 8",
-    spellbookLvl9: "Spellbook Level 9",
-};
-
-let macroFactories: MacroFactoryTable = {};
+import lexCompare from "../utils/LexicographicalComparator";
 
 let dataSet = {
-    npcAction: {
+    "NPC Actions": {
         group: "repeating_npcaction",
         name: "name",
-        macro: idx => `%{selected|repeating_npcaction_$${idx}_npc_action}`
+        macro: idx => `selected|repeating_npcaction_$${idx}_npc_action`,
+        canMakeFolder: true,
     },
 
-    npcLegendaryAction: {
+    "NPC Legendary Actions": {
         group: "repeating_npcaction-l",
         name: "name",
-        macro: idx => `%{selected|repeating_npcaction-l_$${idx}_npc_action}`
+        macro: idx => `selected|repeating_npcaction-l_$${idx}_npc_action`,
+        canMakeFolder: true,
     },
 
-    npcTrait: {
+    "NPC Traits": {
         group: "repeating_npctrait",
         name: "name",
-        macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npctrait_$${idx}_name}}} {{description=@{selected|repeating_npctrait_$${idx}_desc}}}`
+        macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npctrait_$${idx}_name}}} {{description=@{selected|repeating_npctrait_$${idx}_desc}}}`,
+        canMakeFolder: false,
     },
 
-    npcReaction: {
+    "NPC Reactions": {
         group: "repeating_npcreaction",
         name: "name",
         macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npcreaction_$${idx}_name}}} {{description=@{selected|repeating_npcreaction_$${idx}_desc}}}`,
         nameMod: name => "Reaction:" + name,
+        canMakeFolder: false,
     },
 
-    playerAttack: {
+    "Player Attacks": {
         group: "repeating_attack",
         name: "atkname",
-        macro: idx => `%{selected|repeating_attack_$${idx}_attack}`,
+        macro: idx => `selected|repeating_attack_$${idx}_attack`,
+        canMakeFolder: true,
     },
 
-    playerTool: {
+    "Player Tools": {
         group: "repeating_tool",
         name: "toolname",
-        macro: idx => `%{selected|repeating_tool_$${idx}_tool}`
+        macro: idx => `selected|repeating_tool_$${idx}_tool`,
+        canMakeFolder: true,
     },
 
-    playerTrait: {
+    "Player Traits": {
         group: "repeating_traits",
         name: "name",
-        macro: idx => `@{selected|wtype}&{template:traits} @{selected|charname_output} {{name=@{selected|repeating_traits_$${idx}_name}}} {{source=@{selected|repeating_traits_$${idx}_source}: @{selected|repeating_traits_$${idx}_source_type}}} {{description=@{selected|repeating_traits_$${idx}_description}}}`
+        macro: idx => `@{selected|wtype}&{template:traits} @{selected|charname_output} {{name=@{selected|repeating_traits_$${idx}_name}}} {{source=@{selected|repeating_traits_$${idx}_source}: @{selected|repeating_traits_$${idx}_source_type}}} {{description=@{selected|repeating_traits_$${idx}_description}}}`,
+        canMakeFolder: false,
     },
 
-    spellbookCantrip: {
+    "Spellbook Cantrips": {
         group: "repeating_spell-cantrip",
         name: "spellname",
-        macro: idx => `%{selected|repeating_spell-cantrip_$${idx}_spell}`
+        macro: idx => `selected|repeating_spell-cantrip_$${idx}_spell`,
+        canMakeFolder: true,
     }
 };
 
 for (let lvl = 1; lvl <= 9; lvl++) {
-    dataSet[`spellbookLvl${lvl}`] = {
+    dataSet[`Spellbook Level ${lvl}`] = {
         group: `repeating_spell-${lvl}`,
         name: "spellname",
-        macro: idx => `%{selected|repeating_spell-${lvl}_$${idx}_spell}`
+        macro: idx => `selected|repeating_spell-${lvl}_$${idx}_spell`,
+        canMakeFolder: true,
     }
 }
 
@@ -118,7 +109,7 @@ const generateMacroData = (char: Character,
                 "Name Attribute Name": nameAttrib,
                 "Character name": char.get("name"),
                 "Character UUID": char.get("id")
-            });;
+            });
 
             continue;
         }
@@ -137,16 +128,48 @@ const generateMacroData = (char: Character,
     return orderedNames;
 };
 
-for (let actionType in types) {
-    const data = dataSet[actionType];
-    macroFactories[actionType] = char => generateMacroData(char, data.group, data.name, data.macro, data.nameMod);
+let macroFactories: IMacroFactory[] = [];
+
+for (let name in dataSet) {
+
+    const data = dataSet[name];
+
+    let folderGenerator = undefined;
+
+    if(data.canMakeFolder) {
+        folderGenerator = (char: Character) => {
+
+            const macros = generateMacroData(char, data.group, data.name, data.macro, data.nameMod);
+
+            macros.sort((a, b) => lexCompare(a, b, (d: IGeneratedMacro) => d.name));
+
+            let retval: string[] = [];
+
+            for(const macro of macros) {
+                retval.push(`[${macro.name}](~${macro.macro})`);
+            }
+
+            return retval;
+        };
+    }
+
+    const normalMacro = data.canMakeFolder
+        ? (idx) => `%{${data.macro(idx)}}`
+        : data.macro;
+
+    macroFactories.push({
+        name: name,
+        create: char => generateMacroData(char, data.group, data.name, normalMacro, data.nameMod),
+        createFolderEntries: folderGenerator,
+    })
 }
 
+const id = "D&D 5e OGL by Roll20";
+
 const OGL5eByRoll20: IMacroGenerator = {
-    actionTypes: types,
+    id: id,
+    name: id,
     macroFactories: macroFactories,
-    id: "D&D 5e OGL by Roll20",
-    name: "D&D 5e OGL by Roll20",
 };
 
 export default OGL5eByRoll20;
