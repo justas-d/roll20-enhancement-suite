@@ -4,6 +4,7 @@ export interface IMacroFactory {
     name: string;
     create: (char: Character) => IGeneratedMacro[];
     createFolderEntries: (char: Character) => string[];
+    categoryNameModifier?: (name: string) => string;
 }
 
 export interface IMacroGenerator {

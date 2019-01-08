@@ -70,6 +70,7 @@ for (let lvl = 1; lvl <= 9; lvl++) {
         name: "spellname",
         macro: idx => `selected|repeating_spell-${lvl}_$${idx}_spell`,
         canMakeFolder: true,
+        categoryMod: (name, idx) => `${name} (@{Selected|lvl${lvl}_slots_expended}/@{Selected|lvl${lvl}_slots_total})`,
     }
 }
 
@@ -140,7 +141,6 @@ for (let name in dataSet) {
         folderGenerator = (char: Character) => {
 
             const macros = generateMacroData(char, data.group, data.name, data.macro, data.nameMod);
-
             macros.sort((a, b) => lexCompare(a, b, (d: IGeneratedMacro) => d.name));
 
             let retval: string[] = [];
@@ -161,6 +161,7 @@ for (let name in dataSet) {
         name: name,
         create: char => generateMacroData(char, data.group, data.name, normalMacro, data.nameMod),
         createFolderEntries: folderGenerator,
+        categoryNameModifier: data.categoryMod
     })
 }
 

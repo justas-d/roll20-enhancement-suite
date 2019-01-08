@@ -89,7 +89,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         let data: IGeneratedMacro[] = [];
 
         // @COPY-PASTE
-        let uberFolderBuffer = `@{wtype} &{template:default}{{name=@{character_name}}}`;
+        let uberFolderBuffer = `/w @{Selected} @{wtype} &{template:default}{{name=@{character_name}}}`;
         let numUberFolderMacros = 0;
 
         for (let factoryId in this.activeGenerator.macroFactories) {
@@ -111,7 +111,9 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
                 switch(this.folderingMethod) {
                     case FolderingMethod.NoFolder: break;
                     case FolderingMethod.SmallFolders: {
-                        let buffer = `@{wtype} &{template:default}{{name=@{character_name} ${factory.name}}}`;
+                        const name = factory.categoryNameModifier ? factory.categoryNameModifier(factory.name) : factory.name;
+
+                        let buffer = `/w @{Selected} @{wtype} &{template:default}{{name=@{character_name} ${name}}}`;
 
                         for (const str of folder) {
                             buffer += `{{${str}}}`;
@@ -133,7 +135,9 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
                             buffer += str;
                         }
 
-                        uberFolderBuffer += `{{• ${factory.name}=${buffer}}}`;
+                        // @COPY-PASTE
+                        const name = factory.categoryNameModifier ? factory.categoryNameModifier(factory.name) : factory.name;
+                        uberFolderBuffer += `{{• ${name}=${buffer}}}`;
 
                         break;
                     }
