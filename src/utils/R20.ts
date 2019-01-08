@@ -82,6 +82,16 @@ namespace R20 {
         return window.Campaign;
     }
 
+    export const canEditCharacter = (char: Character): boolean => {
+        const controlledby = char.attributes.controlledby;
+
+        if(R20.isGM()) return true;
+        if(controlledby.includes("all")) return true;
+        if(controlledby.includes(R20.getCurrentPlayer().id)) return true;
+
+        return false;
+    };
+
     export function getHandout(uuid: string): Handout {
         return window.Campaign.handouts.get(uuid);
     }

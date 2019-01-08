@@ -814,7 +814,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
     };
 
     public setup = () => {
-        this.sheetTab = SheetTab.add("Token Editor", this.renderWidget, this.onShowTab);
+        this.sheetTab = SheetTab.add("Token Editor", this.renderWidget, this.onShowTab, R20.canEditCharacter);
     };
 
     public dispose = () => {

@@ -249,7 +249,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
         this.noMacrosDialog = new NoMacrosDialog();
 
-        this.sheetTab = SheetTab.add("Macro Generator", this.renderSheet);
+        this.sheetTab = SheetTab.add("Macro Generator", this.renderSheet, null, R20.canEditCharacter);
     }
 
     public dispose() {

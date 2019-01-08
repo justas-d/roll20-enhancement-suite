@@ -1,6 +1,7 @@
 import { R20Module } from '../../utils/R20Module'
 import { DOM } from '../../utils/DOM'
 import { SheetTab } from '../../utils/SheetTab';
+import { R20 } from "../../utils/R20";
 
 const charIdAttribute = "data-characterid";
 
@@ -86,6 +87,15 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         if ($(target).find(".charactereditor").length > 0) return;
 
         const characterId = target.getAttribute(charIdAttribute);
+
+        if(tab.predicate) {
+
+            const char = R20.getCharacter(characterId);
+
+            if(!tab.predicate(char)) {
+                return;
+            }
+        }
 
         const nav = (
             <li>

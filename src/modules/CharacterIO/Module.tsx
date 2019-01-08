@@ -4,7 +4,7 @@ import { R20 } from '../../utils/R20'
 import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../../utils/DOM'
 import { saveAs } from 'save-as'
 import { findByIdAndRemove, readFile, safeParseJson } from '../../utils/MiscUtils';
-import { SheetTab } from '../../utils/SheetTab';
+import {SheetTab, SheetTabSheetInstanceData} from '../../utils/SheetTab';
 import { LoadingDialog } from '../../utils/DialogComponents';
 
 interface IProcessResultData {
@@ -127,6 +127,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     };
 
     private getPc = (target: HTMLElement) => {
+        if(!target) return null;
+
         let elem = null;
         if (target.hasAttribute("data-characterid")) {
             elem = target;
@@ -135,6 +137,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
             if (!query) return null;
             elem = query[0];
         }
+
+        if(!elem) return null;
 
         const pcId = elem.getAttribute("data-characterid");
         if (!pcId) return null;
@@ -194,9 +198,17 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         overwriteButton.disabled = !(e.target.files.length > 0);
     }
 
-    private renderWidget = () => {
-        const style = { marginRight: "8px" }
-        const headerStyle = { marginBottom: "10px", marginTop: "10px" }
+    private renderWidget = (data: SheetTabSheetInstanceData<any>) => {
+        const style = { marginRight: "8px" };
+        const headerStyle = { marginBottom: "10px", marginTop: "10px" };
+
+        const char = R20.getCharacter(data.characterId);
+        if (!char) {
+            return <p>Couldn't find the character associated with this dialog box! Tell a programmer.</p>
+        }
+
+        const canEdit = R20.canEditCharacter(char);
+
         return (
             <div>
                 <h3 style={headerStyle}>Export</h3>
@@ -206,17 +218,23 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
                 </button>
                 </div>
 
-                <h3 style={headerStyle}>Overwrite</h3>
-                <div className="r20es-indent">
-                    <button onClick={this.onOverwriteClick} disabled style={style} className={["btn", CharacterIOModule.overwriteButtonClass]}>
-                        Overwrite this Character with:
-                    </button>
 
-                    <input type="file" style={{ display: "inline" }} onChange={this.onFileChange} />
+                {canEdit &&
+                <div>
+                    <h3 style={headerStyle}>Overwrite</h3>
+                    <div className="r20es-indent">
+                        <button onClick={this.onOverwriteClick} disabled style={style}
+                                className={["btn", CharacterIOModule.overwriteButtonClass]}>
+                            Overwrite this Character with:
+                        </button>
+
+                        <input type="file" style={{display: "inline"}} onChange={this.onFileChange}/>
+                    </div>
                 </div>
+                }
             </div>
         );
-    }
+    };
 
     public setup = () => {
         this.sheetTab = SheetTab.add("Export & Overwrite", this.renderWidget);

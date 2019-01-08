@@ -34,9 +34,11 @@ export class SheetTabSheetInstanceData<T> {
     public userData: T;
     public parent: SheetTab<T>;
     public contentRoot: HTMLElement;
+    public characterId: string;
 
-    constructor(parent: SheetTab<T>) {
+    constructor(parent: SheetTab<T>, charId: string) {
         this.parent = parent;
+        this.characterId = charId;
     }
 
     public rerender() {
@@ -76,6 +78,8 @@ export class SheetTab<T> {
     public name: string;
     public renderFx: (instance?: SheetTabSheetInstanceData<T>) => HTMLElement;
     public id: string;
+
+    public predicate: ((char: Character) => boolean) | null;
     public onShow: ((instance?: SheetTabSheetInstanceData<T>) => void) | null;
     public byIdSheetData: {[charId: string]: SheetTabSheetInstanceData<T>} = {};
 
@@ -95,7 +99,7 @@ export class SheetTab<T> {
 
     public getInstanceData(charId: string): SheetTabSheetInstanceData<T> {
         if(!(charId in this.byIdSheetData)) {
-            this.byIdSheetData[charId] = new SheetTabSheetInstanceData(this);
+            this.byIdSheetData[charId] = new SheetTabSheetInstanceData(this, charId);
         }
         return this.byIdSheetData[charId];
     }
@@ -114,9 +118,12 @@ export class SheetTab<T> {
 
     public static add<T>(name: string,
                       renderFx: (instance?: SheetTabSheetInstanceData<T>) => HTMLElement,
-                      onShow?: (instance?: SheetTabSheetInstanceData<T>) => void) {
+                      onShow?: (instance?: SheetTabSheetInstanceData<T>) => void,
+                      predicate? : (char: Character) => boolean) {
         const data = SheetTab._getInternalData();
         let tab = new SheetTab(name, renderFx, `r20es-character-sheet-tab-${data.idTop++}`, onShow);
+        tab.predicate = predicate;
+
         data.addTab(tab);
 
         if (typeof(data.rescanFunc) === "function") {
