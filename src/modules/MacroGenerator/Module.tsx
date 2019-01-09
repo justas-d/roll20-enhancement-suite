@@ -4,7 +4,7 @@ import {R20} from "../../utils/R20";
 import {LoadingDialog} from "../../utils/DialogComponents";
 import {SheetTab} from "../../utils/SheetTab";
 import {replaceAll} from "../../utils/MiscUtils";
-import {IGeneratedMacro, IMacroDiff, IMacroGenerator} from "./IMacroGenerator";
+import {IGeneratedMacro, IMacroDiff, IMacroFactory, IMacroGenerator} from "./IMacroGenerator";
 import OGL5eByRoll20 from "../../macro/OGL5eByRoll20";
 import PickMacroGeneratorsDialog from "./PickMacroGeneratorsDialog";
 import {Character, CharacterAbility} from "roll20";
@@ -88,8 +88,10 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         // generate an array of macros in wanted categories
         let data: IGeneratedMacro[] = [];
 
-        // @COPY-PASTE
-        let uberFolderBuffer = `/w @{Selected} @{wtype} &{template:default}{{name=@{character_name}}}`;
+        const makeFolderHeader = (title: string= "") => `/w @{character_name} @{wtype} &{template:default}{{name=@{character_name} ${title}}}`;
+        const getCategoryName = (factory: IMacroFactory) => factory.categoryNameModifier ? factory.categoryNameModifier(factory.name) : factory.name;
+
+        let uberFolderBuffer = makeFolderHeader();
         let numUberFolderMacros = 0;
 
         for (let factoryId in this.activeGenerator.macroFactories) {
@@ -111,9 +113,9 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
                 switch(this.folderingMethod) {
                     case FolderingMethod.NoFolder: break;
                     case FolderingMethod.SmallFolders: {
-                        const name = factory.categoryNameModifier ? factory.categoryNameModifier(factory.name) : factory.name;
+                        const name = getCategoryName(factory);
 
-                        let buffer = `/w @{Selected} @{wtype} &{template:default}{{name=@{character_name} ${name}}}`;
+                        let buffer = makeFolderHeader(name);
 
                         for (const str of folder) {
                             buffer += `{{${str}}}`;
@@ -135,8 +137,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
                             buffer += str;
                         }
 
-                        // @COPY-PASTE
-                        const name = factory.categoryNameModifier ? factory.categoryNameModifier(factory.name) : factory.name;
+                        const name = getCategoryName(factory);
                         uberFolderBuffer += `{{• ${name}=${buffer}}}`;
 
                         break;
