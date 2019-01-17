@@ -12,10 +12,6 @@ export default MakeConfig(__dirname, {
 
     category: Category.canvas,
 
-    media: {
-        "night_mode.png": "The night style in action."
-    },
-
     configView: {
         overrideBackground: {
             display: "Force the canvas background to be black?",
