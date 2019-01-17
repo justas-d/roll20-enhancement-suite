@@ -1,5 +1,5 @@
 {
-    "current": "1.10.1",
+    "current": "1.11.0",
     "versions": {
         "1.4.0": {
             "info": {
@@ -621,6 +621,30 @@
                 {
                     "id": "",
                     "content": "Macro Generator: show remaining/max spell slots in spell folders"
+                }
+            ]
+        },
+        "1.11.0": {
+            "info": {
+                "title": "Disable Player Drawing",
+                "media": "disable_drawing.png"
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added the Disable Player Drawing module which lets you chose which players can draw/write text."
+                },
+                {
+                    "id": "",
+                    "content": "NightMode: remove all styling."
+                },
+                {
+                    "id": "",
+                    "content": "Settings: make Apply & Close prettier."
+                },
+                {
+                    "id": "",
+                    "content": "Updated contributors."
                 }
             ]
         }
