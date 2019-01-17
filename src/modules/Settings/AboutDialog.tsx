@@ -74,7 +74,7 @@ export default class AboutDialog extends DialogBase<null> {
                         <div>
                             <b>With contributions from</b>
                             <div style={{maxWidth: "180px"}}>
-                                Mike, Aaron, Blurn Glanstone, Tobyn, Fredrik, Ryan Wenneker, BuckeyeFan79, Jakob, Daniel (Daj), Morris Kennedy, KarateHawk, Jason Backus, Tielc, Spencer Oldemeyer
+                                Mike, Aaron, Blurn Glanstone, Tobyn, Fredrik, Ryan Wenneker, BuckeyeFan79, Jakob, Daniel (Daj), Morris Kennedy, KarateHawk, Jason Backus, Tielc, Spencer Oldemeyer, Hawks
                             </div>
                         </div>
                     </div>
