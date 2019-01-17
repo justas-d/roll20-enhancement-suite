@@ -2,6 +2,7 @@ import { R20Module } from '../../utils/R20Module'
 import { DOM } from '../../utils/DOM'
 import {PageAttributes, FirebaseReference, PathTokenAttributes, TextTokenAttributes, Page, ObjectStorage, SyncObject} from 'roll20';
 import {R20} from "../../utils/R20";
+import {Optional} from "../../utils/TypescriptUtils";
 
 interface MapObj {
     page_id: string,
@@ -13,8 +14,12 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
         super(__dirname);
     }
 
+    _observer: MutationObserver;
     _shouldIgnoreEvents = false;
-
+    _muteButtonClass = "r20es-mute-drawing-button";
+    _muteButtonDisablePicClass = "r20es-mute-drawing-button-disable";
+    _playerCardQuery = "#playerzone .player";
+    _storageKey = "r20es_player_ids_by_who_can_draw";
 
     handleObjectPlacement = (data: FirebaseReference<MapObj>, dataPoolGetter: (page: Page) => ObjectStorage<SyncObject<MapObj>>) => {
         if(this._shouldIgnoreEvents) {
@@ -42,7 +47,13 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
     };
 
     canPlaceObjects = (playerId: string) => {
-        return playerId != "-LUNfvQAJY-BzHfFV0Ch";
+        const data = this.getStorage();
+
+        if(typeof data[playerId] === "boolean") {
+            return data[playerId];
+        }
+
+        return true;
     };
 
     onTextAdded = (firebaseObject: FirebaseReference<TextTokenAttributes>) => {
@@ -60,7 +71,7 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
 
     reportThatWeDontHaveTheInnerPageObject = () => {
         console.error(`[DisablePlayerDrawings] find inner page object after receiving firebase event!`);
-    }
+    };
 
     reportThatWeDontHaveThePageObject = () => {
         console.error("[DisablePlayerDrawings] onPageAdded failed to find wrapped page object after receiving firebase event!");
@@ -89,6 +100,196 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
         this.unhookPage(page);
     };
 
+    uiIsPlayerSquare = (node: Node): boolean => {
+        if(!node["classList"]) return false;
+        if(!node["id"]) return false;
+
+        const el = node as HTMLElement;
+        return el.classList.contains("player") && el.id.startsWith("player_");
+    };
+
+    getPlayerSquareById = (playerId: string): Optional<HTMLElement> => {
+
+        const query = $(this._playerCardQuery) as any as HTMLElement[];
+        for(const el of query) {
+            if (!this.uiIsPlayerSquare(el)) {
+                continue;
+            }
+
+            const id = el.id.replace("player_", "");
+            if(id === playerId) {
+                return el;
+            }
+        }
+
+        return undefined;
+    };
+
+    getControlsEl = (root: HTMLElement): Optional<HTMLElement> => {
+        return $(root).find(".av-controls")[0] as HTMLElement;
+    };
+
+    getStorage = () => {
+        return window.Campaign.attributes[this._storageKey] || {};
+    };
+
+    saveStorage = (data: {[id: string]: boolean}) => {
+        window.Campaign.save({
+            [this._storageKey]: data
+        });
+    };
+
+    toggleMute = (playerId: string) => {
+
+        const data = this.getStorage();
+
+        if(typeof data[playerId] !== "boolean") {
+            data[playerId] = false;
+        } else {
+            data[playerId] = !data[playerId];
+        }
+
+        const newVal = data[playerId];
+
+        this.saveStorage(data);
+        console.log(data);
+
+        const square = this.getPlayerSquareById(playerId);
+        if(!square) {
+            this.uiReportMissingPlayerSquare(playerId);
+            return;
+        }
+
+        const controls = this.getControlsEl(square);
+        if(!controls) {
+            this.uiReportMissingControlsEl(square);
+            return;
+        }
+
+        const button = this.uiGetMuteButton(controls);
+        const disablePic = $(button).find(`.${this._muteButtonDisablePicClass}`)[0] as HTMLElement;
+        disablePic.style.visibility = newVal ? "hidden" : "visible";
+    };
+
+    uiOnMuteButtonClick = (e: Event) => {
+        const target = e.target as HTMLElement;
+        const root = $(target).closest(this._playerCardQuery)[0];
+
+        if(!root) {
+            this.uiReportMissingButtonRoot(target);
+            return;
+        }
+
+        const id = root.id.replace("player_", "");
+
+        this.toggleMute(id);
+    };
+
+    uiReportMissingPlayerSquare= (pid: string) => {
+        console.error("[DisablePlayerDrawing] failed to find root player square div for id: ", pid);
+    };
+
+    uiReportMissingButtonRoot = (mute: HTMLElement) => {
+        console.error("[DisablePlayerDrawing] failed to find root player square div after clicking mute button: ", mute);
+    };
+
+    uiReportMissingControlsEl = (root: HTMLElement) => {
+        console.error("[DisablePlayerDrawing] failed to find controls div in root player square: ", root);
+    };
+
+    uiGetMuteButton = (controls: HTMLElement): HTMLElement => {
+        return $(controls).find(`.${this._muteButtonClass}`)[0];
+    };
+
+    uiAddMuteButton = (root: HTMLElement) => {
+        console.log("add mute button to", root);
+        const controls = this.getControlsEl(root);
+
+        if(!controls) {
+            this.uiReportMissingControlsEl(root);
+            return;
+        }
+
+        // don't add duplicates
+        if(this.uiGetMuteButton(controls)) {
+            return;
+        }
+
+        const style = {
+            position: "absolute",
+            width: "30px",
+            height: "30px",
+            top: "30px",
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            right: "0",
+            justifyContent: "center",
+            alignItems: "center",
+            display: "flex",
+            cursor: "pointer"
+        };
+
+        const button = (
+            <div className={this._muteButtonClass} style={style}>
+                <span className="pictos" style={{
+                    position: "absolute",
+                    fontSize: "18px"
+                }}>p</span>
+                <span className={`pictos ${this._muteButtonDisablePicClass}`} style={{
+                    position: "absolute",
+                    fontSize: "22px",
+                    visibility: "hidden",
+                }}>d</span>
+            </div>
+        );
+
+        button.addEventListener("click", this.uiOnMuteButtonClick);
+
+        controls.appendChild(button);
+    };
+
+    uiRemoveMuteButton = (root: HTMLElement) => {
+        const controls = this.getControlsEl(root);
+
+        if(!controls) {
+            this.uiReportMissingControlsEl(root);
+            return;
+        }
+
+        const button = this.uiGetMuteButton(controls);
+        if(!button) {
+            return;
+        }
+
+        button.remove();
+    };
+
+    observerCallback = (mutations: MutationRecord[]) => {
+        for(const mut of mutations) {
+
+            if(mut.target["id"] !== "playerzone")  {
+                continue;
+            }
+
+            mut.addedNodes.forEach(n => {
+                if(!this.uiIsPlayerSquare(n)) {
+                    return;
+                }
+
+                this.uiAddMuteButton(n as HTMLElement);
+            });
+        }
+    };
+
+    public uiForEachPlayerSquare = (fx: (el: HTMLElement) => void) => {
+        document.querySelectorAll(this._playerCardQuery).forEach(el => {
+            if(!this.uiIsPlayerSquare(el)) {
+                return;
+            }
+
+            fx(el as HTMLElement);
+        })
+    };
+
     public setup = () => {
         if(!R20.isGM()) {
             return;
@@ -113,6 +314,11 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
         setTimeout(() => {
             this._shouldIgnoreEvents = false;
         }, 1000);
+
+        this._observer = new MutationObserver(this.observerCallback);
+        this._observer.observe(document.body, { childList: true, subtree: true });
+
+        this.uiForEachPlayerSquare(this.uiAddMuteButton);
     };
 
     public dispose = () => {
@@ -122,12 +328,16 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
             return;
         }
 
+        this._observer.disconnect();
+
         for(const page of R20.getAllPages()) {
             this.unhookPage(page);
         }
 
         window.Campaign.pages.backboneFirebase.reference.off("child_added", this.onPageAdded);
         window.Campaign.pages.backboneFirebase.reference.off("child_removed", this.onPageRemoved);
+
+        this.uiForEachPlayerSquare(this.uiRemoveMuteButton);
     }
 }
 
