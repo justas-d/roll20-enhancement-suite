@@ -85,8 +85,13 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
             return;
         }
 
-        page.thepaths.backboneFirebase.reference.on("child_added", this.onDrawingAdded);
-        page.thetexts.backboneFirebase.reference.on("child_added", this.onTextAdded);
+        // NOTE(justas): initialization of backboneFirebase.reference is
+        // delayed a bit here for whatever reason by roll20
+        // So we're delaying too
+        setTimeout(() => {
+            page.thepaths.backboneFirebase.reference.on("child_added", this.onDrawingAdded);
+            page.thetexts.backboneFirebase.reference.on("child_added", this.onTextAdded);
+        }, 1000);
     };
 
     onPageRemoved = (firebaseObject: FirebaseReference<PageAttributes>) => {
