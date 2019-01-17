@@ -200,13 +200,14 @@ declare namespace Roll20 {
         characters: ObjectStorage<Character>;
         rollabletables: ObjectStorage<RollableTable>;
         initiativewindow: InitiativeTracker;
-        pages: ObjectStorage<Page>;
+        pages: ObjectStorageWithBackbone<Page>;
 
         activePage: () => Page;
     }
 
     export interface MapTokenAttributes {
         page_id: string;
+        controlledby: string;
     }
 
     export interface PageAttributes {
@@ -244,9 +245,28 @@ declare namespace Roll20 {
     }
 
     export interface Page extends SyncObject<PageAttributes> {
-        thepaths: ObjectStorage<PathToken> | null;
-        thegraphics: ObjectStorage<Token> | null;
-        thetexts: ObjectStorage<TextToken> | null;
+        thepaths: ObjectStorageWithBackbone<PathToken> | null;
+        thegraphics: ObjectStorageWithBackbone<Token> | null;
+        thetexts: ObjectStorageWithBackbone<TextToken> | null;
+    }
+
+    export interface BackboneFirebase {
+        reference: Firebase
+    }
+
+    export type FirebaseEventTypes = "value" | "child_added" | "child_removed" | "child_changed" | "child_moved";
+
+    interface FirebaseReference<T> {
+        val: () => T;
+        key: () => string;
+    }
+
+    export interface Firebase {
+        // https://www.firebase.com/docs/web/api/query/on.html
+        on: (event: FirebaseEventTypes, callback: Function) => void;
+
+        // https://www.firebase.com/docs/web/api/query/off.html
+        off: (event?: FirebaseEventTypes, callback?: Function) => void;
     }
 
     export interface TextTokenAttributes extends MapTokenAttributes {}
@@ -470,6 +490,10 @@ declare namespace Roll20 {
 
     export interface GlobalJukebox {
         playlist: ObjectStorage<JukeboxSong>;
+    }
+
+    export interface ObjectStorageWithBackbone<T> extends ObjectStorage<T> {
+        backboneFirebase: BackboneFirebase;
     }
 
     export interface ObjectStorage<T> {

@@ -19,6 +19,7 @@ import {
 } from "roll20";
 import {IApplyableSong} from "./JukeboxIO";
 import {EventSubscriber} from "./EventSubscriber";
+import {Optional} from "./TypescriptUtils";
 
 namespace R20 {
 
@@ -174,6 +175,10 @@ namespace R20 {
 
     export const getCanvasOffsetY= (): number => {
         return window.d20.engine.currentCanvasOffset[1];
+    };
+
+    export const getPageById = (id: string): Optional<Page> => {
+        return window.Campaign.pages.get(id);
     };
 
     export function isGM(): boolean {
