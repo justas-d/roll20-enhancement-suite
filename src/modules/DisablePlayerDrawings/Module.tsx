@@ -105,7 +105,7 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
         if(!node["id"]) return false;
 
         const el = node as HTMLElement;
-        return el.classList.contains("player") && el.id.startsWith("player_");
+        return el.classList.contains("player") && el.id.startsWith("player_") && !el.id.includes(R20.getCurrentPlayer().id);
     };
 
     getPlayerSquareById = (playerId: string): Optional<HTMLElement> => {
@@ -116,17 +116,13 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
                 continue;
             }
 
-            const id = el.id.replace("player_", "");
+            const id = this.uiGetPlayerIdFromRoot(el);
             if(id === playerId) {
                 return el;
             }
         }
 
         return undefined;
-    };
-
-    getControlsEl = (root: HTMLElement): Optional<HTMLElement> => {
-        return $(root).find(".av-controls")[0] as HTMLElement;
     };
 
     getStorage = () => {
@@ -160,13 +156,7 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
             return;
         }
 
-        const controls = this.getControlsEl(square);
-        if(!controls) {
-            this.uiReportMissingControlsEl(square);
-            return;
-        }
-
-        const button = this.uiGetMuteButton(controls);
+        const button = this.uiGetMuteButton(square);
         const disablePic = $(button).find(`.${this._muteButtonDisablePicClass}`)[0] as HTMLElement;
         disablePic.style.visibility = newVal ? "hidden" : "visible";
     };
@@ -180,9 +170,7 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
             return;
         }
 
-        const id = root.id.replace("player_", "");
-
-        this.toggleMute(id);
+        this.toggleMute(this.uiGetPlayerIdFromRoot(root));
     };
 
     uiReportMissingPlayerSquare= (pid: string) => {
@@ -193,25 +181,19 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
         console.error("[DisablePlayerDrawing] failed to find root player square div after clicking mute button: ", mute);
     };
 
-    uiReportMissingControlsEl = (root: HTMLElement) => {
-        console.error("[DisablePlayerDrawing] failed to find controls div in root player square: ", root);
-    };
-
     uiGetMuteButton = (controls: HTMLElement): HTMLElement => {
         return $(controls).find(`.${this._muteButtonClass}`)[0];
     };
 
+    uiGetPlayerIdFromRoot = (root: HTMLElement) => {
+        return root.id.replace("player_", "");
+    };
+
     uiAddMuteButton = (root: HTMLElement) => {
         console.log("add mute button to", root);
-        const controls = this.getControlsEl(root);
-
-        if(!controls) {
-            this.uiReportMissingControlsEl(root);
-            return;
-        }
 
         // don't add duplicates
-        if(this.uiGetMuteButton(controls)) {
+        if(this.uiGetMuteButton(root)) {
             return;
         }
 
@@ -219,9 +201,9 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
             position: "absolute",
             width: "30px",
             height: "30px",
-            top: "30px",
+            top: "0px",
             backgroundColor: "rgba(255, 255, 255, 0.5)",
-            right: "0",
+            left: "0px",
             justifyContent: "center",
             alignItems: "center",
             display: "flex",
@@ -237,25 +219,18 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
                 <span className={`pictos ${this._muteButtonDisablePicClass}`} style={{
                     position: "absolute",
                     fontSize: "22px",
-                    visibility: "hidden",
+                    visibility: this.canPlaceObjects(this.uiGetPlayerIdFromRoot(root)) ? "hidden" : "visible",
                 }}>d</span>
             </div>
         );
 
         button.addEventListener("click", this.uiOnMuteButtonClick);
 
-        controls.appendChild(button);
+        root.appendChild(button);
     };
 
     uiRemoveMuteButton = (root: HTMLElement) => {
-        const controls = this.getControlsEl(root);
-
-        if(!controls) {
-            this.uiReportMissingControlsEl(root);
-            return;
-        }
-
-        const button = this.uiGetMuteButton(controls);
+        const button = this.uiGetMuteButton(root);
         if(!button) {
             return;
         }
