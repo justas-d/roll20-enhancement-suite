@@ -85,7 +85,7 @@ protected render = (): HTMLElement => {
                     <DialogFooterContent>
                         <input className="btn" type="button" onClick={this.openAbout} value="About" />
                         <input className="btn" style={{marginLeft: "8px"}} type="button" onClick={this.openChangelog} value="Changelog" />
-                        <input className="btn" style={{ float: "right" }} type="button" onClick={this.close} value="Apply & Close" />
+                        <input className="btn btn-primary" style={{ float: "right" }} type="button" onClick={this.close} value="Apply & Close" />
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog> as any
