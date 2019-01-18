@@ -12,6 +12,6 @@ export default class StringEdit extends ConfigEditBase {
     }
 
     protected internalRender = (): HTMLElement =>  {
-        return <input className="compact" type="text" onChange={this.onChange} value={this.getValue() || ""} /> as any
+        return <input style={{width: "90%"}} className="compact" type="text" onChange={this.onChange} value={this.getValue() || ""} /> as any
     }
 };

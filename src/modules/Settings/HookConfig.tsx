@@ -55,6 +55,8 @@ export default class HookConfig extends DOM.ElementBase {
         let elems = [];
 
         if (this.hook.configView ) {
+
+            let nth = 0;
             for (let cfgId in this.hook.configView) {
 
                 const cfg = this.hook.configView[cfgId];
@@ -69,14 +71,25 @@ export default class HookConfig extends DOM.ElementBase {
                 }
 
                 const Component = elemMap[cfg.type];
-                elems.push(
-                    <EditComponentWrapper
-                        Component={Component}
-                        cfgId={cfgId}
-                        display={cfg.display}
-                        hook={this.hook}
-                    />
-                );
+
+                const bgColor= nth % 2 === 0 ? "rgb(249,249,249)" : undefined;
+
+                elems.push(<div style={{
+                    borderRight: "1px lightgray solid",
+                    paddingRight: "8px",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    paddingBottom: "8px",
+                    background: bgColor
+                }}>
+                    <span title={cfgId} className="text">{cfg.display}</span>
+                </div>);
+                elems.push(<div style={{paddingLeft: "8px", background: bgColor}}>
+                    <Component  configName={cfgId} hook={this.hook} />
+                </div>);
+
+                nth++;
             }
         }
 
@@ -117,7 +130,7 @@ export default class HookConfig extends DOM.ElementBase {
                         <h3>Options</h3>
                         <hr style={{ marginTop: "4px" }} />
 
-                        <ul className="r20es-indent">
+                        <ul className="r20es-indent" style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
                             {elems}
                         </ul>
                     </div>

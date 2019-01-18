@@ -21,7 +21,7 @@ export default class DropdownEdit extends ConfigEditBase {
             vals.push(<option value={key}>{val}</option>);
         }
         return (
-            <select className="compact" onChange={this.onChange} value={this.getValue()}>
+            <select style={{width: "90%"}} className="compact" onChange={this.onChange} value={this.getValue()}>
                 {vals}
             </select> as any
         );

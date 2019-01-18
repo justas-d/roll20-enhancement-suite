@@ -23,7 +23,7 @@ export default class ColorEdit extends ConfigEditBase {
         const val = `#${cols[0].toString(16)}${cols[1].toString(16)}${cols[2].toString(16)}`;
 
         return (
-            <input onChange={this.onChange}
+            <input style={{width: "90%"}} onChange={this.onChange}
                 type="color"
                 className="compact"
                 value={val}

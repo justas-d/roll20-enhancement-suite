@@ -13,7 +13,7 @@ export default class NumberEdit extends ConfigEditBase {
 
     protected internalRender = (): HTMLElement => {
         const val = (
-            <input onChange={this.onChange}
+            <input style={{width: "90%"}} onChange={this.onChange}
                    className="compact"
                    type="number"
                    value={this.getValue()}
