@@ -1,3 +1,4 @@
+
 import { DialogBase } from "../../utils/DialogBase";
 import AboutDialog from "./AboutDialog";
 import { Dialog, DialogFooter, DialogFooterContent, DialogHeader, DialogBody } from "../../utils/DialogComponents";
@@ -14,6 +15,8 @@ export default class SettingsDialog extends DialogBase<null> {
     private about: AboutDialog = new AboutDialog();
     private changelog: ChangelogDialog = new ChangelogDialog();
 
+    _leftDiv: HTMLElement;
+
     public constructor(hooks) {
         super("r20es-settings-dialog");
         this.hooks = hooks;
@@ -24,13 +27,17 @@ export default class SettingsDialog extends DialogBase<null> {
     private onSelect = (selectedModule: any) => {
         this.activeModule = _.isEqual(this.activeModule, selectedModule) ? null : selectedModule;
 
+
+        // Note(Justas): preserve the scroll of the hook header list
+        const oldScroll = this._leftDiv.scrollTop;
         this.rerender();
-    }
+        this._leftDiv.scrollTop = oldScroll ;
+    };
 
     private openAbout = () => this.about.show();
     private openChangelog = () => this.changelog.show();
 
-protected render = (): HTMLElement => {
+    protected render = (): HTMLElement => {
 
         let byCategory = {};
 
@@ -44,6 +51,27 @@ protected render = (): HTMLElement => {
             byCategory[hook.category].push(key);
         }
 
+        const leftDiv = (
+            <div className="left">
+                {mapObj(byCategory, (bucket, categoryName) =>
+                    <div>
+                        <h3>{categoryName}</h3>
+                        <div className="r20es-indent">
+                            {bucket.map(id =>
+                                <HookHeader
+                                    selected={this.activeModule && this.activeModule.id === id}
+                                    onSelect={this.onSelect}
+                                    hook={this.hooks[id]}
+                                />)
+                            }
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+
+        this._leftDiv = leftDiv;
+
         return (
             <Dialog className="r20es-settings-flex-wrapper">
                 <DialogHeader>
@@ -51,23 +79,8 @@ protected render = (): HTMLElement => {
                 </DialogHeader>
 
                 <DialogBody>
-                    <div className="left">
-                        {mapObj(byCategory, (bucket, categoryName) =>
-                            <div>
-                                <h3>{categoryName}</h3>
-                                <div className="r20es-indent">
-                                    {bucket.map(id =>
-                                        <HookHeader
-                                            selected={this.activeModule && this.activeModule.id === id}
-                                            onSelect={this.onSelect}
-                                            hook={this.hooks[id]}
-                                        />)
-                                    }
-                                </div>
-                            </div>
-                        )}
-                    </div>
 
+                    {leftDiv}
                     {this.activeModule
                         ?
                         <div className="r20es-indent right">
