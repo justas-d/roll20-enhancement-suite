@@ -13,17 +13,17 @@ export default MakeConfig(__dirname, {
 
     configView: {
         widthThreshold: {
-            display: "The unit width of a token. Nameplates will not be scaled when a token has this widt",
+            display: "The unit width of a token. Nameplates will not be scaled when a token has this width.",
             type: ConfigViews.Number
         },
 
         scaleIfLarger: {
-            display: "Scale nameplate if token width is larger than the unit width",
+            display: "Scale nameplate if token width is larger than the unit width.",
             type: ConfigViews.Checkbox,
         },
 
         scaleIfSmaller: {
-            display: "Scale nameplate if token is smaller than the unit width",
+            display: "Scale nameplate if token is smaller than the unit width.",
             type: ConfigViews.Checkbox,
         }
     },
