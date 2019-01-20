@@ -44,7 +44,7 @@ import SetTableEntryAvatarByUrl from "./modules/SetTableEntryAvatarByUrl/Config"
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
-addCfg(SetTableEntryAvatarByUrl);
+
 addCfg(DisablePlayerDrawings);
 addCfg(TokenFromImg);
 addCfg(AdjustableOpacity);
@@ -85,6 +85,7 @@ addCfg(TokenContextMenuApi);
 addCfg(TokenLayerDrawing);
 addCfg(TransparentPaper);
 addCfg(HidePlayerList);
+addCfg(SetTableEntryAvatarByUrl);
 addCfg(Welcome);
 
 
