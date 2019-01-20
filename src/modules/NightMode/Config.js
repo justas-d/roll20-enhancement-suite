@@ -4,7 +4,11 @@ import ConfigViews from "../../utils/ConfigViews";
 export default MakeConfig(__dirname, {
     id: "nightMode",
     name: "Force dark background",
-    description: "Force a dark background",
+    description: "Force a dark background. The night mode is deprecated in favor of RedReign's Dark Theme.",
+
+    urls: {
+        "You can find it here": "https://github.com/RedReign/Roll20-Dark-Theme"
+    },
 
     category: Category.canvas,
 
