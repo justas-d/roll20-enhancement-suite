@@ -50,12 +50,23 @@ declare namespace Roll20 {
         bio?: string;
     }
 
+    export interface RollableTableEntryAttributes {
+        name: string;
+        id: string;
+        weight: number;
+        avatar: string;
+    }
+
+    export interface RollableTableEntry extends SyncObject<RollableTableEntryAttributes> {
+
+    }
+
     export interface RollableTableAttributes {
 
     }
 
     export interface RollableTable extends SyncObject<RollableTableAttributes> {
-        // todo
+        tableitems: ObjectStorage<RollableTableEntry>;
     }
 
     export interface PlayerAttributes {
