@@ -3,7 +3,7 @@ import { Character } from "roll20";
 export interface IMacroFactory {
     name: string;
     create: (char: Character) => IGeneratedMacro[];
-    createFolderEntries: (char: Character) => string[];
+    createFolderEntries?: (char: Character) => string[];
     categoryNameModifier?: (name: string) => string;
 }
 

@@ -4,8 +4,18 @@ import {
 } from '../modules/MacroGenerator/IMacroGenerator'
 import { Character } from 'roll20';
 import lexCompare from "../utils/LexicographicalComparator";
+import {Optional} from "../utils/TypescriptUtils";
 
-let dataSet = {
+interface RepeatingDataSet {
+    group: string;
+    name: string;
+    macro: (idx: number) => string;
+    canMakeFolder: boolean;
+    nameMod?: (name: string) => string;
+    categoryMod?: (name:string) => string;
+}
+
+let dataSet: {[id: string]: RepeatingDataSet} = {
     "NPC Actions": {
         group: "repeating_npcaction",
         name: "name",
@@ -61,7 +71,7 @@ let dataSet = {
         name: "spellname",
         macro: idx => `selected|repeating_spell-cantrip_$${idx}_spell`,
         canMakeFolder: true,
-    }
+    },
 };
 
 for (let lvl = 1; lvl <= 9; lvl++) {
@@ -70,19 +80,35 @@ for (let lvl = 1; lvl <= 9; lvl++) {
         name: "spellname",
         macro: idx => `selected|repeating_spell-${lvl}_$${idx}_spell`,
         canMakeFolder: true,
-        categoryMod: (name, idx) => `${name} (@{Selected|lvl${lvl}_slots_expended}/@{Selected|lvl${lvl}_slots_total})`,
+        categoryMod: (name) => `${name} (@{Selected|lvl${lvl}_slots_expended}/@{Selected|lvl${lvl}_slots_total})`,
     }
 }
 
-const generateMacroData = (char: Character,
-                           group: string,
-                           nameAttrib: string,
-                           macroFactory: (idx: number) => string,
-                           nameMod?: (name: string) => string) => {
+const tryGetRepeatingName = (character: Character, group: string, abilityId: string, nameSuffix: string): Optional<string> => {
+    const query = `${group}_${abilityId}_${nameSuffix}`;
+    const name = character.attribs.models.find(a => a.get("name") === query);
+
+    if (!name) {
+        console.error("[Bulk macro generator for 5e OGL R20] Could not find name for repeating section.");
+        console.table({
+            "Query": query,
+            "Group name": group,
+            "Name Attribute Name": nameSuffix,
+            "Character name": character.get("name"),
+            "Character UUID": character.get("id")
+        });
+
+        return;
+    }
+
+    return name.attributes.current;
+};
+
+const getAbilityIdsOfGroup = (character: Character, group: string) => {
     let table = {};
 
     // create a sorted table so that we can create abilities that reference actions by index.
-    char.attribs.models.forEach(a => {
+    character.attribs.models.forEach(a => {
         const name = a.get<string>("name");
         if (!name.startsWith(group + "_")) return;
 
@@ -93,29 +119,23 @@ const generateMacroData = (char: Character,
         table[id] = true;
     });
 
-    const ids = char.repeatingKeyOrder(Object.keys(table), group);
+    return character.repeatingKeyOrder(Object.keys(table), group);
+};
+
+const generateMacroData = (char: Character,
+                           group: string,
+                           nameAttrib: string,
+                           macroFactory: (idx: number) => string,
+                           nameMod?: (name: string) => string) => {
+
+    const ids = getAbilityIdsOfGroup(char, group);
 
     // we've got the ordered table, now make the macros.
     const orderedNames = [];
     for (let idIdx = 0; idIdx < ids.length; idIdx++) {
         const id = ids[idIdx];
-        const query = `${group}_${id}_${nameAttrib}`;
-        const name = char.attribs.models.find(a => a.get("name") === query);
 
-        if (!name) {
-            console.error("[Bulk macro generator for 5e OGL R20] Could not find name for repeating section.");
-            console.table({
-                "Query": query,
-                "Group name": group,
-                "Name Attribute Name": nameAttrib,
-                "Character name": char.get("name"),
-                "Character UUID": char.get("id")
-            });
-
-            continue;
-        }
-
-        let finalName = name.get<string>("current");
+        let finalName = tryGetRepeatingName(char, group, id, nameAttrib);
         if(typeof(nameMod) === "function") {
             finalName = nameMod(finalName);
         }
@@ -130,6 +150,7 @@ const generateMacroData = (char: Character,
 };
 
 let macroFactories: IMacroFactory[] = [];
+
 
 for (let name in dataSet) {
 
@@ -165,6 +186,31 @@ for (let name in dataSet) {
     })
 }
 
+/*
+macroFactories.push({
+    name: "Inventory",
+    create: (char: Character): IGeneratedMacro[] => {
+        const ids = getAbilityIdsOfGroup(char, "inventory");
+
+        let buffer  = "/w @{character_name} ";
+
+        for (let abilityIndex = 0;
+             abilityIndex< ids.length;
+             abilityIndex++) {
+
+            const id = ids[abilityIndex];
+
+//?{Name of Query|Label 1,@{selected|repeating_inventory_$0_itemname}|Label 2, value2}
+//?{Name of Query|Label 1,&{template:npcaction}{{rname=@{selected|repeating_inventory_$0_itemname}}}|Label 2, value2}
+//&{template:npcaction} {{rname=@{selected|_itemname}}} {{name=TODO}} {{description=_itemcontent}}
+
+        }
+
+        return [{name: "Inventory", macro: buffer}];
+    }
+});
+*/
+
 const id = "D&D 5e OGL by Roll20";
 
 const OGL5eByRoll20: IMacroGenerator = {
@@ -174,3 +220,4 @@ const OGL5eByRoll20: IMacroGenerator = {
 };
 
 export default OGL5eByRoll20;
+
