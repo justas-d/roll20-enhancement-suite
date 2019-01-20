@@ -1,10 +1,8 @@
 import {R20Module} from "../../utils/R20Module"
 import {R20} from '../../utils/R20';
-import {DialogBase} from "../../utils/DialogBase";
-import {DialogHeader, DialogBody, DialogFooter, Dialog, DialogFooterContent} from "../../utils/DialogComponents";
 import {TokenContextMenu} from '../../utils/TokenContextMenu';
 import MacroSelectDialog from './MacroSelectDialog';
-import {ISlimMacro, TableOfMacrosByCategoryAndId} from './Types';
+import {TableOfMacrosByCategoryAndId} from './Types';
 import {Macro} from 'roll20';
 
 class BulkMacroModule extends R20Module.OnAppLoadBase {
@@ -20,52 +18,9 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         if (!action) return;
 
         const sel = R20.getSelectedTokens();
-        R20.unselectTokens();
-
         const cfg = this.getHook().config;
 
-        const rollForObj = (obj) => {
-            R20.selectToken(obj);
-            R20.say(action);
-        };
-
-        const cleanup = () => {
-
-            R20.hideTokenRadialMenu();
-            R20.hideTokenContextMenu();
-
-            if (cfg.reselectAfter) {
-                for (let obj of sel) {
-                    R20.addTokenToSelection(obj);
-                }
-            }
-        };
-
-        if (cfg.delayBetweenRolls === 0) {
-
-            for (const obj of sel) {
-                rollForObj(obj);
-            }
-
-            cleanup();
-
-        } else {
-            let waited = cfg.delayBetweenRolls;
-
-            for (let i = 0; i < sel.length; i++) {
-                setTimeout(() => {
-                    rollForObj(sel[i]);
-
-                    const isLastObj = i + 1 === sel.length;
-                    if (isLastObj) {
-                        cleanup();
-                    }
-
-                }, waited);
-
-                waited += cfg.delayBetweenRolls;
-            }
-        }
+        R20.doBulkRoll(sel, action, cfg.delayBetweenRolls, cfg.reselectAfter);
     };
 
     private bulkMacroButtonClicked = (e) => {
@@ -118,7 +73,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
 
         console.log(macros);
         this.selectDialog.show(macros);
-    }
+    };
 
     public setup() {
         if (!R20.isGM()) return;

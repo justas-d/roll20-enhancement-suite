@@ -25,12 +25,17 @@ export default MakeConfig(__dirname, {
                 bar2: "Bar 2",
                 bar3: "Bar 3"
             },
+        },
+        diceFormulaMacro: {
+            display: "(Optional) Custom Roll. All inline rolls will be summed.",
+            type: ConfigViews.Text
         }
     },
 
     config: {
         diceFormulaAttribute: "npc_hpformula",
         bar: "bar3",
+        diceFormulaMacro: "",
     }
 });
 

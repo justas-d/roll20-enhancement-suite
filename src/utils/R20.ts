@@ -20,6 +20,7 @@ import {
 import {IApplyableSong} from "./JukeboxIO";
 import {EventSubscriber} from "./EventSubscriber";
 import {Optional} from "./TypescriptUtils";
+import {cb} from "ava";
 
 namespace R20 {
 
@@ -168,7 +169,7 @@ namespace R20 {
     export const getCanvasHeight = (): number => {
         return window.d20.engine.canvas.height;
     };
-
+7
     export const getCanvasOffsetX= (): number => {
         return window.d20.engine.currentCanvasOffset[0];
     };
@@ -376,10 +377,9 @@ namespace R20 {
 
     export function say(
         what: string,
+        callbackId?: string,
         callback?: SayCallback) {
         if (callback) {
-
-            const callbackId = window.generateUUID();
             $(document).on(`mancerroll:${callbackId}`, (event, rollData) => {
                 $(document).off(`mancerroll:${callbackId}`);
                 callback(event, rollData);
@@ -397,7 +397,13 @@ namespace R20 {
         what: string,
         callback?: (e: JQuery.Event<Document, null>, data: Roll20.RollCallbackData)
             => void) {
-        say(`/w "${getCurrentPlayer().get("displayname")}" ${what}`, callback);
+
+        const msg = `/w "${getCurrentPlayer().get("displayname")}" ${what}`;
+        if(callback) {
+            say(msg, R20.generateUUID(), callback);
+        } else {
+            say(msg);
+        }
     }
 
     export function saySystemRaw(htmlContent: string) {
@@ -467,7 +473,62 @@ ${content}
         if (storage.length < 0) {
             console.error("FAILED TO WIPE OBJECT STORAGE!");
         }
-    }
+    };
+
+    export const doBulkRoll = (tokens: CanvasObject[], macro: string, delayBetweenRolls: number, shouldReselect: boolean, cbGenerator?: (obj: CanvasObject) => Optional<{id: string, callback: SayCallback}>) => {
+        R20.unselectTokens();
+
+        const rollForObj = (obj: CanvasObject) => {
+            R20.selectToken(obj);
+
+            if(cbGenerator) {
+                const cbData = cbGenerator(obj);
+                if(cbData) {
+                    R20.say(macro, cbData.id, cbData.callback);
+                }
+            } else {
+                R20.say(macro);
+            }
+        };
+
+        const cleanup = () => {
+
+            R20.hideTokenRadialMenu();
+            R20.hideTokenContextMenu();
+
+            if(shouldReselect) {
+                for (let obj of tokens) {
+                    R20.addTokenToSelection(obj);
+                }
+            }
+        };
+
+        if (delayBetweenRolls === 0) {
+
+            for (const obj of tokens) {
+                rollForObj(obj);
+            }
+
+            cleanup();
+
+        } else {
+            let waited = delayBetweenRolls;
+
+            for (let i = 0; i < tokens.length; i++) {
+                setTimeout(() => {
+                    rollForObj(tokens[i]);
+
+                    const isLastObj = i + 1 === tokens.length;
+                    if (isLastObj) {
+                        cleanup();
+                    }
+
+                }, waited);
+
+                waited += delayBetweenRolls;
+            }
+        }
+    };
 }
 
 export {R20}
