@@ -11,6 +11,9 @@ const firefoxZipPath = `./dist/firefox/prod/${deployData.firefox}`;
 console.log("Pushing commits to master...");
 shell.exec("git push origin master");
 
+console.log(`Creating tag ${deployData.version}`);
+shell.exec(`git tag -a ${deployData.version} -m "${deployData.version}"`);
+
 console.log("Pushing tags...");
 shell.exec("git push --tags");
 
@@ -70,6 +73,7 @@ if (typeof (deployData.firefox) !== "undefined") {
         console.log(`Failed to get changelog, exiting: ${err}`);
         process.exit(1);
     }
+
     let latestChanges = changelog.versions[changelog.current];
     if (!latestChanges) {
         console.log("Couldn't find latest changes.");
@@ -77,8 +81,6 @@ if (typeof (deployData.firefox) !== "undefined") {
     }
 
     client.on("ready", () => {
-        console.log(client.channels);
-
         const channel = client.channels.get(process.env.DISCORD_CHANNEL);
         if (channel) {
             const noMedia = !latestChanges.info.media || latestChanges.info.media.length <=0;
