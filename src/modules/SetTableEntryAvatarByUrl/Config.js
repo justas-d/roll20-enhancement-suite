@@ -6,6 +6,9 @@ export default MakeConfig(__dirname, {
     name: "Set Rollable Table Avatar By Url",
     description: "Allows setting the images/avatars of rollable table entries by an image url.",
     category: Category.misc,
+    media: {
+        "table_entry_by_url.png": "Use this button in the table entry dialog."
+    },
 
     mods: [
         { // add table entry && table ids to popup
