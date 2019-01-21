@@ -16,9 +16,8 @@
         "package-select": "webpack --display-error-details --progress --colors --env.zip --mode production",
         "start": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
         "start-dev": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
-        "test-firefox": "SALENIUM_PORT=4444 nightwatch --env firefox",
-        "test": "ava tests/ava",
-        "deploy": "node utils/deploy.js"
+        "deploy": "node utils/deploy.js",
+        "ship": "npm run build-page && npm run deploy-page && npm run changelog && vim changelog.json && npm run package && npm run deploy"
     },
     "devDependencies": {
         "@babel/core": "7.0.0-rc.3",
@@ -79,15 +78,5 @@
         "react": "16.4.2",
         "react-dom": "16.4.2",
         "save-as": "0.1.8"
-    },
-    "ava": {
-        "require": [
-            "babel-register"
-        ],
-        "babel": {
-            "testOptions": {
-                "babelrc": false
-            }
-        }
     }
 }
