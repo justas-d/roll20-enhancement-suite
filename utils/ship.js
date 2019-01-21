@@ -19,21 +19,23 @@ const canFail = shell.exec;
 noFail("npm run build-page");
 noFail("npm run deploy-page");
 //noFail("npm run changelog");
-noFail("vim changelog.json");
+noFail("gvim changelog.json");
 canFail("git add changelog.json");
 
-const changelogData = fs.readFileSync(changelogFile, "utf8");
+const changelogData = fs.readFileSync("changelog.json", "utf8");
 const changelog = JSON.parse(changelogData);
 
-assert(changelog.current !== "TODO", "changelog.current === TODO. Current version in the changelog must be set!");
-const currentVersion = changelog.versions[changelog.curent];
+console.log(changelog);
 
-assert(typeof currentVersion !== "object", `Could not find current version (${changelog.current}) in the changelog versions table.`);
+assert(changelog.current !== "TODO", "changelog.current === TODO. Current version in the changelog must be set!");
+const currentVersion = changelog.versions[changelog.current];
+
+assert(typeof(currentVersion) === "object", `Could not find current version (${changelog.current}) in the changelog versions table.`);
 
 assert(currentVersion.info.title.length > 0, `Current version (${changelog.current}) doesn't have a title.`);
 assert(currentVersion.changes.length > 0, `Current version (${changelog.current}) has no changes.`);
 
-noFail(`git commit -m ${changelog.current}`);
+noFail(`git commit -m "${changelog.current}"`);
 noFail(`git tag -a ${changelog.current} -m "${changelog.current}"`);
 
 //noFail("npm run package");
