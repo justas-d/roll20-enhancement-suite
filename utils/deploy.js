@@ -11,9 +11,6 @@ const firefoxZipPath = `./dist/firefox/prod/${deployData.firefox}`;
 console.log("Pushing commits to master...");
 shell.exec("git push origin master");
 
-console.log(`Creating tag ${deployData.version}`);
-shell.exec(`git tag -a ${deployData.version} -m "${deployData.version}"`);
-
 console.log("Pushing tags...");
 shell.exec("git push --tags");
 
