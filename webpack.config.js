@@ -57,28 +57,27 @@ module.exports = (_env, argv) => {
     const isProd = argv.mode === "production";
     const wantsZip = "zip" in env && env.zip;
 
-    // if packaging
-    if (isInRepo && isProd && wantsZip) {
-
+    const isPackaging = isInRepo && isProd && wantsZip;
+    if (isPackaging) {
         const gitState = shell.exec("git diff-index --quiet HEAD -- && true");
         if(gitState.code !== 0) {
             console.error("Uncommited changes found in the working directory.");
             console.error("Packaging is not allowed.");
             console.error("Resolve the uncommited changes and try packaging in a clean working directory.");
-            process.exit(0);
+            process.exit(1);
         }
 
         const changelogJson = JSON.parse(changelog);
         if(changelog.current === "TODO") {
             console.error("Current version in the changelog file is set to TODO.");
             console.error("Update the current version to the proper value before packaging.");
-            process.exit(0);
+            process.exit(1);
         }
 
         if(!changelogJson.versions[changelogJson.current].info.title) {
             console.error(`Current version (${changelogJson.current}) has no title.`);
             console.error("Set a valid title before packaging");
-            process.exit(0);
+            process.exit(1);
         }
 
         const gitLastTag = shell.exec("git describe --abbrev=0").stdout.trim();
@@ -88,7 +87,7 @@ module.exports = (_env, argv) => {
             console.error("Cannot package when there are commits that do not fall under a tag.");
             console.error(`There are ${numCommitsSinceLastTag} commits since the last tag (${gitLastTag}).`);
             console.error(`Tag a new release before packaging.`);
-            process.exit(0);
+            process.exit(1);
         }
 
         // prep source code
