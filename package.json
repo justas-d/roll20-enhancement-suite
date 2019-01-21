@@ -17,7 +17,7 @@
         "start": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
         "start-dev": "web-ext run -s builds/firefox/dev/ --firefox-profile=r20esdev --start-url https://app.roll20.net/sessions/new",
         "deploy": "node utils/deploy.js",
-        "ship": "npm run build-page && npm run deploy-page && npm run changelog && vim changelog.json && npm run package && npm run deploy"
+        "ship": "npm run build-page && npm run deploy-page && npm run changelog && vim changelog.json && git add changelog.json && git commit && npm run package && npm run deploy"
     },
     "devDependencies": {
         "@babel/core": "7.0.0-rc.3",
