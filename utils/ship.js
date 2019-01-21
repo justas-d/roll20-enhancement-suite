@@ -18,7 +18,7 @@ const canFail = shell.exec;
 
 noFail("npm run build-page");
 noFail("npm run deploy-page");
-//noFail("npm run changelog");
+noFail("npm run changelog");
 noFail("gvim changelog.json");
 canFail("git add changelog.json");
 
@@ -35,10 +35,10 @@ assert(typeof(currentVersion) === "object", `Could not find current version (${c
 assert(currentVersion.info.title.length > 0, `Current version (${changelog.current}) doesn't have a title.`);
 assert(currentVersion.changes.length > 0, `Current version (${changelog.current}) has no changes.`);
 
-noFail(`git commit -m "${changelog.current}"`);
+canFail(`git commit -m "${changelog.current}"`);
 noFail(`git tag -a ${changelog.current} -m "${changelog.current}"`);
 
-//noFail("npm run package");
-//noFail("npm run deploy");
+noFail("npm run package");
+noFail("npm run deploy");
 
 
