@@ -92,6 +92,9 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
                     });
             }
         } else {
+
+            const sumInline = config.diceFormulaSumInline;
+
             const cbGen = (token: CanvasObject) => {
                 const char = this.tryGetCharacter(token);
                 if(!char) {
@@ -103,14 +106,18 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
                 const callback = (_, o) => {
                     let sum = 0;
 
-                    if(!o.inlinerolls) {
+                    if(!o.inlinerolls || o.inlinerolls.length <= 0) {
                         return;
                     }
 
-                    for (const roll of o.inlinerolls) {
-                        if(!roll || !roll.results || !roll.results.total) continue;
+                    if(sumInline) {
+                        for (const roll of o.inlinerolls) {
+                            if (!roll || !roll.results || !roll.results.total) continue;
 
-                        sum += roll.results.total;
+                            sum += roll.results.total;
+                        }
+                    } else {
+                        sum = o.inlinerolls[o.inlinerolls.length - 1].results.total;
                     }
 
                     console.log(sum, o);

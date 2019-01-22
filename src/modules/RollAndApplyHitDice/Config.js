@@ -27,8 +27,12 @@ export default MakeConfig(__dirname, {
             },
         },
         diceFormulaMacro: {
-            display: "(Optional) Custom Roll. All inline rolls will be summed.",
+            display: "(Optional) Custom Roll.",
             type: ConfigViews.Text
+        },
+        diceFormulaSumInline: {
+            display: "(Optional) Custom roll: sum inline rolls. If unchecked, the value of the last inline roll will be used.",
+            type: ConfigViews.Checkbox
         }
     },
 
@@ -36,6 +40,7 @@ export default MakeConfig(__dirname, {
         diceFormulaAttribute: "npc_hpformula",
         bar: "bar3",
         diceFormulaMacro: "",
+        diceFormulaSumInline: true
     }
 });
 
