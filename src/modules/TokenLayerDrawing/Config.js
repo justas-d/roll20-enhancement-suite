@@ -13,9 +13,19 @@ export default MakeConfig(__dirname, {
         "token_gm.png": "A token in the GM layer"
     },
 
+    mods: [
+        {
+            includes: "assets/app.js",
+            find: `this._drawNameplate(e)}return e.restore(),this}`,
+            patch: `this._drawNameplate(e)}window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this); return e.restore(),this}`,
+        }
+    ],
+
+    /*
     includes: "assets/app.js",
     find: "this.model.view.updateBackdrops(e),this.active",
     patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this), this.active",
+    */
 
     configView: {
         globalAlpha: {

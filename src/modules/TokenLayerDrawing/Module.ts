@@ -10,7 +10,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
     }
 
     drawOverlay = (ctx: CanvasRenderingContext2D, graphic: Roll20.CanvasObject) => {
-        // careful here: tokenDrawBg will run in the renderer and crash recovery requires a referesh
+        // careful here: tokenDrawBg will run in the renderer and crash recovery requires a refresh
         try {
 
             const config = this.getHook().config;
@@ -32,20 +32,12 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
             ctx.globalAlpha = config.globalAlpha;
             ctx.lineWidth = config.textStrokeWidth;
 
-
-            if (!config.rotateAlongWithToken) {
+            if (config.rotateAlongWithToken) {
                 // @ts-ignore
                 const isOneFlipOn = graphic.flipY ^ graphic.flipX;
 
                 let mul = isOneFlipOn ? 1 : -1;
                 ctx.rotate(mul * graphic.angle * DEG_TO_RAD);
-            }
-
-            if (graphic.flipX) {
-                ctx.scale(-1, 1);
-            }
-            if (graphic.flipY) {
-                ctx.scale(1, -1);
             }
 
             let sz = config.textFontSize;
@@ -76,7 +68,6 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
     };
 
     onSettingChange(name, oldVal, newVal) {
-        console.log("change found");
         R20.renderAll();
     }
 

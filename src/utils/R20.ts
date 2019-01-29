@@ -169,7 +169,7 @@ namespace R20 {
     export const getCanvasHeight = (): number => {
         return window.d20.engine.canvas.height;
     };
-7
+
     export const getCanvasOffsetX= (): number => {
         return window.d20.engine.currentCanvasOffset[0];
     };
@@ -445,11 +445,11 @@ ${content}
             downy: top,
         };
 
-        window.d20.engine.renderTop();
+        renderAll();
     }
 
     export function renderAll() {
-        window.d20.engine.renderAll();
+        window.d20.engine.redrawScreenNextTick(false);
     }
 
     export const hasBetteR20 = (): boolean => {

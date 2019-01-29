@@ -359,6 +359,7 @@ declare namespace Roll20 {
 
     export interface Token extends SyncObject<TokenAttributes> {
         character?: Character;
+
     }
 
     export interface PathToken extends SyncObject<PathTokenAttributes> {
@@ -373,6 +374,15 @@ declare namespace Roll20 {
         angle: number;
         flipX: boolean;
         flipY: boolean;
+
+        _nameplate_data: {
+            font_size: number,
+            name: string,
+            padding: number,
+            position: number[],
+            size: number[],
+            vertical_offset: number
+        }
 
         setWidth(width: number): CanvasObject;
         setHeight(width: number): CanvasObject;
@@ -437,8 +447,8 @@ declare namespace Roll20 {
         selected: () => CanvasObject[];
         unselect: () => void;
         select: (obj: CanvasObject) => void;
-        renderAll: () => void;
-        renderTop: () => void;
+
+        redrawScreenNextTick: (flags: boolean) => void;
 
         pings: { [uuid: string]: PingData };
         pinging: LocalPingData;
@@ -527,7 +537,7 @@ declare namespace Roll20 {
     }
 
     export interface R20ES {
-        drawNameplate: (token: Token, n: CanvasRenderingContext2D, textWidth: number, tokenHeight: number, fontSize: number, text: any) => void;
+        prepNameplate: Function;
         togglePageToolbar: () => void;
         tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
         pingInitiativeToken: (token: Token) => void;

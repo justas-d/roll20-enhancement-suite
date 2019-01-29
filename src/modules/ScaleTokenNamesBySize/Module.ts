@@ -1,5 +1,5 @@
 import {R20Module} from "../../utils/R20Module"
-import {Token} from "roll20";
+import {CanvasObject} from "roll20";
 import {R20} from "../../utils/R20";
 
 class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
@@ -11,42 +11,38 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
         R20.renderAll();
     }
 
-    private drawNameplate = (token: Token, n: CanvasRenderingContext2D, textWidth: number, tokenHeight: number, fontSize: number, text: any) => {
+    private prepNameplate = (token: CanvasObject, e: CanvasRenderingContext2D) => {
         const cfg = this.getHook().config;
 
         try {
-            let scale = token.attributes.width / cfg.widthThreshold;
+            let scale = token.width / cfg.widthThreshold;
 
-            if(scale < 1 && !cfg.scaleIfSmaller) scale = 1;
-            if(scale > 1 && !cfg.scaleIfLarger) scale = 1;
+            if (scale < 1 && !cfg.scaleIfSmaller) scale = 1;
+            if (scale > 1 && !cfg.scaleIfLarger) scale = 1;
 
-            const scaledFontSize = fontSize * scale;
-            const scaledWidth = textWidth * scale;
+            const scaledFontSize = token._nameplate_data.font_size * scale;
+            e.font = `bold ${scaledFontSize}px Arial`;
 
-            n.font = `bold ${scaledFontSize}px Arial`;
-            n.fillStyle = "rgba(255,255,255,0.50)";
+            const width = e.measureText(token._nameplate_data.name).width;
+            const t = token.height / 2;
+            const n = e.measureText("M").width;
 
-            const scaledBackplatePadY = 6 * scale;
-            const scaledBackplatePadX = 5 * scale;
-
-            const rectX = -1 * Math.ceil((scaledWidth + scaledBackplatePadX) / 2);
-            const rectY = tokenHeight + 8;
-
-            n.fillRect(rectX, rectY, scaledWidth + scaledBackplatePadX, scaledFontSize + scaledBackplatePadY);
-            n.fillStyle = "rgb(0,0,0)";
-
-            n.fillText(text || "", 0, rectY + scaledFontSize, scaledWidth);
-        } catch (err) {
+            token._nameplate_data.position = [-width / 2 - token._nameplate_data.padding, t + token._nameplate_data.vertical_offset];
+            token._nameplate_data.size = [width + 2 * token._nameplate_data.padding, n + 2 * token._nameplate_data.padding];
+        }
+        catch (err) {
             console.error(err);
         }
     };
 
     public setup() {
-        window.r20es.drawNameplate = this.drawNameplate;
+        window.r20es.prepNameplate = this.prepNameplate;
+        R20.renderAll();
     }
 
     public dispose() {
-        window.r20es.drawNameplate = null;
+        window.r20es.prepNameplate = undefined;
+        R20.renderAll();
     }
 }
 

@@ -7,9 +7,13 @@ export default MakeConfig(__dirname, {
     description: `Scales canvas token names proportionally by their size. Smaller tokens display smaller names while larger ones have large names.`,
     category: Category.canvas,
 
-    includes: "assets/app.js",
-    find: `var m=n.measureText(f).width;`,
-    patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.drawNameplate) window.r20es.drawNameplate(this.model, n, m, r, g, f); else `,
+    mods: [
+        {
+            includes: "assets/app.js",
+            find: `e.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),e.fillStyle="rgb(0,0,0)",e.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+n+this._nameplate_data.padding)`,
+            patch: `window.r20es && window.r20es.prepNameplate && window.r20es.prepNameplate(this, e), >>R20ES_MOD_FIND>>`
+        }
+    ],
 
     configView: {
         widthThreshold: {
