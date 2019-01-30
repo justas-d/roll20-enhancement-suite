@@ -105,7 +105,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
         this.renderLoop();
 
-        R20.setBackgroundStyle("rgba(0,0,0,0)");
         R20.renderAll();
     };
 
@@ -122,6 +121,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         if (this._currentPage) {
             R20.setBackgroundStyle(this._currentPage.attributes.background_color);
         }
+
         R20.renderAll();
     }
 
@@ -190,8 +190,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
         this._currentPage = page;
 
-        // reset background style
-        R20.setBackgroundStyle(this._currentPage.attributes.background_color);
         R20.renderAll();
 
         if (this.canPlayVideo()) {
