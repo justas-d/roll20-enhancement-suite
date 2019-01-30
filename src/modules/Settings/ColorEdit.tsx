@@ -20,7 +20,13 @@ export default class ColorEdit extends ConfigEditBase {
 
     protected internalRender = (): HTMLElement => {
         const cols = this.getValue();
-        const val = `#${cols[0].toString(16)}${cols[1].toString(16)}${cols[2].toString(16)}`;
+
+        console.log(cols, this.configName, this.hook);
+
+        const val = (cols && cols.length >= 3)
+            ? `#${cols[0].toString(16)}${cols[1].toString(16)}${cols[2].toString(16)}`
+            : "#000000";
+
 
         return (
             <input style={{width: "90%"}} onChange={this.onChange}

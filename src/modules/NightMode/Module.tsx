@@ -14,19 +14,16 @@ class DarkModeModule extends R20Module.OnAppLoadBase {
     private updatePageBackground() {
         const cfg = this.getHook().config;
 
-        if (cfg.overrideBackground) {
-            R20.setBackgroundStyle("#0d0e0f");
-        } else {
-            this.resetPageBackground();
-        }
+        const color = cfg.backgroundColor;
+        const colorString = `rgba(${color[0]}, ${color[1]}, ${color[2]})`;
 
+        R20.setBackgroundStyle(colorString);
         R20.renderAll();
     }
 
     private resetPageBackground() {
         const page = R20.getCurrentPage();
         R20.setBackgroundStyle(page.attributes.background_color);
-
     }
 
     public onSettingChange(name, oldVal, newVal) {

@@ -3,8 +3,8 @@ import ConfigViews from "../../utils/ConfigViews";
 
 export default MakeConfig(__dirname, {
     id: "nightMode",
-    name: "Force dark background",
-    description: "Force a dark background. The night mode is deprecated in favor of RedReign's Dark Theme.",
+    name: "Force Background Color",
+    description: "Force a certain background. The night mode is deprecated in favor of RedReign's Dark Theme.",
 
     urls: {
         "You can find it here": "https://github.com/RedReign/Roll20-Dark-Theme"
@@ -13,14 +13,14 @@ export default MakeConfig(__dirname, {
     category: Category.canvas,
 
     configView: {
-        overrideBackground: {
-            display: "Force the canvas background to be black?",
-            type: ConfigViews.Checkbox,
+        backgroundColor: {
+            display: "Background Color",
+            type: ConfigViews.Color,
         },
     },
 
     config: {
-        overrideBackground: true,
+        backgroundColor: [13,14,15],
         enabled: false,
     },
 });
