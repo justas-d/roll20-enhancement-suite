@@ -9,7 +9,7 @@ class AdjustableOpacityModule extends R20Module.OnAppLoadBase {
     }
 
     private static exposeOpacity(val: number) {
-        window.r20es[ADJUSTABLE_OPACITY_PASSIVE_GM_LAYER_CONFIG_KEY] = val;
+        R20.setGMLayerOpacity(val);
     }
 
     private onSettingChange(name: string, oldVal: any, newVal: any) {

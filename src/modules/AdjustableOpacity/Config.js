@@ -22,13 +22,5 @@ export default MakeConfig(__dirname, {
     config: {
         enabled: false,
         [ADJUSTABLE_OPACITY_PASSIVE_GM_LAYER_CONFIG_KEY]: 1,
-    },
-
-    mods: [
-        {
-            includes: "assets/app.js",
-            find: `t.globalAlpha=.55`,
-            patch: `t.globalAlpha= (window.r20es && typeof(window.r20es.${ADJUSTABLE_OPACITY_PASSIVE_GM_LAYER_CONFIG_KEY}) === "number") ? window.r20es.${ADJUSTABLE_OPACITY_PASSIVE_GM_LAYER_CONFIG_KEY} : 0.55`
-        },
-    ]
+    }
 });

@@ -444,6 +444,7 @@ declare namespace Roll20 {
     }
 
     export interface Engine {
+        gm_layer_opacity: number;
         selected: () => CanvasObject[];
         unselect: () => void;
         select: (obj: CanvasObject) => void;

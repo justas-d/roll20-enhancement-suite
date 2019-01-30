@@ -452,6 +452,10 @@ ${content}
         window.d20.engine.redrawScreenNextTick(false);
     }
 
+    export const setGMLayerOpacity = (opacity_t: number) => {
+        window.d20.engine.gm_layer_opacity = opacity_t;
+    };
+
     export const hasBetteR20 = (): boolean => {
         return window["d20plus"] !== undefined;
     };
