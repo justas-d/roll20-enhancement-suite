@@ -1,5 +1,5 @@
 {
-    "current": "1.12.2",
+    "current": "1.12.3",
     "versions": {
         "1.4.0": {
             "info": {
@@ -701,6 +701,34 @@
                 {
                     "id": "",
                     "content": "Fixed various bugs introduced by the latest Roll20 update."
+                }
+            ]
+        },
+        "1.12.3": {
+            "info": {
+                "title": "Update Compatibility II",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "NightMode: repurpose into Force Background"
+                },
+                {
+                    "id": "",
+                    "content": "AdjustableOpacity: fixed it being broken."
+                },
+                {
+                    "id": "",
+                    "content": "AnimatedBackgroundLayer: fix background color issues (thanks, Knilk!)"
+                },
+                {
+                    "id": "",
+                    "content": "TokenLayerDrawing: fixed opacity issues (thanks, Dominic, Brother Sharp & guKing!)"
+                },
+                {
+                    "id": "",
+                    "content": "AnimatedBackgroundLayer: fixed background not autoplaying on chromium (thanks, Neverr!)"
                 }
             ]
         }
