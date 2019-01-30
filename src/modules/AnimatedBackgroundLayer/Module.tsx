@@ -4,6 +4,7 @@ import {R20} from "../../utils/R20";
 import {EventSubscriber} from "../../utils/EventSubscriber";
 import {scaleToFit} from "../../utils/FitWithinTools";
 import {AnimBackgroundSetup} from "./AnimBackgroundSetup";
+import {isChromium} from "../../utils/BrowserDetection";
 
 class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     private static readonly propVideoSource = "r20es_video_src";
@@ -53,15 +54,51 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         }
     };
 
-    beginVideo() {
+    startVideo = () => {
+        try {
+
+            this._videoElement.src = this.getVideoSrc();
+            this._videoElement.play();
+        }
+        catch(err) {
+            console.error(err);
+        }
+    };
+
+    tryStartVideo = () => {
+
+        this.startVideo();
+
+        if(isChromium()) {
+
+            const interactionEvents = [
+                "mousedown",
+                "scroll",
+                "keydown",
+            ];
+
+            const onInteract = () => {
+                this.startVideo();
+
+                for(const ev of interactionEvents) {
+                    document.body.removeEventListener(ev, onInteract);
+                }
+            };
+
+            for(const ev of interactionEvents) {
+                document.body.addEventListener(ev, onInteract);
+            }
+        }
+    };
+
+    beginVideo = () => {
         console.log("video BEGIN VIDEO");
 
         this._isPlaying = true;
 
         this._videoCanvas.style.display = "block";
 
-        this._videoElement.src = this.getVideoSrc();
-        this._videoElement.play();
+        this.tryStartVideo();
 
         this.onResizeCanvas(R20.getCanvasWidth(), R20.getCanvasHeight());
         this.onSetZoom(R20.getCanvasZoom());
@@ -70,7 +107,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
         R20.setBackgroundStyle("rgba(0,0,0,0)");
         R20.renderAll();
-    }
+    };
 
     endVideo() {
         console.log("video END VIDEO");
