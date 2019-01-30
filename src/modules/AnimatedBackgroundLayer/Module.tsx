@@ -117,11 +117,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         this._videoElement.pause();
         this._videoElement.src = "";
 
-        // reset background style
-        if (this._currentPage) {
-            R20.setBackgroundStyle(this._currentPage.attributes.background_color);
-        }
-
         R20.renderAll();
     }
 
