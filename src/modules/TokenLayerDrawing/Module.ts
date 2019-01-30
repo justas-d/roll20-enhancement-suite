@@ -10,8 +10,11 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
     }
 
     drawOverlay = (ctx: CanvasRenderingContext2D, graphic: Roll20.CanvasObject) => {
+
         // careful here: tokenDrawBg will run in the renderer and crash recovery requires a refresh
         try {
+
+            ctx.save();
 
             const config = this.getHook().config;
             const bitmap = {

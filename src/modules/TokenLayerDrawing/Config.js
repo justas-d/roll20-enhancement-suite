@@ -16,8 +16,8 @@ export default MakeConfig(__dirname, {
     mods: [
         {
             includes: "assets/app.js",
-            find: `this._drawNameplate(e)}return e.restore(),this}`,
-            patch: `this._drawNameplate(e)}window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this); return e.restore(),this}`,
+            find: `this._drawNameplate(e)}return e.restore(),this`,
+            patch: `this._drawNameplate(e)} e.restore(); if(window.r20es.tokenDrawBg) { window.r20es.tokenDrawBg(e, this); } return this;`,
         }
     ],
 
