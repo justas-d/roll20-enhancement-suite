@@ -41,8 +41,18 @@ class TokenFromImgModule extends R20Module.OnAppLoadBase {
         };
 
         img.onerror = (...err) => {
-            alert("Could not load image! See the console for more information.");
-            console.error(...err);
+
+            const toCreate = {
+                left: mousePos[0],
+                top: mousePos[1],
+                width: 70,
+                height: 70,
+                z_index: 0,
+                imgsrc: url,
+                layer: layer,
+            };
+
+            R20.getCurrentPage().addImage(toCreate);
         };
 
         img.src = url;

@@ -259,6 +259,7 @@ declare namespace Roll20 {
         thepaths: ObjectStorageWithBackbone<PathToken> | null;
         thegraphics: ObjectStorageWithBackbone<Token> | null;
         thetexts: ObjectStorageWithBackbone<TextToken> | null;
+        addImage: (token: object, force_snap?: boolean, unused_1?: boolean, unused_2?: boolean, unused_3?: boolean, addToFrontAndFireModifier?: boolean) => Token;
     }
 
     export interface BackboneFirebase {

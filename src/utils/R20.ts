@@ -456,6 +456,8 @@ ${content}
         window.d20.engine.gm_layer_opacity = opacity_t;
     };
 
+
+
     export const hasBetteR20 = (): boolean => {
         return window["d20plus"] !== undefined;
     };
