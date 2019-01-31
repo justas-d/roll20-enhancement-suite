@@ -33,10 +33,16 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
 }
 
 #radial-menu .button-1, 
-#radial-menu .button-2 {
-    transform: translateX(-65px);
+#radial-menu .button-2,
+#radial-menu .button-6 {
+    transform: translateX(-65px) translateY(-14px);
     z-index: 5;
 }
+
+#radial-menu .button-6 {
+    transform: translateX(-65px) translateY(-105px);
+}
+
 #radial-menu .button-3, 
 #radial-menu .button-4,
 #radial-menu .button-5 {
@@ -61,9 +67,7 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
 
         if (cfg.superMinimal) {
             style += `
-            
-
-
+}
 #radial-menu .markermenu.open {
     left: -55px;
     width: 260px;
@@ -77,7 +81,11 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
 
 #radial-menu .button-1, 
 #radial-menu .button-2 {
-    transform: translateX(-35px);
+    transform: translateX(-35px) translateY(-14px);
+}
+
+#radial-menu .button-6 {
+    transform: translateX(-35px) translateY(-105px);
 }
 
 #radial-menu .button div.inner.hasnumber span {
