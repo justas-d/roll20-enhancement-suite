@@ -307,7 +307,9 @@ if (doesBrowserNotSupportResponseFiltering()) {
     };
 
     window.requestListener = function (dt) {
+        console.log(`onBeforeRequest: ${dt.url}`);
         if (isEditorUrl(dt.url)) {
+            console.clear();
             console.log("RESET REDIRECT TABLE");
             window.hasBeenRedirected = {};
             window.redirectCount = 0;
