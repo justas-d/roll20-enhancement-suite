@@ -11,11 +11,15 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
         R20.renderAll();
     }
 
-    private prepNameplate = (token: CanvasObject, e: CanvasRenderingContext2D) => {
+    getScale = (token: CanvasObject) => {
         const cfg = this.getHook().config;
+        return token.width / cfg.widthThreshold;
+    };
 
+    private prepNameplateBack = (token: CanvasObject, e: CanvasRenderingContext2D) => {
         try {
-            let scale = token.width / cfg.widthThreshold;
+            const cfg = this.getHook().config;
+            let scale = this.getScale(token);
 
             if (scale < 1 && !cfg.scaleIfSmaller) scale = 1;
             if (scale > 1 && !cfg.scaleIfLarger) scale = 1;
@@ -35,13 +39,26 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
         }
     };
 
+    private prepNameplateText = (token: CanvasObject, e: CanvasRenderingContext2D) => {
+        try {
+            let scale = this.getScale(token) - 1;
+            token._nameplate_data.position[1] += token._nameplate_data.font_size * scale;
+        }
+        catch (err) {
+            console.error(err);
+        }
+    };
+
     public setup() {
-        window.r20es.prepNameplate = this.prepNameplate;
+        window.r20es.prepNameplateBack = this.prepNameplateBack;
+        window.r20es.prepNameplateText= this.prepNameplateText;
         R20.renderAll();
     }
 
     public dispose() {
-        window.r20es.prepNameplate = undefined;
+        window.r20es.prepNameplateBack = undefined;
+        window.r20es.prepNameplateText= undefined;
+
         R20.renderAll();
     }
 }
