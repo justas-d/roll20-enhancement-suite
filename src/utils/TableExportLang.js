@@ -91,7 +91,8 @@ class Lexer {
 
             while (true) {
                 if (this.charStream.length <= (this.readHead + 1)) break;
-                if (this.charStream[this.readHead] === '!') break;
+                //if (this.charStream[this.readHead] === '!') break; Note(justas): this is invalid as the arg token can have an exclamation point char
+                if (this.charStream[this.readHead] === '\n') break;
                 if (this.charStream[this.readHead] === '-' && this.charStream[this.readHead + 1] === '-') break;
 
                 if (this.tryMatchEscapedAscii(ret)) continue;
