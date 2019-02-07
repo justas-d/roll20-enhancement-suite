@@ -1,5 +1,5 @@
 {
-    "current": "1.12.5",
+    "current": "1.12.6",
     "versions": {
         "1.4.0": {
             "info": {
@@ -753,6 +753,26 @@
                 {
                     "id": "",
                     "content": "ScaleTokenNamesBySize: fix improper scaling (thanks, SmoothAsFelt!)"
+                }
+            ]
+        },
+        "1.12.6": {
+            "info": {
+                "title": "Bug Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "TokenLayerDrawing: reworked context state management. Should fix rendering issues."
+                },
+                {
+                    "id": "",
+                    "content": "ScaleTokenNamesBySize: fixed improper scaling when having one of the checkbox settings turned off."
+                },
+                {
+                    "id": "",
+                    "content": "TableExport: fixed importing tables entrys with '!' in the name."
                 }
             ]
         }
