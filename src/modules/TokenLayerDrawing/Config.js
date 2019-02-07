@@ -4,7 +4,7 @@ import ConfigViews from '../../utils/ConfigViews';
 export default MakeConfig(__dirname, {
     id: "tokenLayerDrawing",
     name: "Draw Token Layer on Tokens",
-    description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
+    description: "This module is currently causing issues for some users. Draws an indicator at the bottom left of each token that indicates which layer it is on.",
     category: Category.canvas,
     gmOnly: true,
     media: {

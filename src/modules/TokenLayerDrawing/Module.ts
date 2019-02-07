@@ -11,10 +11,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
 
     drawOverlay = (ctx: CanvasRenderingContext2D, graphic: Roll20.CanvasObject) => {
 
-        // careful here: tokenDrawBg will run in the renderer and crash recovery requires a refresh
         try {
-
-            ctx.save();
 
             const config = this.getHook().config;
             const bitmap = {
@@ -28,9 +25,19 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
 
             const layer: R20.CanvasLayer = graphic.model.get("layer");
 
-            if (!bitmap[layer]) return;
+            if (!bitmap[layer]) {
+                return;
+            }
 
             const layerData = layerInfo[layer];
+
+            // Note(justas): I don't trust ctx.save() so we're doing it manually.
+            ctx.save();
+            const oldAlpha = ctx.globalAlpha;
+            const oldLineWidth = ctx.lineWidth;
+            const oldFillStyle = ctx.fillStyle;
+            const oldStrokeStyle = ctx.strokeStyle;
+            const oldFont = ctx.font;
 
             ctx.globalAlpha = config.globalAlpha;
             ctx.lineWidth = config.textStrokeWidth;
@@ -61,17 +68,28 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
             let offX = Math.floor(graphic.get<number>("width") / 2) - txtWidth;
             let offY = Math.floor(graphic.get<number>("height") / 2);
 
-            ctx.fillStyle = `rgba(${layerData.bgColors[0]}, ${layerData.bgColors[1]}, ${layerData.bgColors[2]}, ${config.backgroundOpacity})`;
-            ctx.fillRect(offX - (pxWallPadding * 0.5), offY - sz, txtWidth + pxWallPadding, sz);
+            {
+                ctx.fillStyle = `rgba(${layerData.bgColors[0]}, ${layerData.bgColors[1]}, ${layerData.bgColors[2]}, ${config.backgroundOpacity})`;
+                ctx.fillRect(offX - (pxWallPadding * 0.5), offY - sz, txtWidth + pxWallPadding, sz);
+            }
 
-            ctx.strokeStyle = `rgba(${config.textStrokeColor[0]}, ${config.textStrokeColor[1]}, ${config.textStrokeColor[2]}, ${config.textStrokeOpacity})`;
+            {
 
-            ctx.fillStyle = `rgba(${config.textFillColor[0]}, ${config.textFillColor[1]},${config.textFillColor[2]}, ${config.textFillOpacity})`;
+                ctx.strokeStyle = `rgba(${config.textStrokeColor[0]}, ${config.textStrokeColor[1]}, ${config.textStrokeColor[2]}, ${config.textStrokeOpacity})`;
+                ctx.fillStyle = `rgba(${config.textFillColor[0]}, ${config.textFillColor[1]},${config.textFillColor[2]}, ${config.textFillOpacity})`;
+                ctx.strokeText(layerData.txt, offX, offY - pxOffsetFromFloor);
+                ctx.fillText(layerData.txt, offX, offY - pxOffsetFromFloor);
+            }
 
-            ctx.strokeText(layerData.txt, offX, offY - pxOffsetFromFloor);
-            ctx.fillText(layerData.txt, offX, offY - pxOffsetFromFloor);
+            {
+                ctx.restore();
+                ctx.globalAlpha = oldAlpha;
+                ctx.lineWidth = oldLineWidth;
+                ctx.fillStyle = oldFillStyle;
+                ctx.strokeStyle = oldStrokeStyle;
+                ctx.font = oldFont;
+            }
 
-            ctx.restore();
         } catch (err) {
             console.error(err);
         }
