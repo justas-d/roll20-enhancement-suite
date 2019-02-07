@@ -13,16 +13,18 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
 
     getScale = (token: CanvasObject) => {
         const cfg = this.getHook().config;
-        return token.width / cfg.widthThreshold;
+        let scale = token.width / cfg.widthThreshold;
+
+        if (scale < 1 && !cfg.scaleIfSmaller) scale = 1;
+        if (scale > 1 && !cfg.scaleIfLarger) scale = 1;
+
+        return scale;
     };
 
     private prepNameplateBack = (token: CanvasObject, e: CanvasRenderingContext2D) => {
         try {
             const cfg = this.getHook().config;
             let scale = this.getScale(token);
-
-            if (scale < 1 && !cfg.scaleIfSmaller) scale = 1;
-            if (scale > 1 && !cfg.scaleIfLarger) scale = 1;
 
             const scaledFontSize = token._nameplate_data.font_size * scale;
             e.font = `bold ${scaledFontSize}px Arial`;
