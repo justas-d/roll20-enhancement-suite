@@ -40,12 +40,13 @@ import AdjustableOpacity from "./modules/AdjustableOpacity/Config";
 import TokenFromImg from "./modules/TokenFromImg/Config";
 import DisablePlayerDrawings from "./modules/DisablePlayerDrawings/Config";
 import SetTableEntryAvatarByUrl from "./modules/SetTableEntryAvatarByUrl/Config";
+//import LibreAnimatedTokens from "./modules/LibreAnimatedTokens/Config"
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
-
 addCfg(DisablePlayerDrawings);
+//addCfg(LibreAnimatedTokens);
 addCfg(TokenFromImg);
 addCfg(AdjustableOpacity);
 addCfg(RememberTextToolSettings);

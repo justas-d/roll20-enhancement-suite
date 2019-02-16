@@ -448,6 +448,10 @@ ${content}
         renderAll();
     }
 
+    export const getFabric = (): any => {
+        return window["exports"].fabric;
+    };
+
     export function renderAll() {
         window.d20.engine.redrawScreenNextTick(false);
     }
