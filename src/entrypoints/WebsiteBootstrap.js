@@ -5,6 +5,7 @@ import showProblemPopup from "../utils/ProblemPopup";
 import { DOM } from "../utils/DOM";
 import {EventEmitter} from "../utils/EventEmitter";
 import { saveAs } from 'save-as'
+import {MESSAGE_KEY_LOAD_MODULES} from "../MiscConstants";
 
 setTimeout(() => {
 
@@ -88,7 +89,10 @@ window.r20es.recvPluginMsg = function (e) {
 
         console.log("WebsiteBootstrap.js applied INITIAL configs.");
         window.injectWebsiteOK = true;
-        window.postMessage({ r20esLoadModules: true }, Config.appUrl);
+
+        window.postMessage({
+            [MESSAGE_KEY_LOAD_MODULES]: true
+        }, Config.appUrl);
 
         window.r20es.syncConfigs();
     }

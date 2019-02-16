@@ -10,7 +10,10 @@ const gen = (browser, origVersionName) => {
         description: 'aka R20ES. Provides quality-of-life and workflow speed improvements to Roll20.',
 
         permissions: [
-            '*://app.roll20.net/editor*',
+            '*://app.roll20.net/editor/',
+            '*://app.roll20.net/editor',
+            '*://app.roll20.net/editor?*',
+            '*://app.roll20.net/editor#*',
             'webRequest',
             'webRequestBlocking',
             'storage'
