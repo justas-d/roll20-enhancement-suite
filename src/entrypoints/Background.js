@@ -84,26 +84,21 @@ if (doesBrowserNotSupportResponseFiltering()) {
         }
         else if(request.type === "script") {
             for(const url of targetScripts) {
+
                 if(request.url.startsWith(url)) {
                     beginRedirectQueue();
 
-                    if(isRedirecting) {
-
-                        if (alreadyRedirected[request.url]) {
-                            console.log(`not queueing request due to alreadyRedirected: ${request.url}`, request);
-                        }
-                        else {
-                            console.log(`queueing ${request.url}`);
-                            redirectQueue.push(request.url);
-                            alreadyRedirected[request.url] = true;
-
-                            return {
-                                cancel: true
-                            };
-                        }
+                    if (alreadyRedirected[request.url]) {
+                        console.log(`not queueing request due to alreadyRedirected: ${request.url}`, request);
                     }
                     else {
-                        console.log("script, but we're not redirecting", request.url);
+                        console.log(`queueing ${request.url}`);
+                        redirectQueue.push(request.url);
+                        alreadyRedirected[request.url] = true;
+
+                        return {
+                            cancel: true
+                        };
                     }
 
                     break;
