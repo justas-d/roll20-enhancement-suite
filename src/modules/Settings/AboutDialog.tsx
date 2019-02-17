@@ -53,11 +53,9 @@ export default class AboutDialog extends DialogBase<null> {
 
                 <DialogBody>
 
-                    <img style={{width: "60%", display: "block", marginLeft: "auto", marginRight: "auto"}}
-                         src={this.logoUrl} alt="Logo"/>
+                    <div style={{display: "flex"}}>
 
-                    <div style={{display: "flex", justifyContent: "space-between"}}>
-                        <div>
+                        <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
                             <div>
                                 <b>Built by</b>
                                 <p>SSStormy, Giddy</p>
@@ -65,19 +63,38 @@ export default class AboutDialog extends DialogBase<null> {
 
                             <div>
                                 <b>And other work by</b>
-                                <div style={{maxWidth: "180px"}}>
+                                <p style={{maxWidth: "180px"}}>
                                     Jay "Vanguard" Fothergill, Ryan Wenneker
-                                </div>
+                                </p>
+                            </div>
+
+                            <div>
+                                <b>Tested by</b>
+                                <p style={{maxWidth: "180px"}}>
+                                    Axecleft, TEU_Snoopy, keablah, Nikolay, Colorblind,
+                                    DoomRice, Daj, Angor de Redjak, Ryan Wenneker, Tielc,
+                                    Giddy, Grigdusher, Knilk, Dominic, Neverr, SmoothAsFelt
+                                </p>
                             </div>
                         </div>
 
-                        <div>
-                            <b>With contributions from</b>
-                            <div style={{maxWidth: "180px"}}>
-                                Mike, Aaron, Blurn Glanstone, Tobyn, Fredrik, Ryan Wenneker, BuckeyeFan79, Jakob, Daniel (Daj), Morris Kennedy, KarateHawk, Jason Backus, Tielc, Spencer Oldemeyer, Hawks, S.Ziterman
+                        <div style={{paddingRight: "8px", paddingLeft: "8px"}}>
+                            <img src={this.logoUrl} alt="Logo"/>
+                        </div>
+
+                        <div style={{display: "flex", flexDirection: "column", direction: "rtl", justifyContent: "center"}}>
+                            <div>
+                                <b>With contributions from</b>
+                                <div style={{maxWidth: "180px"}}>
+                                    Mike, Aaron, Blurn Glanstone, Tobyn, Fredrik, Ryan Wenneker,
+                                    BuckeyeFan79, Jakob, Daniel (Daj), Morris Kennedy, KarateHawk,
+                                    Jason Backus, Tielc, Spencer Oldemeyer, Hawks, S.Ziterman,
+                                    Worst DM Ever, Curtis T, TEU_Snoopy, Jeremy, Alex, Teddy
+                                </div>
                             </div>
                         </div>
                     </div>
+
 
                     <hr/>
 
