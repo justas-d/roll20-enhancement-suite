@@ -302,6 +302,13 @@ namespace R20 {
         return retvals;
     }
 
+    export const playAudio = (id: string, url: string) => {
+        window.Jukebox.soundObjs[id] = window.soundManager.createSound({
+            id,
+            url
+        });
+    };
+
     export function createSong(data: any | IApplyableSong | JukeboxSongAttributes): JukeboxSong {
         return window.Jukebox.playlist.create(data);
     }

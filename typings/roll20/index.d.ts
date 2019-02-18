@@ -513,6 +513,7 @@ declare namespace Roll20 {
 
     export interface GlobalJukebox {
         playlist: ObjectStorage<JukeboxSong>;
+        soundObjs: {[id: string]: any}
     }
 
     export interface ObjectStorageWithBackbone<T> extends ObjectStorage<T> {
@@ -562,6 +563,11 @@ declare namespace Roll20 {
         bind: (keys: string, cb: () => void) => void;
         unbind: (keys: string) => void;
     }
+
+
+    export interface SoundManager {
+        createSound: (sound: {id: string, url: string}) => any;
+    }
 }
 
 
@@ -575,6 +581,7 @@ interface Window {
     generateUUID: () => string;
     r20es: Roll20.R20ES;
     Mousetrap: Roll20.Mousetrap;
+    soundManager: Roll20.SoundManager;
 }
 
 declare module 'roll20' {
