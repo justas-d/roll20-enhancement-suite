@@ -73,7 +73,8 @@ export default class AboutDialog extends DialogBase<null> {
                                 <p style={{maxWidth: "180px"}}>
                                     Axecleft, TEU_Snoopy, keablah, Nikolay, Colorblind,
                                     DoomRice, Daj, Angor de Redjak, Ryan Wenneker, Tielc,
-                                    Giddy, Grigdusher, Knilk, Dominic, Neverr, SmoothAsFelt
+                                    Giddy, Grigdusher, Knilk, Dominic, Neverr, SmoothAsFelt,
+                                    dunedain
                                 </p>
                             </div>
                         </div>
