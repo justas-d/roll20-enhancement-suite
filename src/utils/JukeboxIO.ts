@@ -1,6 +1,7 @@
 import {IResult, Err, Ok} from './Result'
 import {R20} from "./R20";
 import IOCommon from "./IOCommon";
+import {LIBRE_AUDIO_TRACK_KEY} from '../modules/LibreAudio/Constants';
 
 interface IParseStrategy {
     parse: (data: any) => IResult<IApplyableJukeboxPlaylist[], string>;
@@ -120,7 +121,12 @@ export namespace JukeboxIO {
                         title: s.attributes.title,
                         track_id: s.attributes.track_id,
                         volume: s.attributes.volume,
-                    } ;
+                    };
+
+                    if(s.attributes[LIBRE_AUDIO_TRACK_KEY]) {
+                        songRet[LIBRE_AUDIO_TRACK_KEY] = true;
+                    }
+
                     return songRet;
                 }),
             };
