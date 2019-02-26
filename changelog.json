@@ -1,5 +1,5 @@
 {
-    "current": "1.14.1",
+    "current": "1.14.2",
     "versions": {
         "1.4.0": {
             "info": {
@@ -817,6 +817,18 @@
                 {
                     "id": "",
                     "content": "Jukebox: fixed export/importing libeaudio tracks. (thanks, dunedain!)"
+                }
+            ]
+        },
+        "1.14.2": {
+            "info": {
+                "title": "Libre Audio Playback Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Libre Audio: fixed Roll20 thinking Libre Audio tracks are from Fanburst."
                 }
             ]
         }
