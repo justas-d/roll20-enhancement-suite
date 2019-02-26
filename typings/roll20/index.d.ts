@@ -268,7 +268,7 @@ declare namespace Roll20 {
 
     export type FirebaseEventTypes = "value" | "child_added" | "child_removed" | "child_changed" | "child_moved";
 
-    interface FirebaseReference<T> {
+    export interface FirebaseReference<T> {
         val: () => T;
         key: () => string;
     }
@@ -528,7 +528,8 @@ declare namespace Roll20 {
         create: (initialState?: T | any) => T;
         find: (predicate: (element: T) => boolean) => T;
         map: <TOut>(selector: (element: T) => TOut)=> TOut[];
-        
+
+        backboneFirebase: BackboneFirebase;
         //reset: () => ObjectStorage<T>; local only, doesn't sync with firebase
     }
 

@@ -1,9 +1,10 @@
 import {R20Module} from '../../utils/R20Module'
 import {LIBRE_AUDIO_TRACK_KEY} from "./Constants";
-import {JukeboxSong} from 'roll20';
+import {JukeboxSong, JukeboxSongAttributes} from 'roll20';
 import {R20} from "../../utils/R20";
 import {DOM} from "../../utils/DOM";
 import {findByIdAndRemove} from "../../utils/MiscUtils";
+import {FirebaseReference} from "roll20";
 
 class LibreAudio extends R20Module.SimpleBase {
     constructor() {
@@ -32,6 +33,44 @@ class LibreAudio extends R20Module.SimpleBase {
         );
 
         listRoot.appendChild(widget);
+    };
+
+    tryUpgradeTrackToNewestLibreAudioTrackVersion = (track: JukeboxSong) => {
+        /*
+            NOTE(stormy): convert between LibreAudio track versions
+            Current: v2
+
+            v1 -> v2 changes:  source changed from "Fanburst" to "My Audio"
+         */
+
+        console.log("Trying to upgrade", track);
+
+        if(track.attributes[LIBRE_AUDIO_TRACK_KEY]) {
+            // v1 -> v2
+            if(track.attributes.source === "Fanburst") {
+                track.save({
+                    source: "My Audio"
+                })
+            }
+        }
+    };
+
+    databaseOnAddJukeboxTrack = (ref: FirebaseReference<JukeboxSongAttributes>) => {
+
+        // NOTE(stormy); we delay here so that the object is basically guaranteed to be stored in Roll20's firebase objs
+        const attribs = ref.val();
+
+        setTimeout(() => {
+            const track = R20.getSongById(attribs.id);
+            if(!track) {
+                console.error(`[LibreAudio] databaseOnAddJukeboxTrack couldn't find track by id ${attribs.id}!`, attribs);
+                return;
+            }
+
+
+            this.tryUpgradeTrackToNewestLibreAudioTrackVersion(track);
+
+        }, 1000);
     };
 
     uiRemoveAddTrackWidget = () => {
@@ -68,12 +107,8 @@ Disclaimer: players must have the extension installed in order to hear this trac
                 loop: false,
                 playing: false,
                 softstop: false,
-                /*
-                    Note(justas): Fanburst sources have special logic:
-                        no soundcloud deprecation message
-                        no soundcloud api key query string
-                 */
-                source: "Fanburst",
+
+                source: "My Audio",
                 [LIBRE_AUDIO_TRACK_KEY]: true,
                 title: name,
                 track_id: url,
@@ -88,24 +123,35 @@ Disclaimer: players must have the extension installed in order to hear this trac
         testElement.play();
     };
 
-    tryPlaySound = (audio: JukeboxSong) => {
-        const url = audio.attributes.track_id;
-
+    canPlaySound = (audio: JukeboxSong) => {
         if(audio.attributes[LIBRE_AUDIO_TRACK_KEY]) {
-            R20.playAudio(url, url);
             return true;
         }
-
         return false;
     };
 
+    playSound= (audio: JukeboxSong) => {
+        const url = audio.attributes.track_id;
+        R20.playAudio(url, url);
+    };
+
     public setup = () => {
-        window.r20es["tryPlaySound"] = this.tryPlaySound;
+        {
+            window.r20es["canPlaySound"] = this.canPlaySound;
+            window.r20es["playSound"] = this.playSound;
+            window.Jukebox.playlist.backboneFirebase.reference.on("child_added", this.databaseOnAddJukeboxTrack);
+        }
+
         this.uiInsertAddTrackWidget();
     };
 
     public dispose = () => {
-        window.r20es["tryPlaySound"] = undefined;
+        {
+            window.r20es["canPlaySound"] = undefined;
+            window.r20es["playSound"] = undefined;
+            window.Jukebox.playlist.backboneFirebase.reference.off("child_added", this.databaseOnAddJukeboxTrack);
+        }
+
         this.uiRemoveAddTrackWidget();
     }
 }

@@ -14,7 +14,7 @@ export default MakeConfig(__dirname, {
         { // play hook
             includes: "assets/app.js",
             find: `if("My Audio"===r){`,
-            patch: `if(window.r20es && window.r20es.tryPlaySound && !window.r20es.tryPlaySound(n) && "My Audio" === r) {`,
+            patch: `if(window.r20es && window.r20es.canPlaySound && window.r20es.playSound && window.r20es.canPlaySound(n)) { window.r20es.playSound(n) } else if("My Audio" === r) {`,
         },
         { // remove 16 player cap on my audio
 
@@ -24,3 +24,4 @@ export default MakeConfig(__dirname, {
         },
     ]
 });
+
