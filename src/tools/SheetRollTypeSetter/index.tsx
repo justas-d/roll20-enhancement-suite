@@ -60,6 +60,10 @@ const onSetForAll = (e: Event) => {
 
         const chars = R20.getAllCharacters();
 
+        const mod = {
+            current: selectValue
+        };
+
         for (const char of chars) {
 
             let attrib: CharacterSheetAttribute | null = null;
@@ -70,12 +74,12 @@ const onSetForAll = (e: Event) => {
             }
 
             if (!attrib) {
-                attrib = char.attribs.create();
+                attrib = char.attribs.create({
+                    name: attribData.attributeName
+                });
             }
-
-            attrib.save({
-                current: selectValue
-            });
+            
+            attrib.save(mod);
         }
 
     } catch(err) {
