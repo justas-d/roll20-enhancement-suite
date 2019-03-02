@@ -6,7 +6,7 @@ import {DOM} from "../../utils/DOM";
 import {findByIdAndRemove} from "../../utils/MiscUtils";
 import {FirebaseReference} from "roll20";
 
-class LibreAudio extends R20Module.SimpleBase {
+class LibreAudio extends R20Module.OnAppLoadBase {
     constructor() {
         super(__dirname);
     }
