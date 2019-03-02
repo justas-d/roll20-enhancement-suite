@@ -1,5 +1,5 @@
 {
-    "current": "1.14.3",
+    "current": "1.14.4",
     "versions": {
         "1.4.0": {
             "info": {
@@ -841,6 +841,18 @@
                 {
                     "id": "",
                     "content": "SheetRollTypeSetter: Fixed an issue where attributes weren't being properly set sometimes. (thanks, Maxell!)"
+                }
+            ]
+        },
+        "1.14.4": {
+            "info": {
+                "title": "Libre Audio Widget Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "LibreAudio: fixed the Add By URL widget not appearing most of the time."
                 }
             ]
         }
