@@ -5,11 +5,14 @@ import {R20} from "../../utils/R20";
 import {DOM} from "../../utils/DOM";
 import {findByIdAndRemove} from "../../utils/MiscUtils";
 import {FirebaseReference} from "roll20";
+import LibreAudioDialogWidget from "./LibreAudioDialogWidget";
 
 class LibreAudio extends R20Module.OnAppLoadBase {
     constructor() {
         super(__dirname);
     }
+
+    private add_url_dialog: LibreAudioDialogWidget;
 
     _addTrackWidgetId = "r20es-libre-audio-add-track-widget";
 
@@ -78,49 +81,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
     };
 
     uiOnClickAddTrack = () => {
-        const url = prompt(`Insert a Track URL.
-Disclaimer: players must have the extension installed in order to hear this track.`, "www.example.com/audio.mp3");
-        const testElement = document.createElement("audio") as any;
-        testElement.crossorigin = "anonymous";
-        testElement.volume = 0;
-
-        const removeEventListeners = () => {
-            testElement.pause();
-            testElement.removeEventListener("error", onError);
-            testElement.removeEventListener("canplay", onCanPlay);
-            testElement.src = "";
-        };
-
-        const onError = e => {
-            removeEventListeners();
-            console.error(e);
-            alert("Could not load audio. The URL is most likely not a direct audio stream.");
-        };
-
-        const onCanPlay = e => {
-            removeEventListeners();
-
-            const split = url.split("/");
-            const name = split[Math.max(0, split.length - 1)];
-
-            R20.createSong({
-                loop: false,
-                playing: false,
-                softstop: false,
-
-                source: "My Audio",
-                [LIBRE_AUDIO_TRACK_KEY]: true,
-                title: name,
-                track_id: url,
-                volume: 100
-            });
-        };
-
-        testElement.addEventListener("error", onError);
-        testElement.addEventListener("canplay", onCanPlay);
-
-        testElement.src =  url;
-        testElement.play();
+        this.add_url_dialog.show();
     };
 
     canPlaySound = (audio: JukeboxSong) => {
@@ -135,6 +96,30 @@ Disclaimer: players must have the extension installed in order to hear this trac
         R20.playAudio(url, url);
     };
 
+    ui_on_add_url_dialog_close = (e) => {
+        const data = this.add_url_dialog.getData();
+        if (!data) {
+            return;
+        }
+
+        for(const track_data of data) {
+            const created_track = R20.createSong({
+                loop: false,
+                playing: false,
+                softstop: false,
+
+                source: "My Audio",
+                [LIBRE_AUDIO_TRACK_KEY]: true,
+
+                title: track_data.title,
+                track_id: track_data.url,
+                volume: track_data.volume
+            });
+
+            R20.addTrackToPlaylist(created_track.id, track_data.playlist);
+        }
+    };
+
     public setup = () => {
         {
             window.r20es["canPlaySound"] = this.canPlaySound;
@@ -142,10 +127,20 @@ Disclaimer: players must have the extension installed in order to hear this trac
             window.Jukebox.playlist.backboneFirebase.reference.on("child_added", this.databaseOnAddJukeboxTrack);
         }
 
+        {
+            this.add_url_dialog = new LibreAudioDialogWidget();
+            this.add_url_dialog .getRoot().addEventListener("close", this.ui_on_add_url_dialog_close);
+        }
+
         this.uiInsertAddTrackWidget();
     };
 
     public dispose = () => {
+
+        if(this.add_url_dialog) {
+            this.add_url_dialog.dispose()
+        }
+
         {
             window.r20es["canPlaySound"] = undefined;
             window.r20es["playSound"] = undefined;

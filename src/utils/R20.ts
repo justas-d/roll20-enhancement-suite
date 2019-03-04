@@ -255,14 +255,32 @@ namespace R20 {
     }
 
     export interface JukeboxPlaylist {
+        id: string;
         name: string;
         mode: string;
         songs: JukeboxSong[];
     }
 
-    export function getJukeboxFileStructure(): (JukeboxFileStructure | string)[] {
-        return window.d20.jukebox.lastFolderStructure;
+    export type JukeboxFileSystem = (JukeboxFileStructure | string)[];
+
+    export function getJukeboxFileStructure(): JukeboxFileSystem {
+        //return window.d20.jukebox.lastFolderStructure;
+        return JSON.parse(window.d20.Campaign.attributes.jukeboxfolder);
     }
+
+    export function setJukeboxFileStructure(fs: JukeboxFileSystem){
+        R20.getCampaign().save({
+            jukeboxfolder: JSON.stringify(fs)
+        });
+    }
+
+    export const createPlaylist = (name: string): string => {
+        return window.d20.jukebox.addFolderToFolderStructure(name);
+    };
+
+    export const addTrackToPlaylist = (track_id: string, playlist_id: string) => {
+        return window.d20.jukebox.addItemToFolderStructure(track_id, playlist_id);
+    };
 
     export function getSongById(id: string): JukeboxSong | null {
         return window.Jukebox.playlist.get(id);
@@ -280,6 +298,7 @@ namespace R20 {
             const rawPlaylist: JukeboxFileStructure = fsItem;
 
             const playlist: JukeboxPlaylist = {
+                id: rawPlaylist.id,
                 name: rawPlaylist.n,
                 mode: rawPlaylist.s,
                 songs: [],

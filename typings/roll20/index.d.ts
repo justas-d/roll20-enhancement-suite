@@ -509,6 +509,7 @@ declare namespace Roll20 {
     export interface D20Jukebox {
         lastFolderStructure: JukeboxFileStructure[];
         addItemToFolderStructure: (songId: string, folderId: string) => void;
+        addFolderToFolderStructure: (name: string) => string;
     }
 
     export interface GlobalJukebox {

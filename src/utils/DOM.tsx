@@ -61,7 +61,13 @@ namespace DOM {
                     } else if (child === null || child === undefined || typeof (child) === "boolean") {
                         console.log(`JSX got an unrenderable child value, assuming it's control flow related: type: ${typeof (child)} value: ${child}.`);
                     } else {
-                        console.error(`Unknown child type while proecssing JSX: ${child}`);
+                        // NOTE(justas): treat the table as an array
+                        const as_array = [];
+                        for(const key in child) {
+                            as_array.push(child[key]);
+                        }
+
+                        recursiveAddChildren(as_array);
                     }
                 }
             };

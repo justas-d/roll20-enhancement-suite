@@ -92,7 +92,7 @@ export namespace JukeboxIO {
 
         let fs: any[];
         try {
-             fs = JSON.parse(campaign.attributes.jukeboxfolder);
+             fs = R20.getJukeboxFileStructure();
             fs = fs.concat(playlistsStructures);
         } catch(e) {
             console.log("Failed to parse jukeboxfolder:", e);
@@ -101,9 +101,7 @@ export namespace JukeboxIO {
 
         console.log(fs);
 
-        R20.getCampaign().save({
-            jukeboxfolder: JSON.stringify(fs)
-        });
+        R20.setJukeboxFileStructure(fs);
     };
 
     export const makeApplyablePlaylists = (playlists: JukeboxPlaylist[]): IApplyableJukeboxPlaylist[] => {
