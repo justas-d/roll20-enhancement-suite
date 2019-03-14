@@ -74,7 +74,7 @@ export default class AboutDialog extends DialogBase<null> {
                                     Axecleft, TEU_Snoopy, keablah, Nikolay, Colorblind,
                                     DoomRice, Daj, Angor de Redjak, Ryan Wenneker, Tielc,
                                     Giddy, Grigdusher, Knilk, Dominic, Neverr, SmoothAsFelt,
-                                    dunedain
+                                    dunedain, Vlad.D, Mike W
                                 </p>
                             </div>
                         </div>

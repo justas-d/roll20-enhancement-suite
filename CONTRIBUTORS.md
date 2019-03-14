@@ -36,3 +36,5 @@
 * **SmoothAsFelt** - testing.
 * **John Finley** - 2 coffees.
 * **dunedain** - testing.
+* **Vlad.D** - testing.
+* **Mike W** - testing.
