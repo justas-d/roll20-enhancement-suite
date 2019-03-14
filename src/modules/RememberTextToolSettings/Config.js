@@ -42,12 +42,12 @@ export default MakeConfig(__dirname, {
         {
             includes: "assets/app.js",
             find: `"text"==t.type&&(console.log(t.model.get("font_size"))`,
-            patch: `if(!window.r20es || window.r20es.copyTextSettingsOnSelect) >>R20ES_MOD_FIND>>`
+            patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) >>R20ES_MOD_FIND>>`
         },
         {
             includes: "assets/app.js",
             find: `$("#font-size").val(r).trigger("keyup"),$("#font-color").val(s).trigger("change-silent"),$("#font-family").val(a);`,
-            patch: `if(!window.r20es || window.r20es.copyTextSettingsOnSelect) { >>R20ES_MOD_FIND>> }`
+            patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`
         }
     ]
 });

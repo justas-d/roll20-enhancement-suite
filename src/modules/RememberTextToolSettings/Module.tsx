@@ -7,6 +7,11 @@ class RememberTextToolSettingsModule extends R20Module.OnAppLoadBase {
     private static readonly sizeSelectId = "font-size";
     private static readonly fontSelectId = "font-family";
 
+    _copyTextSettingsKey = "copyTextSettingsOnSelect";
+
+    setCopyTextSettingsOnSelectState = (true_if_enabled: boolean) => {
+        window.r20es[this._copyTextSettingsKey] = true_if_enabled;
+    };
 
     private static readonly idToConfig = {
         [RememberTextToolSettingsModule.colorSelectId]: "color",
@@ -26,6 +31,8 @@ class RememberTextToolSettingsModule extends R20Module.OnAppLoadBase {
             new EventSubscriber("change", this.onChangeProp, () => getById(RememberTextToolSettingsModule.sizeSelectId)),
             new EventSubscriber("change", this.onChangeProp, () => getById(RememberTextToolSettingsModule.fontSelectId)),
         ];
+
+        this.setCopyTextSettingsOnSelectState(true);
     }
 
     onChangeProp = (e: Event) => {
@@ -46,10 +53,9 @@ class RememberTextToolSettingsModule extends R20Module.OnAppLoadBase {
     };
 
     private onSettingChange = (key, oldVal, value) => {
-        const expectedKey = "copyTextSettingsOnSelect";
-        if (key !== expectedKey) return;
+        if (key !== this._copyTextSettingsKey) return;
 
-        window.r20es[expectedKey] = value;
+        this.setCopyTextSettingsOnSelectState(value);
     };
 
     private setFontSettingValueFromConfig(id: string) {
@@ -70,12 +76,17 @@ class RememberTextToolSettingsModule extends R20Module.OnAppLoadBase {
 
         this.setFontSettingValueFromConfig(RememberTextToolSettingsModule.sizeSelectId);
         this.setFontSettingValueFromConfig(RememberTextToolSettingsModule.fontSelectId);
+
+        this.setCopyTextSettingsOnSelectState(this.getHook().config[this._copyTextSettingsKey]);
+
     }
 
     public dispose() {
         for (const event of this._events) {
             event.unsubscribe();
         }
+
+        this.setCopyTextSettingsOnSelectState(true);
     }
 }
 
