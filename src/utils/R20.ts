@@ -265,7 +265,15 @@ namespace R20 {
 
     export function getJukeboxFileStructure(): JukeboxFileSystem {
         //return window.d20.jukebox.lastFolderStructure;
-        return JSON.parse(window.d20.Campaign.attributes.jukeboxfolder);
+        try {
+            const folder = window.d20.Campaign.attributes.jukeboxfolder;
+            return JSON.parse(folder || "[]");
+        }
+        catch(e) {
+            console.error("[getJukeboxFileStructure] failed to get fs due to exception", e);
+        }
+
+        return []
     }
 
     export function setJukeboxFileStructure(fs: JukeboxFileSystem){
