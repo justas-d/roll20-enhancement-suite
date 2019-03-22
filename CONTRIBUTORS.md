@@ -34,7 +34,8 @@
 * **Dominic** - testing.
 * **Neverr** - testing.
 * **SmoothAsFelt** - testing.
-* **John Finley** - 2 coffees.
+* **John Finley** - 4 coffees.
 * **dunedain** - testing.
 * **Vlad.D** - testing.
 * **Mike W** - testing.
+* **Hagenkopter** - testing.
