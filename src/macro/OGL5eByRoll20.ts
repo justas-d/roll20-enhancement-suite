@@ -141,7 +141,7 @@ const generateMacroData = (char: Character,
         }
 
         orderedNames.push({
-            name: finalName,
+            name: finalName || "",
             macro: macroFactory(idIdx)
         });
     }
