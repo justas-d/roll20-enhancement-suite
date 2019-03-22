@@ -6,6 +6,7 @@ import { TokenContextMenu } from "../../utils/TokenContextMenu";
 import SayCallback = R20.SayCallback;
 import {CanvasObject, Character} from "roll20";
 import {Optional} from "../../utils/TypescriptUtils";
+import {TOKEN_CONTEXT_MENU_ORDER_HIT_DICE} from '../TokenContextMenuApi/Constants'
 
 class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     public constructor() {
@@ -137,7 +138,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     public setup() {
         if(!R20.isGM()) return;
 
-        TokenContextMenu.addButton("Hit Dice", this.onClickMenuItem, {
+        TokenContextMenu.addButton("Hit Dice", this.onClickMenuItem, TOKEN_CONTEXT_MENU_ORDER_HIT_DICE, {
             mustHaveSelection: true
         });
     }

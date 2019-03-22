@@ -4,6 +4,7 @@ import {TokenContextMenu} from "../../utils/TokenContextMenu";
 import TokenResizeDialog from "./TokenResizeDialog";
 import {CanvasObject} from "roll20";
 import {scaleToFit} from "../../utils/FitWithinTools";
+import {TOKEN_CONTEXT_MENU_ORDER_RESIZE_FIT, TOKEN_CONTEXT_MENU_ORDER_RESIZE_CUSTOM} from '../TokenContextMenuApi/Constants'
 
 class TokenResizeModule extends R20Module.SimpleBase {
 
@@ -79,11 +80,11 @@ class TokenResizeModule extends R20Module.SimpleBase {
     public setup() {
         this.resizeDialog = new TokenResizeDialog();
 
-        TokenContextMenu.addButton("Resize Fit", this.clickResizeFit, {
+        TokenContextMenu.addButton("Resize Fit", this.clickResizeFit, TOKEN_CONTEXT_MENU_ORDER_RESIZE_FIT, {
             mustHaveSelection: true
         });
 
-        TokenContextMenu.addButton("Resize Custom", this.clickResizeCustom, {
+        TokenContextMenu.addButton("Resize Custom", this.clickResizeCustom, TOKEN_CONTEXT_MENU_ORDER_RESIZE_CUSTOM, {
             mustHaveSelection: true
         });
     }

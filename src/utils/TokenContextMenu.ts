@@ -6,6 +6,8 @@ const TOKEN_CONTEXT_MENU_GLOBAL_KEY = "tokenContextMenu";
 export interface ITokenContextMenuButtonOptions {
     // only add the menu item when there is one or more object selected
     mustHaveSelection?: boolean
+    // NOTE(stormy): only show when there are no selected tokens
+    cannotHaveSelection?: boolean
 }
 
 export interface ITokenContextMenuButton {
@@ -36,7 +38,7 @@ export class TokenContextMenu {
         return window.r20es[TOKEN_CONTEXT_MENU_GLOBAL_KEY];
     };
 
-    static addButton = (text: string, callback: Function, _options: Optional<ITokenContextMenuButtonOptions> = undefined) => {
+    static addButton = (text: string, callback: Function, order: number, _options: Optional<ITokenContextMenuButtonOptions> = undefined) => {
 
         const data = TokenContextMenu.getInternalData();
         const id = `r20es-token-ctx-menu-button-${data.idTop++}`;
@@ -48,7 +50,7 @@ export class TokenContextMenu {
             options: _options
         };
 
-        data.widgets.push(payload);
+        data.widgets[order] = payload;
     };
 
     static removeButton = (text: string, callback: Function) => {

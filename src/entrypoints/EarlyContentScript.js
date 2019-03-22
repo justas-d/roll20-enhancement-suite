@@ -1,5 +1,3 @@
-import {initializeDefaultLogWrapperOrReusePreviousInThisContext} from "../utils/LogWrapper";
-
 console.log("EARLY CONTENT SCRIPT");
 
 const url = (chrome || browser).extension.getURL("WebsiteBootstrapBefore.js");
@@ -22,4 +20,3 @@ let waitedFor = 0;
     setTimeout(waitForDepts, 10);
 })();
 
-initializeDefaultLogWrapperOrReusePreviousInThisContext();

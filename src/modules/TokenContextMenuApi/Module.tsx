@@ -21,8 +21,13 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
 
         for(const data of all)
         {
-            if(data.options && data.options.mustHaveSelection && selection.length <= 0)
+            if(data.options && data.options.mustHaveSelection && selection.length <= 0) {
                 continue;
+            }
+
+            if(data.options && data.options.cannotHaveSelection && selection.length > 0) {
+                continue
+            }
 
             const clicked = (e) => {
                 e.stopPropagation();

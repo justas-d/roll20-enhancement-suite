@@ -4,6 +4,7 @@ import {TokenContextMenu} from '../../utils/TokenContextMenu';
 import MacroSelectDialog from './MacroSelectDialog';
 import {TableOfMacrosByCategoryAndId} from './Types';
 import {Macro} from 'roll20';
+import {TOKEN_CONTEXT_MENU_ORDER_ROLL_BULK_MACRO} from '../TokenContextMenuApi/Constants'
 
 class BulkMacroModule extends R20Module.OnAppLoadBase {
 
@@ -81,7 +82,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         this.selectDialog = new MacroSelectDialog();
         this.selectDialog.getRoot().addEventListener("close", this.onDialogClose);
 
-        TokenContextMenu.addButton("Roll Bulk Macro", this.bulkMacroButtonClicked, {
+        TokenContextMenu.addButton("Roll Bulk Macro", this.bulkMacroButtonClicked, TOKEN_CONTEXT_MENU_ORDER_ROLL_BULK_MACRO, {
             mustHaveSelection: true
         });
     }
