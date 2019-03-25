@@ -1,5 +1,5 @@
 {
-    "current": "1.14.7",
+    "current": "1.14.8",
     "versions": {
         "1.4.0": {
             "info": {
@@ -901,6 +901,22 @@
                 {
                     "id": "",
                     "content": "Token context menu options added by R20ES now appear in a consistent order."
+                }
+            ]
+        },
+        "1.14.8": {
+            "info": {
+                "title": "Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "TokenContextMenu: fixed context menu options not showing up"
+                },
+                {
+                    "id": "",
+                    "content": "MacroGenerator: fixed the dialog not showing up when an attribute name was empty"
                 }
             ]
         }
