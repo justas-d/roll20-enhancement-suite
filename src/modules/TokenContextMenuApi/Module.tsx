@@ -19,8 +19,10 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
         const all = TokenContextMenu.getInternalData().widgets;
         const selection = R20.getSelectedTokens();
 
-        for(const data of all)
+        for(const key in all)
         {
+            const data = all[key];
+
             if(data.options && data.options.mustHaveSelection && selection.length <= 0) {
                 continue;
             }
@@ -63,7 +65,8 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
     public dispose() {
         const all = TokenContextMenu.getInternalData().widgets;
 
-        for(const data of all) {
+        for(const key in all) {
+            const data = all[key];
             findByIdAndRemove(data.id);
         }
 

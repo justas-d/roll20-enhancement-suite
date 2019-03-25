@@ -18,7 +18,7 @@ export interface ITokenContextMenuButton {
 }
 
 interface InternalData {
-    widgets: ITokenContextMenuButton[];
+    widgets: {[id:string] : ITokenContextMenuButton};
     idTop: number;
 }
 
@@ -28,7 +28,7 @@ export class TokenContextMenu {
         if (!("tokenContextMenu" in window.r20es)) {
 
             const newData: InternalData = {
-                widgets: [],
+                widgets: {},
                 idTop: 0,
             };
 
@@ -55,14 +55,13 @@ export class TokenContextMenu {
 
     static removeButton = (text: string, callback: Function) => {
         const all = TokenContextMenu.getInternalData().widgets;
-        let idx = all.length;
 
-        while (idx-- > 0) {
-            const cur = all[idx];
+        for(const key in all) {
+            const cur = all[key];
 
             if (cur.text === text && cur.callback === callback) {
                 findByIdAndRemove(cur.id);
-                all.splice(idx, 1);
+                delete all[key];
                 return true;
             }
         }
