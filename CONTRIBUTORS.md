@@ -39,3 +39,5 @@
 * **Vlad.D** - testing.
 * **Mike W** - testing.
 * **Hagenkopter** - testing.
+* **Shemetz** - a coffee.
+* **Jon** - 5 coffees.
