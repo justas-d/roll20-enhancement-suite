@@ -4,7 +4,7 @@ import ConfigViews from '../../utils/ConfigViews';
 export default MakeConfig(__dirname, {
     id: "tokenBarPositionAdjust",
     name: "Token Bar & Status Adjustments",
-    description: "Draws bars 1/2/3 at the bottom of the token instead of on the top.",
+    description: "Allows adjusting how bars & status icons are displayed on tokens.",
     category: Category.token,
 
     media: {
