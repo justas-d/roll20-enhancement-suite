@@ -12,13 +12,9 @@ function Index() {
             </div>
 
             <div className="text-bg">
-                <h1 style={{textAlign: "center"}}>VTT Enhancement Suite</h1>
-
-                <b>An unofficial quality of life and workflow extension for Roll20</b>
-
-                <div>
-                    <small>aka R20ES</small>
-                </div>
+                <h1 style={{borderBottom: "2px solid gray", textAlign: "center"}}>VTT Enhancement Suite</h1>
+                <b >An unofficial quality of life and workflow extension for Roll20</b>
+                <div><b>By <a style={{color: "#000a60"}}href="https://twitter.com/justas_dabrila">Justas "stormy" Dabrila</a></b></div>
 
                 <div className="browser-icons">
 

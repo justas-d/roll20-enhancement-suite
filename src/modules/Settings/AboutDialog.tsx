@@ -58,7 +58,7 @@ export default class AboutDialog extends DialogBase<null> {
                         <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
                             <div>
                                 <b>Built by</b>
-                                <p>SSStormy, Giddy</p>
+                                <p>Justas "stormy" Dabrila, Giddy</p>
                             </div>
 
                             <div>
@@ -128,7 +128,7 @@ export default class AboutDialog extends DialogBase<null> {
 
                         <span>
                             <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
-                               onClick={() => this.openUrl(Config.buyMeACoffee)}>
+                               onClick={() => this.openUrl(Config.contributeUrl)}>
                                 <img height="32" width="32"
                                      src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg"
                                      alt="Buy me a coffee"/>
