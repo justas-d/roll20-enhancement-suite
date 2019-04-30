@@ -303,6 +303,7 @@ declare namespace Roll20 {
         left: number;
         z_index: number;
     }
+    type TokenViewPermissions = "hidden" | "editors" | "everyone";
 
     export interface TokenAttributes extends MapTokenAttributes{
         adv_fow_view_distance: string;
@@ -352,6 +353,9 @@ declare namespace Roll20 {
         playersedit_bar3: boolean;
         playersedit_name: boolean;
         tint_color: string;
+        bar1_num_permission : TokenViewPermissions;
+        bar2_num_permission : TokenViewPermissions;
+        bar3_num_permission : TokenViewPermissions;
         top: number;
         width: number;
         z_index: number;

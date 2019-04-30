@@ -58,6 +58,7 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
         <InputWrapper title={EDIT_WIDGET_TITLE} propName={max} type="text" token={tokenAttribs}/>
     ) as HTMLInputElement;
 
+
     let linkId = tokenAttribs[link];
 
     const updateBarValues = (id: Optional<string>) => {
@@ -161,16 +162,33 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     )
 };
 
-const TokenPermission = ({name, tokenAttribs, propName}) => {
+const TokenPermission = ({name, tokenAttribs, propName, add_permissions, index = 0}) => {
     const seeProp = `showplayers_${propName}`;
     const editProp = `playersedit_${propName}`;
 
+    let permission_widget = null;
+    if(add_permissions) {
+        const permission = `bar${index}_num_permission`;
+
+        permission_widget = (
+            <InputWrapper style={{margin: "0", marginLeft: "8px"}}
+                Component="select" propName={permission} token={tokenAttribs} defaultVal="editors">
+                <option value="hidden">Hidden</option>
+                <option value="editors">Visible to Editors</option>
+                <option value="everyone">Visible to Everyone</option>
+            </InputWrapper>
+        );
+        permission_widget.value = tokenAttribs[permission] || "editors";
+        console.log("=============", tokenAttribs);
+    };
+
     return (
-        <div className="inlineinputs" style={{display: "flex", alignItems: "center"}}>
+        <div className="inlineinputs" style={{height: "40px", display: "flex", alignItems: "center"}}>
             <b style={{display: "inline-block", width: "60px"}}>{name}</b>
 
             <InputCheckbox label="See" defaultVal={false} propName={seeProp} token={tokenAttribs} wrapperStyle={{marginRight: "16px"}}/>
             <InputCheckbox label="Edit" defaultVal={true} propName={editProp} token={tokenAttribs}/>
+            {permission_widget }
         </div>
     )
 };
@@ -187,28 +205,29 @@ const setOverrideTokenData = (element: HTMLElement, value: string) => {
 
 const tokenAttributeDataKey = "data-token-prop-name";
 
-const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) => {
+const InputWrapper = ({Component = "input", type = undefined, token, propName, defaultVal, ...otherProps}: any) => {
     const t: TokenAttributes = token;
-    const widget = <input {...otherProps} type={type}/> as HTMLInputElement;
+    const widget = <Component {...otherProps} /> as HTMLInputElement;
+
+    if(type) {
+        widget.type = type;
+    }
 
     setTokenAttributeDataKey(widget, propName);
 
     let valProp = null;
     let valDefault = null;
 
-    switch (type) {
-        case "checkbox":
-            valProp = "checked";
-            valDefault = false;
-            break;
-        case "number":
-        case "color":
-        case "text":
-            valProp = "value";
-            valDefault = "";
-            break;
-        default:
-            console.error(`Unknown input type ${type}`);
+    if(Component === "select" || type === "number" || type === "color" || type === "text") {
+        valProp = "value";
+        valDefault = "";
+    }
+    else if(type === "checkbox") {
+        valProp = "checked";
+        valDefault = false;
+    }
+    else {
+        console.error(`Unknown input type ${type}`);
     }
 
     if (valProp) {
@@ -226,6 +245,7 @@ const InputWrapper = ({type, token, propName, defaultVal, ...otherProps}: any) =
         if (type === "number") {
             val = parseInt(val, 10) || 0;
         }
+        console.log(propName, valProp, val);
 
         widget[valProp] = val
     }
@@ -427,6 +447,10 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                         showplayers_aura2: defaultToken.showplayers_aura2,
                         playersedit_aura2: defaultToken.playersedit_aura2,
+
+                        bar1_num_permission: defaultToken.bar1_num_permission,
+                        bar2_num_permission: defaultToken.bar2_num_permission,
+                        bar3_num_permission: defaultToken.bar3_num_permission,
                     };
 
                     for(const key in data.token) {
@@ -758,18 +782,13 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                         <hr/>
 
                         <div style={Object.assign({}, indentStyle, {marginBottom: "16px"})}>
-                            <TokenPermission name="Name" propName="name"
-                                             tokenAttribs={data.token}/>
-                            <TokenPermission name="Bar 1" propName="bar1"
-                                             tokenAttribs={data.token}/>
-                            <TokenPermission name="Bar 2" propName="bar2"
-                                             tokenAttribs={data.token}/>
-                            <TokenPermission name="Bar 3" propName="bar3"
-                                             tokenAttribs={data.token}/>
-                            <TokenPermission name="Aura 1" propName="aura1"
-                                             tokenAttribs={data.token}/>
-                            <TokenPermission name="Aura 2" propName="aura2"
-                                             tokenAttribs={data.token}/>
+                            <TokenPermission name="Name" propName="name" tokenAttribs={data.token} add_permissions={false}/>
+
+                            <TokenPermission name="Bar 1" propName="bar1" tokenAttribs={data.token} add_permissions={true} index={1}/>
+                            <TokenPermission name="Bar 2" propName="bar2" tokenAttribs={data.token} add_permissions={true} index={2}/>
+                            <TokenPermission name="Bar 3" propName="bar3" tokenAttribs={data.token} add_permissions={true} index={3}/>
+                            <TokenPermission name="Aura 1" propName="aura1" tokenAttribs={data.token} add_permissions={false} />
+                            <TokenPermission name="Aura 2" propName="aura2" tokenAttribs={data.token} add_permissions={false} />
                         </div>
 
                     </div>
