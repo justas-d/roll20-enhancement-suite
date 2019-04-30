@@ -1,5 +1,5 @@
 {
-    "current": "1.14.8",
+    "current": "1.15.0",
     "versions": {
         "1.4.0": {
             "info": {
@@ -917,6 +917,22 @@
                 {
                     "id": "",
                     "content": "MacroGenerator: fixed the dialog not showing up when an attribute name was empty"
+                }
+            ]
+        },
+        "1.15.0": {
+            "info": {
+                "title": "Small quality of life improvements",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added the 'Draw bars at the bottom' module for tokens"
+                },
+                {
+                    "id": "",
+                    "content": "Character Token Editor: add support for the new bar permissions"
                 }
             ]
         }
