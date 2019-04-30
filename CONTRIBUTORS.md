@@ -41,3 +41,4 @@
 * **Hagenkopter** - testing.
 * **Shemetz** - a coffee.
 * **Jon** - 5 coffees.
+* **Mike Schaeffer** - 3 coffees.
