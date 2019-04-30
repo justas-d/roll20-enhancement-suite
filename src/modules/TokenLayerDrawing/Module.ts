@@ -68,6 +68,11 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
             let offX = Math.floor(graphic.get<number>("width") / 2) - txtWidth;
             let offY = Math.floor(graphic.get<number>("height") / 2);
 
+            // NOTE(justas) is TOkeBarPositionAdjust enabled?
+            if(window.r20es["barDraw"] && graphic._bar_data) {
+                offY -= graphic._bar_data.height * graphic._bar_data.to_render.length + 3;
+            }
+
             {
                 ctx.fillStyle = `rgba(${layerData.bgColors[0]}, ${layerData.bgColors[1]}, ${layerData.bgColors[2]}, ${config.backgroundOpacity})`;
                 ctx.fillRect(offX - (pxWallPadding * 0.5), offY - sz, txtWidth + pxWallPadding, sz);

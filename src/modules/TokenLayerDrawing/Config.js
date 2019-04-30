@@ -4,7 +4,7 @@ import ConfigViews from '../../utils/ConfigViews';
 export default MakeConfig(__dirname, {
     id: "tokenLayerDrawing",
     name: "Draw Token Layer on Tokens",
-    description: "This module is currently causing issues for some users. Draws an indicator at the bottom left of each token that indicates which layer it is on.",
+    description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
     category: Category.canvas,
     gmOnly: true,
     media: {
@@ -18,14 +18,9 @@ export default MakeConfig(__dirname, {
             includes: "assets/app.js",
             find: `this._drawNameplate(e)}return e.restore(),this`,
             patch: `this._drawNameplate(e)} e.restore(); if(window.r20es.tokenDrawBg) { window.r20es.tokenDrawBg(e, this); } return this;`,
-        }
-    ],
+        },
 
-    /*
-    includes: "assets/app.js",
-    find: "this.model.view.updateBackdrops(e),this.active",
-    patch: "this.model.view.updateBackdrops(e), window.is_gm && window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this), this.active",
-    */
+    ],
 
     configView: {
         globalAlpha: {

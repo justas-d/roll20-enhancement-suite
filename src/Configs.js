@@ -41,12 +41,15 @@ import TokenFromImg from "./modules/TokenFromImg/Config";
 import DisablePlayerDrawings from "./modules/DisablePlayerDrawings/Config";
 import SetTableEntryAvatarByUrl from "./modules/SetTableEntryAvatarByUrl/Config";
 import LibreAudio from "./modules/LibreAudio/Config";
+import TokenBarPositionAdjust from "./modules/TokenBarPositionAdjust/Config"
+
 //import LibreAnimatedTokens from "./modules/LibreAnimatedTokens/Config"
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
 addCfg(DisablePlayerDrawings);
+addCfg(TokenBarPositionAdjust);
 //addCfg(LibreAnimatedTokens);
 addCfg(LibreAudio);
 addCfg(TokenFromImg);

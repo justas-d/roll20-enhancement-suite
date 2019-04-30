@@ -389,6 +389,22 @@ declare namespace Roll20 {
             vertical_offset: number
         }
 
+        _bar_data: {
+            border_size: number;
+            font: string;
+            height: number;
+            horizontal_margin: number;
+            position: number[];
+            stroke: string;
+            text_fill: string;
+            text_padding: number;
+            text_stroke: string;
+            text_stroke_size: number;
+            to_render: [];
+            vertical_padding: number;
+            width: number;
+        }
+
         setWidth(width: number): CanvasObject;
         setHeight(width: number): CanvasObject;
         get: <T>(attrib: string) => T;
