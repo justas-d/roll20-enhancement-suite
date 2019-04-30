@@ -30,7 +30,7 @@ const Contribute = () => {
                 <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"/>
                 <a className="bmc-button"
                    target="_blank"
-                   href={Config.contributeUrl}>
+                   href="https://www.buymeacoffee.com/stormy">
                     <img
                         src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"/>
                     <span style={{marginLeft: "5px"}}>Buy me a coffee</span>
