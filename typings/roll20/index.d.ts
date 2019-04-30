@@ -562,6 +562,7 @@ declare namespace Roll20 {
     }
 
     export interface R20ES {
+        is_drawing_bars_at_the_bottom: boolean;
         prepNameplateBack: Function;
         prepNameplateText: Function;
         togglePageToolbar: () => void;

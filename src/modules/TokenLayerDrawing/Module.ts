@@ -69,7 +69,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
             let offY = Math.floor(graphic.get<number>("height") / 2);
 
             // NOTE(justas) is TOkeBarPositionAdjust enabled?
-            if(window.r20es["barDraw"] && graphic._bar_data) {
+            if(window.r20es.is_drawing_bars_at_the_bottom && graphic._bar_data) {
                 offY -= graphic._bar_data.height * graphic._bar_data.to_render.length + 3;
             }
 
