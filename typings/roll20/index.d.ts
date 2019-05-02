@@ -356,6 +356,7 @@ declare namespace Roll20 {
         bar1_num_permission : TokenViewPermissions;
         bar2_num_permission : TokenViewPermissions;
         bar3_num_permission : TokenViewPermissions;
+        bar_location: "above" | "overlap_top" | "overlap_bottom" | "below"
         top: number;
         width: number;
         z_index: number;

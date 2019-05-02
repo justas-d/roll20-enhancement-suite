@@ -451,6 +451,8 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                         bar1_num_permission: defaultToken.bar1_num_permission,
                         bar2_num_permission: defaultToken.bar2_num_permission,
                         bar3_num_permission: defaultToken.bar3_num_permission,
+
+                        bar_location: defaultToken.bar_location,
                     };
 
                     for(const key in data.token) {
@@ -789,6 +791,18 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                             <TokenPermission name="Bar 3" propName="bar3" tokenAttribs={data.token} add_permissions={true} index={3}/>
                             <TokenPermission name="Aura 1" propName="aura1" tokenAttribs={data.token} add_permissions={false} />
                             <TokenPermission name="Aura 2" propName="aura2" tokenAttribs={data.token} add_permissions={false} />
+
+                            <div>
+                                <b>Bar Location</b>
+
+                                <InputWrapper style={{margin: "0", marginLeft: "8px"}}
+                                          Component="select" propName={"bar_location"} token={data.token} defaultVal="above">
+                                    <option value="above">Above</option>
+                                    <option value="overlap_top">Top Overlapping</option>
+                                    <option value="overlap_bottom">Bottom Overlapping</option>
+                                    <option value="below">Below</option>
+                                </InputWrapper>
+                            </div>
                         </div>
 
                     </div>
