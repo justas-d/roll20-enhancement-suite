@@ -27,12 +27,12 @@ export default MakeConfig(__dirname, {
         {
             includes: "assets/app.js",
             find: `"/audio_library/play/"+campaign_id+"/"+o.split("-")[0],`,
-            patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.playSound && window.r20es.canPlaySound(i)) ? o : "/audio_library/play/"+campaign_id+"/"+o.split("-")[0]),`
+            patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(i)) ? o : "/audio_library/play/"+campaign_id+"/"+o.split("-")[0]),`
         },
         {
             includes: "assets/app.js",
             find: `"/audio_library/play/"+campaign_id+"/"+o.split("-")[0]`,
-            patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.playSound && window.r20es.canPlaySound(i)) ? o : "/audio_library/play/"+campaign_id+"/"+o.split("-")[0])`
+            patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(i)) ? o : "/audio_library/play/"+campaign_id+"/"+o.split("-")[0])`
         },
         { // remove 16 player cap on my audio
 
