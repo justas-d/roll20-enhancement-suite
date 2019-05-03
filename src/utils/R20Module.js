@@ -163,12 +163,15 @@ R20Module.OnAppLoadBase = class OnAppLoadModuleBase extends R20Module.Base {
 
     installFirstTime() {
         if (window.r20es.isLoading) {
+            this.earlySetup();
             window.r20es.onAppLoad.addEventListener(this.setup);
         } else {
+            this.earlySetup();
             this.setup();
         }
     }
 
+    earlySetup() { }
     setup() { }
 
     installUpdate() {

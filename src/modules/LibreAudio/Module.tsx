@@ -17,25 +17,17 @@ class LibreAudio extends R20Module.OnAppLoadBase {
     _addTrackWidgetId = "r20es-libre-audio-add-track-widget";
 
     uiInsertAddTrackWidget = () => {
-        const root = document.getElementById("superjukeboxadd");
-        if(!root) {
-            console.error("[LibreAudio] uiInsertAddTrackWidget failed to find widget root (id: superjukeboxadd)");
-            return;
-        }
-
-        const listRoot = $(root).find("ul")[0];
-        if(!listRoot) {
-            console.error("[LibreAudio] uiInsertAddTrackWidget failed to find listRoot");
+        const before_root = document.getElementById("addjukebox");
+        if(!before_root) {
+            console.error("[LibreAudio] uiInsertAddTrackWidget failed to find widget before_root (id: addjukebox)");
             return;
         }
 
         const widget = (
-            <li id={this._addTrackWidgetId}>
-                <a href="javascript:void(0)" onClick={this.uiOnClickAddTrack}>R20ES: Add Track By URL</a>
-            </li>
+            <button className="btn" onClick={this.uiOnClickAddTrack}>R20ES: Add Track By URL</button>
         );
 
-        listRoot.appendChild(widget);
+        before_root.parentNode.insertBefore(widget, before_root);
     };
 
     tryUpgradeTrackToNewestLibreAudioTrackVersion = (track: JukeboxSong) => {
@@ -85,16 +77,21 @@ class LibreAudio extends R20Module.OnAppLoadBase {
     };
 
     canPlaySound = (audio: JukeboxSong) => {
+        console.log("querying", audio);
+
         if(audio.attributes[LIBRE_AUDIO_TRACK_KEY]) {
             return true;
         }
         return false;
     };
 
+    /*
     playSound= (audio: JukeboxSong) => {
+        console.log("playing", audio);
         const url = audio.attributes.track_id;
         R20.playAudio(url, url);
     };
+    */
 
     ui_on_add_url_dialog_close = (e) => {
         const data = this.add_url_dialog.getData();
@@ -120,13 +117,13 @@ class LibreAudio extends R20Module.OnAppLoadBase {
         }
     };
 
-    public setup = () => {
-        {
-            window.r20es["canPlaySound"] = this.canPlaySound;
-            window.r20es["playSound"] = this.playSound;
-            window.Jukebox.playlist.backboneFirebase.reference.on("child_added", this.databaseOnAddJukeboxTrack);
-        }
+    public earlySetup = () => {
+        window.r20es["canPlaySound"] = this.canPlaySound;
+        //window.r20es["playSound"] = this.playSound;
+        window.Jukebox.playlist.backboneFirebase.reference.on("child_added", this.databaseOnAddJukeboxTrack);
+    };
 
+    public setup = () => {
         {
             this.add_url_dialog = new LibreAudioDialogWidget();
             this.add_url_dialog .getRoot().addEventListener("close", this.ui_on_add_url_dialog_close);
@@ -143,7 +140,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
 
         {
             window.r20es["canPlaySound"] = undefined;
-            window.r20es["playSound"] = undefined;
+            //window.r20es["playSound"] = undefined;
             window.Jukebox.playlist.backboneFirebase.reference.off("child_added", this.databaseOnAddJukeboxTrack);
         }
 

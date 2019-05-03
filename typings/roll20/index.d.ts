@@ -581,6 +581,11 @@ declare namespace Roll20 {
         isWindowLoaded: boolean;
         onResizeCanvas: (width: number, height: number) => void;
         onZoomChange: (zoomCoef: number) => void;
+        isLoading: boolean;
+        onAppLoad: {
+            addEventListener: (ev: Function) => void;
+            removeEventListener: (ev: Function) => void;
+        }
     }
 
     export interface Mousetrap {
