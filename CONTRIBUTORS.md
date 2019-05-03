@@ -42,3 +42,5 @@
 * **Shemetz** - a coffee.
 * **Jon** - 5 coffees.
 * **Mike Schaeffer** - 3 coffees.
+* **Anthony Diaz**
+* **Patrick Lane**

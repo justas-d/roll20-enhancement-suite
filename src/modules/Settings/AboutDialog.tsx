@@ -91,7 +91,8 @@ export default class AboutDialog extends DialogBase<null> {
                                     BuckeyeFan79, Jakob, Daniel (Daj), Morris Kennedy, KarateHawk,
                                     Jason Backus, Tielc, Spencer Oldemeyer, Hawks, S.Ziterman,
                                     Worst DM Ever, Curtis T, TEU_Snoopy, Jeremy, Alex, Teddy,
-                                    John Finley, Shemetz, Jon, Mike Schaeffer
+                                    John Finley, Shemetz, Jon, Mike Schaeffer, Anthony Diaz,
+                                    Patrick Lane
                                 </div>
                             </div>
                         </div>
