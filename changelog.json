@@ -1,5 +1,5 @@
 {
-    "current": "1.15.2",
+    "current": "1.15.3",
     "versions": {
         "1.4.0": {
             "info": {
@@ -977,6 +977,18 @@
                 {
                     "id": "",
                     "content": "Character Token Editor: added bar location"
+                }
+            ]
+        },
+        "1.15.3": {
+            "info": {
+                "title": "May 2nd update compatibility",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "LibreAudio: fix playback & ui issues introduced by the May 2nd Roll20 update"
                 }
             ]
         }
