@@ -1,5 +1,5 @@
 {
-    "current": "TODO",
+    "current": "1.15.5",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1004,15 +1004,15 @@
                 }
             ]
         },
-        "TODO": {
+        "1.15.5": {
             "info": {
-                "title": "",
+                "title": "More Fixes",
                 "media": ""
             },
             "changes": [
                 {
                     "id": "",
-                    "content": ""
+                    "content": "LibreAudio: fix possible crash during load"
                 }
             ]
         }
