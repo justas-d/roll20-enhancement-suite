@@ -1,5 +1,5 @@
 {
-    "current": "1.15.4",
+    "current": "TODO",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1001,6 +1001,18 @@
                 {
                     "id": "",
                     "content": "LibreAudio: fix 1.15.3 not fixing the May 2nd Roll20 update breakage"
+                }
+            ]
+        },
+        "TODO": {
+            "info": {
+                "title": "",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": ""
                 }
             ]
         }

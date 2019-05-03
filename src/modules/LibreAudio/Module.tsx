@@ -119,11 +119,11 @@ class LibreAudio extends R20Module.OnAppLoadBase {
 
     public earlySetup = () => {
         window.r20es["canPlaySound"] = this.canPlaySound;
-        //window.r20es["playSound"] = this.playSound;
-        window.Jukebox.playlist.backboneFirebase.reference.on("child_added", this.databaseOnAddJukeboxTrack);
     };
 
     public setup = () => {
+        window.Jukebox.playlist.backboneFirebase.reference.on("child_added", this.databaseOnAddJukeboxTrack);
+
         {
             this.add_url_dialog = new LibreAudioDialogWidget();
             this.add_url_dialog .getRoot().addEventListener("close", this.ui_on_add_url_dialog_close);
@@ -140,7 +140,6 @@ class LibreAudio extends R20Module.OnAppLoadBase {
 
         {
             window.r20es["canPlaySound"] = undefined;
-            //window.r20es["playSound"] = undefined;
             window.Jukebox.playlist.backboneFirebase.reference.off("child_added", this.databaseOnAddJukeboxTrack);
         }
 
