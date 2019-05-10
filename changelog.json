@@ -1,5 +1,5 @@
 {
-    "current": "1.15.5",
+    "current": "1.15.6",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1013,6 +1013,18 @@
                 {
                     "id": "",
                     "content": "LibreAudio: fix possible crash during load"
+                }
+            ]
+        },
+        "1.15.6": {
+            "info": {
+                "title": "May 10th Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "TokenLayerDrawing: fixed the module not working after a Roll20 update."
                 }
             ]
         }
