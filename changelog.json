@@ -1,5 +1,5 @@
 {
-    "current": "1.15.6",
+    "current": "1.15.7",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1025,6 +1025,18 @@
                 {
                     "id": "",
                     "content": "TokenLayerDrawing: fixed the module not working after a Roll20 update."
+                }
+            ]
+        },
+        "1.15.7": {
+            "info": {
+                "title": "Please stop covering up my token",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Alternative Radial Menu: add auto width option that spaces the radial menu in such a way to not cover up the selected token."
                 }
             ]
         }
