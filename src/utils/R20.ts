@@ -592,6 +592,7 @@ ${content}
         }
     };
 
+    /*
     export const on_select_shape_add_event_listener = (callback: (e: any, shape: CanvasObject) => void) => {
         $("body").on("shape_selected", "#editor", callback);
     };
@@ -599,6 +600,7 @@ ${content}
     export const on_select_shape_remove_event_listener = (callback: (e: any, shape: CanvasObject) => void) => {
         $("body").off("shape_selected", "#editor", callback);
     };
+    */
 }
 
 export {R20}

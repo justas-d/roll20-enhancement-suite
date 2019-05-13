@@ -6,7 +6,7 @@ const TOKEN_CONTEXT_MENU_GLOBAL_KEY = "tokenContextMenu";
 export interface ITokenContextMenuButtonOptions {
     // only add the menu item when there is one or more object selected
     mustHaveSelection?: boolean
-    // NOTE(stormy): only show when there are no selected tokens
+    // NOTE(justas): only show when there are no selected tokens
     cannotHaveSelection?: boolean
 }
 

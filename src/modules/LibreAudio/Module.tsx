@@ -32,7 +32,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
 
     tryUpgradeTrackToNewestLibreAudioTrackVersion = (track: JukeboxSong) => {
         /*
-            NOTE(stormy): convert between LibreAudio track versions
+            NOTE(justas): convert between LibreAudio track versions
             Current: v2
 
             v1 -> v2 changes:  source changed from "Fanburst" to "My Audio"
@@ -52,7 +52,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
 
     databaseOnAddJukeboxTrack = (ref: FirebaseReference<JukeboxSongAttributes>) => {
 
-        // NOTE(stormy); we delay here so that the object is basically guaranteed to be stored in Roll20's firebase objs
+        // NOTE(justas); we delay here so that the object is basically guaranteed to be stored in Roll20's firebase objs
         const attribs = ref.val();
 
         setTimeout(() => {

@@ -25,11 +25,17 @@ export default MakeConfig(__dirname, {
         superMinimal: {
             type: ConfigViews.Checkbox,
             display: "Compact mode",
+        },
+
+        auto_width: {
+            type: ConfigViews.Checkbox,
+            display: "Automatically space the left and right sides to not cover up the token."
         }
     },
 
     config: {
         opacity: 1,
         superMinimal: false,
+        auto_width: true
     }
 });

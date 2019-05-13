@@ -1,5 +1,7 @@
 import { R20Module } from "../../utils/R20Module"
 import { createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
+import {CanvasObject} from "roll20";
+import {R20} from "../../utils/R20";
 
 class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
 
@@ -7,11 +9,6 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
 
     constructor() {
         super(__dirname);
-    }
-
-    onSettingChange(name: string, oldVal: any, newVal: any) {
-        this.removeStyle();
-        this.addStyle();
     }
 
     addStyle() {
@@ -122,14 +119,88 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
         findByIdAndRemove(this.sheetId);
     }
 
+    mutation_observer: MutationObserver;
+
+    ui_on_mutate = (mutations: MutationRecord[]) => {
+        for(const mut of mutations) {
+
+            mut.addedNodes.forEach((n: HTMLElement)=> {
+                if(n.id !== "radial-menu") {
+                    return;
+                }
+
+                const selected = R20.getSelectedTokens();
+                if(selected.length != 1) {
+                    return;
+                }
+
+                const cfg = this.getHook().config;
+                const shape_width_in_screen_px = selected[0].width * R20.getCanvasZoom() / 2;
+
+                const nodes = n.children  as any as HTMLElement[];
+
+                const unit_block_size = 30;
+                const pad = 5;
+                for (const node of nodes) {
+
+                    // NOTE(justas): lhs
+                    if (node.classList.contains("button-1") || node.classList.contains("button-2") || node.classList.contains("button-6")) {
+                        var x_offset_in_screen_px = -shape_width_in_screen_px - unit_block_size - pad;
+                        if(cfg.superMinimal) {
+                            x_offset_in_screen_px += unit_block_size;
+                        }
+
+                        // NOTE(justas): the pause/play button is janky and needs a special y coord
+                        if (node.classList.contains("button-6")) {
+                            node.style.transform = `translateX(${x_offset_in_screen_px}px) translateY(-105px)`
+                        }
+                        else {
+                            node.style.transform = `translateX(${x_offset_in_screen_px}px) translateY(-14px)`
+                        }
+                    }
+
+                    // NOTE(justas): rhs
+                    else if (node.classList.contains("button-3") || node.classList.contains("button-4") || node.classList.contains("button-5")) {
+                        // NOTE(justas): +10 to adjust for improper centering
+                        const x_offset_in_screen_px = shape_width_in_screen_px + unit_block_size + pad + 10;
+                        node.style.transform = `translateX(${x_offset_in_screen_px}px) translateY(-75px)`
+                    }
+                }
+            });
+        }
+    };
+
+    try_install_auto_width = () => {
+        const cfg = this.getHook().config;
+        if(cfg.auto_width) {
+            this.mutation_observer = new MutationObserver(this.ui_on_mutate);
+            this.mutation_observer.observe(document.getElementById("editor-wrapper"), {childList: true, subtree: true});
+        }
+    };
+
+    try_uninstall_auto_width = () => {
+        this.mutation_observer.disconnect();
+    };
+
+    onSettingChange(name: string, oldVal: any, newVal: any) {
+        this.removeStyle();
+        this.addStyle();
+
+        this.try_uninstall_auto_width();
+        this.try_install_auto_width();
+    }
+
     setup() {
+        this.try_install_auto_width();
+
         this.addStyle();
     }
 
     dispose() {
+        this.try_uninstall_auto_width();
+
         this.removeStyle();
     }
-
 }
 
 if (R20Module.canInstall()) new AlternativeRadialMenuModule().install();
