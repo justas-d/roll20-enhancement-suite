@@ -38,6 +38,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
 
         const player = R20.getCurrentPlayer();
         const sel = R20.getSelectedTokens();
+        console.log(sel);
 
         for (let macro of player.macros.models) {
             addMacro(macro, "Player Macros");
@@ -46,21 +47,23 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
         const chars = sel
             .reduce((accum, obj) => {
 
-                if (!obj.model) {
+                const model = R20.try_get_canvas_object_model(obj);
+
+                if (!model) {
                     accum.uniq++;
                     return accum;
                 }
 
-                const id: string = obj.model.character
-                    ? obj.model.character.get("id")
-                    : obj.model.get("id");
+                const id: string = model.character
+                    ? model.character.get("id")
+                    : model.get("id");
 
                 if (!(id in accum.map)) {
                     accum.uniq++;
                     accum.map[id] = true;
 
-                    if (obj.model.character) {
-                        accum.arr.push(obj.model.character);
+                    if (model.character) {
+                        accum.arr.push(model.character);
                     }
                 }
                 return accum;

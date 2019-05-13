@@ -33,12 +33,17 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
         while (idx-- > 0) {
             const obj = objs[idx];
 
-            if (R20.doesTokenContainMouse(e, obj) && obj.model) {
+            const model = R20.try_get_canvas_object_model(obj);
+            if(!model) {
+                continue;
+            }
+
+            if (R20.doesTokenContainMouse(e, obj) && model) {
 
                 console.log("Found containing object:");
                 console.log(obj);
 
-                const layer = obj.model.get<R20.CanvasLayer>("layer");
+                const layer = model.get<R20.CanvasLayer>("layer");
 
                 if(!canSelectBitmap[layer])  {
                     console.log("But not selecting due to it not being within the bitmap.");

@@ -374,7 +374,7 @@ declare namespace Roll20 {
 
     export interface CanvasObject {
         _element: HTMLImageElement;
-        model?: Token;
+        // try_get_canvas_object_model
         top: number;
         left: number;
         angle: number;

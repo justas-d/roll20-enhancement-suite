@@ -14,7 +14,11 @@ class AutoPingNextTokenModule extends R20Module.SimpleBase {
 
         if (!obj) return;
 
-        if (obj.model.get("layer") !== "objects") return;
+        const model = R20.try_get_canvas_object_model(obj);
+        if(!model) {
+            return;
+        }
+        if (model.get("layer") !== "objects") return;
         R20.ping(obj.left, obj.top, null, null, R20.CanvasLayer.PlayerTokens);
     }
 

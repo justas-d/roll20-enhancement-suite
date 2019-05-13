@@ -15,7 +15,8 @@ import {
     PlayerAttributes,
     RollableTable,
     SyncObject,
-    JukeboxSongAttributes
+    JukeboxSongAttributes,
+    Token
 } from "roll20";
 import {IApplyableSong} from "./JukeboxIO";
 import {EventSubscriber} from "./EventSubscriber";
@@ -69,7 +70,12 @@ namespace R20 {
     }
 
     export function setCanvasObjectLocation(obj: CanvasObject, left: number, top: number) {
-        obj.model.save({
+        const model = try_get_canvas_object_model(obj);
+        if(!model) {
+            return;
+        }
+
+        model.save({
             top: top,
             left: left,
         });
@@ -103,7 +109,10 @@ namespace R20 {
     }
 
     export function setCanvasObjectDimensions(obj: CanvasObject, width: number, height: number) {
-        obj.model.save({
+        const model = try_get_canvas_object_model(obj);
+        if(!model) return;
+
+        model.save({
             width,
             height
         });
@@ -374,14 +383,23 @@ namespace R20 {
     export function getCurrentPageTokenByUUID(uuid: string): CanvasObject {
         const tokens = getCurrentPageTokens();
         for (let obj of tokens) {
-            if (!obj.model) continue;
+            const model = try_get_canvas_object_model(obj);
+            if(!model) {
+                continue;
+            }
 
-            if (obj.model.get("id") === uuid) {
+            if (model.get("id") === uuid) {
                 return obj;
             }
         }
         return null;
     }
+
+    export const try_get_canvas_object_model = (obj: CanvasObject): Token => {
+        if(obj["_model"]) return obj["_model"];
+        if(obj["model"]) return obj["model"];
+        return null;
+    };
 
     export function isUsing5EOGLSheet() {
         try {
@@ -572,6 +590,14 @@ ${content}
                 waited += delayBetweenRolls;
             }
         }
+    };
+
+    export const on_select_shape_add_event_listener = (callback: (e: any, shape: CanvasObject) => void) => {
+        $("body").on("shape_selected", "#editor", callback);
+    };
+
+    export const on_select_shape_remove_event_listener = (callback: (e: any, shape: CanvasObject) => void) => {
+        $("body").off("shape_selected", "#editor", callback);
     };
 }
 

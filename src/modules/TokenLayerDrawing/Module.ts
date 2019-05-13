@@ -23,7 +23,12 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
                 [R20.CanvasLayer.B20Foreground]: config.drawOnForegroundLayer,
             };
 
-            const layer: R20.CanvasLayer = graphic.model.get("layer");
+            const model = R20.try_get_canvas_object_model(graphic);
+            if(!model) {
+                return;
+            }
+
+            const layer: R20.CanvasLayer = model.get("layer");
 
             if (!bitmap[layer]) {
                 return;

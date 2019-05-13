@@ -76,8 +76,10 @@ class TokenFromImgModule extends R20Module.OnAppLoadBase {
                 ++token_index) {
             let token = tokens[token_index];
 
-            if(token.model && token.model.attributes.imgsrc) {
-                buffer += token.model.attributes.imgsrc;
+            const model =R20.try_get_canvas_object_model(token);
+
+            if(model && model.attributes.imgsrc) {
+                buffer += model.attributes.imgsrc;
                 if(token_index !== tokens.length - 1) {
                     buffer += has_clipboard_api
                         ? "\n"

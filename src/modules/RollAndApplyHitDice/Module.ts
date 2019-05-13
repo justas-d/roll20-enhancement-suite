@@ -22,8 +22,10 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     };
 
     private tryGetCharacter(obj: CanvasObject): Optional<Character> {
-        if(obj.model && obj.model.character) {
-            return obj.model.character;
+        const model = R20.try_get_canvas_object_model(obj);
+
+        if(model && model.character) {
+            return model.character;
         }
         return;
     }
@@ -36,7 +38,13 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
         let save = {};
         save[barValue] = health;
         save[barMax] = health;
-        token.model.save(save);
+
+        const model = R20.try_get_canvas_object_model(token);
+        if(!model) {
+            return;
+        }
+
+        model.save(save);
     };
 
     private onClickMenuItem = (e) => {
@@ -75,7 +83,12 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
                     continue;
                 }
 
-                RollAndApplyHitDiceModule.fancySay(`${token.model.character.get("name")}: [[${hpFormula}]]`,
+                const model = R20.try_get_canvas_object_model(token);
+                if(!model) {
+                    continue;
+                }
+
+                RollAndApplyHitDiceModule.fancySay(`${model.character.get("name")}: [[${hpFormula}]]`,
                     (_, o) => {
                         if (!o.inlinerolls || o.inlinerolls.length <= 0) return;
 
