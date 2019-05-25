@@ -393,67 +393,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                     const defaultToken: TokenAttributes = JSON.parse(jsonToken);
 
                     // @ts-ignore
-                    data.token = {
-                        represents: defaultToken.represents,
-                        name: defaultToken.name,
-                        imgsrc: defaultToken.imgsrc,
-                        showname: defaultToken.showname,
-                        tint_color: defaultToken.tint_color,
-                        width: defaultToken.width,
-                        height: defaultToken.height,
-                        light_radius: defaultToken.light_radius,
-                        light_dimradius: defaultToken.light_dimradius,
-                        light_angle: defaultToken.light_angle,
-                        light_otherplayers: defaultToken.light_otherplayers,
-                        light_losangle: defaultToken.light_losangle,
-                        light_multiplier: defaultToken.light_multiplier,
-                        light_hassight: defaultToken.light_hassight,
-                        adv_fow_view_distance: defaultToken.adv_fow_view_distance,
-
-                        bar1_link: defaultToken.bar1_link,
-                        bar1_max: defaultToken.bar1_max,
-                        bar1_value: defaultToken.bar1_value,
-
-                        bar2_link: defaultToken.bar2_link,
-                        bar2_max: defaultToken.bar2_max,
-                        bar2_value: defaultToken.bar2_value,
-
-                        bar3_link: defaultToken.bar3_link,
-                        bar3_max: defaultToken.bar3_max,
-                        bar3_value: defaultToken.bar3_value,
-
-                        aura1_color: defaultToken.aura1_color,
-                        aura1_radius: defaultToken.aura1_radius,
-                        aura1_square: defaultToken.aura1_square,
-
-                        aura2_color: defaultToken.aura2_color,
-                        aura2_radius: defaultToken.aura2_radius,
-                        aura2_square: defaultToken.aura2_square,
-
-                        showplayers_name: defaultToken.showplayers_name,
-                        playersedit_name: defaultToken.playersedit_name,
-
-                        showplayers_bar1: defaultToken.showplayers_bar1,
-                        playersedit_bar1: defaultToken.playersedit_bar1,
-
-                        showplayers_bar2: defaultToken.showplayers_bar2,
-                        playersedit_bar2: defaultToken.playersedit_bar2,
-
-                        showplayers_bar3: defaultToken.showplayers_bar3,
-                        playersedit_bar3: defaultToken.playersedit_bar3,
-
-                        showplayers_aura1: defaultToken.showplayers_aura1,
-                        playersedit_aura1: defaultToken.playersedit_aura1,
-
-                        showplayers_aura2: defaultToken.showplayers_aura2,
-                        playersedit_aura2: defaultToken.playersedit_aura2,
-
-                        bar1_num_permission: defaultToken.bar1_num_permission,
-                        bar2_num_permission: defaultToken.bar2_num_permission,
-                        bar3_num_permission: defaultToken.bar3_num_permission,
-
-                        bar_location: defaultToken.bar_location,
-                    };
+                    data.token = defaultToken;
 
                     for(const key in data.token) {
                         if(data.token[key] === undefined || data.token[key] === null) {
@@ -532,7 +472,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
             if (!confirm("Are you sure you want to do this? " +
                 "This will update ALL tokens in this campaign that represent this character." +
                 "" +
-                "If you have changed the avatar, a refresh is required to see the changes."))
+                "If you have changed the avatar, a refresh maybe be required to see the changes."))
                 return;
             console.log(data.token);
 
