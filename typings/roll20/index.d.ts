@@ -372,6 +372,12 @@ declare namespace Roll20 {
 
     }
 
+    export interface FrameRecorder {
+        clear : () => void;
+        shutdown : () => void;
+        startup: () => void;
+    }
+
     export interface CanvasObject {
         _element: HTMLImageElement;
         // try_get_canvas_object_model
@@ -466,6 +472,7 @@ declare namespace Roll20 {
     }
 
     export interface Engine {
+        frame_recorder : FrameRecorder
         gm_layer_opacity: number;
         selected: () => CanvasObject[];
         unselect: () => void;

@@ -42,6 +42,7 @@ import DisablePlayerDrawings from "./modules/DisablePlayerDrawings/Config";
 import SetTableEntryAvatarByUrl from "./modules/SetTableEntryAvatarByUrl/Config";
 import LibreAudio from "./modules/LibreAudio/Config";
 import TokenBarPositionAdjust from "./modules/TokenBarPositionAdjust/Config"
+import PerformanceImprovements from "./modules/PerformanceImprovements/Config"
 
 //import LibreAnimatedTokens from "./modules/LibreAnimatedTokens/Config"
 
@@ -93,6 +94,7 @@ addCfg(TransparentPaper);
 addCfg(HidePlayerList);
 addCfg(SetTableEntryAvatarByUrl);
 addCfg(Welcome);
+addCfg(PerformanceImprovements);
 
 
 export default configs;
