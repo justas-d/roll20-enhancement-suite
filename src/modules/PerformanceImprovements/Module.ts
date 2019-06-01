@@ -8,13 +8,15 @@ class PerformanceImprovements extends R20Module.OnAppLoadBase {
 
     toggle_frame_recorder = (true_if_on: boolean) => {
         try {
-            window.d20.engine.frame_recorder.clear();
+            if(window.d20.engine.frame_recorder) {
+                window.d20.engine.frame_recorder.clear();
 
-            if (true_if_on) {
-                window.d20.engine.frame_recorder.startup()
-            }
-            else {
-                window.d20.engine.frame_recorder.shutdown();
+                if (true_if_on) {
+                    window.d20.engine.frame_recorder.startup()
+                }
+                else {
+                    window.d20.engine.frame_recorder.shutdown();
+                }
             }
         }catch(e) {
             console.error(e);

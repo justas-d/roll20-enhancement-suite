@@ -14,7 +14,7 @@ export default MakeConfig(__dirname, {
 
     configView: {
         disable_frame_recorder: {
-            display: "Disable Renderer Profiler",
+            display: "Disable Renderer Profiler (if present)",
             type: ConfigViews.Checkbox,
         },
     },
