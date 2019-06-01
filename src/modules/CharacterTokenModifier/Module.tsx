@@ -179,7 +179,6 @@ const TokenPermission = ({name, tokenAttribs, propName, add_permissions, index =
             </InputWrapper>
         );
         permission_widget.value = tokenAttribs[permission] || "editors";
-        console.log("=============", tokenAttribs);
     };
 
     return (
@@ -245,9 +244,8 @@ const InputWrapper = ({Component = "input", type = undefined, token, propName, d
         if (type === "number") {
             val = parseInt(val, 10) || 0;
         }
-        console.log(propName, valProp, val);
 
-        widget[valProp] = val
+        widget[valProp] = val;
     }
 
     return widget;
@@ -390,10 +388,28 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                     data.token = tkn;
                 } else {
-                    const defaultToken: TokenAttributes = JSON.parse(jsonToken);
+                    data.token = JSON.parse(jsonToken);
 
-                    // @ts-ignore
-                    data.token = defaultToken;
+                    delete data.token.z_index;
+                    delete data.token.type;
+                    delete data.token.top;
+                    delete data.token.left;
+                    delete data.token.statusmarkers;
+                    delete data.token.statusdead;
+                    delete data.token.sides;
+                    delete data.token.pageid;
+                    delete data.token.locked;
+                    delete data.token.layer;
+                    delete data.token.lastmove;
+                    delete data.token.isdrawing;
+                    delete data.token.groupwidth;
+                    delete data.token.gmnotes;
+                    delete data.token.currentSide;
+                    delete data.token.cardid;
+                    delete data.token.adv_fow_view_distance;
+                    delete data.token.anim_autoplay;
+                    delete data.token.anim_loop;
+                    delete data.token.anim_paused_at;
 
                     for(const key in data.token) {
                         if(data.token[key] === undefined || data.token[key] === null) {
@@ -734,17 +750,51 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
                             <div>
                                 <b>Bar Location</b>
+                                {(() => {
+                                    const widget = (
+                                        <InputWrapper style={{margin: "0", marginLeft: "8px"}}
+                                                      Component="select" propName={"bar_location"}
+                                                      token={data.token}
+                                                      defaultVal="above">
+                                            <option value="above">Above</option>
+                                            <option value="overlap_top">Top Overlapping</option>
+                                            <option value="overlap_bottom">Bottom Overlapping</option>
+                                            <option value="below">Below</option>
+                                        </InputWrapper>
+                                    );
+                                    // NOTE(justas): so for some reason the bar_location_widget dropdown DOES NOT want to listen
+                                    // to us setting its .value property from the InputWrapper code while every other dropdown
+                                    // it perfectly fine with that.
+                                    // So this timeout just manually sets the value.
+                                    // :SelectDefaultValueIsNotCooperating
+                                    setTimeout(() => {
+                                        widget.value = data.token["bar_location"] || "above";
+                                    }, 500);
 
-                                <InputWrapper style={{margin: "0", marginLeft: "8px"}}
-                                          Component="select" propName={"bar_location"} token={data.token} defaultVal="above">
-                                    <option value="above">Above</option>
-                                    <option value="overlap_top">Top Overlapping</option>
-                                    <option value="overlap_bottom">Bottom Overlapping</option>
-                                    <option value="below">Below</option>
-                                </InputWrapper>
+                                    return widget;
+                                })()}
+                            </div>
+
+                            <div>
+                                <b>Bar Type</b>
+                                {(() => {
+                                    const prop = "compact_bar";
+                                    const widget= (
+                                        <InputWrapper style={{margin: "0", marginLeft: "8px"}}
+                                                      Component="select" propName={prop} token={data.token} defaultVal="standard">
+                                            <option value="standard">Standard</option>
+                                            <option value="compact">Compact</option>
+                                        </InputWrapper>
+                                    );
+                                    // :SelectDefaultValueIsNotCooperating
+                                    setTimeout(() => {
+                                        widget.value = data.token[prop] || "standard";
+                                    }, 500);
+
+                                    return widget
+                                })()}
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -797,3 +847,4 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 }
 
 if (R20Module.canInstall()) new CharacterTokenModifierModule().install();
+

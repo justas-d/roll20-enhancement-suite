@@ -307,6 +307,18 @@ declare namespace Roll20 {
 
     export interface TokenAttributes extends MapTokenAttributes{
         adv_fow_view_distance: string;
+        statusmarkers: string;
+        statusdead: boolean;
+        sides: number;
+        pageid: string;
+        locked: boolean;
+        isdrawing: boolean;
+        groupwidth: number;
+        currentSide: number;
+        cardid: string;
+        anim_autoplay: boolean
+        anim_loop: boolean
+        anim_paused_at: number;
         aura1_color: string;
         aura1_radius: string;
         aura1_square: boolean;
