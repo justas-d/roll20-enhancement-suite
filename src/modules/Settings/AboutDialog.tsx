@@ -92,7 +92,7 @@ export default class AboutDialog extends DialogBase<null> {
                                     Jason Backus, Tielc, Spencer Oldemeyer, Hawks, S.Ziterman,
                                     Worst DM Ever, Curtis T, TEU_Snoopy, Jeremy, Alex, Teddy,
                                     John Finley, Shemetz, Jon, Mike Schaeffer, Anthony Diaz,
-                                    Patrick Lane
+                                    Patrick Lane, Raphael Riedl
                                 </div>
                             </div>
                         </div>

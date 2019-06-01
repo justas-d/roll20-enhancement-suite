@@ -44,3 +44,4 @@
 * **Mike Schaeffer** - 3 coffees.
 * **Anthony Diaz**
 * **Patrick Lane**
+* **Raphael Riedl** - 5 coffees.
