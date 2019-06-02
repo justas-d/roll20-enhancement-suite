@@ -49,6 +49,12 @@ export const layerInfo: { [id: string]: ILayerInfo } = {
         bgColors: [65, 24, 229],
         toolName: "chooseweather",
     },
+    [R20.CanvasLayer.B20Background]: {
+        bigTxt: "B20 Background",
+        txt: "BG",
+        bgColors: [208, 69, 247],
+        toolName: "choosebackground",
+    },
 };
 
 export const makeLayerButtonSelector = (info: ILayerInfo): string => {

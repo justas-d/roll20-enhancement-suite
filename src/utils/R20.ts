@@ -39,7 +39,8 @@ namespace R20 {
         GMTokens = "gmlayer",
         Lighting = "walls",
         B20Foreground = "foreground",
-        B20Weather = "weather"
+        B20Weather = "weather",
+        B20Background = "background"
     }
 
     export function setBackgroundStyle(bgStyle: string) {

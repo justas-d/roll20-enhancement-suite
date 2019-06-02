@@ -26,6 +26,7 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
             [R20.CanvasLayer.Lighting]: cfg.switchToLightsLayer,
             [R20.CanvasLayer.B20Foreground]: cfg.switchToForegroundLayer,
             [R20.CanvasLayer.B20Weather]: cfg.switchToWeatherLayer,
+            [R20.CanvasLayer.B20Background]: cfg.switchToBackgroundLayer
         };
 
         let idx = objs.length;

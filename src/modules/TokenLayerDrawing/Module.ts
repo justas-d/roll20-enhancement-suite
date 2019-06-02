@@ -21,6 +21,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
                 [R20.CanvasLayer.Lighting]: config.drawOnLightsLayer,
                 [R20.CanvasLayer.B20Weather]: config.drawOnWeatherLayer,
                 [R20.CanvasLayer.B20Foreground]: config.drawOnForegroundLayer,
+                [R20.CanvasLayer.B20Background]: config.drawOnBackgroundLayer,
             };
 
             const model = R20.try_get_canvas_object_model(graphic);

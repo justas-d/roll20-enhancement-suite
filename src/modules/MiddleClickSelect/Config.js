@@ -53,6 +53,13 @@ export default MakeConfig(__dirname,{
             onlyWhenHasB20: true,
         },
 
+        switchToBackgroundLayer: {
+            display: "Allow switching to tokens in the betteR20 background layer",
+            type: ConfigViews.Checkbox,
+
+            onlyWhenHasB20: true,
+        },
+
         modAlt: {
             display: "Must hold down the ALT key",
             type:   ConfigViews.Checkbox
@@ -88,6 +95,7 @@ export default MakeConfig(__dirname,{
 
         switchToForegroundLayer: false,
         switchToWeatherLayer: false,
+        switchToBackgroundLayer: false,
 
         modAlt: false,
         modShift: false,

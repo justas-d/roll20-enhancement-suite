@@ -107,19 +107,24 @@ this;
         },
 
         drawOnForegroundLayer: {
-            display: "Draw on tokens in the foreground layer",
+            display: "Draw on tokens in the betteR20 foreground layer",
             type: ConfigViews.Checkbox,
 
             onlyWhenHasB20: true,
         },
 
         drawOnWeatherLayer: {
-            display: "Draw on tokens in the weather layer",
+            display: "Draw on tokens in the betteR20 weather layer",
+            type: ConfigViews.Checkbox,
+
+            onlyWhenHasB20: true,
+        },
+        drawOnBackgroundLayer: {
+            display: "Draw on tokens in the betteR20 background layer",
             type: ConfigViews.Checkbox,
 
             onlyWhenHasB20: true,
         }
-
     },
 
     config: {
@@ -140,5 +145,6 @@ this;
 
         drawOnWeatherLayer: true,
         drawOnForegroundLayer: true,
+        drawOnBackgroundLayer: true
     },
 });
