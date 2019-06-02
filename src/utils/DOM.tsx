@@ -81,6 +81,10 @@ namespace DOM {
         let getEventName = (what) => what.substring(2).toLowerCase();
 
         for (let attribId in attributes) {
+            if(!attributes.hasOwnProperty(attribId)) {
+                continue;
+            }
+
             let val = attributes[attribId];
 
             if (isEvent(attribId)) {
