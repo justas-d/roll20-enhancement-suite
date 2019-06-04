@@ -24,7 +24,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
         }
 
         const widget = (
-            <button className="btn" onClick={this.uiOnClickAddTrack}>R20ES: Add Track By URL</button>
+            <button id={this._addTrackWidgetId} className="btn" onClick={this.uiOnClickAddTrack}>R20ES: Add Track</button>
         );
 
         before_root.parentNode.insertBefore(widget, before_root);
