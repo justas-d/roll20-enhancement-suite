@@ -1,5 +1,5 @@
 {
-    "current": "1.15.9",
+    "current": "1.15.10",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1065,6 +1065,30 @@
                 {
                     "id": "",
                     "content": "Fixed a possible issue when rendering dialogs"
+                }
+            ]
+        },
+        "1.15.10": {
+            "info": {
+                "title": "Bug Fixes & Small Improvement",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Animated Background: Fixed the icon not appearing"
+                },
+                {
+                    "id": "",
+                    "content": "Animated Background: Added an valid/invalid URL indicator for video URLs."
+                },
+                {
+                    "id": "",
+                    "content": "Libre Audio: Fix improper disposal of the add track button"
+                },
+                {
+                    "id": "",
+                    "content": "Chrome: fixed the loading screen being shown for 6e+04 milliseconds"
                 }
             ]
         }
