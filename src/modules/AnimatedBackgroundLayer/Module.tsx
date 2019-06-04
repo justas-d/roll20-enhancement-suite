@@ -257,7 +257,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         this._videoCtx = this._videoCanvas.getContext("2d");
         this._videoCtx.save();
 
-        const beforeRoot = $("#maincanvas")[0];
+        const beforeRoot = $("#finalcanvas")[0];
 
         beforeRoot.parentNode.insertBefore(this._videoCanvas, beforeRoot);
 

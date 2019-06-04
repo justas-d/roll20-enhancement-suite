@@ -14,7 +14,11 @@ const check_if_url_is_video_stream = (
         err_callback: () => void
 ) => {
     const testElement = document.createElement("video") as HTMLVideoElement;
-    testElement.crossOrigin = "anonymous";
+
+    // NOTE(justas): TS complains that crossorigin is invalid and that I should use crossOrigin
+    // but turns out crossOrigin doesn't work on firefox.
+    // Great.
+    testElement["crossorigin"] = "anonymous";
     testElement.volume = 0;
 
     const removeEventListeners = () => {
@@ -39,6 +43,7 @@ const check_if_url_is_video_stream = (
     testElement.addEventListener("canplay", onCanPlay);
 
     testElement.src =  url;
+    console.log(url);
     testElement.play();
 };
 
@@ -114,8 +119,8 @@ export class AnimBackgroundSetup extends DialogBase<null> {
                         </span>
 
                         <div>
-                            <input type="text" onBlur={this.onBlurUrl} value={this.media_url}/>
-                            {this.ui_is_invalid_media_url ? <b style={{paddingLeft: "8px"}}>Invalid: Not a direct video stream</b> : null}
+                            <input style={{paddingLeft: "8px"}} type="text" onBlur={this.onBlurUrl} value={this.media_url}/>
+                            {this.ui_is_invalid_media_url ? <b>Invalid: Not a direct video stream</b> : <b>Ok!</b>}
                         </div>
 
                     </div>

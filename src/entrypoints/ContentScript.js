@@ -163,8 +163,8 @@ if(doesBrowserNotSupportResponseFiltering()) {
 
                             // incredibly long loading screens fix
                             hookedData = hookedData.replace(
-                                `"You will join the game shortly..."),i=6e4)`,
-                                `"You will join the game shortly..."),i=250)`);
+                                `},6e4))`,
+                                `},250))`);
 
                             const hookQueue = getHooks(hooks, url);
                             hookedData = injectHooks(hookedData, hookQueue, replaceAll);
