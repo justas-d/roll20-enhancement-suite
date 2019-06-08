@@ -135,7 +135,34 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
                 }
 
                 const cfg = this.getHook().config;
-                const shape_width_in_screen_px = selected[0].width * R20.getCanvasZoom() / 2;
+
+                const tkn =selected[0];
+
+                /*
+                    original
+
+                const cos = Math.cos(tkn.angle);
+                const sin = Math.sin(tkn.angle);
+                const x_basis = [cos * tkn.width, sin];
+                const y_basis = [cos, sin * tkn.height];
+
+                const width = x_basis[0] * 1 + x_basis[1] * 0; // dot
+                const height = y_basis[0] * 0 + y_basis[1] * 1; // dot
+                */
+                const camera_scale = R20.getCanvasZoom() / 2;
+                const cos = Math.cos(tkn.angle * Math.PI / 180.0);
+                let width = Math.abs(cos * tkn.width);
+
+                width = width <= 0.00001 ? tkn.height : width;
+
+                // NOTE(justas): add 240 to try to not block the rotation gizmo when we have rotation
+                if(Math.abs(Math.floor(tkn.angle)  % 360) >= 0.00001) {
+                    width += (240 * camera_scale);
+                }
+
+                console.log(width, tkn.angle, tkn.width);
+
+                const shape_width_in_screen_px = width * camera_scale;
 
                 const nodes = n.children  as any as HTMLElement[];
 
