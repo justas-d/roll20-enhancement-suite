@@ -3,6 +3,7 @@ import {DialogBase} from "../../utils/DialogBase";
 import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../utils/DialogComponents";
 import {R20} from "../../utils/R20";
 import {Optional} from "../../utils/TypescriptUtils";
+import {nearly_format_file_url} from "../../utils/MiscUtils";
 
 interface LibreAudioCreateRequest {
     url: string;
@@ -200,29 +201,7 @@ export default class LibreAudioDialogWidget extends DialogBase<LibreAudioCreateR
             const intern = this.internal_request_data[id];
 
             if (intern.can_auto_resolve_title) {
-                let title = "";
-
-                try
-                {
-                    const cut_after_first_occurence_of_char = (str:string , char: string) => {
-                        const idx = str.indexOf(char);
-                        if(idx > 0) {
-                            return str.substring(0, idx)
-                        }
-                        return str;
-                    };
-                    const last_delimiter_index = url.lastIndexOf("/");
-
-                    title = url.substring(last_delimiter_index + 1);
-                    title = cut_after_first_occurence_of_char(title, ".");
-                    title = cut_after_first_occurence_of_char(title, "?");
-                    title = cut_after_first_occurence_of_char(title, "#");
-                    title = decodeURIComponent(title);
-                }
-                catch(e) {
-                    console.error("[LibreAudio] failed resolving track title:", url, e)
-                }
-
+                const title = nearly_format_file_url(url);
 
                 elements.title.value = title;
                 req.title = title;

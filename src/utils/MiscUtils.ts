@@ -20,6 +20,33 @@ const getTransform = function(ctx) {
     }
 };
 
+export const nearly_format_file_url = (url: string) => {
+    let title = "" ;
+
+    try
+    {
+        const cut_after_first_occurence_of_char = (str:string , char: string) => {
+            const idx = str.indexOf(char);
+            if(idx > 0) {
+                return str.substring(0, idx)
+            }
+            return str;
+        };
+        const last_delimiter_index = url.lastIndexOf("/");
+
+        title = url.substring(last_delimiter_index + 1);
+        title = cut_after_first_occurence_of_char(title, ".");
+        title = cut_after_first_occurence_of_char(title, "?");
+        title = cut_after_first_occurence_of_char(title, "#");
+        title = decodeURIComponent(title);
+    }
+    catch(e) {
+        title = url;
+    }
+
+    return title;
+};
+
 const getRotation = function(ctx) {
     let t = getTransform(ctx);
     let rad = Math.atan2(t.b, t.a);

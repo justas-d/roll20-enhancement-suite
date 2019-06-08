@@ -7,6 +7,9 @@ import {
     DialogFooterContent,
     DialogHeader
 } from "../../utils/DialogComponents";
+import lexCompare from "../../utils/LexicographicalComparator";
+import {removeByReference} from "../../utils/ArrayUtils";
+import {nearly_format_file_url} from "../../utils/MiscUtils";
 
 const check_if_url_is_video_stream = (
         url: string,
@@ -58,48 +61,111 @@ export class AnimBackgroundSetup extends DialogBase<null> {
     }
 
     media_url: string;
+    parent_module: any;
 
-    public show(src: string, enabled: boolean, setVideoSrc: (v: string) => void, setEnabled: (state: boolean) => void) {
+    public show(parent_module: any, src: string, enabled: boolean, setVideoSrc: (v: string) => void, setEnabled: (state: boolean) => void) {
+        this.parent_module = parent_module;
         this._setVideoSrc = setVideoSrc;
         this._setEnabled = setEnabled;
         this.media_url = src;
         this._initEnabled = enabled;
 
         this.internalShow();
-        this.ui_verify_media_url();
+        this.ui_verify_media_url(this.media_url, false);
     };
 
     onChangeEnabled = (e) => {
         this._setEnabled(e.target.checked);
-
     };
 
     ui_is_invalid_media_url = false;
 
-    cb_verify_url_ok = () => {
-        this.ui_is_invalid_media_url = false;
-        this.rerender();
-    };
-
-    cb_verify_url_err = () => {
-        this.ui_is_invalid_media_url = true;
-        this.rerender();
-    };
-
     onBlurUrl = (e) => {
         e.stopPropagation();
-
-        this._setVideoSrc(e.target.value);
-        this.media_url = e.target.value;
-
-        this.ui_verify_media_url();
+        this.ui_on_update_url_input(e.target.value);
     };
 
-    ui_verify_media_url = () => {
-        check_if_url_is_video_stream(this.media_url, this.cb_verify_url_ok, this.cb_verify_url_err);
+    ui_on_update_url_input = (url: string) => {
+        this._setVideoSrc(url);
+        this.media_url = url;
+        this.ui_verify_media_url(url, true);
+    };
+
+    module_get_history = () => this.parent_module.getHook().config.video_history;
+    module_save_history = (val: string[]) => this.parent_module.setConfigValue("video_history", val);
+
+    ui_verify_media_url = (url: string, true_if_push_history: boolean) => {
+
+        check_if_url_is_video_stream(url, () => {
+            if(true_if_push_history) {
+                const hist = this.module_get_history() as string[];
+                removeByReference(hist, url);
+                hist.unshift(url);
+                this.module_save_history(hist);
+            }
+
+            this.ui_is_invalid_media_url = false;
+            this.rerender();
+        }, () => {
+            this.ui_is_invalid_media_url = true;
+            this.rerender();
+        });
+    };
+
+    ui_toggle_history = () => {
+        this.show_history = !this.show_history;
+        this.rerender();
+    };
+
+    show_history = false;
+    ui_history_url_attrib = "url";
+
+    ui_history_retrieve_url = (e) => {
+        return e.target.getAttribute(this.ui_history_url_attrib);
+    };
+
+    ui_history_remove = (e) => {
+        const url = this.ui_history_retrieve_url(e);
+        const hist = this.module_get_history();
+        removeByReference(hist, url);
+        this.module_save_history(hist);
+        this.rerender();
+    };
+
+    ui_history_select = (e) => {
+        const url = this.ui_history_retrieve_url(e);
+        this.ui_on_update_url_input(url);
     };
 
     public render() {
+        const hist = this.module_get_history();
+        const hist_widgets = [];
+
+        if(this.show_history) {
+            const set_url = (widget, url) => widget.setAttribute(this.ui_history_url_attrib, url);
+
+            for(const url of hist) {
+                const style = {width: "auto", marginRight: "8px"};
+                const rm_button = <input style={style} className="btn btn-danger" type="button" value="X" onClick={this.ui_history_remove}/>;
+                const url_button = <input style={style} className="btn btn-success" type="button" value="Use" onClick={this.ui_history_select}/>;
+                const url_text = <span title={url}>{nearly_format_file_url(url)}</span>;
+
+                set_url(rm_button, url);
+                set_url(url_button, url);
+
+                hist_widgets.push(
+                    <div>
+                        {rm_button}
+                        {url_button}
+                        {url_text}
+                </div>);
+            }
+
+            if(hist.length == 0) {
+                hist_widgets.push(<div>Nothing here!</div>)
+            }
+        }
+
         return (
             <Dialog>
                 <DialogHeader>
@@ -107,6 +173,13 @@ export class AnimBackgroundSetup extends DialogBase<null> {
                 </DialogHeader>
 
                 <DialogBody>
+
+                    <div>
+                        <i>Disclaimer: VTTES must be installed to be able to see the animated background.</i>
+                    </div>
+
+                    <br/>
+
                     <div style={{display: "grid", gridTemplateColumns: "auto auto", rowGap: "4px"}}>
                         <b>Enabled?</b>
                         <div>
@@ -120,12 +193,24 @@ export class AnimBackgroundSetup extends DialogBase<null> {
 
                         <div>
                             <input style={{paddingLeft: "8px"}} type="text" onBlur={this.onBlurUrl} value={this.media_url}/>
-                            {this.ui_is_invalid_media_url ? <b>Invalid: Not a direct video stream</b> : <b>Ok!</b>}
                         </div>
-
                     </div>
 
-                    <i>Disclaimer: R20ES must be installed to be able to see the animated background.</i>
+                    <div>
+                        <span style={{float: "right"}}>
+                            {this.ui_is_invalid_media_url ? <b>Invalid: Not a direct video stream</b> : <b>URL is valid!</b>}
+                        </span>
+                    </div>
+
+                    <br/>
+
+                    <button style="btn" onClick={this.ui_toggle_history}>{this.show_history ? "Hide History" : "Show History"}</button>
+
+                    <br/>
+
+                    <div style={{maxHeight: "500px", overflowY: "auto"}}>
+                        {hist_widgets}
+                    </div>
 
                 </DialogBody>
 

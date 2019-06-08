@@ -221,7 +221,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     showConfigurationDialog = () => {
-        this._dialog.show(this.getVideoSrc(), this.getVideoEnabled(), this.setVideoSrc, this.setVideoEnabled);
+        this._dialog.show(this, this.getVideoSrc(), this.getVideoEnabled(), this.setVideoSrc, this.setVideoEnabled);
     };
 
     onSettingChange(name: string, oldVal: any, newVal: any) {

@@ -14,7 +14,8 @@ export default MakeConfig(__dirname, {
 
     config: {
         muteAudio: false,
-        audioVolume: 0.1
+        audioVolume: 0.1,
+        video_history: []
     },
 
     configView: {
