@@ -1,5 +1,6 @@
 import { R20Module } from "../../utils/R20Module"
 import { createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
+import OurPageMenu from "./OurPageMenu";
 const constantStyle = require("./alternativePageToolbar.scss");
 
 class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
@@ -73,6 +74,8 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
 
     private noContextMenu = (e) => false;
 
+    new_page_menu: OurPageMenu;
+
     public setup() {
         const clickEvents = $("body").data("events").click;
 
@@ -115,6 +118,9 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
         setTimeout(() => {
             this.updateToolbarTop();
         }, 1000);
+
+        this.new_page_menu = new OurPageMenu();
+        this.new_page_menu.show();
     }
 
     private forEachEvent(jqueryEvents: any, fx: (eventType: string, eventCallback: any) => void) {
@@ -128,6 +134,7 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
     }
 
     public dispose() {
+        if(this.new_page_menu) this.new_page_menu.dispose();
         this.removeStyle();
         this.updateToolbarTop();
 
