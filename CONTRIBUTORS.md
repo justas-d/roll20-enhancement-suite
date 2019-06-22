@@ -45,3 +45,13 @@
 * **Anthony Diaz**
 * **Patrick Lane**
 * **Raphael Riedl** - 5 coffees.
+* **Michael Graeper** - A coffee.
+* **Michael Wilson** - 4 coffees.
+* **Bruce Frankford** - A coffee.
+* **GrapeDrank** - A coffee.
+* **Shona Dixon** - A coffee.
+* **Gabriel Diedrich** - A coffee.
+* **Kyle B. Bachman** - 5 coffees.
+* **The Griffin Moon Collaborative** - A coffee.
+* **Ackerfe** - testing.
+* **shaosam** - testing.

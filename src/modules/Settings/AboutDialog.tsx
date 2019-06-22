@@ -74,7 +74,7 @@ export default class AboutDialog extends DialogBase<null> {
                                     Axecleft, TEU_Snoopy, keablah, Nikolay, Colorblind,
                                     DoomRice, Daj, Angor de Redjak, Ryan Wenneker, Tielc,
                                     Giddy, Grigdusher, Knilk, Dominic, Neverr, SmoothAsFelt,
-                                    dunedain, Vlad.D, Mike W, Hagenkopter
+                                    dunedain, Vlad.D, Mike W, Hagenkopter, Ackerfe, shaosam
                                 </p>
                             </div>
                         </div>
@@ -92,7 +92,9 @@ export default class AboutDialog extends DialogBase<null> {
                                     Jason Backus, Tielc, Spencer Oldemeyer, Hawks, S.Ziterman,
                                     Worst DM Ever, Curtis T, TEU_Snoopy, Jeremy, Alex, Teddy,
                                     John Finley, Shemetz, Jon, Mike Schaeffer, Anthony Diaz,
-                                    Patrick Lane, Raphael Riedl
+                                    Patrick Lane, Raphael Riedl, GrapeDrank, Michael Graeper,
+                                    Michael Wilson, Bruce Frankford, Shona Dixon, Gabriel Diedrich,
+                                    Kyle B. Bachman, The Griffin Moon Collaborative
                                 </div>
                             </div>
                         </div>
