@@ -11,10 +11,11 @@
             "roll20",
             "chrome",
             "firefox-webext-browser",
-            "underscore"
+            "underscore",
+            "webgl2"
         ],
         "lib": ["es7", "dom", "esnext.promise"],
-        "typeRoots": ["node_modules/@types", "./typings"],
+        "typeRoots": ["node_modules/@types", "./typings"]
     },
     "exclude": [
         "*"
