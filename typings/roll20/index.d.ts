@@ -529,7 +529,12 @@ declare namespace Roll20 {
         setupAvatar: (element: JQuery<any>, parentObject: any) => void;
     }
 
+    export interface Canvas_Overlay {
+        drawBackground: (e: CanvasRenderingContext2D, t: any) => void;
+    }
+
     export interface D20 {
+        canvas_overlay: Canvas_Overlay;
         Campaign: Campaign;
         engine: Engine;
         token_editor: TokenEditor;

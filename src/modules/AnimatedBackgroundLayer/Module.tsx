@@ -27,6 +27,7 @@ interface BaseAnimRunner {
     dispose: () => void;
 }
 
+
 class AnimBgUtils {
 
     static get_main_canvas = (): Optional<HTMLCanvasElement> => {
@@ -129,8 +130,6 @@ class VideoRunner implements BaseAnimRunner {
     render_frame = (page: Roll20.Page, canvas: HTMLCanvasElement, roll20Canvas: HTMLCanvasElement, time: number): boolean => {
 
         if(this.ctx && this.video) {
-            R20.setBackgroundStyle("rgba(0,0,0,0)");
-
             const bbX = page.attributes.width * 70;
             const bbY = page.attributes.height * 70;
 
@@ -160,8 +159,6 @@ class VideoRunner implements BaseAnimRunner {
     };
 
     end = (canvas: HTMLCanvasElement) => {
-
-        console.log("video END VIDEO");
         canvas.style.display = "none";
 
         this.video.pause();
@@ -258,8 +255,6 @@ class ShaderRunner implements  BaseAnimRunner{
             gl.viewport(0,0, canvas_x, canvas_y);
 
             const mouse = this.canvas_mouse_pos;
-
-            R20.setBackgroundStyle("rgba(0,0,0,0)");
 
             if(this.uniform_date_loc) {
                 const d = new Date();
@@ -664,7 +659,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
             return;
         }
 
-        console.log("video BEGIN VIDEO");
+        console.log("[AnimBackgrounds] beginVideo while current_runner");
 
         this._isPlaying = true;
 
@@ -673,32 +668,35 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         const try_start = () => {
             try {
                 this.current_runner.start(this.current_page, this.canvas);
+                console.log("[AnimBackgrounds] current_runner.start succeeded!");
+                return true;
             }
             catch(err) {
                 console.error(err);
             }
+            return false;
         };
 
-        try_start();
+        if(!try_start()) {
+            if (isChromium()) {
 
-        if(isChromium()) {
+                const interactionEvents = [
+                    "mousedown",
+                    "scroll",
+                    "keydown",
+                ];
 
-            const interactionEvents = [
-                "mousedown",
-                "scroll",
-                "keydown",
-            ];
+                const onInteract = () => {
+                    try_start();
 
-            const onInteract = () => {
-                try_start();
+                    for (const ev of interactionEvents) {
+                        document.body.removeEventListener(ev, onInteract);
+                    }
+                };
 
-                for(const ev of interactionEvents) {
-                    document.body.removeEventListener(ev, onInteract);
+                for (const ev of interactionEvents) {
+                    document.body.addEventListener(ev, onInteract);
                 }
-            };
-
-            for(const ev of interactionEvents) {
-                document.body.addEventListener(ev, onInteract);
             }
         }
 
@@ -716,8 +714,11 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
             return;
         }
 
+        console.log("[AnimBackgrounds] endVideo while current_runner");
+
         this._isPlaying = false;
         this.current_runner.end(this.canvas);
+
         R20.renderAll();
     }
 
@@ -726,7 +727,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
             return;
         }
 
-        console.log("video ON {PROP CHANGE");
+        console.log("[AnimBackgrounds] onPropChange while current_runner");
 
         this.endVideo();
 
@@ -736,7 +737,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     cleanupPage() {
-        console.log("video CLEANUP PAGE");
+        console.log("[AnimBackgrounds] cleanupPage");
 
         this.endVideo();
 
@@ -756,8 +757,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
     initPage = () => {
         this.cleanupPage();
-
-        console.log("video INITPAGE");
 
         const page = R20.getCurrentPage();
 
@@ -787,7 +786,8 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
             // TODO figure out which runner we need for this page / null
             const cfg = this.getHook().config;
-            this.current_runner = new ShaderRunner();
+            //this.current_runner = new ShaderRunner();
+            this.current_runner = new VideoRunner();
             this.current_runner.init(cfg, this.canvas);
 
             if (this.current_runner && this.current_runner.can_play(this.current_page)) {
@@ -798,7 +798,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
     onResizeCanvas = (width: number, height: number) => {
         if(this._isPlaying) {
-            console.log("video RESIZE CANVAS", width, height);
+            console.log("[AnimBackgrounds] onResizeCanvas while _isPlaying");
 
             this.canvas.width = width;
             this.canvas.height = height;
@@ -815,6 +815,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
     onSetZoom = (coef: number) => {
         if (this._isPlaying) {
+            console.log("[AnimBackgrounds] onSetZoom while _isPlaying");
             this.current_runner.on_zoom(coef);
         }
     };
@@ -825,9 +826,37 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
     onSettingChange(name: string, oldVal: any, newVal: any) {
         if(this.current_runner) {
+            console.log("[AnimBackgrounds] onSettingChange while current_runner");
             this.current_runner.on_setting_change(name, oldVal, newVal);
         }
     }
+
+    trampoline_draw_background = (e: CanvasRenderingContext2D, t : any) =>{
+        if(this._isPlaying) {
+            const old_fill = e.fillStyle;
+            const old_global_compo_op = e.globalCompositeOperation;
+
+            // NOTE(Justas): equivalent to a glClear(GL_COLOR_BUFFER_BIT)
+            e.fillStyle = "rgba(0,0,0,0)";
+            e.globalCompositeOperation = "copy";
+
+            {
+                const zoom = R20.getCanvasZoom();
+                e.fillRect(0, 0,
+                    Math.ceil(R20.getCanvasWidth() / zoom),
+                    Math.ceil(R20.getCanvasHeight() / zoom)
+                );
+            }
+
+            e.fillStyle = old_fill;
+            e.globalCompositeOperation = old_global_compo_op;
+        }
+        else {
+            this.original_canvas_overlay_draw_background(e, t);
+        }
+    };
+
+    original_canvas_overlay_draw_background: (e: CanvasRenderingContext2D, t: any) => void;
 
     setup() {
         console.log("video before ==================================");
@@ -837,6 +866,9 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
         window.r20es.onZoomChange = this.onSetZoom;
         window.r20es.onResizeCanvas = this.onResizeCanvas;
+
+        this.original_canvas_overlay_draw_background = window.d20.canvas_overlay.drawBackground;
+        window.d20.canvas_overlay.drawBackground = this.trampoline_draw_background;
 
         this.initPage();
         window.r20es.onPageChange.on(this.initPage);
@@ -880,6 +912,9 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         window.r20es.onZoomChange = null;
         window.r20es.onResizeCanvas = null;
 
+        window.d20.canvas_overlay.drawBackground = this.original_canvas_overlay_draw_background;
+        this.original_canvas_overlay_draw_background = null;
+
         this._showSettingsWidget.remove();
         this._showSettingsWidget = null;
 
@@ -915,7 +950,7 @@ const check_if_url_is_video_stream = (
 
     const onError = e => {
         removeEventListeners();
-        console.error(e);
+        console.error("check_if_url_is_video_stream error:", e);
         err_callback();
     };
 
