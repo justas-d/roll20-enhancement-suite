@@ -669,34 +669,32 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
             try {
                 this.current_runner.start(this.current_page, this.canvas);
                 console.log("[AnimBackgrounds] current_runner.start succeeded!");
-                return true;
             }
             catch(err) {
                 console.error(err);
             }
-            return false;
         };
 
-        if(!try_start()) {
-            if (isChromium()) {
+        try_start();
 
-                const interactionEvents = [
-                    "mousedown",
-                    "scroll",
-                    "keydown",
-                ];
+        if (isChromium()) {
 
-                const onInteract = () => {
-                    try_start();
+            const interactionEvents = [
+                "mousedown",
+                "scroll",
+                "keydown",
+            ];
 
-                    for (const ev of interactionEvents) {
-                        document.body.removeEventListener(ev, onInteract);
-                    }
-                };
+            const onInteract = () => {
+                try_start();
 
                 for (const ev of interactionEvents) {
-                    document.body.addEventListener(ev, onInteract);
+                    document.body.removeEventListener(ev, onInteract);
                 }
+            };
+
+            for (const ev of interactionEvents) {
+                document.body.addEventListener(ev, onInteract);
             }
         }
 
