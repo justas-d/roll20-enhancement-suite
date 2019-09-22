@@ -21,7 +21,6 @@ import {
 import {IApplyableSong} from "./JukeboxIO";
 import {EventSubscriber} from "./EventSubscriber";
 import {Optional} from "./TypescriptUtils";
-import {cb} from "ava";
 
 namespace R20 {
 
