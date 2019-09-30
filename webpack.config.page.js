@@ -72,10 +72,13 @@ module.exports = (_env, argv) => {
     addStaticFolder("./assets/settings/");
     addStaticFolder("./assets/site/");
 
+    addStaticFile("r20es_1.15.15_chrome.zip", "./page/r20es_1.15.15_chrome.zip");
+    addStaticFile("takedown.png", "./page/takedown.png");
     addStaticFile("index.html", "./page/index.html");
     addStaticFile("features.html", "./page/features.html");
     addStaticFile("about.html", "./page/about.html");
     addStaticFile("contribute.html", "./page/contribute.html");
+    addStaticFile("chrome.html", "./page/chrome.html");
     addStaticFile("logo.svg", "./assets/logo/logo.svg");
 
     const addFile = f => entry[path.basename(f)] = f;
@@ -83,6 +86,7 @@ module.exports = (_env, argv) => {
     addFile("./page/features.js");
     addFile("./page/about.js");
     addFile("./page/contribute.js");
+    addFile("./page/chrome.js");
     addStaticFile("main.css", "./page/main.css");
     addStaticFile("index.css", "./page/index.css");
     addStaticFile("features.css", "./page/features.css");

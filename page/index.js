@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import NavBar from 'NavBar.js';
 
-
 function Index() {
     return (
         <div className="column-flex main-content">
@@ -23,7 +22,7 @@ function Index() {
                             <img src="firefox.png" alt=""/>
                         </a>
 
-                        <a href="https://chrome.google.com/webstore/detail/roll20-enhancement-suite/fadcomaehamhdhekodcpiglabcjkepff">
+                        <a href="chrome.html">
                             <img src="chrome.png" alt=""/>
                         </a>
 
