@@ -15,7 +15,6 @@ import {
 import {removeByReference} from "../../utils/ArrayUtils";
 import {nearly_format_file_url} from "../../utils/MiscUtils";
 import {Optional} from "../../utils/TypescriptUtils";
-import {CommonStyle} from "../../utils/CommonStyles";
 
 interface BaseAnimRunner {
     render_frame: (page: Roll20.Page, canvas: HTMLCanvasElement, roll20Canvas: HTMLCanvasElement, time: number) => boolean;
@@ -28,156 +27,6 @@ interface BaseAnimRunner {
     dispose: () => void;
 }
 
-interface StoredShaderV1 {
-    version: number;
-    name: string;
-    fragment_shader: string
-}
-
-interface ShaderCompileResult {
-    id: Optional<WebGLShader>,
-    success: boolean,
-    error: Optional<string>
-}
-
-const try_compile_shader_part = (gl: WebGL2RenderingContext, type: number, source: string): ShaderCompileResult => {
-    const part = gl.createShader(type);
-    if(!part) {
-        return {
-            id: undefined,
-            success: false,
-            error: "gl.createShader failed"
-        }
-    }
-
-    gl.shaderSource(part, source);
-    gl.compileShader(part);
-
-    const status = gl.getShaderParameter(part, gl.COMPILE_STATUS) as Boolean;
-
-    if(!status) {
-        const log = gl.getShaderInfoLog(part);
-        console.log(log);
-        gl.deleteShader(part);
-        return {
-            id: undefined,
-            success: false,
-            error: log
-        };
-    }
-
-    return {
-        id: part,
-        success: true,
-        error: undefined
-    }
-};
-
-const ONE_QUAD_VERTEX_SHADER = `#version 300 es
-in mediump vec2 VboVertices;
-void main() {
-    gl_Position = vec4(VboVertices, 0, 1);
-}
-`;
-
-const construct_proper_fragment_shader = (frag: string): string => {
-    return `#version 300 es
-precision mediump float;
-
-out mediump vec4 r20es_final_color;
-uniform vec2 r20es_offset;
-uniform vec2 r20es_scale;
-
-uniform float iTime;
-uniform float iTimeDelta;
-uniform int iFrame;
-uniform vec2 iResolution;
-uniform vec4 iMouse;
-uniform vec4 iDate;
-#line 0
-${frag}
-void main() {
-    
-    vec2 our_frag_coord = gl_FragCoord.xy;
-    
-    // NOTE(Justas): @HACK
-    // we convert the fragCoord to a aspect adjusted normalized coordinate 
-    // position in [-1; 1] space and do the scale on that. 
-    our_frag_coord -= r20es_offset;
-    vec2 temp_uv = ((2. * our_frag_coord) / iResolution) - 1.;
-    vec2 aspect = vec2(1, iResolution.y / iResolution.x); 
-    temp_uv *= aspect;  
-    temp_uv /= r20es_scale;
-    our_frag_coord = (((temp_uv / aspect) + 1.0) * iResolution) * .5;
-      
-    vec4 col = vec4(0,0,0,1);
-    mainImage(col, our_frag_coord);
-    r20es_final_color = col;
-}
-`
-};
-
-const try_compile_fragment_shader = (proper_frag_shader: string): Optional<string> => {
-    let canvas = <canvas/>;
-    let gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
-    let vert: Optional<ShaderCompileResult>;
-    let frag : Optional<ShaderCompileResult>;
-    let shader : Optional<WebGLProgram>;
-
-    const dispose_all_the_gl_stuff = () => {
-        if(frag && frag.id) gl.deleteShader(frag.id);
-        if(vert && vert.id) gl.deleteShader(vert.id);
-        if(shader) gl.deleteProgram(shader);
-        vert = null;
-        frag = null;
-        shader = null;
-        gl = null;
-        canvas = null;
-    };
-
-    this.gl = gl;
-
-    if(!this.gl) {
-        return "Could not create webgl2 context.";
-    }
-
-    vert = try_compile_shader_part(gl, gl.VERTEX_SHADER, ONE_QUAD_VERTEX_SHADER);
-    frag = try_compile_shader_part(gl, gl.FRAGMENT_SHADER, proper_frag_shader);
-
-    if(!vert.success) {
-        const err= vert.error;
-        dispose_all_the_gl_stuff();
-        return err;
-    }
-
-    if(!frag.success) {
-        const err= frag.error
-        dispose_all_the_gl_stuff();
-        return err;
-    }
-
-    shader = gl.createProgram();
-    if(!shader) {
-        dispose_all_the_gl_stuff();
-        return "glCreateProgram failed.";
-    }
-
-    gl.attachShader(shader, vert.id);
-    gl.attachShader(shader, frag.id);
-
-    gl.linkProgram(shader);
-    gl.deleteShader(vert.id);
-    gl.deleteShader(frag.id);
-
-    if(!gl.getProgramParameter(shader, gl.LINK_STATUS)) {
-        const err=  gl.getProgramInfoLog(shader);
-        dispose_all_the_gl_stuff();
-        return err;
-    }
-
-    dispose_all_the_gl_stuff();
-    return undefined;
-};
 
 class AnimBgUtils {
 
@@ -204,18 +53,6 @@ class AnimBgUtils {
             y: parseInt(parent.style.height.replace("px", "")),
         }
     };
-
-    static is_shader_anim_enabled = (page: Roll20.Page): boolean => {
-        const val = page.attributes[AnimatedBackgroundLayer.page_prop_shader_enabled];
-        if (typeof val !== "boolean") return false;
-        return val;
-    };
-
-    static set_shader_anim_enabled = (page: Roll20.Page, state: boolean): void => {
-        page.save({
-            [AnimatedBackgroundLayer.page_prop_shader_enabled]: state,
-        });
-    }
 
     static is_anim_enabled = (page: Roll20.Page): boolean => {
         const val = page.attributes[AnimatedBackgroundLayer.propVideoEnabled];
@@ -787,8 +624,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     static readonly propVideoSource = "r20es_video_src";
     static readonly propVideoEnabled = "r20es_video_enabled";
 
-    static readonly page_prop_shader_enabled = "r20es_shader_enabled";
-
     private _isPlaying: boolean = false;
     private canvas: HTMLCanvasElement;
     roll20Canvas: HTMLCanvasElement;
@@ -949,8 +784,8 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
             // TODO figure out which runner we need for this page / null
             const cfg = this.getHook().config;
-            this.current_runner = new ShaderRunner();
-            //this.current_runner = new VideoRunner();
+            //this.current_runner = new ShaderRunner();
+            this.current_runner = new VideoRunner();
             this.current_runner.init(cfg, this.canvas);
 
             if (this.current_runner && this.current_runner.can_play(this.current_page)) {
@@ -1165,9 +1000,6 @@ class AnimBackgroundSetup extends DialogBase<null> {
     module_get_history = () => this.parent_module.getHook().config.video_history;
     module_save_history = (val: string[]) => this.parent_module.setConfigValue("video_history", val);
 
-    module_get_shaders = (): StoredShaderV1[] => this.parent_module.getHook().config.shader_storage as StoredShaderV1[];
-    module_save_shaders = (val: StoredShaderV1[]) => this.parent_module.setConfigValue("shader_storage", val);
-
     ui_verify_media_url = (url: string, true_if_push_history: boolean) => {
 
         check_if_url_is_video_stream(url, () => {
@@ -1211,367 +1043,7 @@ class AnimBackgroundSetup extends DialogBase<null> {
         this.ui_on_update_url_input(url);
     };
 
-    e_panel_select = 0;
-    e_panel_video = 1;
-    e_panel_shader = 2;
-    e_panel_shader_edit_or_create = 3;
-
-    current_panel = this.e_panel_select;
-
-    ui_on_click_select_video = (e) => {
-        e.stopPropagation();
-
-        this.current_panel = this.e_panel_video;
-        this.rerender();
-    };
-
-    ui_on_click_select_shader = (e) => {
-        e.stopPropagation();
-
-        this.current_panel = this.e_panel_shader;
-        this.rerender();
-    };
-
-    ui_on_click_back_to_select = (e) => {
-        e.stopPropagation();
-
-        this.current_panel = this.e_panel_select;
-        this.rerender();
-    };
-
-    ui_enter_shader_new_state = (shader: Optional<StoredShaderV1>) => {
-        this.current_panel = this.e_panel_shader_edit_or_create;
-        this.ui_shader_currently_edited_shader = shader;
-        this.rerender();
-    };
-
-    ui_on_click_shader_new = (e) => {
-        e.stopPropagation();
-        this.ui_enter_shader_new_state(undefined);
-    };
-
-    render_select() {
-        const button_style = {
-            width: "100px",
-            height: "100px",
-            display: "inline",
-        };
-        return (
-            <Dialog>
-            <DialogHeader>
-                <h2>Animated Background Select</h2>
-            </DialogHeader>
-
-            <DialogBody>
-                <div style={{display: "flex", justifyContent: "center", alignContent: "center"}}>
-                    <div>
-                        <button className="btn" style={button_style} onClick={this.ui_on_click_select_video}>Video</button>
-                        <button className="btn" style={button_style} onClick={this.ui_on_click_select_shader}>Shader</button>
-                    </div>
-                </div>
-            </DialogBody>
-
-            <DialogFooter>
-                <DialogFooterContent>
-                    <button style={{ boxSizing: "border-box", width: "100%" }} className="btn btn-primary" onClick={this.close}>Close</button>
-                </DialogFooterContent>
-            </DialogFooter>
-        </Dialog>
-        )
-    }
-
-    ui_select_shader_shader_name_attrib = "data-shader-name";
-
-    ui_get_shader_name_from_event = (e) => {
-        const shader_name = e.target.getAttribute(this.ui_select_shader_shader_name_attrib);
-        if(typeof(shader_name) != "string") {
-            return null;
-        }
-        return shader_name;
-    };
-
-    ui_get_shader_from_event = (e) => {
-        const shader_name = this.ui_get_shader_name_from_event(e);
-
-        const shaders = this.module_get_shaders();
-
-        for(const shader of shaders) {
-            if(shader.name === shader_name) {
-                return shader;
-            }
-        }
-        return null;
-    };
-
-    ui_select_shader_on_click_edit = (e) => {
-        e.stopPropagation();
-        const shader = this.ui_get_shader_from_event(e);
-        if(!shader) {
-            return;
-        }
-
-        this.ui_enter_shader_new_state(shader);
-    };
-
-    ui_select_shader_on_click_delete = (e) => {
-        e.stopPropagation();
-        const shader_name = this.ui_get_shader_name_from_event(e);
-
-        if(confirm(`Are you sure you want to delete shader '${shader_name}'?`)) {
-            const shaders = this.module_get_shaders();
-
-            let index = 0;
-            let did_find = false;
-            for(const shader of shaders) {
-                if(shader.name === shader_name) {
-                    did_find = true;
-                    break;
-                }
-                index++;
-            }
-
-            if(did_find) {
-                shaders.splice(index, 1);
-                this.module_save_shaders(shaders);
-
-                this.rerender();
-            }
-        }
-    };
-
-    ui_select_shader_on_click_enabled = (e) => {
-        e.stopPropagation();
-        AnimBgUtils.set_shader_anim_enabled(this.page, e.target.value);
-    };
-
-    render_shader() {
-        const shaders = this.module_get_shaders();
-        const shader_widgets = [];
-
-        for(const shader of shaders) {
-            const name_attrib = {[this.ui_select_shader_shader_name_attrib]: shader.name};
-
-            shader_widgets.push(<div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
-                <div style={{display: "flex", alignContent: "center"}}>
-                    {shader.name}
-                </div>
-
-                <div>
-                    <button {...name_attrib} onClick={() => alert("todo")} className="btn btn-success">Use</button>
-                    <button {...name_attrib} onClick={this.ui_select_shader_on_click_edit} className="btn">Edit</button>
-                    <button {...name_attrib} onClick={this.ui_select_shader_on_click_delete} className="btn btn-danger">Delete</button>
-                </div>
-            </div>)
-        }
-
-        if(shader_widgets.length <= 0) {
-            shader_widgets.push(<div>
-                "There's nothing here!"
-            </div>)
-
-        }
-
-        return (
-            <Dialog>
-                <DialogHeader>
-                    <h2>Shaders | Animated Background</h2>
-                </DialogHeader>
-
-                <DialogBody>
-                    <div>
-                        <b>Enabled?</b>
-                        <input type="checkbox" onChange={this.ui_select_shader_on_click_enabled} checked={AnimBgUtils.is_shader_anim_enabled(this.page)}/>
-                    </div>
-
-                    <div>
-                        Current Shader: TODO
-                    </div>
-
-                    <button onClick={this.ui_on_click_shader_new}>New</button>
-                    {shader_widgets}
-                </DialogBody>
-
-                <DialogFooter>
-                    <DialogFooterContent>
-                        <button onClick={this.ui_on_click_back_to_select}>Back</button>
-                    </DialogFooterContent>
-                </DialogFooter>
-            </Dialog>
-        )
-    }
-
-    // NOTE(Justas): widgets
-    ui_shader_name_widget: HTMLInputElement;
-    ui_shader_name_exists_widget: HTMLSpanElement;
-
-    ui_shader_frag_widget: HTMLTextAreaElement;
-    ui_shader_err_widget: HTMLTextAreaElement;
-    ui_shader_save_error_widget: HTMLButtonElement;
-    ui_shader_compile_error_widget: HTMLSpanElement;
-
-    // NOTE(Justas): state
-    // NOTE(Justas): ui_shader_currently_edited_shader, if not undefined, MUST be a ref to a table in a StoredShader
-    // that belongs to a module_get_shaders
-    // :CurrentlyEditedShaderLifetime
-    ui_shader_currently_edited_shader: Optional<StoredShaderV1>;
-
-    shader_verify_shader = ():boolean => {
-        const frag = construct_proper_fragment_shader(this.ui_shader_frag_widget.value);
-        const error = try_compile_fragment_shader(frag);
-
-        if(error) {
-            this.ui_shader_err_widget.value = error;
-            this.ui_shader_compile_error_widget.style.visibility = "visible";
-            return false;
-        }
-
-        this.ui_shader_err_widget.value = "Success!";
-        this.ui_shader_compile_error_widget.style.visibility = "hidden";
-        return true;
-    };
-
-    shader_verify_name = ():boolean => {
-        const shaders = this.module_get_shaders();
-        for(const shader of shaders) {
-            if(shader.name === this.ui_shader_name_widget.value && shader != this.ui_shader_currently_edited_shader) {
-                this.ui_shader_name_exists_widget.style.visibility = "visible";
-                return false;
-            }
-        }
-
-        this.ui_shader_name_exists_widget.style.visibility = "hidden";
-        return true;
-    };
-
-    ui_shader_on_click_shader_compile = (e) => {
-        e.stopPropagation();
-        this.shader_verify_shader();
-    };
-
-    ui_shader_on_click_save = (e) => {
-        e.stopPropagation();
-        const handle_failure = () => {
-            this.ui_shader_save_error_widget.style.visibility = "visible";
-        };
-
-        if(!this.shader_verify_shader()) {
-            handle_failure();
-            return;
-        }
-        if(!this.shader_verify_name()) {
-            handle_failure();
-            return;
-        }
-
-        this.ui_shader_save_error_widget.style.visibility = "hidden";
-
-        {
-            if (this.ui_shader_currently_edited_shader) {
-                const shader = this.ui_shader_currently_edited_shader;
-                shader.version = 1;
-                shader.name = this.ui_shader_name_widget.value;
-                shader.fragment_shader = this.ui_shader_frag_widget.value;
-                // NOTE(Justas): :CurrentlyEditedShaderLifetime
-                // we got ui_shader_currently_edited_shader from module_get_shaders
-                // which is just a ref to the array in the config.
-                // That means we can call .saveConfig() without recreating any arrays or anything
-                // as we have already directly edited the correct shader table.
-                this.parent_module.getHook().saveConfig();
-            }
-            else {
-                const shaders = this.module_get_shaders();
-
-                const new_shader: StoredShaderV1 = {
-                    version: 1,
-                    name: this.ui_shader_name_widget.value,
-                    fragment_shader: this.ui_shader_frag_widget.value
-                };
-
-                shaders.push(new_shader);
-                this.module_save_shaders(shaders);
-            }
-        }
-
-        this.current_panel = this.e_panel_shader;
-        this.rerender();
-    };
-
-    render_shader_edit_or_create() {
-        const name_widget = <input type="text"/>;
-        const name_exists_widget = <span style={CommonStyle.error_span}>A shader with this name already exists!</span>;
-        name_exists_widget.style.visibility = "hidden";
-
-        const text_area_style = {
-            display: "block",
-            width: "900px",
-            fontFamily: "monospace"
-        };
-
-        const frag_widget = <textarea style={{...text_area_style, height: "300px"}} onMouseUp={() => this.recenter()} autoComplete="off" autoFocus="false" spellcheck="false" autoCapitalize="none"/>;
-        const err_widget = <textarea style={{...text_area_style, height: "50px"}} disabled={true} autoComplete="off" autoFocus="false" spellcheck="false" autoCapitalize="none"/>;
-        // NOTE(Justas): because setting these on the tags above doesn't work???
-        frag_widget.spellcheck = false;
-        err_widget.spellcheck = false;
-        const save_error_widget = <span style={CommonStyle.error_span}>Cannot save as some data is invalid!</span>;
-        const compile_error_widget = <span style={CommonStyle.error_span}>Compilation Failed!</span>;
-        compile_error_widget.style.visibility = "hidden";
-        save_error_widget.style.visibility = "hidden";
-
-        this.ui_shader_save_error_widget = save_error_widget;
-        this.ui_shader_name_widget = name_widget;
-        this.ui_shader_name_exists_widget = name_exists_widget;
-        this.ui_shader_frag_widget = frag_widget;
-        this.ui_shader_err_widget = err_widget;
-        this.ui_shader_compile_error_widget = compile_error_widget;
-
-        if(this.ui_shader_currently_edited_shader) {
-            name_widget.value = this.ui_shader_currently_edited_shader.name;
-            frag_widget.value = this.ui_shader_currently_edited_shader.fragment_shader;
-        }
-        else {
-            name_widget.value = "New Shader";
-            frag_widget.value = `void mainImage(out vec4 out_color, in vec2 fragCoord) {
-    vec2 uv = ((2. * fragCoord / iResolution) - 1.) / vec2(iResolution.x);
-    out_color.rgba = vec4(uv.xy, 0., 1.);
-}
-`
-        }
-
-        return (
-            <Dialog>
-                <DialogHeader>
-                    <h2>Shader | Animated Background</h2>
-                </DialogHeader>
-
-                <DialogBody>
-                    <div>
-                        {name_widget}
-                        <span style={{marginRight: "8px", marginLeft: "8px"}}>Name</span>
-                        {name_exists_widget}
-                    </div>
-
-
-                    <h3>Fragment Shader</h3>
-                    {frag_widget}
-                    {err_widget}
-                    <div>
-                        <button onClick={this.ui_shader_on_click_shader_compile}>Compile</button>
-                        {compile_error_widget}
-                    </div>
-                </DialogBody>
-
-                <DialogFooter>
-                    <DialogFooterContent>
-                        <button onClick={this.ui_on_click_select_shader}>Cancel</button>
-                        <button onClick={this.ui_shader_on_click_save}>Save</button>
-                        {save_error_widget}
-                    </DialogFooterContent>
-                </DialogFooter>
-            </Dialog>
-        )
-    }
-
-    render_video() {
+    public render() {
         const hist = this.module_get_history();
         const hist_widgets = [];
         const is_enabled = AnimBgUtils.is_anim_enabled(this.page);
@@ -1602,20 +1074,10 @@ class AnimBackgroundSetup extends DialogBase<null> {
             }
         }
 
-        const url_status_widget = <span/>;
-        if(this.ui_is_invalid_media_url) {
-            DOM.apply_style(url_status_widget, {float: "right", ...CommonStyle.error_span});
-            url_status_widget.innerText = "Invalid: Not a direct video stream";
-        }
-        else {
-            DOM.apply_style(url_status_widget, {float: "right", ...CommonStyle.success_span});
-            url_status_widget.innerText = "URL is valid!";
-        }
-
         return (
             <Dialog>
                 <DialogHeader>
-                    <h2>Video | Animated Background</h2>
+                    <h2>Animated Background Setup</h2>
                 </DialogHeader>
 
                 <DialogBody>
@@ -1643,7 +1105,9 @@ class AnimBackgroundSetup extends DialogBase<null> {
                     </div>
 
                     <div>
-                        {url_status_widget}
+                        <span style={{float: "right"}}>
+                            {this.ui_is_invalid_media_url ? <b>Invalid: Not a direct video stream</b> : <b>URL is valid!</b>}
+                        </span>
                     </div>
 
                     <br/>
@@ -1660,31 +1124,12 @@ class AnimBackgroundSetup extends DialogBase<null> {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button onClick={this.close}>OK</button>
-                        <button onClick={this.ui_on_click_back_to_select}>Back</button>
+                        <button style={{ boxSizing: "border-box", width: "100%" }} className="btn btn-primary" onClick={this.close}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>
         )
     }
-
-    public render() {
-        switch(this.current_panel) {
-            case this.e_panel_select: {
-                return this.render_select();
-            }
-            case this.e_panel_video: {
-                return this.render_video();
-            }
-            case this.e_panel_shader: {
-                return this.render_shader();
-            }
-            case this.e_panel_shader_edit_or_create: {
-                return this.render_shader_edit_or_create();
-            }
-        }
-    }
-
 }
 
 if (R20Module.canInstall()) new AnimatedBackgroundLayer().install();

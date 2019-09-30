@@ -105,7 +105,10 @@ namespace DOM {
                 if (typeof(val) === "string") {
                     elem.style.cssText = val;
                 } else if(typeof(val) === "object") {
-                    DOM.apply_style(elem, val);
+                    for (let elemId in val) {
+                        if (!val) continue;
+                        elem.style[elemId] = val[elemId];
+                    }
                 } else if(typeof(val) !== "undefined"){
                     console.error(`Unknown style attribute type: ${typeof(val)}, ${val}`);
                 }
@@ -117,18 +120,7 @@ namespace DOM {
         }
 
         return elem;
-    };
-
-    export const apply_style = (el: HTMLElement, style: any) => {
-        for (let elemId in style) {
-            if(!style.hasOwnProperty(elemId)) {
-                continue;
-            }
-
-            if (!elemId) continue;
-            el.style[elemId] = style[elemId];
-        }
-    };
+    }
 
     export abstract class ElementBase {
         private elementRoot: HTMLElement = null;
