@@ -22,7 +22,7 @@ function Index() {
                             <img src="firefox.png" alt=""/>
                         </a>
 
-                        <a href="chrome.html">
+                        <a href="chrome">
                             <img src="chrome.png" alt=""/>
                         </a>
 

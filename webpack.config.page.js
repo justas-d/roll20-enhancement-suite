@@ -72,7 +72,6 @@ module.exports = (_env, argv) => {
     addStaticFolder("./assets/settings/");
     addStaticFolder("./assets/site/");
 
-    addStaticFile("r20es_1.15.15_chrome.zip", "./page/r20es_1.15.15_chrome.zip");
     addStaticFile("takedown.png", "./page/takedown.png");
     addStaticFile("index.html", "./page/index.html");
     addStaticFile("features.html", "./page/features.html");

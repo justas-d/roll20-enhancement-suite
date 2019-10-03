@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import NavBar from 'NavBar.js'
 import {Config} from "../src/utils/Config";
 
-function About() {
+function Chrome() {
 
     return (
         <div>
@@ -20,7 +20,7 @@ function About() {
                 <p>We recommend using Firefox to avoid the extra steps.</p>
 
                 <ul>
-                    <li>1. Download the extension <a href="r20es_1.15.15_chrome.zip">here</a></li>
+                    <li>1. Download the extension <a href="https://github.com/SSStormy/roll20-enhancement-suite/raw/gh-pages/r20es_1.15.15_chrome.zip">here</a></li>
                     <li>2. Extract the zip file somewhere permanent.</li>
                     <li title="Chrome doesn't allow making hyperlinks to these special URLs :(">3. Copy & Paste <span style={{backgroundColor: "#ddd"}}>chrome://extensions</span> into the URL bar and press enter.</li>
                     <li>4. Enable "Developer Mode" in the top right.</li>
@@ -29,16 +29,18 @@ function About() {
                     <li>7. Make sure to not delete the extension folder as that will remove the extension.</li>
                 </ul>
 
+                <p>Beware that auto-updates will not be available while using this method.</p>
+
             </div>
         </div>
     );
 }
 
 if(typeof(window) !== "undefined" && window.document) {
-    ReactDOM.render(<About />, document.getElementById("root"));
+    ReactDOM.render(<Chrome/>, document.getElementById("root"));
 }
 
-export default About;
+export default Chrome;
 
 
 

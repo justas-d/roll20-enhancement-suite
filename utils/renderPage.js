@@ -4,6 +4,7 @@ import Index from "../page/index";
 import ReactDOMServer from 'react-dom/server';
 import React from 'react';
 import Contribute from "../page/contribute";
+import Chrome from "../page/chrome";
 
 const fs = require("fs");
 const path = require("path");
@@ -45,6 +46,7 @@ buildPage(<About/>, "about");
 buildPage(<Features/>, "features");
 buildPage(<Index/>, "index");
 buildPage(<Contribute/>, "contribute");
+buildPage(<Chrome/>, "chrome");
 
 const addStaticFolder = (folder) => {
     fs.readdirSync(folder).forEach(f => {
@@ -57,4 +59,6 @@ addStaticFolder("./assets/site/");
 addStaticFile("logo.svg", "./assets/logo/logo.svg");
 addStaticFile("main.css", "./page/main.css");
 addStaticFile("more.css", "./page/more.css");
+addStaticFile("takedown.png", "./page/takedown.png");
+addStaticFile("r20es_1.15.15_chrome.zip", "./page/r20es_1.15.15_chrome.zip");
 
