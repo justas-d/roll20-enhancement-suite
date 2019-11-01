@@ -643,7 +643,7 @@ class AnimBackgroundSetup extends DialogBase<null> {
                 <DialogBody>
 
                     <div>
-                        <i>Disclaimer: VTTES must be installed to be able to see the animated background.</i>
+                        <i>Disclaimer: Players must have VTTES installed to be able to see the animated background.</i>
                     </div>
 
                     <br/>
