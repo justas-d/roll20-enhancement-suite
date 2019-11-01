@@ -4,6 +4,7 @@ import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} fro
 import {R20} from "../../utils/R20";
 import {Optional} from "../../utils/TypescriptUtils";
 import {nearly_format_file_url} from "../../utils/MiscUtils";
+import {CommonStyle} from "../../utils/CommonStyle";
 
 interface LibreAudioCreateRequest {
     url: string;
@@ -171,6 +172,7 @@ export default class LibreAudioDialogWidget extends DialogBase<LibreAudioCreateR
         {
             const elements = this.ui_request_elements[request_id];
             elements.status.innerText = "OK";
+            DOM.apply_style(elements.status, CommonStyle.success_span);
         }
 
         this.ui_disable_ok_button_if_there_is_an_invalid_url_or_enable_it_if_there_are_none ();
@@ -185,6 +187,7 @@ export default class LibreAudioDialogWidget extends DialogBase<LibreAudioCreateR
         {
             const elements = this.ui_request_elements[request_id];
             elements.status.innerText = "Invalid URL";
+            DOM.apply_style(elements.status, CommonStyle.error_span);
         }
 
         this.ui_disable_ok_button_if_there_is_an_invalid_url_or_enable_it_if_there_are_none ();
@@ -211,6 +214,8 @@ export default class LibreAudioDialogWidget extends DialogBase<LibreAudioCreateR
         req.url= url;
 
         elements.status.innerText = "Checking...";
+        DOM.apply_style(elements.status, CommonStyle.progress_span);
+
         check_if_url_is_audio_stream(url, id, this.misc_on_audio_stream_checker_ok, this.misc_on_audio_stream_checker_err);
     };
 
@@ -278,8 +283,10 @@ export default class LibreAudioDialogWidget extends DialogBase<LibreAudioCreateR
                 title:          <input style={style} {...id_prop} type="text" value={request.title} onChange={this.ui_on_update_title_input}/>,
                 volume:         <input style={{width: "80%"}} {...id_prop} type="range" min="0" max="100" value={request.volume} onChange={this.ui_on_update_volume_input}/>,
                 current_volume: <span style={{...style, width: "32px"}}></span>,
-                status:         <i style={style}></i>
+                status:         <span style={style}></span>
             };
+
+            DOM.apply_style(elements.remove, CommonStyle.error_span);
 
             this.ui_request_elements[id] = elements;
 
@@ -392,7 +399,7 @@ export default class LibreAudioDialogWidget extends DialogBase<LibreAudioCreateR
                         <div style={{display: "grid", gridTemplateColumns: "1fr 1fr 1fr"}}>
 
                             <input style={padding_style} type="button" className="btn-danger" onClick={this.close} value="Cancel" />
-                            <input style={padding_style} type="button" className="btn-info" value="Add Track" onClick={this.ui_add_track}/>
+                            <input style={padding_style} type="button" className="btn-info" value="Add Another Track" onClick={this.ui_add_track}/>
                             {this.ui_button_create}
 
                         </div>
