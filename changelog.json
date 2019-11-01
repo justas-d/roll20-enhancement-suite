@@ -1,5 +1,5 @@
 {
-    "current": "1.15.15",
+    "current": "1.15.16",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1161,6 +1161,26 @@
                 {
                     "id": "",
                     "content": "Animated Background Layer: Fix a case where the animated backgrounds would potentially not play at startup."
+                }
+            ]
+        },
+        "1.15.16": {
+            "info": {
+                "title": "Tiny Improvements",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Animated Backgrounds: various dialog tweaks"
+                },
+                {
+                    "id": "",
+                    "content": "Libre Audio: various dialog tweaks"
+                },
+                {
+                    "id": "",
+                    "content": "Character Token Modifier: various dialog tweaks"
                 }
             ]
         }
