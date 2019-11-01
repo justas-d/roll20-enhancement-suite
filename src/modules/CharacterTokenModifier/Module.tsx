@@ -675,7 +675,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                             </div>
 
                             <div style={{marginRight: "16px"}}>
-                                <div>Name</div>
+                                <div>Nameplate</div>
 
                                 <div style={{display: "flex"}}>
                                     <InputWrapper propName="name" type="text" style={{width: "210px"}} token={data.token}/>
