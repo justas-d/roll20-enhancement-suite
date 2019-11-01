@@ -1,6 +1,7 @@
 import {R20Module} from "../../utils/R20Module"
 import {R20} from "../../utils/R20";
 import {DOM} from "../../utils/DOM";
+import {CommonStyle} from "../../utils/CommonStyle";
 import {EventSubscriber} from "../../utils/EventSubscriber";
 import {scaleToFit} from "../../utils/FitWithinTools";
 import {isChromium} from "../../utils/BrowserDetection";
@@ -26,7 +27,6 @@ interface BaseAnimRunner {
     on_zoom: (coef: number) => void;
     dispose: () => void;
 }
-
 
 class AnimBgUtils {
 
@@ -169,455 +169,6 @@ class VideoRunner implements BaseAnimRunner {
         if(this.ctx) this.ctx = null;
         if(this.video) this.video = null;
     }
-}
-
-
-class ShaderRunner implements  BaseAnimRunner{
-    gl: WebGL2RenderingContext;
-    quad_vao: WebGLVertexArrayObject;
-    quad_vbo = WebGLBuffer;
-    is_valid = false;
-    shader: WebGLProgram;
-    time = 0;
-    last_render_time = 0;
-    scale = 1;
-    frame_number = 0;
-
-    uniform_time_loc: Optional<WebGLUniformLocation>;
-    uniform_resolution_loc: Optional<WebGLUniformLocation>;
-    uniform_mouse_loc: Optional<WebGLUniformLocation>;
-    uniform_offset_loc: Optional<WebGLUniformLocation>;
-    uniform_scale_loc: Optional<WebGLUniformLocation>;
-    uniform_time_delta_loc: Optional<WebGLUniformLocation>;
-    uniform_frame_number_loc: Optional<WebGLUniformLocation>;
-    uniform_date_loc: Optional<WebGLUniformLocation>;
-
-    canvas_mouse_pos: {x: number, y: number} = {x: 0, y: 0};
-    is_lmb_down = false;
-    is_rmb_down = false;
-
-    render_frame = (page: Roll20.Page, canvas: HTMLCanvasElement, roll20Canvas: HTMLCanvasElement,  in_time: number): boolean => {
-        if(this.is_valid) {
-            const delta_time = (in_time - this.last_render_time) / 1000.0;
-            this.time += delta_time;
-
-            this.last_render_time = in_time;
-
-            const gl = this.gl;
-
-            const zoom = R20.getCanvasZoom();
-            const zoomed_map_x = 70 * page.attributes.width * zoom;
-            const zoomed_map_y = 70 * page.attributes.height * zoom;
-
-            let canvas_x = 0;
-            let canvas_y = 0;
-
-            let is_x_really_zoomed_in = false;
-            let is_y_really_zoomed_in = false;
-            let x_off = -R20.getCanvasOffsetX() * zoom;
-            let y_off = R20.getCanvasOffsetY() * zoom;
-
-            if(zoomed_map_x < roll20Canvas.width) {
-                canvas_x = zoomed_map_x;
-            }
-            else {
-                canvas_x = roll20Canvas.width;
-                is_x_really_zoomed_in = true;
-            }
-
-            if(zoomed_map_y < roll20Canvas.height) {
-                canvas_y = zoomed_map_y;
-            }
-            else {
-                canvas_y = roll20Canvas.height;
-                is_y_really_zoomed_in = true;
-            }
-
-            canvas.width = canvas_x;
-            canvas.height = canvas_y;
-
-            const special_case = is_x_really_zoomed_in && is_y_really_zoomed_in;
-
-            {
-                const extra_y_off = (zoomed_map_y - roll20Canvas.height) * .5;
-                if (extra_y_off > 0) {
-                    y_off -= extra_y_off;
-                }
-            }
-
-            {
-                const extra_x_off = (zoomed_map_x - roll20Canvas.width) * .5;
-                if(extra_x_off > 0) {
-                    x_off += extra_x_off;
-                }
-            }
-
-            gl.viewport(0,0, canvas_x, canvas_y);
-
-            const mouse = this.canvas_mouse_pos;
-
-            if(this.uniform_date_loc) {
-                const d = new Date();
-                const year = d.getUTCFullYear();
-                const month = d.getUTCMonth();
-                const day = d.getUTCDay();
-                const seconds = d.getUTCSeconds();
-                gl.uniform4f(this.uniform_date_loc, year, month, day, seconds);
-            }
-            if(this.uniform_frame_number_loc) {
-                gl.uniform1i(this.uniform_frame_number_loc, this.frame_number);
-            }
-            if(this.uniform_offset_loc) {
-                gl.uniform2f(this.uniform_offset_loc, x_off, y_off);
-            }
-            if(this.uniform_scale_loc) {
-                const x_scale = special_case ? zoom : 1;
-                const y_scale = special_case ? zoom : 1;
-
-                gl.uniform2f(this.uniform_scale_loc, x_scale, y_scale);
-            }
-            if(this.uniform_time_loc) {
-                gl.uniform1f(this.uniform_time_loc, this.time);
-            }
-            if(this.uniform_time_delta_loc) {
-                gl.uniform1f(this.uniform_time_delta_loc, delta_time);
-            }
-            if(this.uniform_resolution_loc) {
-                gl.uniform2f(this.uniform_resolution_loc, canvas.width, canvas.height);
-            }
-            if(this.uniform_mouse_loc) {
-                gl.uniform4f(this.uniform_mouse_loc,
-                    this.is_lmb_down ? mouse.x : 0,
-                    this.is_lmb_down ? mouse.y : 0,
-                    this.is_lmb_down as any as number,
-                    this.is_rmb_down as any as number
-                );
-            }
-
-            gl.clearColor(0,0,0,0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-            ++this.frame_number;
-            return true;
-        }
-
-        return false;
-    };
-
-    report_error_and_cleanup = (err: string) => {
-        alert(err);
-        this.dispose();
-    };
-
-    init = (cfg: any, canvas: HTMLCanvasElement): void => {
-        const gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
-        this.gl = gl;
-        if(!this.gl) {
-            this.report_error_and_cleanup("gl unavailable!");
-            return;
-        }
-
-        this.quad_vao = gl.createVertexArray();
-        if(!this.quad_vao) {
-            this.report_error_and_cleanup("vao fail");
-            return;
-        }
-
-        gl.bindVertexArray(this.quad_vao);
-
-        // @ts-ignore
-        this.quad_vbo = gl.createBuffer();
-        if(!this.quad_vbo) {
-            this.report_error_and_cleanup("vbo fail");
-            return;
-        }
-        const quad_verts = new Float32Array([
-            -1.0, -1.0,
-            -1.0, 1.0,
-            1.0, -1.0,
-            1.0, 1.0
-        ]);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.quad_vbo);
-
-        gl.enableVertexAttribArray(0);
-        gl.vertexAttribPointer(0, 2, gl.FLOAT, false,0, 0);
-
-        gl.bufferData(gl.ARRAY_BUFFER, quad_verts, gl.STATIC_DRAW);
-
-        const try_compile_shader_part = (type: number, source: string): {id: Optional<WebGLShader>, success: boolean, error: Optional<string> } => {
-            const part = gl.createShader(type);
-            if(!part) {
-                return {
-                    id: undefined,
-                    success: false,
-                    error: "gl.createShader failed"
-                }
-            }
-
-            gl.shaderSource(part, source);
-            gl.compileShader(part);
-
-            const status = gl.getShaderParameter(part, gl.COMPILE_STATUS) as Boolean;
-
-            if(!status) {
-                const log = gl.getShaderInfoLog(part);
-                console.log(log);
-                gl.deleteShader(part);
-                return {
-                    id: undefined,
-                    success: false,
-                    error: "log: " + log
-                };
-            }
-
-            return {
-                id: part,
-                success: true,
-                error: undefined
-            }
-        };
-
-        const vert = try_compile_shader_part(gl.VERTEX_SHADER, `#version 300 es
-in mediump vec2 VboVertices;
-void main() {
-    gl_Position = vec4(VboVertices, 0, 1);
-}
-`);
-        const frag = try_compile_shader_part(gl.FRAGMENT_SHADER, `#version 300 es
-
-precision mediump float;
-
-out mediump vec4 r20es_final_color;
-uniform vec2 r20es_offset;
-uniform vec2 r20es_scale;
-
-uniform float iTime;
-uniform float iTimeDelta;
-uniform int iFrame;
-uniform vec2 iResolution;
-uniform vec4 iMouse;
-uniform vec4 iDate;
-
-#define v2 vec2
-#define v3 vec3
-#define v4 vec4
-#define f32 float
-#define s32 int
-#define b32 bool
-#define m2 mat2
-#define TAU 6.283185307179586
-#define DEG_TO_RAD (TAU / 360.0)
-#define zero_v2 vec2(0,0)
-
-v2 uv;
-
-f32 random (v2 p) {
-    return fract(sin(dot(p.xy,vec2(12.9898,78.233)))*43758.5453123);
-}
-
-f32 noise (v2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-
-    // Four corners in 2D of a tile
-    float a = random(i);
-    float b = random(i + vec2(1.0, 0.0));
-    float c = random(i + vec2(0.0, 1.0));
-    float d = random(i + vec2(1.0, 1.0));
-
-    vec2 u = f * f * (3.0 - 2.0 * f);
-
-    return mix(a, b, u.x) +
-            (c - a)* u.y * (1.0 - u.x) +
-            (d - b) * u.x * u.y;
-}
-
-f32 fbm(v2 p, f32 freq, f32 amp, f32 lacunarity, f32 gain, s32 octave) {
-    f32 accum = 0.;
-    //f32 ang = 1.6180339;
-    f32 ang = 0.5;
-
-    for(s32 i = 0; i < octave; i++) {
-        f32 n = noise(p) * amp;
-        accum += n;
-
-        amp *= gain;
-
-        p = (m2(cos(ang), sin(ang), -sin(ang), cos(ang)) * p) * freq + v2(1000., 0.);
-        p *= 2.;
-
-        freq *= lacunarity;
-    }
-
-    return accum;
-}
-
-f32 fbm_s(v2 p) {
-    return fbm(p, 1.5, .6, 1.1, .5, 5);
-}
-
-void mainImage(out vec4 out_color, in vec2 fragCoord) {
-    f32 time = iTime * .1;
-    uv = (2. * fragCoord / iResolution) - 1.;
-    uv.y *= iResolution.y / iResolution.x;
-   
-    out_color.rgba = v4(0,0,0,1);
-    
-    v2 p = abs(uv);
-    p *= 2.;
-    p += v2(1000. - time * .02);
-    p += iMouse.zw;
-
-    v2 f1 = v2(fbm_s(p) + time * .02, fbm_s(p));
-    v2 f2 = v2(fbm_s(p + f1 + atan(fbm_s(f1) + p.x * p.y)), fbm_s(p + f1 * 2.));
-    v2 f3 = v2(fbm_s(p + f2 * 5.), fbm_s(p + f2 + atan(fbm_s(f2))));
-    f32 final = fbm_s(p + f3 * 4. + time * 4.);
-
-    f32 r = clamp(final - 0.3, 0., 1.);
-    f32 g = clamp(final, 0., .2);
-
-    out_color.rb = v2(1) * v2(r, g);
-    out_color.rgb *= (1.1 - length(uv)) * (1.2 - length(uv));
-}
-
-void main() {
-    
-    vec2 our_frag_coord = gl_FragCoord.xy;
-    
-    // NOTE(Justas): @HACK
-    // we convert the fragCoord to a aspect adjusted normalized coordinate 
-    // position in [-1; 1] space and do the scale on that. 
-    our_frag_coord -= r20es_offset;
-    vec2 temp_uv = ((2. * our_frag_coord) / iResolution) - 1.;
-    vec2 aspect = vec2(1, iResolution.y / iResolution.x); 
-    temp_uv *= aspect;  
-    temp_uv /= r20es_scale;
-    our_frag_coord = (((temp_uv / aspect) + 1.0) * iResolution) * .5;
-      
-    vec4 col = vec4(0,0,0,1);
-    mainImage(col, our_frag_coord);
-    r20es_final_color = col;
-}
-`);
-
-        if(!vert.success) {
-            if(frag.id) gl.deleteShader(frag.id);
-            if(vert.id) gl.deleteShader(vert.id);
-
-            this.report_error_and_cleanup(`vert: ${vert.error}`);
-            return;
-        }
-
-        if(!frag.success) {
-            if(frag.id) gl.deleteShader(frag.id);
-            if(vert.id) gl.deleteShader(vert.id);
-
-            this.report_error_and_cleanup(`frag: ${frag.error}`);
-            return;
-        }
-
-        const shader = gl.createProgram();
-        if(!shader) {
-            this.report_error_and_cleanup("shader");
-            return;
-        }
-
-        gl.attachShader(shader, vert.id);
-        gl.attachShader(shader, frag.id);
-
-        gl.linkProgram(shader);
-        gl.deleteShader(vert.id);
-        gl.deleteShader(frag.id);
-
-        if(!gl.getProgramParameter(shader, gl.LINK_STATUS)) {
-            gl.deleteProgram(shader);
-            const log = gl.getProgramInfoLog(shader);
-            this.report_error_and_cleanup(`link failed: ${log}`);
-            return;
-        }
-        this.shader = shader;
-
-        this.is_valid = true;
-
-        this.uniform_time_loc = gl.getUniformLocation(shader, "iTime");
-        this.uniform_resolution_loc = gl.getUniformLocation(shader, "iResolution");
-        this.uniform_mouse_loc = gl.getUniformLocation(shader, "iMouse");
-        this.uniform_time_delta_loc = gl.getUniformLocation(shader, "iTimeDelta");
-        this.uniform_frame_number_loc = gl.getUniformLocation(shader, "iFrame");
-        this.uniform_date_loc = gl.getUniformLocation(shader, "iDate");
-
-        this.uniform_offset_loc = gl.getUniformLocation(shader, "r20es_offset");
-        this.uniform_scale_loc = gl.getUniformLocation(shader, "r20es_scale");
-
-        this.end(canvas);
-    };
-
-    ui_on_mouse_move = (e: any) => {
-        const rect = e.target.getBoundingClientRect();
-        const pos = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        };
-
-        this.canvas_mouse_pos = pos;
-    };
-
-    ui_process_mouse_state = (button: number, state: boolean) => {
-        if(button == 0) this.is_lmb_down = state;
-        else if(button == 2) this.is_rmb_down = state;
-    }
-
-    ui_on_mouse_down = (e: any) => {
-        this.ui_process_mouse_state(e.button, true);
-    };
-
-    ui_on_mouse_up = (e: any) => {
-        this.ui_process_mouse_state(e.button, false);
-    };
-
-    start = (page: Roll20.Page, canvas: HTMLCanvasElement): void => {
-        if(this.is_valid) {
-            this.gl.bindVertexArray(this.quad_vao);
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.quad_vbo);
-            this.gl.useProgram(this.shader);
-
-            canvas.parentElement.addEventListener("mousemove", this.ui_on_mouse_move);
-            canvas.parentElement.addEventListener("mousedown", this.ui_on_mouse_down);
-            canvas.parentElement.addEventListener("mouseup", this.ui_on_mouse_up);
-        }
-    };
-
-    end = (canvas: HTMLCanvasElement): void => {
-        canvas.parentElement.removeEventListener("mousemove", this.ui_on_mouse_move);
-        canvas.parentElement.removeEventListener("mousedown", this.ui_on_mouse_down);
-        canvas.parentElement.removeEventListener("mouseup", this.ui_on_mouse_up);
-    };
-
-    can_play = (page: Roll20.Page): boolean => {
-        // TODO
-        return this.is_valid;
-    };
-
-    on_setting_change = (name: string, oldVal: any, newVal: any): void => {
-        // TODO
-    };
-
-    on_zoom = (coef: number): void => {
-        this.scale = coef;
-    };
-
-    dispose = (): void => {
-        if(this.is_valid) {
-            const gl = this.gl;
-
-            gl.deleteVertexArray(this.quad_vao);
-            gl.deleteBuffer(this.quad_vbo);
-            gl.deleteProgram(this.shader);
-            this.gl = null;
-        }
-    };
 }
 
 class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
@@ -784,7 +335,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
             // TODO figure out which runner we need for this page / null
             const cfg = this.getHook().config;
-            //this.current_runner = new ShaderRunner();
             this.current_runner = new VideoRunner();
             this.current_runner.init(cfg, this.canvas);
 
@@ -885,7 +435,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
             };
 
             this._showSettingsWidget = (
-                <div title="Animated Background Setup (R20ES)" style={widgetStyle}
+                <div title="Animated Background Setup (VTTES)" style={widgetStyle}
                      onClick={this.ui_show_configuration_dialog}
                 >
                     <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/32/film.png"
@@ -1074,6 +624,16 @@ class AnimBackgroundSetup extends DialogBase<null> {
             }
         }
 
+        const url_status_widget = <span/>;
+        if(this.ui_is_invalid_media_url) {
+            DOM.apply_style(url_status_widget, {float: "right", ...CommonStyle.error_span});
+            url_status_widget.innerText = "Invalid: Not a direct video stream";
+        }
+        else {
+            DOM.apply_style(url_status_widget, {float: "right", ...CommonStyle.success_span});
+            url_status_widget.innerText = "URL is valid!";
+        }
+
         return (
             <Dialog>
                 <DialogHeader>
@@ -1105,9 +665,7 @@ class AnimBackgroundSetup extends DialogBase<null> {
                     </div>
 
                     <div>
-                        <span style={{float: "right"}}>
-                            {this.ui_is_invalid_media_url ? <b>Invalid: Not a direct video stream</b> : <b>URL is valid!</b>}
-                        </span>
+                        {url_status_widget}
                     </div>
 
                     <br/>
