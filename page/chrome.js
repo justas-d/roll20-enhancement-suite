@@ -20,7 +20,7 @@ function Chrome() {
                 <p>We recommend using Firefox to avoid the extra steps.</p>
 
                 <ul>
-                    <li>1. Download the extension <a href="https://github.com/SSStormy/roll20-enhancement-suite/raw/gh-pages/r20es_1.15.15_chrome.zip">here</a></li>
+                    <li>1. Download the extension <a href="https://github.com/SSStormy/roll20-enhancement-suite/raw/gh-pages/r20es_1.15.17_chrome.zip">here</a></li>
                     <li>2. Extract the zip file somewhere permanent.</li>
                     <li title="Chrome doesn't allow making hyperlinks to these special URLs :(">3. Copy & Paste <span style={{backgroundColor: "#ddd"}}>chrome://extensions</span> into the URL bar and press enter.</li>
                     <li>4. Enable "Developer Mode" in the top right.</li>
