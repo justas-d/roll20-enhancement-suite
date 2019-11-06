@@ -35,8 +35,8 @@ export default MakeConfig(__dirname, {
     mods: [
         {
             includes: "assets/app.js",
-            find: `var i=e/d20.engine.canvasZoom;`,
-            patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.onZoomChange) window.r20es.onZoomChange(e);`,
+            find: `var o=t/d20.engine.canvasZoom;`,
+            patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.onZoomChange) window.r20es.onZoomChange(t);`,
         }
     ]
 });
