@@ -60,5 +60,5 @@ addStaticFile("logo.svg", "./assets/logo/logo.svg");
 addStaticFile("main.css", "./page/main.css");
 addStaticFile("more.css", "./page/more.css");
 addStaticFile("takedown.png", "./page/takedown.png");
-addStaticFile("r20es_1.15.17_chrome.zip", "./page/r20es_1.15.17_chrome.zip");
+addStaticFile("r20es_1.15.18_chrome.zip", "./page/r20es_1.15.18_chrome.zip");
 
