@@ -1,16 +1,20 @@
-import { DialogBase } from "../utils/DialogBase";
-import { Dialog, DialogHeader, DialogFooter, DialogFooterContent, DialogBody, CheckboxWithText } from "../utils/DialogComponents";
+import {DialogBase} from "../utils/DialogBase";
+import {CheckboxWithText, Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../utils/DialogComponents";
+import {ImportStrategy} from "./ImportStrategy";
 import { DOM } from "../utils/DOM";
 
 type FilterTableType = { [id: number]: boolean };
 
 export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
 
+
     private data: T[];
+    private importStrategies: ImportStrategy[];
+    private selectedStrategy: ImportStrategy;
     private nameGetter: (d: T) => string;
     private descGetter: (d: T) => string;
     private title: string;
-    private continueCallback: (data: T[]) => void;
+    private continueCallback: (data: T[], strategy?:ImportStrategy) => void;
 
     public constructor(className?: string) {
         super(className);
@@ -20,12 +24,15 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
                 data: T[], 
                 nameGetter: (d: T) => string, 
                 descGetter: (d: T) => string,
-                continueCallback: (data: T[]) => void) {
+                importStrategies: ImportStrategy[],
+                continueCallback: (data: T[], strategy?:ImportStrategy) => void) {
         this.title = title;
         this.data =data;
         this.nameGetter = nameGetter;
         this.descGetter = descGetter;
         this.continueCallback = continueCallback;
+        this.importStrategies = importStrategies;
+        this.selectedStrategy = undefined;
         super.internalShow();
     }
 
@@ -51,7 +58,7 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
             return;
         }
 
-        this.continueCallback(finalData);
+        this.continueCallback(finalData, this.selectedStrategy);
     };
 
     private onToggleAll = (e: any) => {
@@ -61,6 +68,11 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
             input.checked = !input.checked;
         });
     };
+
+    private updateStrategy = (e: any, f?:any, g?:any) => {
+        e.stopPropagation();
+        this.selectedStrategy = e.target.value;
+    }
 
     protected render(): HTMLElement {
 
@@ -87,6 +99,14 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
 
                 <DialogBody>
                     <button className="btn" onClick={this.onToggleAll}>Toggle All</button>
+                    {this.importStrategies &&
+                    <span>On duplicate name in import:
+                        <select className="btn" onChange={this.updateStrategy}>
+                            <option value={ImportStrategy.ADD}>Add the duplicate</option>
+                            <option value={ImportStrategy.UPDATE_FIRST_MATCH}>Update first existing macro with matching name</option>
+                        </select>
+                    </span>
+                    }
 
                     <table className="r20es-indent">
                         <thead>

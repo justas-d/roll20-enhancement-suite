@@ -2,6 +2,7 @@ import { Player, MacroAttributes } from "roll20";
 import { IResult, Ok, Err } from "./Result";
 import { R20 } from "./R20";
 import IOCommon from "./IOCommon";
+import {ImportStrategy} from "../modules/ImportStrategy";
 
 interface IParseStrategy {
     parse: (data: any) => IResult<IApplyableMacroData[], string>;
@@ -158,33 +159,63 @@ namespace MacroIO {
         return stratLookup.ok().unwrap().parse(data);
     }
 
-    export const applyToPlayer = (player: Player, macros: IApplyableMacroData[]) => {
+    const createMacroBarEntry = (player: Player, macroId: string, macroData: IApplyableMacroData) => {
+        let macrobar = `${player.id}|${macroId}`;
+
+        const hasCol = macroData.macrobar.color !== null;
+        const hasName = macroData.macrobar.name !== null;
+
+        console.log(macroData.macrobar);
+
+        if (hasCol || hasName) {
+
+            if (hasCol && hasName) {
+                macrobar += `|${macroData.macrobar.color}|${macroData.macrobar.name}`
+            } else if (!hasCol) {
+                if (hasName) macrobar += `|#|${macroData.macrobar.name}`
+            } else {
+                if (!hasName) macrobar += `|${macroData.macrobar.color}`
+            }
+        }
+        return macrobar;
+    }
+
+    export const applyToPlayer = (player: Player, macros: IApplyableMacroData[], strategy?: ImportStrategy) => {
+        const currentMacros = player.macros
         const macrobarRows = player.attributes.macrobar.split(',');
-
         for (const macroData of macros) {
-            const macro = player.macros.create(macroData.attributes);
-
-            if (macroData.macrobar) {
-
-                let macrobar = `${player.id}|${macro.id}`;
-
-                const hasCol = macroData.macrobar.color !== null;
-                const hasName = macroData.macrobar.name !== null;
-
-                console.log(macroData.macrobar);
-
-                if (hasCol || hasName) {
-
-                    if(hasCol && hasName) {
-                        macrobar += `|${macroData.macrobar.color}|${macroData.macrobar.name}`
-                    } else if (!hasCol) {
-                        if (hasName) macrobar += `|#|${macroData.macrobar.name}`
+            let updateMatched = false;
+            if (ImportStrategy.UPDATE_FIRST_MATCH === strategy) {
+                const name = macroData.attributes.name;
+                const matchingExistingMacro = currentMacros.find(macro => name === macro.attributes.name);
+                if (matchingExistingMacro) {
+                    //update the object
+                    Object.assign(matchingExistingMacro.attributes, macroData.attributes);
+                    matchingExistingMacro.save();
+                    //update the macrobar
+                    const existingRowIndex = macrobarRows.findIndex(bar => bar.includes(matchingExistingMacro.id));
+                    //if it is not there, add it if the json has attributes
+                    if (existingRowIndex === -1) {
+                        if (macroData.macrobar) {
+                            macrobarRows.push(createMacroBarEntry(player, matchingExistingMacro.id, macroData));
+                        }
                     } else {
-                        if (!hasName) macrobar += `|${macroData.macrobar.color}`
+                        //if json has attributes, replace them, else, if it does not,r emove it
+                        if (macroData.macrobar) {
+                            macrobarRows[existingRowIndex] = createMacroBarEntry(player, matchingExistingMacro.id, macroData);
+                        } else {
+                            macrobarRows.splice(existingRowIndex, 1);
+                        }
                     }
+                    updateMatched = true;
                 }
+            }
+            if (updateMatched === false) {
+                const macro = player.macros.create(macroData.attributes);
 
-                macrobarRows.push(macrobar);
+                if (macroData.macrobar) {
+                    macrobarRows.push(createMacroBarEntry(player, macro.id, macroData));
+                }
             }
         }
 

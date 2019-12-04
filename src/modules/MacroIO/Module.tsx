@@ -1,16 +1,18 @@
-import { R20Module } from "../../utils/R20Module"
-import { R20 } from "../../utils/R20";
-import { MacroIO, IApplyableMacroData } from "../../utils/MacroIO";
+import {R20Module} from "../../utils/R20Module"
+import {R20} from "../../utils/R20";
+import {IApplyableMacroData, MacroIO} from "../../utils/MacroIO";
 import {IOModuleCommon} from "../IOModuleCommon";
 import {IResult} from "../../utils/Result";
+import {ImportStrategy} from "../ImportStrategy";
 
 class MacroIOModule extends IOModuleCommon<IApplyableMacroData> {
     constructor() {
-        super(__dirname, "r20es-macro-io-widget", "Import/Export Macro", "Select Macros", "r20es-big-dialog");
+        super(__dirname, "r20es-macro-io-widget", "Import/Export Macro", "Select Macros", "r20es-big-dialog",
+            [ImportStrategy.ADD, ImportStrategy.UPDATE_FIRST_MATCH]);
     }
 
-    protected continueImporting(finalData: IApplyableMacroData[]) {
-        MacroIO.applyToPlayer(R20.getCurrentPlayer(), finalData);
+    protected continueImporting(finalData: IApplyableMacroData[], strategy:ImportStrategy) {
+        MacroIO.applyToPlayer(R20.getCurrentPlayer(), finalData, strategy);
 
         R20.rerenderJournalMacros();
         R20.rerenderMacroBar();

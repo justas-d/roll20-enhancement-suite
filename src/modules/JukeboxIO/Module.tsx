@@ -6,7 +6,7 @@ import {IApplyableJukeboxPlaylist, JukeboxIO} from "../../utils/JukeboxIO";
 
 class JukeboxIOModule extends IOModuleCommon<IApplyableJukeboxPlaylist> {
     constructor() {
-        super(__dirname, "r20es-jukebox-io-widget", "Import/Export Playlists", "Select Playlists", null);
+        super(__dirname, "r20es-jukebox-io-widget", "Import/Export Playlists", "Select Playlists", null, undefined);
     }
 
     protected continueImporting(finalData: IApplyableJukeboxPlaylist[]) {
