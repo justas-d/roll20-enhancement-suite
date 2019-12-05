@@ -1,8 +1,9 @@
-import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../utils/DOM'
-import { R20Module } from "../utils/R20Module"
-import { saveAs } from 'save-as'
+import {DOM, SidebarCategoryTitle, SidebarSeparator} from '../utils/DOM'
+import {R20Module} from "../utils/R20Module"
+import {saveAs} from 'save-as'
 import PickObjectsDialog from "./PickObjectsDialog";
 import {findByIdAndRemove, readFile} from "../utils/MiscUtils";
+import { Optional } from "../utils/TypescriptUtils";
 import {IResult} from "../utils/Result";
 
 export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
@@ -10,6 +11,7 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
     private pickMacrosDialog: PickObjectsDialog<T>;
     private buffer: T[];
     private pickDialogTitle: string;
+    private object_name: string;
     private widgetId: string;
     private widgetTitle: string;
     private dialogClass: string | null;
@@ -18,8 +20,10 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
                 widgetId: string,
                 widgetTitle: string,
                 pickDialogTitle: string,
+                object_name: string,
                 dialogClass: string | null) {
         super(id);
+        this.object_name = object_name;
         this.widgetId = widgetId;
         this.dialogClass = dialogClass;
         this.widgetTitle = widgetTitle;
@@ -33,6 +37,8 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
     protected abstract getExportData(): T[];
     protected abstract serializeExportData(finalData: T[]): {json: string, filename: string};
     protected abstract injectWidget(widget: HTMLElement);
+
+    protected abstract extra_drawing_above_table_import(): Optional<HTMLElement>;
 
     private continueExporting = (finalData: T[]) => {
         const data = this.serializeExportData(finalData);
@@ -48,12 +54,19 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
         ($(targ.parentNode).find("button.import")[0] as any).disabled = targ.files.length <= 0;
     };
 
-    private showPickDialog(continueCallback: (data: T[]) => void) {
-        this.pickMacrosDialog.show(this.pickDialogTitle,
+    private showPickDialog(
+        continueCallback: (data: T[]) => void,
+        extra_drawing_above_table_import: Optional<() => Optional<HTMLElement>>
+    ) {
+        this.pickMacrosDialog.show(
+            this.pickDialogTitle,
+            this.object_name,
             this.buffer,
             this.nameGetter,
             this.descGetter,
-            continueCallback);
+            continueCallback,
+            extra_drawing_above_table_import
+        );
     }
 
     private onImportClick = (e: any) => {
@@ -71,7 +84,7 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
                 if (result.isErr()) throw new Error(result.err().unwrap());
 
                 this.buffer= result.ok().unwrap();
-                this.showPickDialog(this.continueImporting);
+                this.showPickDialog(this.continueImporting, () => this.extra_drawing_above_table_import());
             })
             .catch(alert);
     };
@@ -87,7 +100,7 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
         }
 
         this.buffer = data;
-        this.showPickDialog(this.continueExporting);
+        this.showPickDialog(this.continueExporting, undefined);
     };
 
     public setup() {
