@@ -4,15 +4,24 @@ import {IApplyableMacroData, MacroIO} from "../../utils/MacroIO";
 import {IOModuleCommon} from "../IOModuleCommon";
 import {IResult} from "../../utils/Result";
 import {ImportStrategy} from "../ImportStrategy";
+import { DOM } from "../../utils/DOM";
 
 class MacroIOModule extends IOModuleCommon<IApplyableMacroData> {
     constructor() {
-        super(__dirname, "r20es-macro-io-widget", "Import/Export Macro", "Select Macros", "r20es-big-dialog",
-            [ImportStrategy.ADD, ImportStrategy.UPDATE_FIRST_MATCH]);
+        super(
+            __dirname, 
+            "r20es-macro-io-widget", 
+            "Import/Export Macro", 
+            "Select Macros", 
+            "Macro", 
+            "r20es-big-dialog"
+        );
     }
 
-    protected continueImporting(finalData: IApplyableMacroData[], strategy:ImportStrategy) {
-        MacroIO.applyToPlayer(R20.getCurrentPlayer(), finalData, strategy);
+    import_strategy: ImportStrategy = ImportStrategy.ADD;
+
+    protected continueImporting = (finalData: IApplyableMacroData[]) => {
+        MacroIO.applyToPlayer(R20.getCurrentPlayer(), finalData, this.import_strategy);
 
         R20.rerenderJournalMacros();
         R20.rerenderMacroBar();
@@ -24,6 +33,25 @@ class MacroIOModule extends IOModuleCommon<IApplyableMacroData> {
 
     protected descGetter(d: IApplyableMacroData): string {
         return d.attributes.action;
+    }
+
+    private updateStrategy = (e: any) => {
+        e.stopPropagation();
+        console.log(e.target.value);
+        console.log(this.import_strategy);
+        this.import_strategy = e.target.value;
+        console.log(this.import_strategy);
+    }
+
+    extra_drawing_above_table_import(): HTMLElement {
+        return (
+            <span>On duplicate name in import:
+                <select value={this.import_strategy} onChange={this.updateStrategy}>
+                    <option value={ImportStrategy.ADD}>Add the duplicate</option>
+                    <option value={ImportStrategy.UPDATE_FIRST_MATCH}>Update first existing macro with matching name</option>
+                </select>
+            </span>
+        );
     }
 
     protected getExportData(): IApplyableMacroData[] {

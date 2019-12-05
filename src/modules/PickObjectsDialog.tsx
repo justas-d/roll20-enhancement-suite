@@ -2,6 +2,7 @@ import {DialogBase} from "../utils/DialogBase";
 import {CheckboxWithText, Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../utils/DialogComponents";
 import {ImportStrategy} from "./ImportStrategy";
 import { DOM } from "../utils/DOM";
+import { Optional } from "../utils/TypescriptUtils";
 
 type FilterTableType = { [id: number]: boolean };
 
@@ -9,30 +10,34 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
 
 
     private data: T[];
-    private importStrategies: ImportStrategy[];
-    private selectedStrategy: ImportStrategy;
     private nameGetter: (d: T) => string;
     private descGetter: (d: T) => string;
     private title: string;
-    private continueCallback: (data: T[], strategy?:ImportStrategy) => void;
+    private continueCallback: (data: T[]) => void;
+
+    object_name: string;
+    extra_drawing_above_table: Optional<() => Optional<HTMLElement>>;
 
     public constructor(className?: string) {
         super(className);
     }
 
-    public show(title: string, 
-                data: T[], 
-                nameGetter: (d: T) => string, 
-                descGetter: (d: T) => string,
-                importStrategies: ImportStrategy[],
-                continueCallback: (data: T[], strategy?:ImportStrategy) => void) {
+    public show(
+        title: string, 
+        object_name: string,
+        data: T[], 
+        nameGetter: (d: T) => string, 
+        descGetter: (d: T) => string,
+        continueCallback: (data: T[]) => void,
+        extra_drawing_above_table: Optional<() => Optional<HTMLElement>>
+    ) {
+        this.extra_drawing_above_table = extra_drawing_above_table;
+        this.object_name = object_name;
         this.title = title;
         this.data =data;
         this.nameGetter = nameGetter;
         this.descGetter = descGetter;
         this.continueCallback = continueCallback;
-        this.importStrategies = importStrategies;
-        this.selectedStrategy = undefined;
         super.internalShow();
     }
 
@@ -58,7 +63,7 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
             return;
         }
 
-        this.continueCallback(finalData, this.selectedStrategy);
+        this.continueCallback(finalData);
     };
 
     private onToggleAll = (e: any) => {
@@ -69,12 +74,12 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
         });
     };
 
-    private updateStrategy = (e: any, f?:any, g?:any) => {
-        e.stopPropagation();
-        this.selectedStrategy = e.target.value;
-    }
-
     protected render(): HTMLElement {
+
+        let extra_above_table = null;
+        if(this.extra_drawing_above_table) {
+            extra_above_table = this.extra_drawing_above_table();
+        }
 
         const macroElements = [];
         for (const obj of this.data) {
@@ -98,21 +103,14 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
                 </DialogHeader>
 
                 <DialogBody>
+                    {extra_above_table}
                     <button className="btn" onClick={this.onToggleAll}>Toggle All</button>
-                    {this.importStrategies &&
-                    <span>On duplicate name in import:
-                        <select className="btn" onChange={this.updateStrategy}>
-                            <option value={ImportStrategy.ADD}>Add the duplicate</option>
-                            <option value={ImportStrategy.UPDATE_FIRST_MATCH}>Update first existing macro with matching name</option>
-                        </select>
-                    </span>
-                    }
 
                     <table className="r20es-indent">
                         <thead>
                             <tr className="table-head">
                                 <th scope="col">Name</th>
-                                <th scope="col">Macro</th>
+                                <th scope="col">{this.object_name}</th>
                             </tr>
                         </thead>
 
@@ -133,3 +131,4 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
         );
     }
 }
+

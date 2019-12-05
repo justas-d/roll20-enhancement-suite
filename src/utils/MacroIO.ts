@@ -98,7 +98,6 @@ const getUserMacrobarData = (rawMacroBar: string) => rawMacroBar.split(',').map(
 
 const makeApplyableMacro = (macro: MacroAttributes, macrobarData: string[][]): IApplyableMacroData => {
     const macrobarIndex = macrobarData.findIndex(arr => arr.length >= 2 && arr[1] === macro.id);
-    console.log(macro);
 
     const retval: IApplyableMacroData = {
         attributes: {
@@ -165,35 +164,49 @@ namespace MacroIO {
         const hasCol = macroData.macrobar.color !== null;
         const hasName = macroData.macrobar.name !== null;
 
-        console.log(macroData.macrobar);
-
         if (hasCol || hasName) {
 
             if (hasCol && hasName) {
                 macrobar += `|${macroData.macrobar.color}|${macroData.macrobar.name}`
             } else if (!hasCol) {
-                if (hasName) macrobar += `|#|${macroData.macrobar.name}`
+                if (hasName) {
+                    macrobar += `|#|${macroData.macrobar.name}`
+                }
             } else {
-                if (!hasName) macrobar += `|${macroData.macrobar.color}`
+                if (!hasName) {
+                    macrobar += `|${macroData.macrobar.color}`
+                }
             }
         }
         return macrobar;
     }
 
-    export const applyToPlayer = (player: Player, macros: IApplyableMacroData[], strategy?: ImportStrategy) => {
+    export const applyToPlayer = (
+        player: Player, 
+        macros: IApplyableMacroData[], 
+        strategy: ImportStrategy
+    ) => {
+        console.log(strategy);
+
         const currentMacros = player.macros
         const macrobarRows = player.attributes.macrobar.split(',');
+
         for (const macroData of macros) {
             let updateMatched = false;
+
             if (ImportStrategy.UPDATE_FIRST_MATCH === strategy) {
                 const name = macroData.attributes.name;
                 const matchingExistingMacro = currentMacros.find(macro => name === macro.attributes.name);
+
                 if (matchingExistingMacro) {
+
                     //update the object
                     Object.assign(matchingExistingMacro.attributes, macroData.attributes);
                     matchingExistingMacro.save();
+
                     //update the macrobar
                     const existingRowIndex = macrobarRows.findIndex(bar => bar.includes(matchingExistingMacro.id));
+
                     //if it is not there, add it if the json has attributes
                     if (existingRowIndex === -1) {
                         if (macroData.macrobar) {
@@ -210,6 +223,7 @@ namespace MacroIO {
                     updateMatched = true;
                 }
             }
+
             if (updateMatched === false) {
                 const macro = player.macros.create(macroData.attributes);
 
@@ -218,8 +232,6 @@ namespace MacroIO {
                 }
             }
         }
-
-        console.log(macrobarRows);
 
         player.save({
             macrobar: macrobarRows.join(',')

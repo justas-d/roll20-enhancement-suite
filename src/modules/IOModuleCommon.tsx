@@ -3,40 +3,42 @@ import {R20Module} from "../utils/R20Module"
 import {saveAs} from 'save-as'
 import PickObjectsDialog from "./PickObjectsDialog";
 import {findByIdAndRemove, readFile} from "../utils/MiscUtils";
+import { Optional } from "../utils/TypescriptUtils";
 import {IResult} from "../utils/Result";
-import {ImportStrategy} from "./ImportStrategy";
 
 export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
 
     private pickMacrosDialog: PickObjectsDialog<T>;
     private buffer: T[];
     private pickDialogTitle: string;
+    private object_name: string;
     private widgetId: string;
     private widgetTitle: string;
     private dialogClass: string | null;
-    private importStrategies: ImportStrategy[];
 
     constructor(id: string,
                 widgetId: string,
                 widgetTitle: string,
                 pickDialogTitle: string,
-                dialogClass: string | null,
-                importStrategies: ImportStrategy[]) {
+                object_name: string,
+                dialogClass: string | null) {
         super(id);
+        this.object_name = object_name;
         this.widgetId = widgetId;
         this.dialogClass = dialogClass;
         this.widgetTitle = widgetTitle;
         this.pickDialogTitle = pickDialogTitle;
-        this.importStrategies = importStrategies;
     }
 
     protected abstract nameGetter(d: T): string;
     protected abstract descGetter(d: T): string;
     protected abstract tryDeserialize(data: string): IResult<T[], string>;
-    protected abstract continueImporting(finalData: T[], strategy?:ImportStrategy);
+    protected abstract continueImporting(finalData: T[]);
     protected abstract getExportData(): T[];
     protected abstract serializeExportData(finalData: T[]): {json: string, filename: string};
     protected abstract injectWidget(widget: HTMLElement);
+
+    protected abstract extra_drawing_above_table_import(): Optional<HTMLElement>;
 
     private continueExporting = (finalData: T[]) => {
         const data = this.serializeExportData(finalData);
@@ -52,13 +54,19 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
         ($(targ.parentNode).find("button.import")[0] as any).disabled = targ.files.length <= 0;
     };
 
-    private showPickDialog(continueCallback: (data: T[], strategy?: ImportStrategy) => void, importStrategies: ImportStrategy[]) {
-        this.pickMacrosDialog.show(this.pickDialogTitle,
+    private showPickDialog(
+        continueCallback: (data: T[]) => void,
+        extra_drawing_above_table_import: Optional<() => Optional<HTMLElement>>
+    ) {
+        this.pickMacrosDialog.show(
+            this.pickDialogTitle,
+            this.object_name,
             this.buffer,
             this.nameGetter,
             this.descGetter,
-            importStrategies,
-            continueCallback);
+            continueCallback,
+            extra_drawing_above_table_import
+        );
     }
 
     private onImportClick = (e: any) => {
@@ -76,7 +84,7 @@ export abstract class IOModuleCommon<T> extends R20Module.OnAppLoadBase {
                 if (result.isErr()) throw new Error(result.err().unwrap());
 
                 this.buffer= result.ok().unwrap();
-                this.showPickDialog(this.continueImporting, this.importStrategies);
+                this.showPickDialog(this.continueImporting, () => this.extra_drawing_above_table_import());
             })
             .catch(alert);
     };

@@ -3,10 +3,11 @@ import { R20 } from "../../utils/R20";
 import {IOModuleCommon} from "../IOModuleCommon";
 import {IResult} from "../../utils/Result";
 import {IApplyableJukeboxPlaylist, JukeboxIO} from "../../utils/JukeboxIO";
+import { DOM } from "../../utils/DOM";
 
 class JukeboxIOModule extends IOModuleCommon<IApplyableJukeboxPlaylist> {
     constructor() {
-        super(__dirname, "r20es-jukebox-io-widget", "Import/Export Playlists", "Select Playlists", null, undefined);
+        super(__dirname, "r20es-jukebox-io-widget", "Import/Export Playlists", "Track", "Select Playlists", null);
     }
 
     protected continueImporting(finalData: IApplyableJukeboxPlaylist[]) {
@@ -19,6 +20,10 @@ class JukeboxIOModule extends IOModuleCommon<IApplyableJukeboxPlaylist> {
 
     protected descGetter(d: IApplyableJukeboxPlaylist): string {
         return d.songs.map(s => s.title).join(" ; ");
+    }
+
+    protected extra_drawing_above_table_import(): HTMLElement {
+        return null;
     }
 
     protected getExportData(): IApplyableJukeboxPlaylist[] {
