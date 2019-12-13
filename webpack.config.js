@@ -215,13 +215,6 @@ module.exports = (_env, argv) => {
                         test: /(\.ts|\.tsx)$/,
                         loaders: ['awesome-typescript-loader']
                     },
-                    {
-                        test: /\.scss$/,
-                        use: [
-                            "raw-loader",
-                            "sass-loader"
-                        ]
-                    }
                 ],
             },
 
