@@ -34,6 +34,8 @@ const getPlugins = (isProd) => {
 
 module.exports = (_env, argv) => {
 
+    console.log(process.cwd());
+
     const isProd = argv.mode === "production";
 
     const sourceOutputPath = path.join(path.resolve(__dirname), "pagerender");
@@ -90,8 +92,6 @@ module.exports = (_env, argv) => {
     addStaticFile("index.css", "./page/index.css");
     addStaticFile("features.css", "./page/features.css");
 
-    console.log(entry);
-
     let config = {
 
         target: "web",
@@ -105,7 +105,7 @@ module.exports = (_env, argv) => {
         module: cfgModule,
 
         resolve: {
-            extensions: ['.js', '.jsx'],
+            extensions: ['.js'],
             modules: ['page', 'node_modules'],
         },
 
