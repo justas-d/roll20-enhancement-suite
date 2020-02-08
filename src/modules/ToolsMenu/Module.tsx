@@ -24,7 +24,7 @@ class ToolsModule extends R20Module.OnAppLoadBase {
         const button = (
             <SettingsSidebarButton
                 id={ToolsModule.TOOLS_ID}
-                text="R20ES Tools"
+                text="VTTES Tools"
                 onClick={this.onButtonClick}
             />);
 

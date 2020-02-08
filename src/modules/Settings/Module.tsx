@@ -23,7 +23,7 @@ class SettingsModule extends R20Module.OnAppLoadBase {
 
         const button = (
             <SettingsSidebarButton
-                text="R20ES Settings"
+                text="VTTES Settings"
                 id={ButtonId}
                 onClick={this.onButtonClick}
             />);
