@@ -1,5 +1,5 @@
 {
-    "current": "1.15.22",
+    "current": "1.15.23",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1241,6 +1241,18 @@
                 {
                     "id": "",
                     "content": "LibreAudio: fixed audio playback not working as of 2020-03-31"
+                }
+            ]
+        },
+        "1.15.23": {
+            "info": {
+                "title": "Macro Generator Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Macro Generator: Fix NPC trait and reaction macro descriptions (thanks Rimane for the report!)"
                 }
             ]
         }
