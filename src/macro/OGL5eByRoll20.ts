@@ -33,14 +33,14 @@ let dataSet: {[id: string]: RepeatingDataSet} = {
     "NPC Traits": {
         group: "repeating_npctrait",
         name: "name",
-        macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npctrait_$${idx}_name}}} {{description=@{selected|repeating_npctrait_$${idx}_desc}}}`,
+        macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npctrait_$${idx}_name}}} {{description=@{selected|repeating_npctrait_$${idx}_description}}}`,
         canMakeFolder: false,
     },
 
     "NPC Reactions": {
         group: "repeating_npcreaction",
         name: "name",
-        macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npcreaction_$${idx}_name}}} {{description=@{selected|repeating_npcreaction_$${idx}_desc}}}`,
+        macro: idx => `@{selected|wtype}&{template:npcaction} {{name=@{selected|npc_name}}} {{rname=@{selected|repeating_npcreaction_$${idx}_name}}} {{description=@{selected|repeating_npcreaction_$${idx}_description}}}`,
         nameMod: name => "Reaction:" + name,
         canMakeFolder: false,
     },
