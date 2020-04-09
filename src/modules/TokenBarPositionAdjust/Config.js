@@ -14,15 +14,15 @@ export default MakeConfig(__dirname, {
     mods: [
         {
             includes: "assets/app.js",
-            find: `this._positionAndScaleStatusIcons(i,n.length),e.save(),`,
+            find: `this._positionAndScaleStatusIcons(r,n.length),e.save(),`,
             patch: `
 if(window.r20es.statusDraw) { 
-    if(!window.r20es.statusDraw(e, this, n, i)) { 
+    if(!window.r20es.statusDraw(e, this, n, r)) { 
         return;
     } 
 } 
 else { 
-    this._positionAndScaleStatusIcons(i,n.length);
+    this._positionAndScaleStatusIcons(r,n.length);
     e.save();
 }
 `
