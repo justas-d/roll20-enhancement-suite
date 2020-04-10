@@ -53,7 +53,7 @@ class OverwriteV2 implements IOverwriteStrategy {
 
         const hasNot = what => !(what in data);
 
-        if (hasNot("oldId")) return new Err("oldId not found");
+        //if (hasNot("oldId")) return new Err("oldId not found");
         if (hasNot("name")) return new Err("name not found");
         if (hasNot("avatar")) return new Err("avatar not found");
         if (hasNot("bio")) return new Err("bio not found");
@@ -88,14 +88,16 @@ class OverwriteV2 implements IOverwriteStrategy {
 
         // some attributes store the id of the exported character
         // we replace them here with the new id 
-        let jsonData = JSON.stringify(data);
-        jsonData = replaceAll(jsonData, data.oldId, pc.attributes.id);
-        data = JSON.parse(jsonData);
+        if(data.oldId) {
+          let jsonData = JSON.stringify(data);
+          jsonData = replaceAll(jsonData, data.oldId, pc.attributes.id);
+          data = JSON.parse(jsonData);
 
-        // replace represents id
-        const hasToken = data.defaulttoken && data.defaulttoken.length > 0;
-        if (hasToken) {
-            data.defaulttoken = replaceAll(data.defaulttoken, data.oldId, pc.attributes.id);
+          // replace represents id
+          const hasToken = data.defaulttoken && data.defaulttoken.length > 0;
+          if (hasToken) {
+              data.defaulttoken = replaceAll(data.defaulttoken, data.oldId, pc.attributes.id);
+          }
         }
 
         let save: any = {
