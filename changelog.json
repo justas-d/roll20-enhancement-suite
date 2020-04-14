@@ -1,5 +1,5 @@
 {
-    "current": "1.15.24",
+    "current": "1.15.25",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1265,6 +1265,18 @@
                 {
                     "id": "",
                     "content": "Token Status Display Adjustments: Fix it from being broken (thanks Kendros for the report!)"
+                }
+            ]
+        },
+        "1.15.25": {
+            "info": {
+                "title": "Token Status Display Adjustments fix 2",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Token Status Display Adjustments: Fix it not initializing on player sessions (thanks Halvralf and HeadsetRuler for the report!)"
                 }
             ]
         }
