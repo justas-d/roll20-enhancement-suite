@@ -88,13 +88,18 @@ class OverwriteV2 implements IOverwriteStrategy {
 
         // some attributes store the id of the exported character
         // we replace them here with the new id 
+
         if(data.oldId) {
           let jsonData = JSON.stringify(data);
           jsonData = replaceAll(jsonData, data.oldId, pc.attributes.id);
           data = JSON.parse(jsonData);
 
-          // replace represents id
-          const hasToken = data.defaulttoken && data.defaulttoken.length > 0;
+        }
+
+        // replace represents id
+        const hasToken = data.defaulttoken && data.defaulttoken.length > 0;
+
+        if(data.oldId) {
           if (hasToken) {
               data.defaulttoken = replaceAll(data.defaulttoken, data.oldId, pc.attributes.id);
           }
