@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import NavBar from 'NavBar.js'
+import GTag from 'GTag.js'
 import {Config} from "../src/utils/Config";
 
 function About() {
@@ -34,6 +35,8 @@ function About() {
                     <li>Campaign data is accessed and used to allow The VTT Enhancement Suite to function during a session.</li>
                 </ul>
             </div>
+
+            <GTag/>
         </div>
     );
 }

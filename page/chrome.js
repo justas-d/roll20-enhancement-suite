@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import NavBar from 'NavBar.js'
+import GTag from 'GTag.js'
 import {Config} from "../src/utils/Config";
 
 function Chrome() {
@@ -32,6 +33,8 @@ function Chrome() {
                 <p>Beware that auto-updates will not be available while using this method.</p>
 
             </div>
+
+            <GTag/>
         </div>
     );
 }

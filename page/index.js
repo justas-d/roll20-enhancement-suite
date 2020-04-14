@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import GTag from 'GTag.js'
 import NavBar from 'NavBar.js';
 
 function Index() {
@@ -22,7 +23,7 @@ function Index() {
                             <img src="firefox.png" alt=""/>
                         </a>
 
-                        <a href="chrome">
+                        <a href="chrome.html">
                             <img src="chrome.png" alt=""/>
                         </a>
 
@@ -34,6 +35,7 @@ function Index() {
 
                 <NavBar noLanding={true}/>
             </div>
+          <GTag/>
         </div>
     )
 }

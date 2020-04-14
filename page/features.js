@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import Configs from '../src/Configs';
+import GTag from 'GTag.js'
 import NavBar from 'NavBar.js'
 
 function FeatureCard(props) {
@@ -59,6 +60,8 @@ function Features() {
 
                 {cards}
             </div>
+
+          <GTag/>
         </div>
     );
 }
