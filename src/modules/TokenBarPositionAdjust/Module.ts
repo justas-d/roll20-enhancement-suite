@@ -82,8 +82,6 @@ class TokenBarPositionAdjust  extends R20Module.SimpleBase {
     }
 
     setup() {
-        if (!R20.isGM()) return;
-
         window.r20es["statusDraw"] = this.statusDraw;
 
         R20.renderAll();
