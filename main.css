@@ -12,12 +12,14 @@ body {
     color: lightgray;
 }
 
+.navbar-landing .nav-link:hover {
+  color: white !important;
+}
+
 .navbar-nav {
     margin-left: auto;
     margin-right: auto;
 }
-
-
 
 .navbar {
     background-color: rgb(6, 26, 45);   
