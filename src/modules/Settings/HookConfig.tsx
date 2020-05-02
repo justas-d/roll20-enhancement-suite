@@ -112,7 +112,7 @@ export default class HookConfig extends DOM.ElementBase {
                         <h3 title={this.hook.id + " " + this.hook.filename}>{this.hook.name}</h3>
                         <hr style={{ marginTop: "4px" }} />
 
-                        <div className="r20es-indent description">
+                        <div className="r20es-indent">
                             <p>{this.hook.description}</p>
 
                             <p>{urlHyperlinks}</p>
