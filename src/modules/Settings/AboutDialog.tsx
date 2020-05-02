@@ -79,10 +79,6 @@ export default class AboutDialog extends DialogBase<null> {
                             </div>
                         </div>
 
-                        <div style={{paddingRight: "8px", paddingLeft: "8px"}}>
-                            <img src={this.logoUrl} alt="Logo"/>
-                        </div>
-
                         <div style={{display: "flex", flexDirection: "column", direction: "rtl", justifyContent: "center"}}>
                             <div>
                                 <b>With contributions from</b>
