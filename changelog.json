@@ -1,5 +1,5 @@
 {
-    "current": "1.15.25",
+    "current": "1.15.26",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1277,6 +1277,30 @@
                 {
                     "id": "",
                     "content": "Token Status Display Adjustments: Fix it not initializing on player sessions (thanks Halvralf and HeadsetRuler for the report!)"
+                }
+            ]
+        },
+        "1.15.26": {
+            "info": {
+                "title": "Chrome Update Checker & Some Tweaks",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Add an update checker for Chrome which will post a message in chat when a new update is out."
+                },
+                {
+                    "id": "",
+                    "content": "Uh Oh: Update the problem popup with some new updated troubleshooting directions."
+                },
+                {
+                    "id": "",
+                    "content": "Settings: Fix gray-ish description text color."
+                },
+                {
+                    "id": "",
+                    "content": "About: Tweak formatting"
                 }
             ]
         }
