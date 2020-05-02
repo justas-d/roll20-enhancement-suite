@@ -28,6 +28,7 @@ const getPlugins = (isProd) => {
     return [
         new webpack.DefinePlugin({
             R20ES_PAGE_PREFIX: JSON.stringify(isProd ? "/roll20-enhancement-suite" : ""),
+            "VTTES_BROWSER": JSON.stringify("none"),
         }),
     ];
 };
@@ -74,6 +75,7 @@ module.exports = (_env, argv) => {
     addStaticFolder("./assets/settings/");
     addStaticFolder("./assets/site/");
 
+    addStaticFile("latest_chrome_version", "./page/latest_chrome_version.png");
     addStaticFile("takedown.png", "./page/takedown.png");
     addStaticFile("index.html", "./page/index.html");
     addStaticFile("features.html", "./page/features.html");

@@ -56,6 +56,7 @@ const addStaticFolder = (folder) => {
 
 addStaticFolder("./assets/settings/");
 addStaticFolder("./assets/site/");
+addStaticFile("latest_chrome_version", "./page/latest_chrome_version");
 addStaticFile("tags.js", "./page/tags.js");
 addStaticFile("logo.svg", "./assets/logo/logo.svg");
 addStaticFile("main.css", "./page/main.css");
