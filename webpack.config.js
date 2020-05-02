@@ -240,6 +240,7 @@ module.exports = (_env, argv) => {
                     "build.R20ES_COMMIT": JSON.stringify(git.commit),
                     "build.R20ES_BRANCH": JSON.stringify(git.branch),
                     "build.R20ES_BROWSER": JSON.stringify(browser.target),
+                    "VTTES_BROWSER": JSON.stringify(browser.target),
                     "build.R20ES_CHANGELOG": JSON.stringify(changelog),
                     'build_R20ES_IS_DEV': JSON.stringify(isProd === false),
                     'process.env.NODE_ENV': JSON.stringify('production'),

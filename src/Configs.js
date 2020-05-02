@@ -43,6 +43,7 @@ import SetTableEntryAvatarByUrl from "./modules/SetTableEntryAvatarByUrl/Config"
 import LibreAudio from "./modules/LibreAudio/Config";
 import TokenBarPositionAdjust from "./modules/TokenBarPositionAdjust/Config"
 import PerformanceImprovements from "./modules/PerformanceImprovements/Config"
+import ChromeUpdateChecker from "./modules/ChromeUpdateChecker/Config"
 
 //import LibreAnimatedTokens from "./modules/LibreAnimatedTokens/Config"
 
@@ -96,6 +97,9 @@ addCfg(SetTableEntryAvatarByUrl);
 addCfg(Welcome);
 addCfg(PerformanceImprovements);
 
+if(VTTES_BROWSER == "chrome") {
+  addCfg(ChromeUpdateChecker);
+}
 
 export default configs;
 
