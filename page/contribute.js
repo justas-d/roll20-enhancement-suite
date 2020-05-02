@@ -21,7 +21,7 @@ const Contribute = () => {
 
             <div style={{marginBottom: "32px"}}>
               <h4>PayPal.Me</h4>
-              <div><b>Preferred due to no fees.</b></div>
+              <div><b>Preferred due to no processing fees.</b></div>
               <div><i>Single</i></div>
 
               <div style={{margin: "16px"}}>
@@ -33,7 +33,7 @@ const Contribute = () => {
 
             <div style={{marginBottom: "32px"}}>
               <h4>Buy Me A Coffee</h4>
-              <div><b>You pay a fee.</b></div>
+              <div><b>The processing fee is split between us.</b></div>
               <div><i>Single & Recurring</i></div>
 
               <div style={{margin: "16px"}}>
@@ -46,7 +46,7 @@ const Contribute = () => {
 
             <div style={{marginBottom: "32px"}}>
               <h4>PayPal Donate</h4>
-              <div><b>Least Preferred due to processing fees.</b></div>
+              <div><b>Least preferred due to processing fees.</b></div>
               <div><i>Single & Recurring</i></div>
 
               <div style={{margin: "16px"}}>
