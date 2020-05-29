@@ -17,7 +17,7 @@ class EnumerateTokensModule extends R20Module.SimpleBase {
         // tokens will locally disappear if we do not unselect them here
         R20.unselectTokens();
 
-        let counter = 0;
+        let counter = {};
         for (let token of objects) {
             const model = R20.try_get_canvas_object_model(token);
 
@@ -29,8 +29,13 @@ class EnumerateTokensModule extends R20Module.SimpleBase {
             if (!originalName) {
                 originalName = model.attributes.name;
             }
+
+            if (!counter[originalName]) {
+                counter[originalName] = 0;
+            }
+
             if (originalName) {
-                const save = {name: `${originalName} ${++counter}`};
+                const save = {name: `${originalName} ${++counter[originalName]}`};
                 model.save(save);
             }
         }
