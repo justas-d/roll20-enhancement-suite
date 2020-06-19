@@ -18,8 +18,7 @@ const buildPage = (fx, resource) => {
 
     const page = `<!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>VTT Enhancement Suite</title>
@@ -29,17 +28,14 @@ const buildPage = (fx, resource) => {
 
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="${resource}.css">
-
-</head>
-
-<body>
-${data}    
-</body>
-
+  </head>
+  <body>
+    ${data}    
+  </body>
 </html>
 `;
 
-    fs.writeFile(path.join(buildDir, resource +".html"), page, console.log);
+  fs.writeFile(path.join(buildDir, resource +".html"), page, console.log);
 }
 buildPage(<About/>, "about");
 buildPage(<Features/>, "features");
@@ -56,7 +52,7 @@ addStaticFolder("./assets/settings/");
 addStaticFolder("./assets/site/");
 addStaticFile("latest_chrome_version", "./page/latest_chrome_version");
 addStaticFile("tags.js", "./page/tags.js");
-addStaticFile("contribute.js", "./page/contribute.html");
+addStaticFile("contribute.html", "./page/contribute.html");
 addStaticFile("logo.svg", "./assets/logo/logo.svg");
 addStaticFile("main.css", "./page/main.css");
 addStaticFile("more.css", "./page/more.css");
