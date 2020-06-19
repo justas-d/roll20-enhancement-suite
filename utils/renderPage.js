@@ -3,7 +3,6 @@ import Features from "../page/features";
 import Index from "../page/index";
 import ReactDOMServer from 'react-dom/server';
 import React from 'react';
-import Contribute from "../page/contribute";
 import Chrome from "../page/chrome";
 
 const fs = require("fs");
@@ -17,7 +16,7 @@ const buildPage = (fx, resource) => {
     addStaticFile(`${resource}.css`, `./page/${resource}.css`);
     const data = ReactDOMServer.renderToStaticMarkup(fx);
 
-    const page = `<!doctype <!DOCTYPE html>
+    const page = `<!DOCTYPE html>
 <html>
 
 <head>
@@ -45,7 +44,6 @@ ${data}
 buildPage(<About/>, "about");
 buildPage(<Features/>, "features");
 buildPage(<Index/>, "index");
-buildPage(<Contribute/>, "contribute");
 buildPage(<Chrome/>, "chrome");
 
 const addStaticFolder = (folder) => {
@@ -58,6 +56,7 @@ addStaticFolder("./assets/settings/");
 addStaticFolder("./assets/site/");
 addStaticFile("latest_chrome_version", "./page/latest_chrome_version");
 addStaticFile("tags.js", "./page/tags.js");
+addStaticFile("contribute.js", "./page/contribute.html");
 addStaticFile("logo.svg", "./assets/logo/logo.svg");
 addStaticFile("main.css", "./page/main.css");
 addStaticFile("more.css", "./page/more.css");

@@ -88,7 +88,6 @@ module.exports = (_env, argv) => {
     addFile("./page/index.js");
     addFile("./page/features.js");
     addFile("./page/about.js");
-    addFile("./page/contribute.js");
     addFile("./page/chrome.js");
     addStaticFile("tags.js", "./page/tags.js");
     addStaticFile("main.css", "./page/main.css");
