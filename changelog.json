@@ -1,5 +1,5 @@
 {
-    "current": "1.15.26",
+    "current": "1.15.27",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1301,6 +1301,18 @@
                 {
                     "id": "",
                     "content": "About: Tweak formatting"
+                }
+            ]
+        },
+        "1.15.27": {
+            "info": {
+                "title": "Fix Scale Token Names By Size Module",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix Scale Token Names By Size module not scaling nameplates. (thanks, seba1708 & Sabre Runner for the report!)"
                 }
             ]
         }
