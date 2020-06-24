@@ -10,9 +10,10 @@ export default MakeConfig(__dirname, {
     mods: [
         {
             includes: "assets/app.js",
-            find: `e.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),e.fillStyle="rgb(0,0,0)",e.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+n+this._nameplate_data.padding)`,
+            find: `e.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),e.fillStyle="rgb(0,0,0)",e.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+i+this._nameplate_data.padding)`,
+          
             patch: `window.r20es && window.r20es.prepNameplateBack && window.r20es.prepNameplateBack(this, e), e.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),e.fillStyle="rgb(0,0,0)",
-                    window.r20es && window.r20es.prepNameplateText && window.r20es.prepNameplateText(this, e), e.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+n+this._nameplate_data.padding)`
+                    window.r20es && window.r20es.prepNameplateText && window.r20es.prepNameplateText(this, e), e.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+i+this._nameplate_data.padding)`
         }
     ],
 
