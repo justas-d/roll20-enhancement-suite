@@ -92,7 +92,7 @@ module.exports = (_env, argv) => {
 
         // prep source code
         const filename = `r20es_${git.version}_source.zip`;
-        shell.exec(`git archive -o ${filename} HEAD`);
+        shell.exec(`git archive -o ${filename} HEAD ":(exclude)page"`);
 
         fs.readFile(filename, (err, data) => {
             if (err) throw err;
@@ -258,14 +258,14 @@ module.exports = (_env, argv) => {
 
         if (wantsZip) {
             config.plugins.push(new ZipPlugin({
-                path: packageOutputPath,
-                filename: genZipName(git.version, browser.id),
-                fileOptions: {
-                    mtime: new Date(0),
-                    mode: 0o100664,
-                    compress: true,
-                    forceZip64Format: false,
-                },
+              path: packageOutputPath,
+              filename: genZipName(git.version, browser.id),
+              fileOptions: {
+                mtime: new Date(0),
+                mode: 0o100664,
+                compress: true,
+                forceZip64Format: false,
+              },
             }))
         }
 
