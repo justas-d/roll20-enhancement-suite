@@ -90,6 +90,8 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
 
                 RollAndApplyHitDiceModule.fancySay(`${model.character.get("name")}: [[${hpFormula}]]`,
                     (_, o) => {
+
+                      console.log("roll:", _, 0);
                         if (!o.inlinerolls || o.inlinerolls.length <= 0) return;
 
                         let hp = o.inlinerolls[0].results.total;

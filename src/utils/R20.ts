@@ -437,7 +437,7 @@ namespace R20 {
                 callback(event, rollData);
             });
 
-            window.d20.textchat.doChatInput(what, callbackId);
+            window.d20.textchat.doChatInput(what, "chatbox", callbackId);
 
         } else {
             window.d20.textchat.doChatInput(what);
