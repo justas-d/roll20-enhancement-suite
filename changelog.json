@@ -1,5 +1,5 @@
 {
-    "current": "1.15.27",
+    "current": "1.15.29",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1313,6 +1313,18 @@
                 {
                     "id": "",
                     "content": "Fix Scale Token Names By Size module not scaling nameplates. (thanks, seba1708 & Sabre Runner for the report!)"
+                }
+            ]
+        },
+        "1.15.29": {
+            "info": {
+                "title": "Roll & Apply Hit Dice Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix Roll & Apply Hit Dice module not setting token health."
                 }
             ]
         }
