@@ -23,7 +23,7 @@ const NavBar = ({noLanding}) => {
                 <a className="nav-link" href={`${R20ES_PAGE_PREFIX}/about.html`}>About</a>
             </li>
             <li className="nav-item">
-                <a className="nav-link" href={`${R20ES_PAGE_PREFIX}/contribute.html`}>Contribute</a>
+                <a className="nav-link" href={`https://justas-d.github.io/coffee.html`}>Contribute</a>
             </li>
           </ul>
         </nav>

@@ -84,7 +84,7 @@ if (typeof (deployData.firefox) !== "undefined") {
 
             let strBuffer = `**${changelog.current} - ${latestChanges.info.title}**\n`;
             if(!noMedia) {
-                strBuffer += `https://ssstormy.github.io/roll20-enhancement-suite/${latestChanges.info.media}\n`;
+                strBuffer += `https://justas-d.github.io/roll20-enhancement-suite/${latestChanges.info.media}\n`;
             }
 
             latestChanges.changes.forEach(c => {
