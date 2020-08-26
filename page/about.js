@@ -17,7 +17,7 @@ function About() {
 
                 <ul>
                     <li>VTT Enhancement Suite (R20ES) is a browser extension usable on Firefox 57+ and Chrome made to enhance Roll20.</li>
-                    <li>It is licensed under GPL-3.0 and the source code for it can be found on <a href="https://github.com/SSStormy/roll20-enhancement-suite">GitHub</a>.</li>
+                    <li>It is licensed under GPL-3.0 and the source code for it can be found on <a href="https://github.com/justas-d/roll20-enhancement-suite">GitHub</a>.</li>
                     <li>Currently maintained by <a style={{color: "#000a60"}}href="https://twitter.com/justas_dabrila">Justas</a></li>
                     <li>VTTES is community driven and is independent from and not affiliated with Roll20.</li>
                     <li>We have a <a href={Config.discordInvite}>Discord server.</a></li>

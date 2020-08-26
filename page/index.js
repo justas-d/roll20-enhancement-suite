@@ -27,7 +27,7 @@ function Index() {
                             <img src="chrome.png" alt=""/>
                         </a>
 
-                        <a href="https://github.com/SSStormy/roll20-enhancement-suite">
+                        <a href="https://github.com/justas-d/roll20-enhancement-suite">
                             <img className="invert" src="github.png" alt=""/>
                         </a>
                     </span>
