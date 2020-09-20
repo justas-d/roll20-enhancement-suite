@@ -1,5 +1,7 @@
 # Quick production build
 
+0. You either have to clone the repository or have a `git_data.json` file in the root folder of the project.
+
 1. Install dependencies:
 
 ```
