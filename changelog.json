@@ -1,5 +1,5 @@
 {
-    "current": "1.15.30",
+    "current": "1.15.31",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1337,6 +1337,18 @@
                 {
                     "id": "",
                     "content": "Fix improper animated background zooming."
+                }
+            ]
+        },
+        "1.15.31": {
+            "info": {
+                "title": "Settings Media Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed broken media in the settings menu. (thanks Niels_mit_e for the report!)"
                 }
             ]
         }
