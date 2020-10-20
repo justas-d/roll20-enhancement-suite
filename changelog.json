@@ -1,5 +1,5 @@
 {
-    "current": "1.15.31",
+    "current": "1.15.32",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1349,6 +1349,18 @@
                 {
                     "id": "",
                     "content": "Fixed broken media in the settings menu. (thanks Niels_mit_e for the report!)"
+                }
+            ]
+        },
+        "1.15.32": {
+            "info": {
+                "title": "Fix Animation Disable Module",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix animations not being disabled as of 2020-10-20 (thanks pella, Anthony_ and ShaunSullivan for the report!)"
                 }
             ]
         }
