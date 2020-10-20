@@ -40,7 +40,6 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 <br/>
 
 <a class="bmc-button" target="_blank" href=${Config.contributeUrl}>
-    <img src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"/>
     <span style="color: orange; margin-left:5px">
         Buy me a coffee
     </span>
