@@ -6,6 +6,7 @@ import {SheetTab} from "../../utils/SheetTab";
 import {replaceAll} from "../../utils/MiscUtils";
 import {IGeneratedMacro, IMacroDiff, IMacroFactory, IMacroGenerator} from "./IMacroGenerator";
 import OGL5eByRoll20 from "../../macro/OGL5eByRoll20";
+import PF2ByRoll20 from "../../macro/PF2ByRoll20";
 import PickMacroGeneratorsDialog from "./PickMacroGeneratorsDialog";
 import {Character, CharacterAbility} from "roll20";
 import DuplicateResolveDialog from "./DuplicateResolveDialog";
@@ -43,6 +44,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
         const addGen = gen => this.generators[gen.id] = gen;
         addGen(OGL5eByRoll20);
+        addGen(PF2ByRoll20);
     }
 
     private showVerify() {
