@@ -1,5 +1,5 @@
 {
-    "current": "1.15.32",
+    "current": "1.15.33",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1361,6 +1361,18 @@
                 {
                     "id": "",
                     "content": "Fix animations not being disabled as of 2020-10-20 (thanks pella, Anthony_ and ShaunSullivan for the report!)"
+                }
+            ]
+        },
+        "1.15.33": {
+            "info": {
+                "title": "Macro Generator for Pathfinder 2e",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added a macro generator for Pathfinder 2e sheets. (by Blesmol)"
                 }
             ]
         }
