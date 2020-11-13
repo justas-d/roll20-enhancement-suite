@@ -58,7 +58,7 @@ export default class AboutDialog extends DialogBase<null> {
                         <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
                             <div>
                                 <b>Built by</b>
-                                <p>Justas "stormy" Dabrila, Giddy, gludington</p>
+                                <p>Justas Dabrila, Giddy, gludington, Blesmol</p>
                             </div>
 
                             <div>
