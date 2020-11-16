@@ -80,7 +80,7 @@ if (typeof (deployData.firefox) !== "undefined") {
   }
 
   client.on("ready", async () => {
-    const channel = await client.channels.get('495911561181790208');
+    const channel = await client.channels.fetch('495911561181790208');
     if(!channel) {
       console.log("couldn't find discord chanel");
       return;

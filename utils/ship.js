@@ -16,6 +16,9 @@ const assert = (expr, msg) => {
 
 const canFail = shell.exec;
 
+const changelogData = fs.readFileSync("changelog.json", "utf8");
+const changelog = JSON.parse(changelogData);
+
 noFail("npm run changelog");
 noFail("gvim changelog.json");
 
@@ -40,7 +43,7 @@ noFail(`git tag -a ${changelog.current} -m "${changelog.current}"`);
 noFail("npm run package");
 
 {
-  fs.writeFileSync('../page/latest_chrome_version', changelog.current, 'utf8');
+  fs.writeFileSync('page/latest_chrome_version', changelog.current, 'utf8');
 }
 
 {
@@ -50,14 +53,15 @@ noFail("npm run package");
   let month = time.getMonth() + 1;
   let year = time.getFullYear();
   let time_str = `${year}-${month}-${day}`
-  fs.writeFileSync('../page/chrome_last_update_time', time_str, 'utf8');
+  fs.writeFileSync('page/chrome_last_update_time', time_str, 'utf8');
 }
 
-noFail("cp ../dist/chrome/prod/r20es_${changelog.current}_chrome.zip ../page/");
+noFail(`cp dist/chrome/prod/r20es_${changelog.current}_chrome.zip page/`);
 
 noFail("npm run build-page");
 noFail("npm run deploy-page");
 
+canFail(`git add page/`);
 canFail(`git commit -m "${changelog.current} page"`);
 
 noFail("npm run deploy");
