@@ -21,7 +21,7 @@ function Chrome() {
                 <p>We recommend using Firefox to avoid the extra steps.</p>
 
                 <ul>
-                    <li>1. <a href="https://github.com/justas-d/roll20-enhancement-suite/raw/gh-pages/r20es_1.15.33_chrome.zip">Download the extension here</a> (last updated on 2020-11-13, version 1.15.33)</li>
+                    <li>1. <a href={`https://github.com/justas-d/roll20-enhancement-suite/raw/master/page/r20es_${LATEST_CHROME_VERSION}_chrome.zip`}>Download the extension here</a> ({`last updated on ${CHROME_LAST_UPDATE_TIME}, version ${LATEST_CHROME_VERSION})`}</li>
                     <li>2. Extract the zip file somewhere permanent.</li>
                     <li title="Chrome doesn't allow making hyperlinks to these special URLs :(">3. Copy & Paste <span style={{backgroundColor: "#ddd"}}>chrome://extensions</span> into the URL bar and press enter.</li>
                     <li>4. Enable "Developer Mode" in the top right.</li>
@@ -44,50 +44,5 @@ if(typeof(window) !== "undefined" && window.document) {
 }
 
 export default Chrome;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

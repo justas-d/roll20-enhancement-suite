@@ -25,12 +25,20 @@ const cfgModule = {
 };
 
 const getPlugins = (isProd) => {
-    return [
-        new webpack.DefinePlugin({
-            R20ES_PAGE_PREFIX: JSON.stringify(isProd ? "/roll20-enhancement-suite" : ""),
-            "VTTES_BROWSER": JSON.stringify("none"),
-        }),
-    ];
+  let latest_chrome_version = fs.readFileSync('page/latest_chrome_version', 'utf8');
+  console.log("latest_chrome_version:", latest_chrome_version);
+
+  let chrome_last_update_time = fs.readFileSync('page/chrome_last_update_time', 'utf8');
+  console.log("chrome_last_update_time:", chrome_last_update_time);
+
+  return [
+    new webpack.DefinePlugin({
+      R20ES_PAGE_PREFIX: JSON.stringify(isProd ? "/roll20-enhancement-suite" : ""),
+      "VTTES_BROWSER": JSON.stringify("none"),
+      "LATEST_CHROME_VERSION": JSON.stringify(latest_chrome_version),
+      "CHROME_LAST_UPDATE_TIME": JSON.stringify(chrome_last_update_time),
+    }),
+  ];
 };
 
 module.exports = (_env, argv) => {
@@ -75,7 +83,7 @@ module.exports = (_env, argv) => {
     addStaticFolder("./assets/settings/");
     addStaticFolder("./assets/site/");
 
-    addStaticFile("latest_chrome_version", "./page/latest_chrome_version.png");
+    addStaticFile("latest_chrome_version", "./page/latest_chrome_version");
     addStaticFile("takedown.png", "./page/takedown.png");
     addStaticFile("index.html", "./page/index.html");
     addStaticFile("features.html", "./page/features.html");
