@@ -1,5 +1,5 @@
 {
-    "current": "1.15.33",
+    "current": "1.15.34",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1373,6 +1373,18 @@
                 {
                     "id": "",
                     "content": "Added a macro generator for Pathfinder 2e sheets. (by Blesmol)"
+                }
+            ]
+        },
+        "1.15.34": {
+            "info": {
+                "title": "Pathfinder 2e Macro Generator improvement",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "PF2 Macro Generator: Add the ability to generate NPC attack macros."
                 }
             ]
         }
