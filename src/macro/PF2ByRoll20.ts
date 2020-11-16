@@ -15,14 +15,28 @@ interface RepeatingDataSet {
 }
 
 let dataSet: {[id: string]: RepeatingDataSet} = {
-	"Melee Attacks": {
+	"NPC Melee Attacks": {
+		group: "repeating_melee-strikes",
+		name: "weapon",
+		macro: idx => `selected|repeating_melee-strikes_$${idx}_ATTACK-DAMAGE-NPC`,
+		hasMultiAttacks: true,
+	},
+
+	"NPC Ranged Attacks": {
+		group: "repeating_ranged-strikes",
+		name: "weapon",
+		macro: idx => `selected|repeating_ranged-strikes_$${idx}_ATTACK-DAMAGE-NPC`,
+	    hasMultiAttacks: true,
+	},
+
+	"Player Melee Attacks": {
 		group: "repeating_melee-strikes",
 		name: "weapon",
 		macro: idx => `selected|repeating_melee-strikes_$${idx}_ATTACK-DAMAGE`,
 		hasMultiAttacks: true,
 	},
 		
-	"Ranged Attacks": {
+	"Player Ranged Attacks": {
 		group: "repeating_ranged-strikes",
 		name: "weapon",
 		macro: idx => `selected|repeating_ranged-strikes_$${idx}_ATTACK-DAMAGE`,
