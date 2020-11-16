@@ -34,6 +34,9 @@ assert(currentVersion.changes.length > 0, `Current version (${changelog.current}
 
 canFail("git add changelog.json");
 
+canFail(`git commit -m "${changelog.current}"`);
+noFail(`git tag -a ${changelog.current} -m "${changelog.current}"`);
+
 noFail("npm run package");
 
 {
@@ -55,8 +58,7 @@ noFail("cp ../dist/chrome/prod/r20es_${changelog.current}_chrome.zip ../page/");
 noFail("npm run build-page");
 noFail("npm run deploy-page");
 
-canFail(`git commit -m "${changelog.current}"`);
-noFail(`git tag -a ${changelog.current} -m "${changelog.current}"`);
+canFail(`git commit -m "${changelog.current} page"`);
 
 noFail("npm run deploy");
 
