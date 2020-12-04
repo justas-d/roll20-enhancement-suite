@@ -25,8 +25,7 @@ class ChromeUpdateChecker extends R20Module.OnAppLoadBase {
             R20.saySystem(`
 <h2 style="color: whitesmoke">Update Available!</h2>
 <span>VTTES Has an update available. Grab it 
-  <a style="color: orange;" href="https://justas-d.github.io/roll20-enhancement-suite/chrome.html">here</a>
-  .
+  <a style="color: orange;" href="https://justas-d.github.io/roll20-enhancement-suite/chrome.html">here</a>.
 </span>
 <br/>
 `);
