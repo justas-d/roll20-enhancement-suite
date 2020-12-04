@@ -2,6 +2,46 @@ import { R20Module } from "../../utils/R20Module"
 import { createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
 
 const constantStyle = `
+
+#page-toolbar .pages .availablepage .page-duplication {
+  display: none;
+  top: unset;
+  left: unset;
+  width: unset;
+  margin-top: unset;
+  right: 0;
+  padding: 10px;
+  z-index: 10000;
+}
+
+#page-toolbar .pages .availablepage .page-duplication .page-duplication__body .form-group .checkbox {
+  width: unset;
+}
+
+#page-toolbar .pages .availablepage .page-actions {
+  position: unset;
+  top: unset;
+  right: unset;
+  background-color: unset;
+  width: unset;
+  border-radius: unset;
+  border: unset;
+  flex-direction: unset;
+  justify-content: unset;
+  box-shadow: unset;
+  padding-right: 8px;
+}
+
+#page-toolbar .pages .availablepage span.page-title {
+  position: unset;
+  bottom: unset;
+  width: unset;
+  text-align: unset;
+  display: unset;
+  font-size: unset;
+  max-width: unset;
+}
+
 #page-toolbar {
     right: unset;
     left: unset;
@@ -118,7 +158,7 @@ const constantStyle = `
     max-width: unset;
     width: auto;
     flex: 10;
-    order: 3;
+    order: 0;
     margin-left: 8px;
     font-size: 1.1em;
     white-space: pre;
@@ -153,7 +193,6 @@ div#page-toolbar:not(.closed) > div.handle.showtip {
     display: flex !important;
     flex-direction: column;
     height: auto;
-    width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
 
