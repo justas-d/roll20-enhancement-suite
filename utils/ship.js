@@ -16,9 +16,6 @@ const assert = (expr, msg) => {
 
 const canFail = shell.exec;
 
-const changelogData = fs.readFileSync("changelog.json", "utf8");
-const changelog = JSON.parse(changelogData);
-
 noFail("npm run changelog");
 noFail("gvim changelog.json");
 
