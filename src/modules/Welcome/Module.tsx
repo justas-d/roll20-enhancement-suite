@@ -41,7 +41,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 
 <a class="bmc-button" target="_blank" href=${Config.contributeUrl}>
     <span style="color: orange; margin-left:5px">
-        Buy me a coffee
+      ☕   Buy me a coffee
     </span>
 </a>
 `);
