@@ -34,6 +34,8 @@ function Index() {
                 </div>
 
                 <NavBar noLanding={true}/>
+
+                <a href="https://www.patreon.com/bePatron?u=11619189" data-patreon-widget-type="become-patron-button">Become a Patron!</a>
             </div>
           <GTag/>
         </div>
