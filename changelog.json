@@ -1,5 +1,5 @@
 {
-    "current": "1.15.35",
+    "current": "1.15.36",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1397,6 +1397,18 @@
                 {
                     "id": "",
                     "content": "Fixed the alternative page toolbar having broken styling."
+                }
+            ]
+        },
+        "1.15.36": {
+            "info": {
+                "title": "2020-12-22 Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed the extension not loading properly as of 2020-12-22."
                 }
             ]
         }
