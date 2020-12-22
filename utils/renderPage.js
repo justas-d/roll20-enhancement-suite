@@ -57,4 +57,5 @@ addStaticFile("logo.svg", "./assets/logo/logo.svg");
 addStaticFile("main.css", "./page/main.css");
 addStaticFile("more.css", "./page/more.css");
 addStaticFile("takedown.png", "./page/takedown.png");
+addStaticFile("patreon.webp", "./page/patreon.webp");
 

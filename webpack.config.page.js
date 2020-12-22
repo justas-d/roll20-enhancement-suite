@@ -85,6 +85,7 @@ module.exports = (_env, argv) => {
 
     addStaticFile("latest_chrome_version", "./page/latest_chrome_version");
     addStaticFile("takedown.png", "./page/takedown.png");
+    addStaticFile("patreon.webp", "./page/patreon.webp");
     addStaticFile("index.html", "./page/index.html");
     addStaticFile("features.html", "./page/features.html");
     addStaticFile("about.html", "./page/about.html");

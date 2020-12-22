@@ -35,7 +35,9 @@ function Index() {
 
                 <NavBar noLanding={true}/>
 
-                <a href="https://www.patreon.com/bePatron?u=11619189" data-patreon-widget-type="become-patron-button">Become a Patron!</a>
+                <a href="https://www.patreon.com/bePatron?u=11619189" rel="noopener noreferrer">
+                  <img src="patreon.webp" alt="Become a Patron" style={{width: "217px", height: "51px"}}/>
+                </a>
             </div>
           <GTag/>
         </div>
