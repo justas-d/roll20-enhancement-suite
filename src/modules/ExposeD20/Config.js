@@ -3,8 +3,8 @@ export default {
     force: true,
 
     includes: "assets/app.js",
-    find: "getPointer,degreesToRadians;",
-    patch: "getPointer,degreesToRadians;window.d20=d20;window.exports=exports;",
+    find: `var exports=exports||{},`,
+    patch: `window.d20 = d20; var exports=exports||{},`,
 
     expectedPatchCount: 2
 };
