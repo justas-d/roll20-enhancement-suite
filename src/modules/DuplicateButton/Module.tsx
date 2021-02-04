@@ -15,7 +15,6 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
         const note = R20.getHandout(id);
         const char = R20.getCharacter(id);
 
-
         if (char) {
 
             const blobsPromise = Promise.all([R20.getBlob(char, "notes"),
@@ -57,7 +56,7 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
         let menu = document.getElementById("journalitemmenu");
         if (menu) {
             menu.firstElementChild.appendChild(
-                <li data-action-type="r20esduplicate" id={DuplicateButtonModule .optionId}>
+                <li data-action-type="r20esduplicate" id={DuplicateButtonModule.optionId}>
                     Duplicate
                 </li>
             );
