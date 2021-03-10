@@ -3,7 +3,7 @@ import {DOM} from '../../utils/DOM'
 import {SheetTab, SheetTabSheetInstanceData} from '../../utils/SheetTab';
 import {R20} from "../../utils/R20";
 import {Character, CharacterSheetAttribute, TokenAttributes} from 'roll20';
-import {strIsNullOrEmpty} from "../../utils/MiscUtils";
+import {strIsNullOrEmpty, createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
 import lexCompare from "../../utils/LexicographicalComparator";
 import {isChromium} from "../../utils/BrowserDetection";
 import {Optional} from "../../utils/TypescriptUtils";
@@ -58,107 +58,81 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
         <InputWrapper title={EDIT_WIDGET_TITLE} propName={max} type="text" token={tokenAttribs}/>
     ) as HTMLInputElement;
 
+    const options: any = [
+      <option value="">None</option>
+    ];
 
-    let linkId = tokenAttribs[link];
+    for(let attrib of char.attribs.models) {
+      const el = (
+        <option value={attrib.id}>
+          {attrib.attributes.name}
+        </option>
+      )
+      options.add(el);
+    }
+
+    const select_attribute_widget = (
+      <InputWrapper 
+        propName={link} 
+        Component="select" 
+        token={tokenAttribs} 
+        defaultVal=""
+        onChange={(e) => {
+          updateBarValues(e.target.value);
+        }}
+      >
+        {options}
+      </InputWrapper>
+    )
+
 
     const updateBarValues = (id: Optional<string>) => {
+      console.log("Update", name, id);
+      const attrib = char.attribs.get(id);
 
-        const attrib = char.attribs.get(id);
+      if (!id || !attrib) {
+        select_attribute_widget.value = "";
+        currentWidget.disabled = false;
+        maxWidget.disabled = false;
+        return;
+      }
 
-        if (!id || !attrib) {
+      currentWidget.disabled = true;
+      maxWidget.disabled = true;
+      
+      select_attribute_widget.value = id;
+      currentWidget.value = attrib.attributes.current;
+      maxWidget.value = attrib.attributes.max;
 
-            currentWidget.disabled = false;
-            maxWidget.disabled = false;
-
-            searchWidget.value = "";
-            setOverrideTokenData(searchWidget, "");
-            return;
-        }
-
-        currentWidget.disabled = true;
-        maxWidget.disabled = true;
-
-        linkId = id;
-
-        searchWidget.value = attrib.attributes.name;
-
-        setOverrideTokenData(searchWidget, attrib.id);
-
-        currentWidget.value = attrib.attributes.current;
-        maxWidget.value = attrib.attributes.max;
-
-        onChange({target: currentWidget});
-        onChange({target: maxWidget});
+      onChange({target: currentWidget});
+      onChange({target: maxWidget});
     };
 
-    const searchWidget = (
-        <input type="text" style={{flex: "1"}} placeholder="Search for attribute"/>
-    );
-
-    const attribAutocompleteData = char.attribs.models
-        .sort((a: CharacterSheetAttribute, b: CharacterSheetAttribute) => lexCompare(a, b, (d: CharacterSheetAttribute) => d.attributes.name))
-        .map((a) => {
-            return {
-                value: a.id,
-                label: a.attributes.name,
-            }
-        });
-
-    // @ts-ignore
-    $(searchWidget).autocomplete({
-        minLength: 1,
-        delay: 0,
-        source: attribAutocompleteData,
-        change: (e, ui) => {
-            const val = (ui && ui.item && ui.item.value) || undefined;
-            updateBarValues(val);
-        },
-        focus: (e, ui) => {
-            e.preventDefault();
-            updateBarValues(ui.item.value);
-        },
-        select: (e, ui) => {
-            e.preventDefault();
-            updateBarValues(ui.item.value);
-        }
-    });
-
-    $(searchWidget).blur(() => {
-        if(searchWidget.value.trim() === "") {
-            updateBarValues(undefined);
-        }
-    });
-
-    $(searchWidget).change(() => {
-        if(searchWidget.value.trim() === "") {
-            updateBarValues(undefined);
-        }
-    });
-
-    setTokenAttributeDataKey(searchWidget, link);
+    let linkId = tokenAttribs[link];
     updateBarValues(linkId);
 
     return (
-        <div className="inlineinputs" style={{marginTop: "5px", marginBottom: "5px", display: "flex", alignItems: "center"}}>
+      <div 
+        className="inlineinputs" 
+        style={{marginTop: "5px", marginBottom: "5px", display: "flex", alignItems: "center"}}
+      >
+        <b>
+          {name}
+          <span className="bar_color_indicator" style={{
+            marginLeft: "4px",
+            display: "inline-block",
+            width: "15px",
+            height: "15px",
+            borderRadius: "10px",
+            backgroundColor: color
+          }}/>
+        </b>
 
-            <b>
-                {name}
-                <span className="bar_color_indicator" style={{
-                    marginLeft: "4px",
-                    display: "inline-block",
-                    width: "15px",
-                    height: "15px",
-                    borderRadius: "10px",
-                    backgroundColor: color
-                }}/>
-            </b>
-
-            {searchWidget}
-            {currentWidget}
-            /
-            {maxWidget}
-        </div>
-
+        {select_attribute_widget}
+        {currentWidget}
+        /
+        {maxWidget}
+      </div>
     )
 };
 
@@ -353,23 +327,25 @@ const DEFAULT_AVATAR_URL = "/images/character.png";
 class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
     private sheetTab: SheetTab<TabInstanceData> = null;
 
+    private css_element: HTMLElement;
+
     constructor() {
         super(__dirname);
     }
 
     private getUserData(instance: SheetTabSheetInstanceData<TabInstanceData>) {
-        if (!instance.userData) instance.userData = new TabInstanceData();
-        return instance.userData;
+      if (!instance.userData) {
+        instance.userData = new TabInstanceData();
+      }
+      return instance.userData;
     }
 
     private onShowTab = (instance: SheetTabSheetInstanceData<TabInstanceData>) => {
         const data = this.getUserData(instance);
-        console.log("show");
 
+        if(data.token && data.char) return;
 
-        if (data.token && data.char) return;
-
-        data.char = instance.tryGetPc();
+        data.char = R20.getCharacter(instance.characterId);
         console.log(data);
 
         if (!data.char) return;
@@ -667,7 +643,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                                         URL
                                     </button>
 
-                                    <div style={{backgroundColor: "rgba(255,255,255,0.5)"}}>Drag an image on me!</div>
+                                    {/*<div style={{backgroundColor: "rgba(255,255,255,0.0)"}}>Drag & Drop Image</div>*/}
                                 </div>
 
                                 <img style={{width: "100%"}}src={data.token.imgsrc} alt="token image"/>
@@ -816,31 +792,49 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         $(widget).find("input, select, button").on("change", onChange).on("click", onChange);
 
+/*
         R20.setupImageDropTarget($(widget).find(".r20es-token-img-hover"),
             ({avatar}) => {
                 console.log(avatar);
                 data.token.imgsrc = avatar;
             },
             () => {
-                /*
-                    Note(Justas): this callback is fired before the save callback is
-                    but we need the save cb to fire first so we just delay the redraw here.
-                 */
+                
+                    //Note(Justas): this callback is fired before the save callback is
+                    //but we need the save cb to fire first so we just delay the redraw here.
 
                 setTimeout(() => {
                     console.log("rerender");
                     instance.rerender()
                 }, 100);
             });
+        */
 
         return widget;
     };
 
     public setup = () => {
         this.sheetTab = SheetTab.add("Token Editor", this.renderWidget, this.onShowTab, R20.canEditCharacter);
+
+        this.css_element = createCSSElement(`
+
+          .r20es-token-img-hover {
+            visibility: hidden;
+          }
+
+          .r20es-token-img-hover:hover {
+            visibility: visible;
+          }
+
+        `, "vttes_token_editor_css");
+
     };
 
     public dispose = () => {
+      if(this.css_element) {
+        this.css_element.remove();
+      }
+
         super.dispose();
         if (this.sheetTab) this.sheetTab.dispose();
     }

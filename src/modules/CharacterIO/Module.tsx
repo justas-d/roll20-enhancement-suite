@@ -65,29 +65,32 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         btn.disabled = !(e.target.files.length > 0);
     }
 
-    private onImportClick = (e: any) => {
+    private onImportClick = async (e: any) => {
         const input = $(e.target.parentNode).find("input")[0];
 
         let plsWait = new LoadingDialog("Importing");
         plsWait.show();
 
         const handle = input.files[0];
-        
-        const promise = readFile(handle)
-            .then(CharacterIOModule.processData)
-            .then(payload => {
-                let pc = R20.createCharacter();
-                console.log(pc);
-                console.log(payload);
-                const result = payload.strategy.overwrite(pc, payload.data);
-                if(result.isErr()) {
-                    this.catchError(result.err().unwrap());
-                    pc.destroy();
-                }
-            })
-            .catch(this.catchError);
 
-        (promise as any).finally(plsWait.dispose);
+        try {
+          const read_result = await readFile(handle);
+          const payload = await CharacterIOModule.processData(read_result as string);
+
+          let pc = R20.createCharacter();
+
+          try {
+            await payload.strategy.overwrite(pc, payload.data);
+          } catch(e) {
+            pc.destroy();
+            throw e
+          }
+        }
+        catch(e) {
+          this.catchError(e);
+        }
+
+        plsWait.dispose();
 
         input.value = "";
         e.target.disabled = true;
@@ -128,19 +131,9 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
     private getPc = (target: HTMLElement) => {
         if(!target) return null;
+        if(!target.hasAttribute("data-characterid")) return null;
 
-        let elem = null;
-        if (target.hasAttribute("data-characterid")) {
-            elem = target;
-        } else {
-            let query = $(target).closest("div[data-characterid]");
-            if (!query) return null;
-            elem = query[0];
-        }
-
-        if(!elem) return null;
-
-        const pcId = elem.getAttribute("data-characterid");
+        const pcId = target.getAttribute("data-characterid");
         if (!pcId) return null;
 
         let pc = R20.getCharacter(pcId);
@@ -150,8 +143,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
     private onExportClick = (e: any) => {
         e.stopPropagation();
-        const pc = this.getPc(e.target.parentElement.parentElement);
-        if (!pc) return;
+        const pc = this.getPc(e.target);
+        if(!pc) return;
 
         CharacterIO.exportSheet(pc, data => {
 
@@ -163,13 +156,13 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         })
     }
 
-    private onOverwriteClick = (e: any) => {
+    private onOverwriteClick = async (e: any) => {
         e.stopPropagation();
 
         const input = $(e.target.parentNode).find("input")[0];
         const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
 
-        const pc = this.getPc(e.target.parentElement.parentElement);
+        const pc = this.getPc(e.target);
         if (!pc) return;
 
         const fileHandle = input.files[0];
@@ -177,18 +170,25 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         overwriteButton.disabled = true;
 
         if (!window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
-            return;
+          return;
         }
 
         let plsWait = new LoadingDialog("Overwriting");
         plsWait.show();
+        
+        try {
+          const read_result = await readFile(fileHandle);
+          const payload = await CharacterIOModule.processData(read_result as string);
 
-        const promise = readFile(fileHandle)
-            .then(CharacterIOModule.processData)
-            .then(payload => payload.strategy.overwrite(pc, payload.data))
-            .catch(this.catchError);
+          payload.strategy.overwrite(pc, payload.data);
 
-        (promise as any).finally(plsWait.dispose);
+        } catch(e) {
+          this.catchError(e);
+        }
+
+        plsWait.dispose();
+
+        R20.rerender_character_sheet(pc);
     }
 
     private onFileChange = (e: any) => {
@@ -213,9 +213,14 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
             <div>
                 <h3 style={headerStyle}>Export</h3>
                 <div className="r20es-indent">
-                    <button onClick={this.onExportClick} style={style} className="btn">
-                        Export
-                </button>
+                  <button 
+                    onClick={this.onExportClick} 
+                    style={style} 
+                    className="btn"
+                    data-characterid={data.characterId}
+                  >
+                    Export
+                  </button>
                 </div>
 
 
@@ -223,9 +228,14 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
                 <div>
                     <h3 style={headerStyle}>Overwrite</h3>
                     <div className="r20es-indent">
-                        <button onClick={this.onOverwriteClick} disabled style={style}
-                                className={["btn", CharacterIOModule.overwriteButtonClass]}>
-                            Overwrite this Character with:
+                        <button 
+                          onClick={this.onOverwriteClick} 
+                          disabled 
+                          style={style}
+                          className={["btn", CharacterIOModule.overwriteButtonClass]}
+                          data-characterid={data.characterId}
+                        >
+                          Overwrite this Character with:
                         </button>
 
                         <input type="file" style={{display: "inline"}} onChange={this.onFileChange}/>

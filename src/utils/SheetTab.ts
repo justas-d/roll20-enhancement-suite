@@ -7,7 +7,7 @@ export class InternalSheetTabData {
     public tabsById: {[id: string]: SheetTab<any>} = {};
 
     public idTop: number = 0;
-    public rescanFunc?: () => void = undefined;
+    public rescanFunc?: (tab: SheetTab<any>) => void = undefined;
 
     public addTab(tab: SheetTab<any>) {
         this.tabs.push(tab);
@@ -30,47 +30,20 @@ export class InternalSheetTabData {
 }
 
 export class SheetTabSheetInstanceData<T> {
-    public root: HTMLElement;
-    public userData: T;
-    public parent: SheetTab<T>;
-    public contentRoot: HTMLElement;
-    public characterId: string;
+  public root: HTMLElement;
+  public userData: T;
+  public parent: SheetTab<T>;
+  public contentRoot: HTMLElement;
+  public characterId: string;
 
-    constructor(parent: SheetTab<T>, charId: string) {
-        this.parent = parent;
-        this.characterId = charId;
-    }
+  constructor(parent: SheetTab<T>, charId: string) {
+    this.parent = parent;
+    this.characterId = charId;
+  }
 
-    public rerender() {
-        this.root = DOM.rerender(this.root, () => this.parent.renderFx(this));
-    }
-
-    public tryGetPc(): Character | null {
-        if(!this.contentRoot) {
-            return null;
-        }
-
-        console.log(this.contentRoot);
-
-        let elem = null;
-        if (this.contentRoot.hasAttribute("data-characterid")) {
-            elem = this.contentRoot;
-        } else {
-            let query = $(this.contentRoot).closest("div[data-characterid]");
-            if (!query) return null;
-            elem = query[0];
-        }
-
-        if(!elem) return null;
-
-        const pcId = elem.getAttribute("data-characterid");
-        if (!pcId) return null;
-
-        let pc = R20.getCharacter(pcId);
-        if (!pc) return null;
-
-        return pc;
-    }
+  public rerender() {
+    this.root = DOM.rerender(this.root, () => this.parent.renderFx(this));
+  }
 }
 
 export class SheetTab<T> {
@@ -126,8 +99,8 @@ export class SheetTab<T> {
 
         data.addTab(tab);
 
-        if (typeof(data.rescanFunc) === "function") {
-            data.rescanFunc();
+        if(typeof(data.rescanFunc) === "function") {
+          data.rescanFunc(tab);
         }
         
         return tab;
