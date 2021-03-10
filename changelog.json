@@ -1,5 +1,5 @@
 {
-    "current": "1.15.37",
+    "current": "1.15.38",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1421,6 +1421,22 @@
                 {
                     "id": "",
                     "content": "Duplicate Button: fix the 'Duplicate' button in the journal context menu not doing anything. Thanks (Niztael, Nostros & osobuho for the report!)"
+                }
+            ]
+        },
+        "1.15.38": {
+            "info": {
+                "title": "Character Sheet Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix various character sheet tabs not appearing and breaking character sheets."
+                },
+                {
+                    "id": "",
+                    "content": "TokenLayerDrawing: fix possible renderer crash when VTTES is disabled."
                 }
             ]
         }
