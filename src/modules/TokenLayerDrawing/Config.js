@@ -20,7 +20,7 @@ export default MakeConfig(__dirname, {
             patch: `
 this._drawNameplate(e)),
 e.restore(),
-(window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this)),
+(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(e, this)),
 this;
 `,
         },
