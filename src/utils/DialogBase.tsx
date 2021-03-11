@@ -53,7 +53,7 @@ abstract class DialogBase<T> {
         el.style.top = Math.max(scrollTop, topValue) + 'px';
     }
 
-    protected rerender() {
+    public rerender() {
         removeAllChildren(this.getRoot());
         this.internalRender();
     }
