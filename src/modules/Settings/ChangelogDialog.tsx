@@ -24,7 +24,7 @@ export default class ChangelogDialog extends DialogBase<null> {
         return (
             <Dialog>
                 <DialogHeader style={{ textAlign: "center" }}>
-                    <h1>R20ES - Changelog</h1>
+                    <h1>VTTES - Changelog</h1>
                 </DialogHeader>
 
 
