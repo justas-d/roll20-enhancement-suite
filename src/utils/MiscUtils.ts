@@ -120,7 +120,7 @@ const readFile = function(file) {
         reader.readAsText(file);
 
         reader.onload = e => {
-            resolve((<any>e.target).result as string);
+            resolve((<any>e.target).result);
         };
     });
 }

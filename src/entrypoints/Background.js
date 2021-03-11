@@ -77,34 +77,7 @@ if (doesBrowserNotSupportResponseFiltering()) {
         }
     });
 
-    let last_character_request_timestamp = 0;
-
-    const heuristic_is_character_resource  = (request) => {
-      if(isRedirecting) {
-        return false;
-      }
-
-      const ms_threshold = 5000;
-      if(request.timeStamp < last_character_request_timestamp + ms_threshold) {
-        return true;
-      }
-
-      return false;
-    }
-
     window.requestListener = function(request) {
-      {
-        const is_character_request = request.url.includes("/editor/character/");
-        if(is_character_request) {
-          last_character_request_timestamp = request.timeStamp;
-          console.log("Cought character request, setting last_character_request_timestamp to", 
-            last_character_request_timestamp
-          );
-
-          return;
-        }
-      }
-
         if(isEditorRequest(request)) {
             console.log("Editor, blocking:", request.url, request);
             beginRedirectQueue();
@@ -113,11 +86,6 @@ if (doesBrowserNotSupportResponseFiltering()) {
             for(const url of targetScripts) {
 
                 if(request.url.startsWith(url)) {
-                    if(heuristic_is_character_resource(request)) {
-                      console.log("Ignoring request as it's likely a character resource", request.url, "last_character_request_timestamp is", last_character_request_timestamp);
-                      continue;
-                    }
-
                     beginRedirectQueue();
 
                     if (alreadyRedirected[request.url]) {
