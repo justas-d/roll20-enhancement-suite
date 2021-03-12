@@ -3,7 +3,7 @@ import {R20} from "./R20";
 import {Character, CharacterBlobs, CharacterAttributes} from "roll20";
 
 import {IResult, Err, Ok} from './Result'
-import promiseWait from "./promiseWait";
+import { promiseWait } from "./promiseWait";
 
 interface IOverwriteStrategy {
     overwrite: (pc: Character, data: any) => IResult<boolean, string>;

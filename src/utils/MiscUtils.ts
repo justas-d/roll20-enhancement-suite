@@ -193,7 +193,6 @@ const getExtUrlFromPage = function(resource: string, _waitMs: number): Promise<s
     });
 }
 
-
 export {
     getBrowser, readFile, safeParseJson,
     replaceAll, findByIdAndRemove,
