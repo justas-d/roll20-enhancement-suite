@@ -47,10 +47,12 @@ abstract class DialogBase<T> {
     }
 
     public recenter() {
+      /*
         const el = this.getRoot();
         const scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
         const topValue = scrollTop + (window.innerHeight - el.offsetHeight) / 2;
         el.style.top = Math.max(scrollTop, topValue) + 'px';
+        */
     }
 
     public rerender() {

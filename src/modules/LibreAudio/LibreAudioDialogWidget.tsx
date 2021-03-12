@@ -62,7 +62,7 @@ const check_if_url_is_audio_stream = (url: string, request_id: number, ok_callba
 export default class LibreAudioDialogWidget extends DialogBase<LibreAudioCreateRequest[]> {
 
     public constructor() {
-        super(undefined, {height: "auto"});
+        super(undefined);
     }
 
     requests: {[id: number]: LibreAudioCreateRequest};

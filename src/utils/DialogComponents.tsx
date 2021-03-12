@@ -3,24 +3,29 @@ import { copy } from "./MiscUtils";
 import { DialogBase } from "./DialogBase";
 
 class LoadingDialog extends DialogBase<void> {
-    private action: string;
-    public show = this.internalShow;
-    constructor(action: string, className?: string, style?: any) {
-        super(className, style);
-        this.action =action;
-    }
+  show = this.internalShow;
+  action_element: HTMLElement;
 
-    render = (): HTMLElement => {
-        return (
-            <Dialog>
-                <DialogBody>
-                    <h3>{this.action}, please wait...</h3>
-                </DialogBody>
-            </Dialog> as any
-        )
-    }
+  constructor(action: string, className?: string, style?: any) {
+    super(className, style);
+
+    this.action_element= <h3>{action}</h3>;
+  }
+
+  set_text = (text: string) => {
+    this.action_element.innerText = text;
+  }
+
+  render = (): HTMLElement => {
+    return (
+      <Dialog>
+        <DialogBody>
+          {this.action_element}
+        </DialogBody>
+      </Dialog>
+    )
+  }
 }
-
 
 function DialogHeader(props: any): any {
     return <div className="dialog-header"></div>

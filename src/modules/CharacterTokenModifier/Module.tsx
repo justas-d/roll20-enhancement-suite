@@ -636,10 +636,6 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
             refreshButton.title = "Players do not have permissions to read default character tokens.";
             refreshButton.disabled = true;
             addTooltip(refreshButton);
-
-        } else {
-            updateDefaultTokenButton.classList.add("btn-primary");
-            refreshButton.classList.add("btn-danger");
         }
 
         const borderString = "1px solid lightgray";
@@ -807,7 +803,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                     {progressWidget}
 
                     <span style="float: right">
-                        <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn btn-info">Update all tokens</button>
+                        <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn">Update all tokens</button>
                         {updateDefaultTokenButton}
                     </span>
                 </div>

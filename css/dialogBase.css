@@ -49,9 +49,9 @@
 
 .r20es-dialog {
     background-color: rgb(253, 253, 253);
-    height: 100%;
+    /*height: 100%;*/
     display: grid;
-    grid-template-rows: auto 10fr auto;
+    grid-template-rows: auto auto auto;
 }
 
 .r20es-dialog th {
@@ -111,15 +111,15 @@ dialog+.backdrop {
 dialog {
     overflow-y: auto;
     overflow-x: auto;
-    max-height: 70%;
+    max-height: 90%;
     max-width: 60%;
     border: none;
     padding: 0;
-    height: auto;
+    /*height: auto;*/
 }
 
 .r20es-big-dialog {
-    height: 100%;
+    /*height: 100%;*/
 }
 
 .r20es-token-img-hover .r20es-hover-block {
