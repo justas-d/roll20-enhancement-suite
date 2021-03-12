@@ -124,7 +124,7 @@ export default class PickObjectsDialog<T> extends DialogBase<FilterTableType> {
                 <DialogFooter>
                     <DialogFooterContent>
                         <button className="btn" onClick={this.close}>Close</button>
-                        <button className="btn btn-primary" style={{ float: "right" }} onClick={this.submit}>OK</button>
+                        <button className="btn" style={{ float: "right" }} onClick={this.submit}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog> as any

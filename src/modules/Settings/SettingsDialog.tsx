@@ -214,7 +214,7 @@ export default class SettingsDialog extends DialogBase<null> {
             />
 
             <input 
-              className="btn btn-primary" 
+              className="btn" 
               style={{ float: "right" }} 
               type="button" 
               onClick={this.close} 

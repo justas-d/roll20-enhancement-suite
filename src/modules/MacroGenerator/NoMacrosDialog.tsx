@@ -17,7 +17,7 @@ export default class NoMacrosDialog extends DialogBase<null> {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button style={{ boxSizing: "border-box", width: "100%" }} className="btn btn-primary" onClick={this.close}>OK</button>
+                        <button style={{ boxSizing: "border-box", width: "100%" }} className="btn" onClick={this.close}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
 

@@ -604,8 +604,8 @@ class AnimBackgroundSetup extends DialogBase<null> {
 
             for(const url of hist) {
                 const style = {width: "auto", marginRight: "8px"};
-                const rm_button = <input style={style} className="btn btn-danger" type="button" value="X" onClick={this.ui_history_remove}/>;
-                const url_button = <input style={style} className="btn btn-success" type="button" value="Use" onClick={this.ui_history_select}/>;
+                const rm_button = <input style={style} className="btn" type="button" value="X" onClick={this.ui_history_remove}/>;
+                const url_button = <input style={style} className="btn" type="button" value="Use" onClick={this.ui_history_select}/>;
                 const url_text = <span title={url}>{nearly_format_file_url(url)}</span>;
 
                 set_url(rm_button, url);
@@ -682,7 +682,7 @@ class AnimBackgroundSetup extends DialogBase<null> {
 
                 <DialogFooter>
                     <DialogFooterContent>
-                        <button style={{ boxSizing: "border-box", width: "100%" }} className="btn btn-primary" onClick={this.close}>OK</button>
+                        <button style={{ boxSizing: "border-box", width: "100%" }} className="btn" onClick={this.close}>OK</button>
                     </DialogFooterContent>
                 </DialogFooter>
             </Dialog>

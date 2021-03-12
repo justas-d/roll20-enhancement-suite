@@ -140,7 +140,7 @@ export default class AboutDialog extends DialogBase<null> {
 
                 <section style={{margin: "20px"}}>
                     <input
-                        className="btn btn-primary"
+                        className="btn"
                         style={{width: "100%", height: "auto", boxSizing: "border-box"}}
                         type="button"
                         onClick={this.close}

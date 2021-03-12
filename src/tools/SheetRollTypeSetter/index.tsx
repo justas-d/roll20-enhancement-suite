@@ -108,7 +108,7 @@ const generateSelect = (cfg: IConfigurableAttribute) => {
                 {options}
             </select>
 
-            <button data-key={cfg.attributeName} onClick={onSetForAll} className="btn btn-primary">{setForAllText}</button>
+            <button data-key={cfg.attributeName} onClick={onSetForAll} className="btn">{setForAllText}</button>
         </div>
     )
 };
