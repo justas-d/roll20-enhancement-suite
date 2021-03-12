@@ -201,7 +201,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     };
 
     err_report_missing_current_runner_in(where: string) {
-        console.error(`[${where}]: current_runner is null, bailing.`);
+      console.log(`[${where}]: current_runner is null, bailing.`);
     }
 
     beginVideo = () => {
@@ -498,7 +498,7 @@ const check_if_url_is_video_stream = (
 
     const onError = e => {
         removeEventListeners();
-        console.error("check_if_url_is_video_stream error:", e);
+        console.log("check_if_url_is_video_stream error:", e);
         err_callback();
     };
 
