@@ -137,7 +137,7 @@ window.r20es.onLoadingOverlayHide = function () {
         window.r20es.onPageChange.fire();
 
     } else {
-        alert("R20ES global state is undefined. R20ES will not function properly.");
+        alert("VTTES global state is undefined. VTTES will not function properly.");
     }
 };
 

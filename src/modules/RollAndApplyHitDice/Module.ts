@@ -14,7 +14,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     }
 
     private static fancySay(msg: string, callback?: SayCallback) {
-        R20.sayToSelf(`&{template:default} {{name=R20ES Hit Dice}} {{${msg}}}`, callback);
+        R20.sayToSelf(`&{template:default} {{name=VTTES Hit Dice}} {{${msg}}}`, callback);
     }
 
     private reportNoCharacter = () => {

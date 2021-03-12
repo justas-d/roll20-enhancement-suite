@@ -16,7 +16,7 @@ import {
 import {getHooks, injectHooks} from "../HookUtils";
 
 console.log("====================");
-console.log("R20ES ContentScript");
+console.log("VTTES ContentScript");
 console.log("====================");
 
 window.bootstrapTable = {};
