@@ -6,247 +6,258 @@ import { saveAs } from 'save-as'
 import { findByIdAndRemove, readFile, safeParseJson } from '../../utils/MiscUtils';
 import {SheetTab, SheetTabSheetInstanceData} from '../../utils/SheetTab';
 import { LoadingDialog } from '../../utils/DialogComponents';
+import { import_multiple_files } from "../../utils/import_multiple_files";
 
 interface IProcessResultData {
-    strategy: IOverwriteStrategy,
-    data: any;
+  strategy: IOverwriteStrategy,
+  data: any;
 }
 
 class CharacterIOModule extends R20Module.OnAppLoadBase {
-    private static readonly journalWidgetId = "r20es-character-io-journal-widget";
-    private static readonly overwriteButtonClass = "r20es-sheet-overwrite-button";
+  static readonly journalWidgetId = "r20es-character-io-journal-widget";
+  static readonly overwriteButtonClass = "r20es-sheet-overwrite-button";
 
-    private sheetTab: any = null;
+  sheetTab: any = null;
 
-    constructor() {
-        super(__dirname);
+  constructor() {
+    super(__dirname);
+  }
+
+  catch_error = (e: any) => {
+    alert(e);
+    console.trace();
+    console.error(e);
+  };
+
+  static process_data(input: string): Promise<IProcessResultData> {
+    return new Promise((resolve, reject) => {
+      let data = null;
+
+      try {
+        data = JSON.parse(input);
+      } 
+      catch (err) {
+        reject("File is not a valid JSON file.");
+        return;
+      }
+
+      if(!data) {
+        reject("Data is null.");
+        return;
+      }
+
+      let version = CharacterIO.formatVersions[data.schema_version];
+      if(!version) {
+        reject(`Unknown schema version: ${data.schema_version}`);
+        return;
+      }
+
+      const payload: IProcessResultData = {
+        strategy: version,
+        data
+      }
+
+      resolve(payload);
+    });
+  }
+
+  on_journal_file_change = (e: any) => {
+    const btn = $(e.target.parentNode).find("button")[0];
+    console.log(btn);
+    btn.disabled = !(e.target.files.length > 0);
+  }
+
+  on_import_click = (e: any) => {
+    e.stopPropagation();
+
+    const file_selector_element = (
+      <input 
+        type="file"
+        accept=".json"
+        multiple={true}
+      />
+    );
+
+    import_multiple_files(file_selector_element, async (handle: File) => {
+      const str = await readFile(handle) as string;
+      const payload = await CharacterIOModule.process_data(str);
+
+      const pc = R20.createCharacter();
+      const result = payload.strategy.overwrite(pc, payload.data);
+
+      if(result.isErr()) {
+        pc.destroy();
+        throw result.err().unwrap();
+      }
+    });
+  }
+
+  add_journal_widget = () => {
+    if(!window.is_gm) return;
+
+    let journal = document.getElementById("journal").getElementsByClassName("content")[0];
+
+    const widget = <div id={CharacterIOModule.journalWidgetId}>
+      <SidebarSeparator />
+
+      <div>
+        <SidebarCategoryTitle>
+          VTTES Character Importer
+        </SidebarCategoryTitle>
+
+        <button 
+          className="btn" 
+          style={{ display: "block", float: "left", width: "90%", marginBottom: "10px" }} 
+          onClick={this.on_import_click}
+        >
+          Import Character(s)
+        </button>
+
+      </div>
+
+      <SidebarSeparator big="1px" />
+    </div>
+
+    journal.appendChild(widget);
+  };
+
+  getPc = (target: HTMLElement) => {
+    if(!target) return null;
+
+    let elem = null;
+    if (target.hasAttribute("data-characterid")) {
+        elem = target;
+    } else {
+        let query = $(target).closest("div[data-characterid]");
+        if (!query) return null;
+        elem = query[0];
     }
 
-    private catchError = (e: any) => {
-        alert(e);
-        console.trace();
-        console.error(e);
+    if(!elem) return null;
+
+    const pcId = elem.getAttribute("data-characterid");
+    if (!pcId) return null;
+
+    let pc = R20.getCharacter(pcId);
+    if (!pc) return null;
+    return pc;
+  }
+
+  private on_export_click = (e: any) => {
+    e.stopPropagation();
+    const pc = this.getPc(e.target.parentElement.parentElement);
+    if (!pc) return;
+
+    CharacterIO.exportSheet(pc, data => {
+      let jsonData = JSON.stringify(data, null, 4);
+
+      var jsonBlob = new Blob([jsonData], { type: 'data:application/javascript;charset=utf-8' });
+      saveAs(jsonBlob, data.name + ".json");
+    });
+  }
+
+  private on_overwrite_click = (e: any) => {
+    e.stopPropagation();
+
+    const file_selector_element = (
+      <input 
+        type="file"
+        accept=".json"
+      />
+    );
+    
+    const listener = () => {
+      file_selector_element.removeEventListener("change", listener);
+      const f_handle = file_selector_element.files[0];
+
+      const pc = this.getPc(e.target.parentElement.parentElement);
+      if (!pc) return;
+
+      if (!window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
+        return;
+      }
+
+      let plsWait = new LoadingDialog("Overwriting");
+      plsWait.show();
+
+      const promise = readFile(f_handle)
+        .then(CharacterIOModule.process_data)
+        .then(payload => payload.strategy.overwrite(pc, payload.data))
+        .catch(this.catch_error);
+
+      (promise as any).finally(plsWait.dispose);
     };
 
-    private static processData(input: string): Promise<IProcessResultData> {
-        return new Promise((resolve, reject) => {
-            let data = null;
+    file_selector_element.click();
+    file_selector_element.addEventListener("change", listener);
+  }
 
-            try {
-                data = JSON.parse(input);
-            } catch (err) {
-                reject("File is not a valid JSON file.");
-                return;
-            }
+  renderWidget = (data: SheetTabSheetInstanceData<any>) => {
+    const style = { marginRight: "8px" };
+    const headerStyle = { marginBottom: "10px", marginTop: "10px" };
 
-            if (!data) {
-                reject("Data is null.");
-                return;
-            }
-
-            let version = CharacterIO.formatVersions[data.schema_version];
-            if (!version) {
-                reject(`Unknown schema version: ${data.schema_version}`);
-                return;
-            }
-
-            const payload: IProcessResultData = {
-                strategy: version,
-                data
-            }
-
-            resolve(payload);
-        });
+    const char = R20.getCharacter(data.characterId);
+    if (!char) {
+      return <p>Couldn't find the character associated with this dialog box! Tell a programmer.</p>
     }
 
-    private onJournalFileChange = (e: any) => {
-        const btn = $(e.target.parentNode).find("button")[0];
-        console.log(btn);
-        btn.disabled = !(e.target.files.length > 0);
-    }
+    const canEdit = R20.canEditCharacter(char);
 
-    private onImportClick = (e: any) => {
-        const input = $(e.target.parentNode).find("input")[0];
+    return (
+      <div style={{
+        display:"grid", 
+        gridTemplateColumns:"1fr 1fr", 
+        gridTemplateRows:"1fr 1fr", 
+        columnGap: "16px"
+      }}>
+        <div style={{width:"100%",display:"inline-block"}}>
+          <h3>Export</h3>
 
-        let plsWait = new LoadingDialog("Importing");
-        plsWait.show();
+          <p>
+            Export this character as a VTTES character JSON file.
+          </p>
 
-        const handle = input.files[0];
-        
-        const promise = readFile(handle)
-            .then(CharacterIOModule.processData)
-            .then(payload => {
-                let pc = R20.createCharacter();
-                console.log(pc);
-                console.log(payload);
-                const result = payload.strategy.overwrite(pc, payload.data);
-                if(result.isErr()) {
-                    this.catchError(result.err().unwrap());
-                    pc.destroy();
-                }
-            })
-            .catch(this.catchError);
-
-        (promise as any).finally(plsWait.dispose);
-
-        input.value = "";
-        e.target.disabled = true;
-    }
-
-    private addJournalWidget = () => {
-
-        if (!window.is_gm) return;
-
-        let journal = document.getElementById("journal").getElementsByClassName("content")[0];
-
-
-        const widget = <div id={CharacterIOModule.journalWidgetId}>
-            <SidebarSeparator />
-
-            <div>
-                <SidebarCategoryTitle>
-                    Import Character
-                </SidebarCategoryTitle>
-
-                <input
-                    type="file"
-                    style={{ width: "95%" }}
-                    onChange={this.onJournalFileChange}
-                />
-
-                <button disabled className="btn" style={{ display: "block", float: "left", width: "90%", marginBottom: "10px" }} onClick={this.onImportClick}>
-                    Import Character
-                </button>
-
-            </div>
-
-            <SidebarSeparator big="1px" />
         </div>
 
-        journal.appendChild(widget);
-    };
+        <div style={{width:"100%",display:"inline-block"}}>
+          <h3>Overwrite</h3>
 
-    private getPc = (target: HTMLElement) => {
-        if(!target) return null;
+          <p>
+            Overwrite this character with the character stored in the selected VTTES character JSON file.
+          </p>
 
-        let elem = null;
-        if (target.hasAttribute("data-characterid")) {
-            elem = target;
-        } else {
-            let query = $(target).closest("div[data-characterid]");
-            if (!query) return null;
-            elem = query[0];
-        }
+        </div>
 
-        if(!elem) return null;
+        <input 
+          type="button" 
+          onClick={this.on_export_click} 
+          className="btn" 
+          style={{width:"auto"}}
+          value="Export "
+        />
 
-        const pcId = elem.getAttribute("data-characterid");
-        if (!pcId) return null;
+        <input 
+          type="button" 
+          onClick={this.on_overwrite_click} 
+          className="btn" 
+          style={{width:"auto"}}
+          value="Overwrite"
+        />
+      </div>
+    )
+  };
 
-        let pc = R20.getCharacter(pcId);
-        if (!pc) return null;
-        return pc;
-    }
+  setup = () => {
+    this.sheetTab = SheetTab.add("Export & Overwrite", this.renderWidget);
+    this.add_journal_widget();
+  }
 
-    private onExportClick = (e: any) => {
-        e.stopPropagation();
-        const pc = this.getPc(e.target.parentElement.parentElement);
-        if (!pc) return;
+  dispose = () => {
+    super.dispose();
 
-        CharacterIO.exportSheet(pc, data => {
-
-            let jsonData = JSON.stringify(data, null, 4);
-
-            var jsonBlob = new Blob([jsonData], { type: 'data:application/javascript;charset=utf-8' });
-            saveAs(jsonBlob, data.name + ".json");
-
-        })
-    }
-
-    private onOverwriteClick = (e: any) => {
-        e.stopPropagation();
-
-        const input = $(e.target.parentNode).find("input")[0];
-        const overwriteButton = $(e.target.parentNode).find(":contains('Overwrite')")[0];
-
-        const pc = this.getPc(e.target.parentElement.parentElement);
-        if (!pc) return;
-
-        const fileHandle = input.files[0];
-        input.value = "";
-        overwriteButton.disabled = true;
-
-        if (!window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
-            return;
-        }
-
-        let plsWait = new LoadingDialog("Overwriting");
-        plsWait.show();
-
-        const promise = readFile(fileHandle)
-            .then(CharacterIOModule.processData)
-            .then(payload => payload.strategy.overwrite(pc, payload.data))
-            .catch(this.catchError);
-
-        (promise as any).finally(plsWait.dispose);
-    }
-
-    private onFileChange = (e: any) => {
-        e.stopPropagation();
-
-        const overwriteButton = $(e.target.parentNode).find("." + CharacterIOModule.overwriteButtonClass)[0];
-        overwriteButton.disabled = !(e.target.files.length > 0);
-    }
-
-    private renderWidget = (data: SheetTabSheetInstanceData<any>) => {
-        const style = { marginRight: "8px" };
-        const headerStyle = { marginBottom: "10px", marginTop: "10px" };
-
-        const char = R20.getCharacter(data.characterId);
-        if (!char) {
-            return <p>Couldn't find the character associated with this dialog box! Tell a programmer.</p>
-        }
-
-        const canEdit = R20.canEditCharacter(char);
-
-        return (
-            <div>
-                <h3 style={headerStyle}>Export</h3>
-                <div className="r20es-indent">
-                    <button onClick={this.onExportClick} style={style} className="btn">
-                        Export
-                </button>
-                </div>
-
-
-                {canEdit &&
-                <div>
-                    <h3 style={headerStyle}>Overwrite</h3>
-                    <div className="r20es-indent">
-                        <button onClick={this.onOverwriteClick} disabled style={style}
-                                className={["btn", CharacterIOModule.overwriteButtonClass]}>
-                            Overwrite this Character with:
-                        </button>
-
-                        <input type="file" style={{display: "inline"}} onChange={this.onFileChange}/>
-                    </div>
-                </div>
-                }
-            </div>
-        );
-    };
-
-    public setup = () => {
-        this.sheetTab = SheetTab.add("Export & Overwrite", this.renderWidget);
-        this.addJournalWidget();
-    }
-
-    public dispose = () => {
-        super.dispose();
-
-        if (this.sheetTab) this.sheetTab.dispose();
-        findByIdAndRemove(CharacterIOModule.journalWidgetId);
-    }
+    if (this.sheetTab) this.sheetTab.dispose();
+    findByIdAndRemove(CharacterIOModule.journalWidgetId);
+  }
 }
 
 if (R20Module.canInstall()) new CharacterIOModule().install();
