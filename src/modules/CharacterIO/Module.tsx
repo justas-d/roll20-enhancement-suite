@@ -23,12 +23,6 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     super(__dirname);
   }
 
-  catch_error = (e: any) => {
-    alert(e);
-    console.trace();
-    console.error(e);
-  };
-
   static process_data(input: string): Promise<IProcessResultData> {
     return new Promise((resolve, reject) => {
       let data = null;
@@ -83,11 +77,13 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
       const payload = await CharacterIOModule.process_data(str);
 
       const pc = R20.createCharacter();
-      const result = payload.strategy.overwrite(pc, payload.data);
 
-      if(result.isErr()) {
+      try {
+        await payload.strategy.overwrite(pc, payload.data);
+      }
+      catch(e) {
         pc.destroy();
-        throw result.err().unwrap();
+        throw e;
       }
     });
   }
@@ -123,19 +119,9 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
   getPc = (target: HTMLElement) => {
     if(!target) return null;
+    if(!target.hasAttribute("data-characterid")) return null;
 
-    let elem = null;
-    if (target.hasAttribute("data-characterid")) {
-        elem = target;
-    } else {
-        let query = $(target).closest("div[data-characterid]");
-        if (!query) return null;
-        elem = query[0];
-    }
-
-    if(!elem) return null;
-
-    const pcId = elem.getAttribute("data-characterid");
+    const pcId = target.getAttribute("data-characterid");
     if (!pcId) return null;
 
     let pc = R20.getCharacter(pcId);
@@ -166,7 +152,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
       />
     );
     
-    const listener = () => {
+    const listener = async () => {
       file_selector_element.removeEventListener("change", listener);
       const f_handle = file_selector_element.files[0];
 
@@ -180,12 +166,18 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
       let plsWait = new LoadingDialog("Overwriting");
       plsWait.show();
 
-      const promise = readFile(f_handle)
-        .then(CharacterIOModule.process_data)
-        .then(payload => payload.strategy.overwrite(pc, payload.data))
-        .catch(this.catch_error);
+      try {
+        const read_result = (await readFile(f_handle)) as string;
+        const payload = await CharacterIOModule.process_data(read_result);
 
-      (promise as any).finally(plsWait.dispose);
+        await payload.strategy.overwrite(pc, payload.data);
+      }
+      catch(e) {
+        alert(e);
+        console.log(e);
+      }
+
+      plsWait.dispose();
     };
 
     file_selector_element.click();
@@ -225,7 +217,6 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
           <p>
             Overwrite this character with the character stored in the selected VTTES character JSON file.
           </p>
-
         </div>
 
         <input 
@@ -233,7 +224,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
           onClick={this.on_export_click} 
           className="btn" 
           style={{width:"auto"}}
-          value="Export "
+          data-characterid={data.characterId}
+          value="Export"
         />
 
         <input 
@@ -241,7 +233,9 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
           onClick={this.on_overwrite_click} 
           className="btn" 
           style={{width:"auto"}}
-          value="Overwrite"
+          data-characterid={data.characterId}
+          value={canEdit ? "Overwrite" : "You do not have permission to edit this character"}
+          disabled={!canEdit}
         />
       </div>
     )

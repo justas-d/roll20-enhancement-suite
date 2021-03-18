@@ -126,6 +126,17 @@ namespace R20 {
         return window.Campaign.characters.models;
     }
 
+    export function rerender_character_sheet(sheet: Character) {
+      try {
+        sheet.view.$el.dialog("close");
+        setTimeout(() => {
+          sheet.view.showDialog();
+        }, 100);
+      } catch(e) {
+        console.log(e);
+      }
+    }
+
     export function getAllPages(): Page[] {
         return window.Campaign.pages.models;
     }

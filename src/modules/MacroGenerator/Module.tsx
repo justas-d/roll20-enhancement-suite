@@ -2,7 +2,7 @@ import {R20Module} from "../../utils/R20Module";
 import {DOM} from "../../utils/DOM";
 import {R20} from "../../utils/R20";
 import {LoadingDialog} from "../../utils/DialogComponents";
-import {SheetTab} from "../../utils/SheetTab";
+import {SheetTab, SheetTabSheetInstanceData} from "../../utils/SheetTab";
 import {replaceAll} from "../../utils/MiscUtils";
 import {IGeneratedMacro, IMacroDiff, IMacroFactory, IMacroGenerator} from "./IMacroGenerator";
 import OGL5eByRoll20 from "../../macro/OGL5eByRoll20";
@@ -199,49 +199,56 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
     }
 
     private onVerifyDialogClose = (e: any) => {
-        e.stopPropagation();
+      e.stopPropagation();
 
-        if(!this.verifyDialog.isSuccessful()) return;
+      if(!this.verifyDialog.isSuccessful()) return;
 
-        this.generateMacros();
+      this.generateMacros();
     }
 
     private onButtonClick = (e: any) => {
-        e.stopPropagation();
+      e.stopPropagation();
 
-        const attrib = "data-characterid";
-        const elem = $(e.target).closest(`[${attrib}]`)[0];
-        if (!elem) {
-            console.error("Failed to find character id for macro generation");
-            return;
-        }
+console.log(e.target);
+      const id = e.target.getAttribute("data-characterid");
+      if(!id) {
+        console.error("Failed to find character id for macro generation");
+        return;
+      }
 
-        const id = elem.getAttribute(attrib);
-        const pc = R20.getCharacter(id);
-        if (!pc) {
-            console.error(`Failed to get character for macro generation: getCharacter("${id}") failed.`);
-            return;
-        }
+      const pc = R20.getCharacter(id);
+      if (!pc) {
+        console.error(`Failed to get character for macro generation: getCharacter("${id}") failed.`);
+        return;
+      }
 
-        this.activePc = pc;
-        this.activeGenerator = null;
-        this.categoryFilter = {};
-        this.byNameMacroTable = {};
-        this.macroBuffer = [];
-        this.modifiedMacros = [];
-        this.addedMacros = [];
+      this.activePc = pc;
+      this.activeGenerator = null;
+      this.categoryFilter = {};
+      this.byNameMacroTable = {};
+      this.macroBuffer = [];
+      this.modifiedMacros = [];
+      this.addedMacros = [];
 
-        this.pickerDialog.show();
+      this.pickerDialog.show();
     }
 
-    private renderSheet = () => {
-        return (
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <button style={{ width: "50%", height: "30px", display: "flex", justifyContent: "center" }} className="btn" onClick={this.onButtonClick}>
-                    Open Generate Macros Dialog
-            </button>
-            </div>
-        );
+    private renderSheet = (instance: SheetTabSheetInstanceData<null>) => {
+      return (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <button 
+            style={{ 
+              width: "50%", 
+              height: "30px"
+            }} 
+            className="btn" 
+            onClick={this.onButtonClick}
+            data-characterid={instance.characterId}
+          >
+            Open Generate Macros Dialog
+          </button>
+        </div>
+      );
     }
 
     private onDupeDialogClose = (e: any) => {
@@ -302,9 +309,11 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
                     });
                 }
 
-                pc.view.render();
+                R20.rerender_character_sheet(pc);
+
             } catch (err) {
                 console.error(err);
+                R20.rerender_character_sheet(pc);
             }
 
             plsWait.dispose();

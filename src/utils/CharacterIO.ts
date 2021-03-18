@@ -1,153 +1,184 @@
 import {replaceAll} from "./MiscUtils";
 import {R20} from "./R20";
 import {Character, CharacterBlobs, CharacterAttributes} from "roll20";
-
-import {IResult, Err, Ok} from './Result'
 import { promiseWait } from "./promiseWait";
 
 interface IOverwriteStrategy {
-    overwrite: (pc: Character, data: any) => IResult<boolean, string>;
+  overwrite: (pc: Character, data: any) => Promise<any>
 }
 
+const get_default_save = (): any => {
+  return {
+    name: "",
+    avatar: "",
+    tags: "",
+    controlledby: "",
+    inplayerjournals: "",
+    defaulttoken: "",
+    bio: "",
+    gmnotes: "",
+    archived: false,
+    attrorder: "",
+    abilorder: "",
+    mancerdata: "",
+    mancerget: "",
+    mancerstep: "",
+  };
+};
+
+const get_default_blobs = () => {
+  const blob: CharacterBlobs = {
+    defaulttoken: null,
+    bio: null
+  };
+
+  if (R20.isGM()) {
+    blob.gmnotes = null;
+  }
+
+  return blob;
+};
+
 class OverwriteV1 implements IOverwriteStrategy {
-    overwrite = (pc: Character, data: any): IResult<boolean, string> => {
+  overwrite = (pc: Character, data: any): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      //console.log("Schema 1");
 
-        const hasNot = what => !(what in data);
+      const hasNot = what => !(what in data);
 
-        if (hasNot("name")) return new Err("name not found");
-        if (hasNot("avatar")) return new Err("avatar not found");
-        if (hasNot("bio")) return new Err("bio not found");
-        if (hasNot("attribs")) return new Err("attribs not found");
+      if(hasNot("name")) return reject("name not found");
+      if(hasNot("avatar")) return reject("avatar not found");
+      if(hasNot("bio")) return reject("bio not found");
+      if(hasNot("attribs")) return reject("attribs not found");
 
-        let idx = 0;
-        for (let el of data.attribs) {
-            if (!("name" in el)) return new Err(`Attribute index ${idx} doesn't have name`);
-            if (!("current" in el)) return new Err(`Attribute index ${idx} doesn't have current`);
-            if (!("max" in el)) return new Err(`Attribute index ${idx} doesn't have max`);
-        }
+      let idx = 0;
+      for (let el of data.attribs) {
+        if (!("name" in el)) return reject(`Attribute index ${idx} doesn't have name`);
+        if (!("current" in el)) return reject(`Attribute index ${idx} doesn't have current`);
+        if (!("max" in el)) return reject(`Attribute index ${idx} doesn't have max`);
+      }
 
-        CharacterIO.wipeCharacter(pc);
+      R20.wipeObjectStorage(pc.abilities);
+      R20.wipeObjectStorage(pc.attribs);
 
-        pc.save({
-            name: data.name,
-            avatar: data.avatar,
+      let save = get_default_save();
+      save.name = data.name;
+      save.avatar = data.avatar;
 
-        });
+      let blobs = get_default_blobs();
+      blobs.bio = data.bio;
+      pc.updateBlobs(blobs);
 
-        pc.updateBlobs({bio: data.bio});
+      for(let importAttrib of data.attribs) {
+        pc.attribs.create(importAttrib);
+      }
 
-        for (let importAttrib of data.attribs) {
-            pc.attribs.create(importAttrib);
-        }
-
-        pc.view.render();
-        pc.save();
-
-        return new Ok(true);
-    }
+      pc.save(save, { success: (v) => {
+        resolve();
+      }});
+    });
+  }
 }
 
 class OverwriteV2 implements IOverwriteStrategy {
+  overwrite = (pc: Character, data: any): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      console.log("Schema 2");
 
-    overwrite = (pc: Character, data: any): IResult<boolean, string> => {
+      const hasNot = what => !(what in data);
 
-        const hasNot = what => !(what in data);
+      //if (hasNot("oldId")) return new Err("oldId not found");
+      if (hasNot("name")) return reject("name not found");
+      if (hasNot("avatar")) return reject("avatar not found");
+      if (hasNot("bio")) return reject("bio not found");
+      if (hasNot("gmnotes")) return reject("gmnotes not found");
+      if (hasNot("defaulttoken")) return reject("defaulttoken not found");
+      if (hasNot("tags")) return reject("tags not found");
+      if (hasNot("controlledby")) return reject("controlledby not found");
+      if (hasNot("inplayerjournals")) return reject("inplayerjournals not found");
+      if (hasNot("attribs")) return reject("attribs not found");
+      if (hasNot("abilities")) return reject("abilities not found");
 
-        //if (hasNot("oldId")) return new Err("oldId not found");
-        if (hasNot("name")) return new Err("name not found");
-        if (hasNot("avatar")) return new Err("avatar not found");
-        if (hasNot("bio")) return new Err("bio not found");
-        if (hasNot("gmnotes")) return new Err("gmnotes not found");
-        if (hasNot("defaulttoken")) return new Err("defaulttoken not found");
-        if (hasNot("tags")) return new Err("tags not found");
-        if (hasNot("controlledby")) return new Err("controlledby not found");
-        if (hasNot("inplayerjournals")) return new Err("inplayerjournals not found");
-        if (hasNot("attribs")) return new Err("attribs not found");
-        if (hasNot("abilities")) return new Err("abilities not found");
+      let idx = 0;
+      for (let el of data.attribs) {
+          if (!("name" in el)) return reject(`Attribute index ${idx} doesn't have name`);
+          if (!("current" in el)) return reject(`Attribute index ${idx} doesn't have current`);
+          if (!("max" in el)) return reject(`Attribute index ${idx} doesn't have max`);
+          if (!("id" in el)) return reject(`Attribute index ${idx} doesn't have id`);
+          idx++;
+      }
 
-        let idx = 0;
-        for (let el of data.attribs) {
-            if (!("name" in el)) return new Err(`Attribute index ${idx} doesn't have name`);
-            if (!("current" in el)) return new Err(`Attribute index ${idx} doesn't have current`);
-            if (!("max" in el)) return new Err(`Attribute index ${idx} doesn't have max`);
-            if (!("id" in el)) return new Err(`Attribute index ${idx} doesn't have id`);
-            idx++;
+      idx = 0;
+      for (let el of data.abilities) {
+          if (!("name" in el)) return reject(`Ability index ${idx} doesn't have name`);
+          if (!("description" in el)) return reject(`Ability index ${idx} doesn't have description`);
+          if (!("istokenaction" in el)) return reject(`Ability index ${idx} doesn't have istokenaction`);
+          if (!("action" in el)) return reject(`Ability index ${idx} doesn't have action`);
+          if (!("order" in el)) return reject(`Ability index ${idx} doesn't have order`);
+          idx++;
+      }
+
+      R20.wipeObjectStorage(pc.abilities);
+      R20.wipeObjectStorage(pc.attribs);
+
+      // some attributes store the id of the exported character
+      // we replace them here with the new id 
+
+      if(data.oldId) {
+        let jsonData = JSON.stringify(data);
+        jsonData = replaceAll(jsonData, data.oldId, pc.attributes.id);
+        data = JSON.parse(jsonData);
+      }
+
+      // replace represents id
+      const hasToken = data.defaulttoken && data.defaulttoken.length > 0;
+
+      if(data.oldId) {
+        if (hasToken) {
+          data.defaulttoken = replaceAll(data.defaulttoken, data.oldId, pc.attributes.id);
+        }
+      }
+
+      let save = get_default_save();
+      save.name = data.name;
+      save.avatar = data.avatar;
+      save.tags = data.tags;
+      save.controlledby = data.controlledby;
+      save.inplayerjournals = data.inplayerjournals;
+      save.defaulttoken= "";
+
+      {
+        let blobs = get_default_blobs();
+        blobs.bio = data.bio;
+
+        if(R20.isGM()) {
+          blobs.gmnotes = data.gmnotes
         }
 
-        idx = 0;
-        for (let el of data.abilities) {
-            if (!("name" in el)) return new Err(`Ability index ${idx} doesn't have name`);
-            if (!("description" in el)) return new Err(`Ability index ${idx} doesn't have description`);
-            if (!("istokenaction" in el)) return new Err(`Ability index ${idx} doesn't have istokenaction`);
-            if (!("action" in el)) return new Err(`Ability index ${idx} doesn't have action`);
-            if (!("order" in el)) return new Err(`Ability index ${idx} doesn't have order`);
-            idx++;
+        if (hasToken) {
+          blobs.defaulttoken = data.defaulttoken;
+          save.defaulttoken = (new Date).getTime();
+        } else {
+          blobs.defaulttoken = null;
+          save.defaulttoken = "";
         }
 
-        CharacterIO.wipeCharacter(pc);
+        pc.updateBlobs(blobs);
+      }
 
-        // some attributes store the id of the exported character
-        // we replace them here with the new id 
+      for(let importAttrib of data.attribs) {
+        pc.attribs.create(importAttrib);
+      }
 
-        if(data.oldId) {
-          let jsonData = JSON.stringify(data);
-          jsonData = replaceAll(jsonData, data.oldId, pc.attributes.id);
-          data = JSON.parse(jsonData);
+      for(let abil of data.abilities) {
+        pc.abilities.create(abil);
+      }
 
-        }
-
-        // replace represents id
-        const hasToken = data.defaulttoken && data.defaulttoken.length > 0;
-
-        if(data.oldId) {
-          if (hasToken) {
-              data.defaulttoken = replaceAll(data.defaulttoken, data.oldId, pc.attributes.id);
-          }
-        }
-
-        let save: any = {
-            name: data.name,
-            avatar: data.avatar,
-            tags: data.tags,
-            controlledby: data.controlledby,
-            inplayerjournals: data.inplayerjournals,
-            defaulttoken: ""
-        };
-
-        {
-            let blobs: CharacterBlobs = {
-                bio: data.bio,
-            };
-
-            if (R20.isGM()) {
-                blobs.gmnotes = data.gmnotes
-            }
-
-            if (hasToken) {
-                blobs.defaulttoken = data.defaulttoken;
-                save.defaulttoken = (new Date).getTime();
-            } else {
-                blobs.defaulttoken = null;
-                save.defaulttoken = "";
-            }
-
-            pc.updateBlobs(blobs);
-        }
-
-
-        for (let importAttrib of data.attribs) {
-            pc.attribs.create(importAttrib);
-        }
-
-        for (let abil of data.abilities) {
-            pc.abilities.create(abil);
-        }
-
-        pc.save(save);
-        pc.view.render();
-
-        return new Ok(true);
-    }
+      pc.save(save, { success: (v) => {
+        resolve();
+      }});
+    });
+  }
 }
 
 namespace CharacterIO {
@@ -159,13 +190,13 @@ namespace CharacterIO {
 
     export const exportSheet = (sheet, doneCallback) => {
 
-        const blobPromise = new Promise(ok => sheet._getLatestBlob("defaulttoken", () => {console.log("IN CALLBA CK"); ok(false);}));
+        const blobPromise = new Promise(ok => sheet._getLatestBlob("defaulttoken", () => { ok(false);}));
+
+        // NOTE(justasd): 3 second timeout for the blobpromise
         const waitPromise = promiseWait(3000, true);
 
         Promise.race([blobPromise, waitPromise])
             .then(didTimeout => {
-                console.log(sheet._blobcache.defaulttoken);
-
                 let data = {
                     schema_version: 2,
                     oldId: sheet.attributes.id || "",
@@ -203,41 +234,6 @@ namespace CharacterIO {
                 doneCallback(data);
             });
     };
-
-    export const wipeCharacter = (pc: Character) => {
-        R20.wipeObjectStorage(pc.abilities);
-        R20.wipeObjectStorage(pc.attribs);
-
-        {
-            const blob: CharacterBlobs = {
-                defaulttoken: null,
-                bio: null
-            };
-
-            if (R20.isGM()) {
-                blob.gmnotes = null;
-            }
-
-            pc.updateBlobs(blob);
-        }
-
-        pc.save({
-            name: "",
-            avatar: "",
-            tags: "",
-            controlledby: "",
-            inplayerjournals: "",
-            defaulttoken: "",
-            bio: "",
-            gmnotes: "",
-            archived: false,
-            attrorder: "",
-            abilorder: "",
-            mancerdata: "",
-            mancerget: "",
-            mancerstep: "",
-        });
-    }
 }
 
 export {CharacterIO, IOverwriteStrategy};
