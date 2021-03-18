@@ -131,7 +131,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
   private on_export_click = (e: any) => {
     e.stopPropagation();
-    const pc = this.getPc(e.target.parentElement.parentElement);
+    const pc = this.getPc(e.target);
     if (!pc) return;
 
     CharacterIO.exportSheet(pc, data => {
@@ -156,8 +156,11 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
       file_selector_element.removeEventListener("change", listener);
       const f_handle = file_selector_element.files[0];
 
-      const pc = this.getPc(e.target.parentElement.parentElement);
-      if (!pc) return;
+      const pc = this.getPc(e.target);
+      if (!pc) {
+        alert("Could not find character that corresponds to sheet. Tell a programmer.");
+        return;
+      }
 
       if (!window.confirm(`Are you sure you want to overwrite ${pc.get("name")}`)) {
         return;
@@ -178,6 +181,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
       }
 
       plsWait.dispose();
+
+      R20.rerender_character_sheet(pc);
     };
 
     file_selector_element.click();
