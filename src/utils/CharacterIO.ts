@@ -83,21 +83,21 @@ class OverwriteV1 implements IOverwriteStrategy {
 class OverwriteV2 implements IOverwriteStrategy {
   overwrite = (pc: Character, data: any): Promise<any> => {
     return new Promise((resolve, reject) => {
-      console.log("Schema 2");
+      //console.log("Schema 2");
 
       const hasNot = what => !(what in data);
 
       //if (hasNot("oldId")) return new Err("oldId not found");
       if (hasNot("name")) return reject("name not found");
-      if (hasNot("avatar")) return reject("avatar not found");
-      if (hasNot("bio")) return reject("bio not found");
-      if (hasNot("gmnotes")) return reject("gmnotes not found");
-      if (hasNot("defaulttoken")) return reject("defaulttoken not found");
-      if (hasNot("tags")) return reject("tags not found");
-      if (hasNot("controlledby")) return reject("controlledby not found");
-      if (hasNot("inplayerjournals")) return reject("inplayerjournals not found");
-      if (hasNot("attribs")) return reject("attribs not found");
-      if (hasNot("abilities")) return reject("abilities not found");
+      //if (hasNot("avatar")) return reject("avatar not found");
+      //if (hasNot("bio")) return reject("bio not found");
+      //if (hasNot("gmnotes")) return reject("gmnotes not found");
+      //if (hasNot("defaulttoken")) return reject("defaulttoken not found");
+      //if (hasNot("tags")) return reject("tags not found");
+      //if (hasNot("controlledby")) return reject("controlledby not found");
+      //if (hasNot("inplayerjournals")) return reject("inplayerjournals not found");
+      //if (hasNot("attribs")) return reject("attribs not found");
+      //if (hasNot("abilities")) return reject("abilities not found");
 
       let idx = 0;
       for (let el of data.attribs) {
@@ -139,19 +139,17 @@ class OverwriteV2 implements IOverwriteStrategy {
         }
       }
 
-      let save = get_default_save();
-      save.name = data.name;
-      save.avatar = data.avatar;
-      save.tags = data.tags;
-      save.controlledby = data.controlledby;
-      save.inplayerjournals = data.inplayerjournals;
+      let save = {...get_default_save(), ...data};
       save.defaulttoken= "";
 
       {
         let blobs = get_default_blobs();
-        blobs.bio = data.bio;
 
-        if(R20.isGM()) {
+        if(data.bio) {
+          blobs.bio = data.bio;
+        }
+
+        if(R20.isGM() && data.gmnotes) {
           blobs.gmnotes = data.gmnotes
         }
 
