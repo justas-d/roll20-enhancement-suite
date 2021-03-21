@@ -18,28 +18,28 @@ const InputCheckbox = ({defaultVal = undefined, propName, token, label, wrapperS
 };
 
 const AuraEditor = ({tokenAttribs, name, index}) => {
-    const radius = `aura${index}_radius`;
-    const color = `aura${index}_color`;
-    const square = `aura${index}_square`;
+  const radius = `aura${index}_radius`;
+  const color = `aura${index}_color`;
+  const square = `aura${index}_square`;
 
-    return (
-        <div className="inlineinputs" style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-            <b>{name}</b>
+  return (
+    <div className="inlineinputs" style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
+      <b style={{marginRight: "8px"}}>{name}</b>
 
-            <InputWrapper propName={radius} type="text" token={tokenAttribs}/>
+      <InputWrapper style={{width: "48px"}} propName={radius} type="text" token={tokenAttribs}/>
 
-            <span style={{marginRight: "16px"}}>
-            ft.
-            </span>
+      <span style={{marginRight: "16px"}}>
+      ft.
+      </span>
 
 
-            <span style={{marginRight: "16px"}}>
-                <ColorWidget propName={color} token={tokenAttribs}/>
-            </span>
+      <span style={{marginRight: "16px"}}>
+        <ColorWidget propName={color} token={tokenAttribs}/>
+      </span>
 
-            <InputCheckbox label="Square" propName={square} token={tokenAttribs}/>
-        </div>
-    );
+      <InputCheckbox label="Square" propName={square} token={tokenAttribs}/>
+    </div>
+  );
 };
 
 const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
@@ -51,11 +51,23 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     const EDIT_WIDGET_TITLE = "You can only edit the current and max values when the bar is not linked.";
 
     const currentWidget = (
-        <InputWrapper title={EDIT_WIDGET_TITLE} propName={value} type="text" token={tokenAttribs}/>
+      <InputWrapper 
+        style={{width: "64px", margin: "0 4px"}} 
+        title={EDIT_WIDGET_TITLE} 
+        propName={value} 
+        type="text" 
+        token={tokenAttribs}
+      />
     ) as HTMLInputElement;
 
     const maxWidget = (
-        <InputWrapper title={EDIT_WIDGET_TITLE} propName={max} type="text" token={tokenAttribs}/>
+      <InputWrapper 
+        style={{width: "64px", margin: "0 4px"}} 
+        title={EDIT_WIDGET_TITLE} 
+        propName={max} 
+        type="text" 
+        token={tokenAttribs}
+      />
     ) as HTMLInputElement;
 
     const options: any = [
@@ -112,23 +124,26 @@ const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
     updateBarValues(linkId);
 
     return (
+
       <div 
         className="inlineinputs" 
-        style={{marginTop: "5px", marginBottom: "5px", display: "flex", alignItems: "center"}}
       >
-        <b>
+        <b style={{width: "max-content"}}>
           {name}
-          <span className="bar_color_indicator" style={{
+        </b>
+
+        <span className="bar_color_indicator" style={{
             marginLeft: "4px",
             display: "inline-block",
             width: "15px",
             height: "15px",
             borderRadius: "10px",
             backgroundColor: color
-          }}/>
-        </b>
+          }}
+        />
 
         {select_attribute_widget}
+
         {currentWidget}
         /
         {maxWidget}
@@ -156,7 +171,7 @@ const TokenPermission = ({name, tokenAttribs, propName, add_permissions, index =
     };
 
     return (
-        <div className="inlineinputs" style={{height: "40px", display: "flex", alignItems: "center"}}>
+        <div className="inlineinputs" style={{height: "48px", display: "flex", alignItems: "center"}}>
             <b style={{display: "inline-block", width: "60px"}}>{name}</b>
 
             <InputCheckbox label="See" defaultVal={false} propName={seeProp} token={tokenAttribs} wrapperStyle={{marginRight: "16px"}}/>
@@ -252,11 +267,11 @@ const LightSettings = ({tokenAttribs}) => {
 
             <div className="inlineinputs" style="margin-bottom: 16px;">
 
-                <InputWrapper propName="light_radius" type="text" token={tokenAttribs}/>
+                <InputWrapper style={{width: "48px"}} propName="light_radius" type="text" token={tokenAttribs}/>
                 ft.
-                <InputWrapper propName="light_dimradius" type="text" token={tokenAttribs}/>
+                <InputWrapper style={{width: "48px"}} propName="light_dimradius" type="text" token={tokenAttribs}/>
                 ft.
-                <InputWrapper propName="light_angle" type="text" token={tokenAttribs}/>
+                <InputWrapper style={{width: "48px"}} propName="light_angle" type="text" token={tokenAttribs}/>
 
                 <span style="font-size: 2.0em;">°</span>
 
@@ -280,13 +295,21 @@ const LightSettings = ({tokenAttribs}) => {
 
                     <div className="inlineinputs" style="margin-bottom: 16px;">
 
-                        <InputWrapper propName="light_losangle" type="text" placeholder="360"
-                                      token={tokenAttribs}/>
+                        <InputWrapper 
+                          style={{width: "48px"}}
+                          propName="light_losangle" 
+                          type="text" 
+                          placeholder="360"
+                          token={tokenAttribs}
+                        />
+
                         <span style="font-size: 2.0em;">°</span>
 
-                        <InputWrapper propName="light_multiplier" type="number" placeholder="1.0"
-                                      token={tokenAttribs}
-                                      style={{width: "40px", display: "inline-block", margin: "0px 5px"}}/>
+                        <InputWrapper 
+                          propName="light_multiplier" type="number" placeholder="1.0"
+                          token={tokenAttribs}
+                          style={{width: "48px", display: "inline-block", margin: "0px 5px"}}
+                        />
 
 
                         <div style="color: #888; padding-left: 5px; margin-bottom: 8px">
@@ -305,8 +328,12 @@ const LightSettings = ({tokenAttribs}) => {
                     <h4>Advanced Fog of War</h4>
 
                     <div className="inlineinputs" style="margin-top: 5px; margin-bottom: 16px;">
-                        <InputWrapper propName="adv_fow_view_distance" type="text"
-                                      token={tokenAttribs}/>
+                        <InputWrapper 
+                          style={{width: "48px"}}
+                          propName="adv_fow_view_distance" 
+                          type="text"
+                          token={tokenAttribs}
+                        />
                         <div style="color: #888; padding-left: 5px;">View Distance</div>
                     </div>
                 </div>
@@ -541,9 +568,11 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
         };
 
         const removeAvatar = (e: Event) => {
-            e.stopPropagation();
+          e.stopPropagation();
+          if(confirm("Remove avatar image?")) {
             data.token.imgsrc = DEFAULT_AVATAR_URL;
             instance.rerender();
+          }
         };
 
         const onExternalAvatarDrop = (e: DragEvent) => {
@@ -618,76 +647,90 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         const widget = (
             <div>
-                <h3 style={{marginBottom: "16px"}}>Token Editor</h3>
-                <div style={{borderBottom: borderString}}/>
-
                 <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
                     <div style={{borderBottom: borderString}}>
 
                         <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
 
-                            <div onDrop={onExternalAvatarDrop} className="r20es-token-img-hover"
-                                 style={{margin: "16px", position: "relative"}}>
+                            <div 
+                              onDrop={onExternalAvatarDrop} 
+                              className="r20es-token-img-hover"
+                              style={{
+                                margin: "16px", 
+                                position: "relative",
+                                marginLeft: "0"
+                              }}
+                            >
+                              <img style={{width: "100%", maxWidth: "256px"}} src={data.token.imgsrc} alt="token image"/>
 
-                                <div className="r20es-hover-block"
-                                     style={{position: "absolute", bottom: "0", right: "0", left: "0", top: "0"}}>
-                                    <button onClick={removeAvatar} className="btn" style={{marginBottom: "8px"}}>Remove
-                                        Image
-                                    </button>
+                              <div style={{marginTop: "4px", display: "grid", gridTemplateColumns: "1fr 1fr"}}>
+                                <button onClick={removeAvatar} className="btn" style={{marginBottom: "8px", marginRight: "8px"}}>
+                                  Remove Image
+                                </button>
 
-                                    <button style={{marginBottom: "8px"}} onClick={setFromUrl} className="btn">Set from
-                                        URL
-                                    </button>
-
-                                    {/*<div style={{backgroundColor: "rgba(255,255,255,0.0)"}}>Drag & Drop Image</div>*/}
-                                </div>
-
-                                <img style={{width: "100%"}}src={data.token.imgsrc} alt="token image"/>
+                                <button style={{marginBottom: "8px"}} onClick={setFromUrl} className="btn">
+                                  Set from URL
+                                </button>
+                              </div>
 
                             </div>
 
                             <div style={{marginRight: "16px"}}>
-                                <div>Nameplate</div>
+                              <div>Nameplate</div>
 
-                                <div style={{display: "flex"}}>
-                                    <InputWrapper propName="name" type="text" style={{width: "210px"}} token={data.token}/>
-                                    <button onClick={setCharacterName} className="btn" title="Updates the name of the character on the sheet with the name in the input box.">Set</button>
-                                </div>
+                              <div style={{display: "flex"}}>
+                                <InputWrapper propName="name" type="text" style={{width: "210px"}} token={data.token}/>
+                                <button onClick={setCharacterName} className="btn" title="Updates the name of the character on the sheet with the name in the input box.">Set</button>
+                              </div>
 
-                                <div>
-                                    <InputWrapper propName="showname" type="checkbox"
-                                                  style={{marginTop: "8px", marginRight: "4px"}}
-                                                  token={data.token}/>
-                                    <span>Show nameplate?</span>
-                                </div>
+                              <div>
+                                <InputWrapper 
+                                  propName="showname" 
+                                  type="checkbox"
+                                  style={{marginTop: "8px", marginRight: "4px"}}
+                                  token={data.token}
+                                />
+                                <span>Show nameplate?</span>
+                              </div>
 
-                                <div>Tint Color</div>
-                                <ColorWidget style={{marginBottom: "8px"}} propName={"tint_color"} token={data.token}/>
+                              <div>Tint Color</div>
+                              <ColorWidget style={{marginBottom: "8px"}} propName={"tint_color"} token={data.token}/>
+
+                              <div style={{marginBottom: "4px"}}>
+                                <span style={{display: "inline-block", marginRight: "4px"}}>Width (px)</span>
+                                <InputWrapper 
+                                  propName="width" 
+                                  style={{width: "48px", marginRight: "12px"}} 
+                                  type="number"
+                                  token={data.token}
+                                />
+
+                                <span style={{display: "inline-block", marginRight: "4px"}}>Height (px)</span>
+
+                                <InputWrapper 
+                                  propName="height" 
+                                  style={{width: "48px"}} 
+                                  type="number" 
+                                  token={data.token}
+                                />
+
+                              </div>
+
+                              <div style={{marginBottom: "4px"}}>
+                                <span style={{display: "inline-block", marginRight: "4px"}}>
+                                  Rotation (degrees)
+                                </span>
+                                <InputWrapper style={{width: "48px"}} propName="rotation" type="number" token={data.token}/>
+                              </div>
+
+
+                              <div>
+                                <InputCheckbox label="Flip Horizontal" defaultVal={false} propName={"fliph"} token={data.token} wrapperStyle={{marginRight: "16px"}}/>
+                                <InputCheckbox label="Flip Vertical" defaultVal={false} propName={"flipv"} token={data.token}/>
+                              </div>
+
                             </div>
                         </div>
-
-                        <div style={{marginBottom: "4px"}}>
-                            <span style={{display: "inline-block", marginRight: "4px"}}>Width (px)</span>
-                            <InputWrapper propName="width" style={{width: "48px", marginRight: "12px"}} type="number"
-                                          token={data.token}/>
-
-                            <span style={{display: "inline-block", marginRight: "4px"}}>Height (px)</span>
-                            <InputWrapper propName="height" style={{width: "48px"}} type="number" token={data.token}/>
-
-                        </div>
-
-                        <div style={{marginBottom: "4px"}}>
-                            <span style={{display: "inline-block", marginRight: "4px"}}>Rotation (angles)</span>
-                            <InputWrapper propName="rotation" type="number" token={data.token}/>
-                        </div>
-
-
-                        <div>
-                            <InputCheckbox label="Flip Horizontal" defaultVal={false} propName={"fliph"} token={data.token} wrapperStyle={{marginRight: "16px"}}/>
-                            <InputCheckbox label="Flip Vertical" defaultVal={false} propName={"flipv"} token={data.token}/>
-                        </div>
-
-                        <hr/>
 
                         <LightSettings tokenAttribs={data.token}/>
 
@@ -702,7 +745,6 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                             <BarEditor name="Bar 3" color={campaign.bar3_color} tokenAttribs={data.token}
                                        character={data.char} onChange={onChange} index={3}/>
                         </div>
-                        <hr/>
 
                         <div style={indentStyle}>
                             <AuraEditor name="Aura 1" tokenAttribs={data.token} index={1}/>
@@ -712,6 +754,8 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
                         <hr/>
 
                         <div style={Object.assign({}, indentStyle, {marginBottom: "16px"})}>
+                          <h4>Player Permissions</h4>
+
                             <TokenPermission name="Name" propName="name" tokenAttribs={data.token} add_permissions={false}/>
 
                             <TokenPermission name="Bar 1" propName="bar1" tokenAttribs={data.token} add_permissions={true} index={1}/>
