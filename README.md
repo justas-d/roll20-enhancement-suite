@@ -29,7 +29,7 @@ We've got a [Discord Server](https://discord.gg/pKxxvuM). Come say hi, discuss n
 ## Contributing
 Awesome, contributing is always welcome and appretiatied!
 
- If you'd like to contribute code please first start a discussion by opening an issue.
+If you'd like to contribute code please first start a discussion by opening an issue.
 
 If there are any questions regarding the codebase - open an issue.
 
