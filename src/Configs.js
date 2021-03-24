@@ -44,6 +44,7 @@ import LibreAudio from "./modules/LibreAudio/Config";
 import TokenBarPositionAdjust from "./modules/TokenBarPositionAdjust/Config"
 import PerformanceImprovements from "./modules/PerformanceImprovements/Config"
 import ChromeUpdateChecker from "./modules/ChromeUpdateChecker/Config"
+import CharacterAvatarFromURL from "./modules/CharacterAvatarFromURL/Config"
 
 //import LibreAnimatedTokens from "./modules/LibreAnimatedTokens/Config"
 
@@ -94,12 +95,14 @@ addCfg(TokenLayerDrawing);
 addCfg(TransparentPaper);
 addCfg(HidePlayerList);
 addCfg(SetTableEntryAvatarByUrl);
-addCfg(Welcome);
 addCfg(PerformanceImprovements);
+addCfg(CharacterAvatarFromURL);
 
 if(VTTES_BROWSER == "chrome") {
   addCfg(ChromeUpdateChecker);
 }
+
+addCfg(Welcome);
 
 export default configs;
 
