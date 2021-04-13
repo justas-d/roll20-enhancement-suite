@@ -45,6 +45,7 @@ import TokenBarPositionAdjust from "./modules/TokenBarPositionAdjust/Config"
 import PerformanceImprovements from "./modules/PerformanceImprovements/Config"
 import ChromeUpdateChecker from "./modules/ChromeUpdateChecker/Config"
 import CharacterAvatarFromURL from "./modules/CharacterAvatarFromURL/Config"
+import HideTipsyPopup from "./modules/HideTipsyPopup/Config"
 
 //import LibreAnimatedTokens from "./modules/LibreAnimatedTokens/Config"
 
@@ -97,6 +98,7 @@ addCfg(HidePlayerList);
 addCfg(SetTableEntryAvatarByUrl);
 addCfg(PerformanceImprovements);
 addCfg(CharacterAvatarFromURL);
+addCfg(HideTipsyPopup);
 
 if(VTTES_BROWSER == "chrome") {
   addCfg(ChromeUpdateChecker);
