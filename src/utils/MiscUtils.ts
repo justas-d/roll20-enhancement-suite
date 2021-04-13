@@ -90,13 +90,33 @@ const removeAllChildren = function(root) {
     }
 }
 
+const escapeRegExp = (str) => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 const replaceAll = function(where, find, replace) {
+  return where.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
 
-    const escapeRegExp = function(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-    }
+interface Replace_All_And_Count_Return {
+  result: string;
+  count: number;
+};
 
-    return where.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+export const replace_all_and_count = function(where, find, replace) {
+  let count = 0;
+  const regex = new RegExp(escapeRegExp(find), 'g');
+  const result = where.replace(regex, (match, p1, offset, string, groups) => {
+    count += 1;
+    return replace;
+  });
+
+  const ret: Replace_All_And_Count_Return = {
+    result: result,
+    count: count
+  };
+
+  return ret;
 }
 
 const safeParseJson = function(str) {

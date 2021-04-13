@@ -1,6 +1,6 @@
 import {Config} from "../utils/Config";
 import hooks from "../Configs";
-import {injectScript, getBrowser, replaceAll, findByIdAndRemove} from "../utils/MiscUtils";
+import {injectScript, getBrowser, findByIdAndRemove} from "../utils/MiscUtils";
 import SettingsBootstrapper from "../modules/Settings/Bootstrapper"
 import {DialogFormsBootstrapper} from "../modules/Dialog/Bootstrapper";
 import {LocalStorageBootstrapper} from "../modules/LocalStorage/Bootstrapper";
@@ -167,7 +167,7 @@ if(doesBrowserNotSupportResponseFiltering()) {
                                 `},250))`);
 
                             const hookQueue = getHooks(hooks, url);
-                            hookedData = injectHooks(hookedData, hookQueue, replaceAll);
+                            hookedData = injectHooks(hookedData, hookQueue);
 
                             const blob = new Blob([hookedData]);
                             const hookedScriptUrl = URL.createObjectURL(blob);

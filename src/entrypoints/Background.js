@@ -213,7 +213,7 @@ else {
 
         filter.onstop = e => {
 
-            const hookedData = injectHooks(stringBuffer, hookQueue, replaceAll);
+            const hookedData = injectHooks(stringBuffer, hookQueue);
 
             filter.write(new TextEncoder().encode(hookedData));
             filter.close();

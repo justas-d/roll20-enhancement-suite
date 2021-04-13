@@ -1,40 +1,57 @@
+import {replace_all_and_count} from "utils/MiscUtils";
+
 export const getHooks = (hooks, url) => {
+  let hookQueue = [];
 
-    let hookQueue = [];
-
-    const addModToQueueIfOk = (mod, hook) => {
-        if (mod.includes && url.includes(mod.includes) && mod.find && mod.patch) {
-            hookQueue.push({mod, hook});
-        }
-    };
-
-    for (let id in hooks) {
-        let hook = hooks[id];
-
-        if (hook.mods) {
-            for (let mod of hook.mods) {
-                addModToQueueIfOk(mod, hook);
-            }
-        } else {
-            addModToQueueIfOk(hook, hook);
-        }
+  const addModToQueueIfOk = (mod, hook) => {
+    if (mod.includes && url.includes(mod.includes) && mod.find && mod.patch) {
+      hookQueue.push({mod, hook});
     }
+  };
 
-    return hookQueue;
+  for (let id in hooks) {
+    let hook = hooks[id];
+
+    if (hook.mods) {
+      for (let mod of hook.mods) {
+        addModToQueueIfOk(mod, hook);
+      }
+    } else {
+      addModToQueueIfOk(hook, hook);
+    }
+  }
+
+  return hookQueue;
 };
 
-export const injectHooks = (intoWhat, hookQueue, replaceFunc) => {
-    if (hookQueue.length <= 0) return intoWhat;
+export const injectHooks = (into_what, hook_queue) => {
+  if(hook_queue.length <= 0) {
+    return into_what;
+  }
 
-    for (let combo of hookQueue) {
-        const mod = combo.mod;
+  for(let combo of hook_queue) {
+    const mod = combo.mod;
+    const hook = combo.hook;
 
-        // TODO : move this to Configs.js?
-        const patch = replaceFunc(mod.patch, ">>R20ES_MOD_FIND>>", mod.find);
+    // TODO : move this to Configs.js?
+    let replace = replace_all_and_count(mod.patch, ">>R20ES_MOD_FIND>>", mod.find);
+    const patch = replace.result;
 
-        console.log(`REPLACING: Find: ${mod.find} Patch: ${patch}`);
-        intoWhat = replaceFunc(intoWhat, mod.find, patch);
+    replace = replace_all_and_count(into_what, mod.find, patch);
+    into_what = replace.result;
+
+    {
+      const str = `REPLACING: Replace count: ${replace.count} Find: '${mod.find}' Patch: '${patch}'.`;
+
+      if(replace.count <= 0) {
+        console.error(str, hook);
+      }
+      else {
+        console.log(str);
+      }
     }
+  }
 
-    return intoWhat;
+  return into_what;
 };
+
