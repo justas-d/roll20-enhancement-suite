@@ -13,7 +13,7 @@ export default MakeConfig(__dirname, {
     mods: [
         { // add table entry && table ids to popup
             includes: "assets/app.js",
-            find: `this.$el.on("click",".deleteitem",function(){`,
+            find: `this.$el.on("click",".deleteitem",()=>{`,
             patch: `this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", e.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", e.model.id),>>R20ES_MOD_FIND>>`,
         },
     ]
