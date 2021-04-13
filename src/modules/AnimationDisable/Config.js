@@ -12,6 +12,8 @@ export default MakeConfig(__dirname, {
     },
 
     mods: [
+
+      /*
         { // radial button proportionally timed animation
             includes: "assets/app.js",
             find: `setTimeout(function(){$(e).addClass("open"),n.find(".button div.hasnumber").textfill(20)},30*r),r++`,
@@ -19,7 +21,9 @@ export default MakeConfig(__dirname, {
             if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(e).addClass("open");n.find(".button div.hasnumber").textfill(20);}
             else { >>R20ES_MOD_FIND>>; }`,
         },
+        */
 
+      /*
         { // radial final
             includes: "assets/app.js",
             find: `setTimeout(function(){n.find(".button").addClass("animcomplete")},250)`,
@@ -27,6 +31,7 @@ export default MakeConfig(__dirname, {
             if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { n.find(".button").addClass("animcomplete");}
             else { >>R20ES_MOD_FIND>>; }`,
         },
+        */
 
         { // marker menu hide
             includes: "assets/app.js",
@@ -36,6 +41,7 @@ export default MakeConfig(__dirname, {
             else { >>R20ES_MOD_FIND>>; }`,
         },
 
+      /*
         { // marker menu show
             includes: "assets/app.js",
             find: `_.delay(function(){i.addClass("open")})`,
@@ -43,6 +49,7 @@ export default MakeConfig(__dirname, {
             if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { i.addClass("open"); }
             else { >>R20ES_MOD_FIND>>; }`
         },
+        */
 
       /*
         { // take over page toolbar animation
