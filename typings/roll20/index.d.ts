@@ -225,6 +225,7 @@ declare namespace Roll20 {
     }
 
     export interface PageAttributes {
+
         adv_fow_dim_reveals: boolean
         adv_fow_enabled: boolean
         adv_fow_grid_size: number
@@ -309,6 +310,10 @@ declare namespace Roll20 {
     type TokenViewPermissions = "hidden" | "editors" | "everyone";
 
     export interface TokenAttributes extends MapTokenAttributes{
+        night_vision_effect: string | null
+        night_vision_distance: number
+        vttes_dimming_start: number
+
         adv_fow_view_distance: string;
         statusmarkers: string;
         statusdead: boolean;
