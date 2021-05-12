@@ -453,7 +453,22 @@ namespace R20 {
         } else {
             window.d20.textchat.doChatInput(what);
         }
+    }
 
+    export function say_async(
+      what: string
+    ) {
+      return new Promise((ok, err) => {
+        const callback_id = R20.generateUUID();
+
+        $(document).on(`mancerroll:${callback_id}`, (event, roll_data) => {
+          $(document).off(`mancerroll:${callback_id}`);
+
+          ok({event, roll_data});
+        });
+
+        window.d20.textchat.doChatInput(what, "chatbox", callback_id);
+      });
     }
 
     export function sayToSelf(
@@ -545,61 +560,6 @@ ${content}
 
         if (storage.length < 0) {
             console.error("FAILED TO WIPE OBJECT STORAGE!");
-        }
-    };
-
-    export const doBulkRoll = (tokens: CanvasObject[], macro: string, delayBetweenRolls: number, shouldReselect: boolean, cbGenerator?: (obj: CanvasObject) => Optional<{id: string, callback: SayCallback}>) => {
-        R20.unselectTokens();
-
-        const rollForObj = (obj: CanvasObject) => {
-            R20.selectToken(obj);
-
-            if(cbGenerator) {
-                const cbData = cbGenerator(obj);
-                if(cbData) {
-                    R20.say(macro, cbData.id, cbData.callback);
-                }
-            } else {
-                R20.say(macro);
-            }
-        };
-
-        const cleanup = () => {
-
-            R20.hideTokenRadialMenu();
-            R20.hideTokenContextMenu();
-
-            if(shouldReselect) {
-                for (let obj of tokens) {
-                    R20.addTokenToSelection(obj);
-                }
-            }
-        };
-
-        if (delayBetweenRolls === 0) {
-
-            for (const obj of tokens) {
-                rollForObj(obj);
-            }
-
-            cleanup();
-
-        } else {
-            let waited = delayBetweenRolls;
-
-            for (let i = 0; i < tokens.length; i++) {
-                setTimeout(() => {
-                    rollForObj(tokens[i]);
-
-                    const isLastObj = i + 1 === tokens.length;
-                    if (isLastObj) {
-                        cleanup();
-                    }
-
-                }, waited);
-
-                waited += delayBetweenRolls;
-            }
         }
     };
 
