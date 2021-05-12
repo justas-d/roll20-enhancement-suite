@@ -246,7 +246,7 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
     observerCallback = (mutations: MutationRecord[]) => {
         for(const mut of mutations) {
 
-            if(mut.target["id"] !== "playerzone")  {
+            if(mut.target["id"] !== "avatarContainer")  {
                 continue;
             }
 
