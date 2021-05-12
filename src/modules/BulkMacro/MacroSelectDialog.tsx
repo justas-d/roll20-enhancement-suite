@@ -7,7 +7,7 @@ export default class MacroSelectDialog extends DialogBase<string> {
     private macros: TableOfMacrosByCategoryAndId;
 
     public constructor() {
-        super(undefined, {maxWidth: "20%", height: "auto"});
+        super(undefined, {maxWidth: "20%"});
     }
 
     private reset() {
