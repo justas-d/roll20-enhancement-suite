@@ -323,23 +323,33 @@ const UpdatedLightSettings = ({attribs}) => {
     }
   }
 
+  const HeaderCheckbox = ({label, defaultVal = undefined, propName, attribs}) => {
+    return (
+      <span style={{marginTop: "16px", display: "inline-flex", alignItems: "center"}}>
+        <InputWrapper defaultVal={defaultVal} style={{marginRight: "4px"}} propName={propName} type="checkbox" token={attribs}/>
+        <h4>{label}</h4>
+      </span>
+    );
+  };
+
   return (
     <div className="span6">
-      <h4>Updated Dynamic Lighting</h4>
+      <h3 style={{marginBottom:"12px"}}>Updated Dynamic Lighting</h3>
 
       <InputCheckbox label="Has Bright Light Vision" defaultVal={false} propName={"has_bright_light_vision"} token={attribs} wrapperStyle={{marginRight: "16px"}}/>
       <InputCheckbox label="Has Low Light Vision" defaultVal={false} propName={"has_low_light_vision"} token={attribs} wrapperStyle={{marginRight: "16px"}}/>
 
       <div>
         <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="light_sensitivity_multiplier" type="number" token={attribs}/>
-        Light Sensitivity Percentage
+        Light Sensitivity Percentage (0 to 100)
       </div>
 
-      <h5 style={{marginTop: "8px"}}>Night Vision</h5>
-      <InputCheckbox label="Has Night Vision" defaultVal={false} propName={"has_night_vision"} token={attribs} wrapperStyle={{marginRight: "16px"}}/>
+      <HeaderCheckbox label="Night Vision" defaultVal={false} propName="has_night_vision" attribs={attribs}/>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="night_vision_distance" type="number" token={attribs}/>
-      Distance (in ft.)
+      <div>
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="night_vision_distance" type="number" token={attribs}/>
+        Distance (in ft.)
+      </div>
 
       { /* night_vision_effect: "Dimming_1" null "Nocturnal" "Sharpen" "Dimming_0.45"*/ }
       { /* the dimming param of night_vision_effect is baked into the night_vision_effect value ... smh */ }
@@ -358,59 +368,65 @@ const UpdatedLightSettings = ({attribs}) => {
         </span>
       </div>
 
-      <h5 style={{marginTop: "8px"}}>Limit Field of Vision</h5>
-      <InputCheckbox label="Enable Field of Vision Limit" defaultVal={false} propName="has_limit_field_of_vision" token={attribs} wrapperStyle={{marginRight: "16px"}}/>
+      <HeaderCheckbox label="Limit Field of Vision" defaultVal={false} propName="has_limit_field_of_vision" attribs={attribs}/>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="limit_field_of_vision_total" type="number" token={attribs}/>
-      Total
+      <div>
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="limit_field_of_vision_total" type="number" token={attribs}/>
+        <span style={{marginRight: "8px"}}>Total</span>
+    
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="limit_field_of_vision_center" type="number" token={attribs}/>
+        Center
+      </div>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="limit_field_of_vision_center" type="number" token={attribs}/>
-      Center
+      <HeaderCheckbox label="Limit Field of Vision (for Night Vision)" defaultVal={false} propName="has_limit_field_of_night_vision" attribs={attribs}/>
 
-      <h5 style={{marginTop: "8px"}}>Limit Field of Vision (for Night Vision)</h5>
-      <InputCheckbox label="Enable Field of Vision Limit for Night Vision" defaultVal={false} propName={"has_limit_field_of_night_vision"} token={attribs} wrapperStyle={{marginRight: "16px"}}/>
+      <div>
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="limit_field_of_night_vision_total" type="number" token={attribs}/>
+        <span style={{marginRight: "8px"}}>Total</span>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="limit_field_of_night_vision_total" type="number" token={attribs}/>
-      Total
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="limit_field_of_night_vision_center" type="number" token={attribs}/>
+        Center
+      </div>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="limit_field_of_night_vision_center" type="number" token={attribs}/>
-      Center
+      <HeaderCheckbox label="Emit Bright Light" defaultVal={false} propName="emits_bright_light" attribs={attribs}/>
 
-      <h5 style={{marginTop: "8px"}}>Bright Light</h5>
-      <InputCheckbox label="Emits Bright Light" defaultVal={false} propName={"emits_bright_light"} token={attribs} wrapperStyle={{marginRight: "16px"}}/>
+      <div>
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="bright_light_distance" type="number" token={attribs}/>
+        Distance (in ft.)
+      </div>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="bright_light_distance" type="number" token={attribs}/>
-      Distance (in ft.)
+      <HeaderCheckbox label="Emit Low Light" defaultVal={false} propName="emits_low_light" attribs={attribs}/>
 
-      <h5 style={{marginTop: "8px"}}>Low Light</h5>
-      <InputCheckbox label="Emits Low Light" defaultVal={false} propName={"emits_low_light"} token={attribs} wrapperStyle={{marginRight: "16px"}}/>
+      <div>
+        { /* dim_light_opacity 0-1 string */ }
+        { /* low_light_distance: 11 this is the sum??? */ }
+        { /* light_ui: 6 this is the actual low light distance */ }
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="light_ui" type="number" token={attribs}/>
+        <span style={{marginRight: "8px"}}>Distance</span>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="dim_light_opacity" type="number" token={attribs}/>
-      Brightness (0-1)
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="dim_light_opacity" type="number" token={attribs}/>
+        Brightness (0 to 1)
+      </div>
 
-      { /* dim_light_opacity 0-1 string */ }
-      { /* low_light_distance: 11 this is the sum??? */ }
-      { /* light_ui: 6 this is the actual low light distance */ }
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="light_ui" type="number" token={attribs}/>
-      Distance
+      <HeaderCheckbox label="Directional Bright Light" defaultVal={false} propName="has_directional_bright_light" attribs={attribs}/>
 
-      <h5 style={{marginTop: "8px"}}>Directional Bright Light</h5>
-      <InputCheckbox label="Has Directional Bright Light" defaultVal={false} propName={"has_directional_bright_light"} token={attribs} wrapperStyle={{marginRight: "16px"}}/>
+      <div>
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="directional_bright_light_total" type="number" token={attribs}/>
+        <span style={{marginRight: "8px"}}>Total</span>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="directional_bright_light_total" type="number" token={attribs}/>
-      Total
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="directional_bright_light_center" type="number" token={attribs}/>
+        Center
+      </div>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="directional_bright_light_center" type="number" token={attribs}/>
-      Center
+      <HeaderCheckbox label="Directional Dim Light" defaultVal={false} propName="has_directional_dim_light" attribs={attribs}/>
 
-      <h5 style={{marginTop: "8px"}}>Directional Dim Light</h5>
-      <InputCheckbox label="Has Directional Dim Light" defaultVal={false} propName={"has_directional_dim_light"} token={attribs} wrapperStyle={{marginRight: "16px"}}/>
+      <div>
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="directional_dim_light_total" type="number" token={attribs}/>
+        <span style={{marginRight: "8px"}}>Total</span>
 
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="directional_dim_light_total" type="number" token={attribs}/>
-      Total
-
-      <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="directional_dim_light_center" type="number" token={attribs}/>
-      Center
+        <InputWrapper style={{marginRight: "4px", width: "48px"}} propName="directional_dim_light_center" type="number" token={attribs}/>
+        Center
+      </div>
 
     </div>
   );
@@ -419,8 +435,8 @@ const UpdatedLightSettings = ({attribs}) => {
 const LegacyLightSettings = ({tokenAttribs}) => {
   return (
     <div style={{marginTop: "16px"}} className="span6">
-      <h4>Legacy Dynamic Lighting</h4>
-      <h5>Light Emitter</h5>
+      <h3 style={{marginBottom:"12px"}}>Legacy Dynamic Lighting</h3>
+      <h4>Light Emitter</h4>
 
       <div className="inlineinputs" style="margin-bottom: 16px;">
 
@@ -451,7 +467,7 @@ const LegacyLightSettings = ({tokenAttribs}) => {
 
       <div style={{display: "grid", gridTemplateColumns: "auto auto"}}>
         <div>
-            <h5>Light Observer</h5>
+            <h4>Light Observer</h4>
 
             <div className="inlineinputs" style="margin-bottom: 16px;">
 
@@ -485,7 +501,7 @@ const LegacyLightSettings = ({tokenAttribs}) => {
         </div>
 
         <div>
-          <h5>Advanced Fog of War</h5>
+          <h4>Advanced Fog of War</h4>
 
           <div className="inlineinputs" style="margin-top: 5px; margin-bottom: 16px;">
             <InputWrapper 
@@ -840,186 +856,193 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
     const borderString = "1px solid lightgray";
 
     const widget = (
-        <div>
+      <div>
+        <div style={{borderBottom: borderString, display: "grid", gridTemplateColumns: "1fr 1fr 1fr"}}>
+          <div>
             <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
-                <div style={{borderBottom: borderString}}>
+              <div 
+                onDrop={onExternalAvatarDrop} 
+                className="r20es-token-img-hover"
+                style={{display:"flex", flexDirection:"column", margin: "16px", position: "relative", marginLeft: "0"}}
+              >
+                <img style={{alignSelf: "center", width: "100%", maxWidth: "180px"}} src={data.token.imgsrc} alt="token image"/>
 
-                    <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
+                <div style={{marginTop: "4px", display: "grid", gridTemplateColumns: "1fr 1fr"}}>
+                  <button onClick={removeAvatar} className="btn" style={{marginBottom: "8px", marginRight: "8px"}}>
+                    Remove Image
+                  </button>
 
-                        <div 
-                          onDrop={onExternalAvatarDrop} 
-                          className="r20es-token-img-hover"
-                          style={{
-                            margin: "16px", 
-                            position: "relative",
-                            marginLeft: "0"
-                          }}
-                        >
-                          <img style={{width: "100%", maxWidth: "256px"}} src={data.token.imgsrc} alt="token image"/>
-
-                          <div style={{marginTop: "4px", display: "grid", gridTemplateColumns: "1fr 1fr"}}>
-                            <button onClick={removeAvatar} className="btn" style={{marginBottom: "8px", marginRight: "8px"}}>
-                              Remove Image
-                            </button>
-
-                            <button style={{marginBottom: "8px"}} onClick={setFromUrl} className="btn">
-                              Set from URL
-                            </button>
-                          </div>
-
-                        </div>
-
-                        <div style={{marginRight: "16px"}}>
-                          <div>Nameplate</div>
-
-                          <div style={{display: "flex"}}>
-                            <InputWrapper propName="name" type="text" style={{width: "210px"}} token={data.token}/>
-                            <button onClick={setCharacterName} className="btn" title="Updates the name of the character on the sheet with the name in the input box.">Set</button>
-                          </div>
-
-                          <div>
-                            <InputWrapper 
-                              propName="showname" 
-                              type="checkbox"
-                              style={{marginTop: "8px", marginRight: "4px"}}
-                              token={data.token}
-                            />
-                            <span>Show nameplate?</span>
-                          </div>
-
-                          <div>Tint Color</div>
-                          <ColorWidget style={{marginBottom: "8px"}} propName={"tint_color"} token={data.token}/>
-
-                          <div style={{marginBottom: "4px"}}>
-                            <span style={{display: "inline-block", marginRight: "4px"}}>Width (px)</span>
-                            <InputWrapper 
-                              propName="width" 
-                              style={{width: "48px", marginRight: "12px"}} 
-                              type="number"
-                              token={data.token}
-                            />
-
-                            <span style={{display: "inline-block", marginRight: "4px"}}>Height (px)</span>
-
-                            <InputWrapper 
-                              propName="height" 
-                              style={{width: "48px"}} 
-                              type="number" 
-                              token={data.token}
-                            />
-
-                          </div>
-
-                          <div style={{marginBottom: "4px"}}>
-                            <span style={{display: "inline-block", marginRight: "4px"}}>
-                              Rotation (degrees)
-                            </span>
-                            <InputWrapper style={{width: "48px"}} propName="rotation" type="number" token={data.token}/>
-                          </div>
-
-
-                          <div>
-                            <InputCheckbox label="Flip Horizontal" defaultVal={false} propName={"fliph"} token={data.token} wrapperStyle={{marginRight: "16px"}}/>
-                            <InputCheckbox label="Flip Vertical" defaultVal={false} propName={"flipv"} token={data.token}/>
-                          </div>
-
-                        </div>
-                    </div>
-
-                    <UpdatedLightSettings attribs={data.token}/>
+                  <button style={{marginBottom: "8px"}} onClick={setFromUrl} className="btn">
+                    Set from URL
+                  </button>
                 </div>
 
-                <div style={{borderBottom: borderString, borderLeft: borderString}}>
-                    <div style={indentStyle}>
-                        <BarEditor name="Bar 1" color={campaign.bar1_color} tokenAttribs={data.token}
-                                   character={data.char} onChange={onChange} index={1}/>
-                        <BarEditor name="Bar 2" color={campaign.bar2_color} tokenAttribs={data.token}
-                                   character={data.char} onChange={onChange} index={2}/>
-                        <BarEditor name="Bar 3" color={campaign.bar3_color} tokenAttribs={data.token}
-                                   character={data.char} onChange={onChange} index={3}/>
-                    </div>
+              </div>
 
-                    <div style={indentStyle}>
-                        <AuraEditor name="Aura 1" tokenAttribs={data.token} index={1}/>
-                        <AuraEditor name="Aura 2" tokenAttribs={data.token} index={2}/>
-                    </div>
+              <div style={{marginRight: "16px"}}>
+                <div>Nameplate</div>
 
-                    <div style={Object.assign({}, indentStyle, {marginBottom: "16px"})}>
-                      <h4>Player Permissions</h4>
-
-                        <TokenPermission name="Name" propName="name" tokenAttribs={data.token} add_permissions={false}/>
-
-                        <TokenPermission name="Bar 1" propName="bar1" tokenAttribs={data.token} add_permissions={true} index={1}/>
-                        <TokenPermission name="Bar 2" propName="bar2" tokenAttribs={data.token} add_permissions={true} index={2}/>
-                        <TokenPermission name="Bar 3" propName="bar3" tokenAttribs={data.token} add_permissions={true} index={3}/>
-                        <TokenPermission name="Aura 1" propName="aura1" tokenAttribs={data.token} add_permissions={false} />
-                        <TokenPermission name="Aura 2" propName="aura2" tokenAttribs={data.token} add_permissions={false} />
-
-                        <div>
-                            <b>Bar Location</b>
-                            {(() => {
-                                const widget = (
-                                    <InputWrapper style={{margin: "0", marginLeft: "8px"}}
-                                                  Component="select" propName={"bar_location"}
-                                                  token={data.token}
-                                                  defaultVal="above">
-                                        <option value="above">Above</option>
-                                        <option value="overlap_top">Top Overlapping</option>
-                                        <option value="overlap_bottom">Bottom Overlapping</option>
-                                        <option value="below">Below</option>
-                                    </InputWrapper>
-                                );
-                                // NOTE(justas): so for some reason the bar_location_widget dropdown DOES NOT want to listen
-                                // to us setting its .value property from the InputWrapper code while every other dropdown
-                                // it perfectly fine with that.
-                                // So this timeout just manually sets the value.
-                                // :SelectDefaultValueIsNotCooperating
-                                setTimeout(() => {
-                                    widget.value = data.token["bar_location"] || "above";
-                                }, 500);
-
-                                return widget;
-                            })()}
-                        </div>
-
-                        <div>
-                            <b>Bar Type</b>
-                            {(() => {
-                                const prop = "compact_bar";
-                                const widget= (
-                                    <InputWrapper style={{margin: "0", marginLeft: "8px"}}
-                                                  Component="select" propName={prop} token={data.token} defaultVal="standard">
-                                        <option value="standard">Standard</option>
-                                        <option value="compact">Compact</option>
-                                    </InputWrapper>
-                                );
-                                // :SelectDefaultValueIsNotCooperating
-                                setTimeout(() => {
-                                    widget.value = data.token[prop] || "standard";
-                                }, 500);
-
-                                return widget
-                            })()}
-                        </div>
-                      <LegacyLightSettings tokenAttribs={data.token}/>
-                    </div>
+                <div style={{display: "flex"}}>
+                  <InputWrapper propName="name" type="text" style={{width: "210px"}} token={data.token}/>
+                  <button onClick={setCharacterName} className="btn" title="Updates the name of the character on the sheet with the name in the input box.">Set</button>
                 </div>
-            </div>
 
-            <div style={{marginTop: "16px", marginBottom: "16px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr"}}>
+                <div>
+                  <InputWrapper 
+                    propName="showname" 
+                    type="checkbox"
+                    style={{marginTop: "8px", marginRight: "4px"}}
+                    token={data.token}
+                  />
+                  <span>Show nameplate?</span>
+                </div>
 
-                <span style="float: left">
-                    {refreshButton}
-                </span>
+                <div>Tint Color</div>
+                <ColorWidget style={{marginBottom: "8px"}} propName={"tint_color"} token={data.token}/>
 
-                {progressWidget}
+                <div style={{marginBottom: "4px"}}>
+                  <span style={{display: "inline-block", marginRight: "4px"}}>Width (px)</span>
+                  <InputWrapper 
+                    propName="width" 
+                    style={{width: "48px", marginRight: "12px"}} 
+                    type="number"
+                    token={data.token}
+                  />
 
-                <span style="float: right">
-                    <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn">Update all tokens</button>
-                    {updateDefaultTokenButton}
-                </span>
-            </div>
+                  <span style={{display: "inline-block", marginRight: "4px"}}>Height (px)</span>
+
+                  <InputWrapper 
+                    propName="height" 
+                    style={{width: "48px"}} 
+                    type="number" 
+                    token={data.token}
+                  />
+
+                </div>
+
+                <div style={{marginBottom: "4px"}}>
+                  <span style={{display: "inline-block", marginRight: "4px"}}>
+                    Rotation (degrees)
+                  </span>
+                  <InputWrapper style={{width: "48px"}} propName="rotation" type="number" token={data.token}/>
+                </div>
+
+
+                <div>
+                  <InputCheckbox label="Flip Horizontal" defaultVal={false} propName={"fliph"} token={data.token} wrapperStyle={{marginRight: "16px"}}/>
+                  <InputCheckbox label="Flip Vertical" defaultVal={false} propName={"flipv"} token={data.token}/>
+                </div>
+
+              </div>
+          </div>
+
+          <UpdatedLightSettings attribs={data.token}/>
         </div>
+
+        <div style={{borderLeft: borderString}}>
+          <div style={indentStyle}>
+            <BarEditor 
+                name="Bar 1" color={campaign.bar1_color} tokenAttribs={data.token}
+                character={data.char} onChange={onChange} index={1}
+            />
+            <BarEditor 
+              name="Bar 2" color={campaign.bar2_color} tokenAttribs={data.token}
+              character={data.char} onChange={onChange} index={2}
+            />
+            <BarEditor 
+              name="Bar 3" color={campaign.bar3_color} tokenAttribs={data.token}
+              character={data.char} onChange={onChange} index={3}
+            />
+          </div>
+
+          <div style={indentStyle}>
+            <AuraEditor name="Aura 1" tokenAttribs={data.token} index={1}/>
+            <AuraEditor name="Aura 2" tokenAttribs={data.token} index={2}/>
+          </div>
+
+          <div style={Object.assign({}, indentStyle, {marginBottom: "16px"})}>
+            <h3>Player Permissions</h3>
+
+              <TokenPermission name="Name" propName="name" tokenAttribs={data.token} add_permissions={false}/>
+
+              <TokenPermission name="Bar 1" propName="bar1" tokenAttribs={data.token} add_permissions={true} index={1}/>
+              <TokenPermission name="Bar 2" propName="bar2" tokenAttribs={data.token} add_permissions={true} index={2}/>
+              <TokenPermission name="Bar 3" propName="bar3" tokenAttribs={data.token} add_permissions={true} index={3}/>
+              <TokenPermission name="Aura 1" propName="aura1" tokenAttribs={data.token} add_permissions={false} />
+              <TokenPermission name="Aura 2" propName="aura2" tokenAttribs={data.token} add_permissions={false} />
+
+              <div>
+                <b>Bar Location</b>
+                {(() => {
+                  const widget = (
+                    <InputWrapper 
+                      style={{margin: "0", marginLeft: "8px"}}
+                      Component="select" 
+                      propName={"bar_location"}
+                      token={data.token}
+                      defaultVal="above"
+                    >
+                      <option value="above">Above</option>
+                      <option value="overlap_top">Top Overlapping</option>
+                      <option value="overlap_bottom">Bottom Overlapping</option>
+                      <option value="below">Below</option>
+                    </InputWrapper>
+                  );
+                  // NOTE(justas): so for some reason the bar_location_widget dropdown DOES NOT want to listen
+                  // to us setting its .value property from the InputWrapper code while every other dropdown
+                  // it perfectly fine with that.
+                  // So this timeout just manually sets the value.
+                  // :SelectDefaultValueIsNotCooperating
+                  setTimeout(() => {
+                      widget.value = data.token["bar_location"] || "above";
+                  }, 500);
+
+                  return widget;
+                })()}
+              </div>
+
+              <div>
+                <b>Bar Type</b>
+                {(() => {
+                  const prop = "compact_bar";
+                  const widget= (
+                    <InputWrapper 
+                      style={{margin: "0", marginLeft: "8px"}}
+                      Component="select" propName={prop} 
+                      token={data.token} 
+                      defaultVal="standard"
+                    >
+                      <option value="standard">Standard</option>
+                      <option value="compact">Compact</option>
+                    </InputWrapper>
+                  );
+                  // :SelectDefaultValueIsNotCooperating
+                  setTimeout(() => {
+                    widget.value = data.token[prop] || "standard";
+                  }, 500);
+
+                  return widget
+                })()}
+              </div>
+
+              <LegacyLightSettings tokenAttribs={data.token}/>
+            </div>
+          </div>
+        </div>
+
+        <div style={{marginTop: "16px", marginBottom: "16px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr"}}>
+          <span style="float: left">
+            {refreshButton}
+          </span>
+
+          {progressWidget}
+
+          <span style="float: right">
+            <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn">Update all tokens</button>
+            {updateDefaultTokenButton}
+          </span>
+        </div>
+      </div>
     );
 
     $(widget).find("input, select, button").on("change", onChange).on("click", onChange);
