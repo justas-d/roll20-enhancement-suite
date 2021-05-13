@@ -41,7 +41,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 
 <a class="bmc-button" target="_blank" href=${Config.contributeUrl}>
     <span style="color: orange; margin-left:5px">
-      ☕   Buy me a coffee
+      <img style="margin-right: 5px; width: 26px; height: 26px" src="https://github.com/justas-d/roll20-enhancement-suite/raw/b7db254d7c6487ac54f1fb8d6d5aeb966306f813/assets/promotional/Digital-Patreon-Logo_FieryCoral.png" alt=""></img>Patreon
     </span>
 </a>
 `);
