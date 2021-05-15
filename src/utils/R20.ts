@@ -498,7 +498,7 @@ namespace R20 {
     border: none;
     display: inline-block;
     padding: 8px;
-    margin: -15px -5px -7px -45px;    
+    box-shadow: 0px 0px 10px rgb(6, 26, 45);
     "
 >
 ${content}
