@@ -686,6 +686,23 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
         console.log("try_recalc_dimming_effect: vttes_dimming_start");
         try_recalc_dimming_effect();
       }
+
+      if(attribName == "bright_light_distance" ||
+         attribName == "light_ui"
+      ) {
+        const try_get = (name) => {
+          let val = data.token[name];
+          if(typeof(val) != "number") return 0;
+          if(!isFinite(val)) return 0;
+          if(isNaN(val)) return 0;
+          return val;
+        };
+
+        const bright_light_distance = try_get("bright_light_distance");
+        const light_ui = try_get("light_ui");
+
+        data.token["low_light_distance"] = bright_light_distance + light_ui;
+      }
     };
 
     const onRefresh = (e: Event) => {
