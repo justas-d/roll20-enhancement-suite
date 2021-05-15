@@ -5,7 +5,8 @@ const CSS_ELEMENT_ID = "vttes_hide_tipsy_popup";
 
 const CSS_STYLE = `
 .tipsy-inner {
-  visibility:hidden;
+  visibility: hidden;
+  display: none;
 }
 `;
 
