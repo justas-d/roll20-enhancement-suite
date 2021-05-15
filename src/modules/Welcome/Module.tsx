@@ -25,7 +25,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 
             if (cfg.showWelcomePopup) {
                 R20.saySystem(`
-<h2 style="font-size: 20px; color: whitesmoke">VTT Enhancement Suite</h2>
+<h2 style="font-size: 18px; color: whitesmoke">VTT Enhancement Suite</h2>
 <span>The enhancement suite (aka R20ES) v${build.R20ES_VERSION} has been loaded!</span>
 <br/>
 <br/>
@@ -47,7 +47,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 <img style="margin-left: 4px; margin-right: 4px; width: 26px; height: 26px" src="https://github.com/justas-d/roll20-enhancement-suite/raw/b7db254d7c6487ac54f1fb8d6d5aeb966306f813/assets/promotional/Digital-Patreon-Logo_FieryCoral.png" alt=""></img>Patrons!</b>
 <br/>
 View the full details on our 
-<a style="color: orange" class="bmc-button" target="_blank" href=${Config.contributeUrl}>Discord.</a>
+<a style="color: orange" class="bmc-button" target="_blank" href=${Config.discordInvite}>Discord.</a>
 `);
                 
             }

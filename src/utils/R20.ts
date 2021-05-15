@@ -499,6 +499,8 @@ namespace R20 {
     display: inline-block;
     padding: 8px;
     box-shadow: 0px 0px 10px rgb(6, 26, 45);
+    position: relative;
+    left: -20px;
     "
 >
 ${content}
