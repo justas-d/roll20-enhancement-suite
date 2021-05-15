@@ -1,5 +1,5 @@
 {
-    "current": "1.17.1",
+    "current": "1.18",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1525,6 +1525,30 @@
                 {
                     "id": "",
                     "content": "Fixed the loading screens sometimes taking a big longer to load."
+                }
+            ]
+        },
+        "1.18": {
+            "info": {
+                "title": "UDL in the Character Token Editor",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Add 'Updated Dynamic Lighting' to the character token editor."
+                },
+                {
+                    "id": "",
+                    "content": "Fix disable player drawing toggle button not appearing."
+                },
+                {
+                    "id": "",
+                    "content": "Fix bulk macro dialog stretching on Chrome."
+                },
+                {
+                    "id": "",
+                    "content": "Add an option to roll bulk rolls sequentially (disabled by default)."
                 }
             ]
         }
