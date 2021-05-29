@@ -1,5 +1,5 @@
 {
-    "current": "1.18",
+    "current": "1.19",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1549,6 +1549,26 @@
                 {
                     "id": "",
                     "content": "Add an option to roll bulk rolls sequentially (disabled by default)."
+                }
+            ]
+        },
+        "1.19": {
+            "info": {
+                "title": "Handout Exporting",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added handout exporting & overwriting. (voted on by Patrons)"
+                },
+                {
+                    "id": "",
+                    "content": "Replaced the character importer with a handout & character importer."
+                },
+                {
+                    "id": "",
+                    "content": "Fix character sheets sometimes failing to load (thanks to SamuelDancing, DonnieSlash and Bernd for the report!)."
                 }
             ]
         }
