@@ -4,6 +4,7 @@ import {
     Campaign,
     CanvasObject,
     Character,
+    HandoutAttributes,
     Handout,
     IBlobObject,
     InitiativeData,
@@ -108,6 +109,10 @@ namespace R20 {
         return window.Campaign.characters.create(initialAttributes);
     }
 
+    export function create_handout(initialAttributes?: HandoutAttributes): Handout {
+      return window.Campaign.handouts.create(initialAttributes);
+    }
+
     export function setCanvasObjectDimensions(obj: CanvasObject, width: number, height: number) {
         const model = try_get_canvas_object_model(obj);
         if(!model) return;
@@ -131,7 +136,7 @@ namespace R20 {
         sheet.view.$el.dialog("close");
         setTimeout(() => {
           sheet.view.showDialog();
-        }, 100);
+        }, 500);
       } catch(e) {
         console.log(e);
       }

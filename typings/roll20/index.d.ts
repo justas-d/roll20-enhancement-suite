@@ -140,9 +140,10 @@ declare namespace Roll20 {
     }
 
     export interface CharacterSheetAttributeAttributes {
-        name: string;
-        current: string;
-        max: string;
+      name: string;
+      current: string;
+      max: string;
+      id: string;
     }
 
     export interface CharacterSheetAttribute extends SyncObject<CharacterSheetAttributeAttributes>{
@@ -150,7 +151,11 @@ declare namespace Roll20 {
     }
 
     export interface CharacterAbilityAttributes {
-
+      name: string;
+      description: string;
+      istokenaction: boolean;
+      action: string;
+      order: number;
     }
 
     export interface CharacterAbility extends SyncObject<CharacterAbilityAttributes> {
@@ -158,7 +163,7 @@ declare namespace Roll20 {
     }
 
     export interface IBlobObject<TBlobs> {
-        _blobcache: CharacterBlobs;
+        _blobcache: TBlobs;
         updateBlobs: (blobs: TBlobs) => void;
         _getLatestBlob: (blobName: string, callback: (blob: string) => void) => void;
     }
@@ -619,6 +624,9 @@ declare namespace Roll20 {
             addEventListener: (ev: Function) => void;
             removeEventListener: (ev: Function) => void;
         }
+
+        export_handout: Function;
+        overwrite_handout : Function;
     }
 
     export interface Mousetrap {
