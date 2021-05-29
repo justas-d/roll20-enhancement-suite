@@ -101,6 +101,13 @@ if (doesBrowserNotSupportResponseFiltering()) {
             last_character_request_timestamp
           );
 
+          if(isRedirecting) {
+            console.log("cancelling redirect queue");
+            isRedirecting = false;
+            alreadyRedirected = {};
+            redirectQueue = [];
+          }
+
           return;
         }
       }
