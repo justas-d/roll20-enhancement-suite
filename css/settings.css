@@ -5,6 +5,14 @@
     width: 100%;
 }
 
+.vttes_overwrite_handout  {
+  visibility: hidden;
+}
+
+.vttes_export_handout {
+  visibility: hidden;
+}
+
 .r20es-settings-flex-wrapper {
     height: 100%;
     width: 100%;

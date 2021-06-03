@@ -2,7 +2,7 @@ import { R20Module } from '../../utils/R20Module'
 import { R20 } from '../../utils/R20'
 import { DOM, SidebarSeparator, SidebarCategoryTitle } from '../../utils/DOM'
 import { saveAs } from 'save-as'
-import { findByIdAndRemove, readFile, safeParseJson } from '../../utils/MiscUtils';
+import { createCSSElement, findByIdAndRemove, readFile, safeParseJson } from '../../utils/MiscUtils';
 import { SheetTab, SheetTabSheetInstanceData } from '../../utils/SheetTab';
 import { LoadingDialog } from '../../utils/DialogComponents';
 import { import_multiple_files } from "../../utils/import_multiple_files";
@@ -28,6 +28,8 @@ const get_default_character_save = (): any => {
     mancerstep: "",
   };
 };
+
+const SHEET_ID = "r20es-handout-button-enabled-sheet";
 
 const get_default_character_blobs = () => {
   const blob: CharacterBlobs = {
@@ -658,6 +660,21 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
       const json_blob = new Blob([json_data], { type: 'data:application/javascript;charset=utf-8' });
       saveAs(json_blob, file_name);
     };
+
+    {
+      const style = `
+.vttes_overwrite_handout  {
+  visibility: visible !important;
+}
+
+.vttes_export_handout {
+  visibility: visible !important;
+}
+
+`;
+      const el = createCSSElement(style, SHEET_ID);
+      document.body.appendChild(el);
+    }
   }
 
   dispose = () => {
@@ -667,6 +684,8 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     findByIdAndRemove(CharacterIOModule.journalWidgetId);
 
     window.r20es.export_handout = null;
+
+    findByIdAndRemove(SHEET_ID);
   }
 }
 
