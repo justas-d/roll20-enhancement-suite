@@ -231,6 +231,11 @@ declare namespace Roll20 {
 
     export interface PageAttributes {
 
+      vttes_default_camera_enabled: boolean;
+      vttes_default_camera_x: number;
+      vttes_default_camera_y: number;
+      vttes_default_camera_zoom: number;
+
         adv_fow_dim_reveals: boolean
         adv_fow_enabled: boolean
         adv_fow_grid_size: number
@@ -280,6 +285,7 @@ declare namespace Roll20 {
     export interface FirebaseReference<T> {
         val: () => T;
         key: () => string;
+        getPriority: () => number;
     }
 
     export interface Firebase {
@@ -470,6 +476,15 @@ declare namespace Roll20 {
         incoming: (playSound: boolean, data: any) => void;
     }
 
+    export interface ChatMessage {
+      avatar: string | null;
+      content: string | null;
+      playerid: string | null;
+      type: "general" | "api" | null;
+      who: string | null;
+
+    }
+
     interface InlineRollResults {
         total: number;
     }
@@ -519,7 +534,7 @@ declare namespace Roll20 {
         currentCanvasOffset: number[];
 
         setCanvasSize: (width: number, height: number) => void;
-        setZoom: (coef: number, b: any, c: any) => void;
+        setZoom: (coef: number, b?: any, c?: any) => void;
     }
 
     export interface TokenEditor {

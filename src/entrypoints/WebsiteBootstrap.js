@@ -127,18 +127,20 @@ if (window.r20es.isLoading) {
 }
 
 window.r20es.onLoadingOverlayHide = function () {
-    if ("r20es" in window) {
+  if("r20es" in window) {
 
-        if (!window.r20es.isWindowLoaded) {
-            window.r20es.isWindowLoaded = true;
-            window.r20es.onAppLoad.fire();
-        }
+    let first_load = false;
 
-        window.r20es.onPageChange.fire();
-
-    } else {
-        alert("VTTES global state is undefined. VTTES will not function properly.");
+    if(!window.r20es.isWindowLoaded) {
+      window.r20es.isWindowLoaded = true;
+      window.r20es.onAppLoad.fire();
+      first_load = true;
     }
+
+    window.r20es.onPageChange.fire(first_load);
+  } else {
+    alert("VTTES global state is undefined. VTTES will not function properly.");
+  }
 };
 
 

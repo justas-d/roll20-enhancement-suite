@@ -11,14 +11,14 @@ export class EventEmitter {
         return ee;
     };
 
-    public fire() {
-        for(const fx of this._fxs) {
-            try {
-                fx();
-            } catch(err) {
-                console.error(err);
-            }
+    public fire(...args) {
+      for(const fx of this._fxs) {
+        try {
+          fx(...args);
+        } catch(err) {
+          console.error(err);
         }
+      }
     }
 
     public on(fx: Function) {

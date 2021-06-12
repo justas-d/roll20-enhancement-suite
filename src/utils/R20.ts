@@ -183,6 +183,13 @@ namespace R20 {
         return window.currentPlayer;
     }
 
+    export const set_zoom = (zoom: number) => {
+      if(zoom > 2.5) zoom = 2.5;
+      if(.1 > zoom) zoom = .1;
+
+      window.d20.engine.setZoom(zoom);
+    }
+    
     export const getCanvasZoom = (): number => {
         return window.d20.engine.canvasZoom;
     };
@@ -423,6 +430,22 @@ namespace R20 {
         } catch (err) {
             return false;
         }
+    }
+
+    export const get_camera_x = () => {
+      return $("#editor-wrapper").scrollLeft();
+    }
+
+    export const get_camera_y = () => {
+      return $("#editor-wrapper").scrollTop();
+    }
+
+    export const set_camera_x = (x: number) =>  {
+      return $("#editor-wrapper").scrollLeft(x);
+    }
+
+    export const set_camera_y = (y: number) => {
+      return $("#editor-wrapper").scrollTop(y);
     }
 
     export function moveCameraToTokenByUUID(uuid: string) {
