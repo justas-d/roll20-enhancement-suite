@@ -1,5 +1,5 @@
 {
-    "current": "1.19.1",
+    "current": "1.20",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1581,6 +1581,18 @@
                 {
                     "id": "",
                     "content": "Hide handout Export & Overwrite buttons when the module is disabled (thanks to KartoffelKaiser for the report!)."
+                }
+            ]
+        },
+        "1.20": {
+            "info": {
+                "title": "Default Camera Position Module",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added the Default Camera Position module. (voted on by Patrons)"
                 }
             ]
         }
