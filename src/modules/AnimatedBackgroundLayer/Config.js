@@ -5,7 +5,7 @@ import ConfigViews from '../../utils/ConfigViews';
 export default MakeConfig(__dirname, {
     id: "animatedBackground",
     name: "Animated Background",
-    description: "Displays an animated background if the GM has one set up for the page. Setup can be found in the top-left corner, look for a orange film button.",
+    description: "Displays an animated background if the GM has one set up for the page. Setup can be found in the top-right corner, look for a orange film button.",
     category: Category.canvas,
 
     media: {
