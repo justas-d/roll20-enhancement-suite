@@ -431,7 +431,8 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
                 maxHeight: "32px",
                 zIndex: "10",
                 backgroundColor: "#e18e42",
-                borderRadius: "2px"
+                padding: "0px 0px 1px",
+                borderRadius: "3px;",
             };
 
             this._showSettingsWidget = (
@@ -439,7 +440,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
                      onClick={this.ui_show_configuration_dialog}
                 >
                     <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/32/film.png"
-                         width="28" height="28" alt="ANIM"/>
+                         maxWidth="28" maxHeight="28" alt="ANIM"/>
                 </div>
             );
 
