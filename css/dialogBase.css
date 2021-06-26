@@ -16,7 +16,7 @@
 }
 
 .r20es-dialog>.dialog-footer {
-    position: relative;
+    position: sticky;
     background-color: #f5f5f5;
     right: 0;
     bottom: 0;
