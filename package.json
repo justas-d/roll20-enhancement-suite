@@ -75,6 +75,7 @@
     "dependencies": {
         "@types/webgl2": "0.0.4",
         "browser-detect": "0.2.28",
+        "fflate": "0.7.1",
         "save-as": "0.1.8"
     }
 }

@@ -7,8 +7,571 @@ import { SheetTab, SheetTabSheetInstanceData } from '../../utils/SheetTab';
 import { LoadingDialog } from '../../utils/DialogComponents';
 import { import_multiple_files } from "../../utils/import_multiple_files";
 import {replaceAll} from "../../utils/MiscUtils";
-import {Handout, Character, CharacterBlobs, CharacterAttributes} from "roll20";
+import {Handout, Character, CharacterBlobs, CharacterAttributes, CharacterSheetAttributeAttributes } from "roll20";
 import { promiseWait } from "../../utils/promiseWait";
+import {DialogBase} from "../../utils/DialogBase";
+import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../utils/DialogComponents";
+import { zipSync, strToU8} from 'fflate';
+
+interface Component_Bundle_Export {
+  schema_version: number;
+  type: "vttes_component_bundle";
+  components: Array<Component_Export>;
+}
+
+interface Component_Export {
+  name: string;
+  type: string;
+  repeating_id: string;
+  attributes: Array<CharacterSheetAttributeAttributes>;
+}
+
+class Import_Component_Dialog extends DialogBase<string> {
+
+  pc: Character;
+  types: Array<any>;
+  import_button: HTMLButtonElement;
+  num_checked = 0
+
+  public constructor() {
+    super(undefined, {minWidth: "30%"});
+  }
+
+  update_import_button_state = () => {
+    if(this.num_checked <= 0) {
+      this.import_button.disabled = true;
+    }
+    else {
+      this.import_button.disabled = false;
+    }
+  }
+
+  on_check = (e) => {
+    var el = e.target as HTMLInputElement;
+    if(el.checked) {
+      this.num_checked += 1;
+    }
+    else {
+      this.num_checked -= 1;
+    }
+
+    this.update_import_button_state();
+  }
+
+  public show(pc: Character, data: Component_Bundle_Export) {
+    this.types = [];
+    this.pc = pc;
+    this.num_checked = 0;
+
+    this.types = [];
+    for(const component of data.components) {
+
+      var type = this.types.find(t => t.name === component.type);
+      if(!type) {
+        type = {
+          name: component.type,
+          components: [],
+        };
+        this.types.push(type);
+      }
+
+      type.components.push(component);
+    }
+
+    super.internalShow();
+  }
+
+  on_click_import = (e) => {
+    const root = this.getRoot();
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    const components = [];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+      if(!el.checked) continue;
+
+      var repeating_id = el.getAttribute("repeating_id");
+
+      for(const type of this.types) {
+        for(const component of type.components) {
+          if(component.repeating_id === repeating_id) {
+            components.push(component);
+          }
+        }
+      }
+    }
+
+    for(const component of components) {
+      const new_repeating_id = R20.generateUUID();
+
+      for(const attribute of component.attributes) {
+
+        //var new_id = "";
+        //if(attribute.id.includes(component.repeating_id)) {
+        //  replaceAll(attribute.id, component.repeating_id, new_repeating_id);
+        //}
+        //else {
+        //  new_id = R20.generateUUID();
+        //}
+
+        const new_name = replaceAll(attribute.name, component.repeating_id, new_repeating_id);
+
+        const new_attrib = this.pc.attribs.create({
+          name: new_name,
+          current: attribute.current,
+          max: attribute.max,
+        });
+
+        //new_attrib.save({
+        //  id: new_id,
+        //});
+      }
+    }
+
+    this.close();
+  }
+
+  on_select_all = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+
+      if(!el.checked) {
+        el.checked = true;
+        this.num_checked += 1;
+      }
+    }
+    this.update_import_button_state();
+  }
+
+  on_unselect_all = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+      if(el.checked) {
+        el.checked = false;
+        this.num_checked -= 1;
+      }
+    }
+    this.update_import_button_state();
+  }
+
+  on_unselect_all_checkboxes = (e) => {
+    const root = e.target.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+      el.checked = false;
+    }
+
+    this.num_checked = 0;
+    this.update_import_button_state();
+  }
+
+  protected render() {
+
+    const rows = [];
+
+    for(const type of this.types) {
+      const data = [];
+
+      for(const component of type.components) {
+
+        const checkbox = (<input 
+          className="vttes-component" 
+          type="checkbox" 
+          checked={true}
+          onChange={this.on_check}
+          style={{marginRight: "4px"}}
+        />);
+        this.num_checked += 1;
+
+        checkbox.setAttribute("repeating_id", component.repeating_id);
+
+        const el = (
+          <div>
+            {checkbox}
+            {component.name}
+          </div>
+        );
+        data.push(el);
+      }
+
+      rows.push(
+        <div style={{minWidth: "180px"}}>
+          <h3>
+            {type.name}
+            <button className="btn" onClick={this.on_select_all}>Select All</button>
+            <button className="btn" onClick={this.on_unselect_all}>Unselect All</button>
+          </h3>
+          <div>
+            {data}
+          </div>
+        </div>
+      );
+    }
+
+    this.import_button = <input className="r20btn btn" type="button" onClick={this.on_click_import} value="Import Selected" />
+    if(rows.length <= 0) {
+      this.import_button.disabled = true;
+    }
+
+    return (
+      <Dialog>
+        <DialogHeader>
+          <h2>Component Import</h2>
+        </DialogHeader>
+
+        <DialogBody>
+          <button className="btn" onClick={this.on_unselect_all_checkboxes}>Unselect All</button>
+          {rows}
+        </DialogBody>
+
+        <DialogFooter>
+          <DialogFooterContent >
+            <div style={{display:"grid", gridTemplateColumns: "1fr 1fr", gridGap: "16px"}}>
+              <input className="r20btn btn" type="button" onClick={this.close} value="Close" />
+              {this.import_button}
+            </div>
+          </DialogFooterContent>
+        </DialogFooter>
+      </Dialog>
+    );
+  }
+}
+
+
+class Export_Component_Dialog extends DialogBase<string> {
+
+  pc: Character;
+  components = {};
+  export_individual_files = false;
+  num_checked = 0;
+  export_button: HTMLButtonElement;
+
+  public constructor() {
+    super(undefined, {minWidth: "30%"});
+  }
+
+  public show(pc: Character) {
+    this.pc = pc;
+    this.num_checked = 0;
+    super.internalShow();
+  }
+
+  update_export_button_state = () => {
+    if(this.num_checked <= 0) {
+      this.export_button.disabled = true;
+    }
+    else {
+      this.export_button.disabled = false;
+    }
+  }
+
+  on_check = (e) => {
+    var el = e.target as HTMLInputElement;
+    if(el.checked) {
+      this.num_checked += 1;
+    }
+    else {
+      this.num_checked -= 1;
+    }
+
+    this.update_export_button_state();
+  }
+
+  on_click_export = (e) => {
+    const root = this.getRoot();
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    const all_components: Array<Component_Export> = [];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+      if(!el.checked) continue;
+
+      var type_key = el.getAttribute("type_key");
+      var repeating_id = el.getAttribute("repeating_id");
+      var name = el.getAttribute("name");
+
+      var type = this.components[type_key];
+      var repeating = type[repeating_id];
+
+      var attributes: Array<CharacterSheetAttributeAttributes> = [];
+      for(const key in repeating) {
+        const attrib = repeating[key];
+        attributes.push(attrib);
+      }
+
+      all_components.push({
+        name: name,
+        type: this.get_type_name(type_key),
+        repeating_id: repeating_id,
+        attributes: attributes,
+      });
+    }
+
+    if(this.export_individual_files) {
+      let fs = {};
+
+      for(const component of all_components) {
+        let key = `${this.pc.attributes.name} ${component.type} ${component.name} ${component.repeating_id}.vttes_component_bundle`;
+
+        // NOTE(justasd): path separators make the fflate confused so we yeet them
+        // 2021-06-26
+        key = replaceAll(key, "/", "");
+        key = replaceAll(key, "\\", "");
+
+        let data: Component_Bundle_Export = {
+          schema_version: 1,
+          type: "vttes_component_bundle",
+          components: [ component ],
+        };
+
+        const json = JSON.stringify(data, null, 2);
+        const bytes = strToU8(json);
+
+        fs[key] = bytes;
+      }
+
+      const zipped = zipSync(fs);
+
+      const zip_blob = new Blob([zipped], { type: 'application/octet-stream' });
+      var file_name = "Components from " + this.pc.attributes.name + ".zip";
+
+      saveAs(zip_blob, file_name);
+
+      // TODO(justasd): test some more
+      // TODO(justasd): invalid schema message errors etc
+      // TODO(justasd): chrome test
+    }
+    else {
+      let data: Component_Bundle_Export = {
+        schema_version: 1,
+        type: "vttes_component_bundle",
+        components: all_components,
+      };
+
+      const file_name = "Components from " + this.pc.attributes.name + ".vttes_component_bundle";
+
+      const json_data = JSON.stringify(data, null, 2);
+      const json_blob = new Blob([json_data], { type: 'data:application/javascript;charset=utf-8' });
+      saveAs(json_blob, file_name);
+    }
+    this.close();
+  }
+
+  on_select_all = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+
+      if(!el.checked) {
+        el.checked = true;
+        this.num_checked += 1;
+      }
+    }
+    this.update_export_button_state();
+  }
+
+  on_unselect_all = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+      if(el.checked) {
+        el.checked = false;
+        this.num_checked -= 1;
+      }
+    }
+    this.update_export_button_state();
+  }
+
+  get_type_name = (type_key) => {
+    if(type_key === "attack") return "Attack";
+    else if(type_key === "inventory") return "Item";
+    else if(type_key === "proficiencies") return "Proficiency";
+    else if(type_key === "spell-1") return "Spell (lv 1)";
+    else if(type_key === "spell-2") return "Spell (lv 2)";
+    else if(type_key === "spell-3") return "Spell (lv 3)";
+    else if(type_key === "spell-4") return "Spell (lv 4)";
+    else if(type_key === "spell-5") return "Spell (lv 5)";
+    else if(type_key === "spell-6") return "Spell (lv 6)";
+    else if(type_key === "spell-7") return "Spell (lv 7)";
+    else if(type_key === "spell-8") return "Spell (lv 8)";
+    else if(type_key === "spell-9") return "Spell (lv 9)";
+    else if(type_key === "spell-cantrip") return "Cantrip";
+    else if(type_key === "tool") return "Tool";
+    else if(type_key === "traits") return "Trait";
+    else if(type_key === "npctrait") return "NPC Trait";
+    else if(type_key === "npcaction") return "NPC Action";
+    else if(type_key === "npcaction-l") return "NPC Legendary Action";
+    return type_key;
+  }
+
+  protected render() {
+
+    this.components = {};
+
+    for(const attrib of this.pc.attribs.models) {
+      var split = attrib.attributes.name.split("_");
+      if(split.length != 4) continue;
+      if(split[0] !== "repeating") continue;
+      var type = split[1];
+      var id = split[2];
+      var property = split[3];
+
+      if(!this.components[type]) {
+        this.components[type] = {};
+      }
+      var components_of_type = this.components[type];
+
+      if(!components_of_type[id]) {
+        components_of_type[id] = {};
+      }
+
+      var properties = components_of_type[id];
+
+      if(!properties[property]) {
+        properties[property] = attrib.attributes;
+      }
+    }
+
+    const columns = [];
+    for(const type_key in this.components) {
+      const type = this.components[type_key];
+
+      const data = [];
+
+      var type_name = this.get_type_name(type_key);
+
+      for(const repeating_id in type) {
+        const repeating_attribute = type[repeating_id];
+
+        const get_name_from = (name) => {
+          for(const attribute_key in repeating_attribute) {
+            if(attribute_key === name) {
+              const attrib = repeating_attribute[attribute_key];
+              return attrib.current;
+            }
+          }
+          return name;
+        };
+
+        var name = repeating_id;
+
+        if(type_key === "attack") name = get_name_from("atkname");
+        else if(type_key === "inventory") name = get_name_from("itemname");
+        else if(type_key === "proficiencies") name = get_name_from("name");
+        else if(type_key === "spell-1") name = get_name_from("spellname");
+        else if(type_key === "spell-2") name = get_name_from("spellname");
+        else if(type_key === "spell-3") name = get_name_from("spellname");
+        else if(type_key === "spell-4") name = get_name_from("spellname");
+        else if(type_key === "spell-5") name = get_name_from("spellname");
+        else if(type_key === "spell-6") name = get_name_from("spellname");
+        else if(type_key === "spell-7") name = get_name_from("spellname");
+        else if(type_key === "spell-8") name = get_name_from("spellname");
+        else if(type_key === "spell-9") name = get_name_from("spellname");
+        else if(type_key === "spell-cantrip") name = get_name_from("spellname");
+        else if(type_key === "tool") name = get_name_from("toolname");
+        else if(type_key === "traits") name = get_name_from("name"); 
+        else if(type_key === "npctrait") name = get_name_from("name"); 
+        else if(type_key === "npcaction") name = get_name_from("name"); 
+        else if(type_key === "npcaction-l") name = get_name_from("name"); 
+        else {
+          // NOTE(justasd): try guessing
+          for(const attribute_key in repeating_attribute) {
+            if(attribute_key.includes("name")) {
+              const attrib = repeating_attribute[attribute_key];
+              name = attrib.current;
+              break;
+            }
+          }
+        }
+
+        const checkbox = (<input 
+          className="vttes-component" 
+          type="checkbox" 
+          onChange={this.on_check}
+          style={{marginRight: "4px"}}
+        />);
+
+        checkbox.setAttribute("type_key", type_key);
+        checkbox.setAttribute("repeating_id", repeating_id);
+        checkbox.setAttribute("name", name);
+
+        const el = (
+          <div>
+            {checkbox}
+            {name}
+          </div>
+        );
+
+        data.push(el);
+      }
+
+      const col = (
+        <div style={{minWidth: "180px"}}>
+          <h3>
+            {type_name}
+            <button className="btn" onClick={this.on_select_all}>Select All</button>
+            <button className="btn" onClick={this.on_unselect_all}>Unselect All</button>
+          </h3>
+          <div>
+            {data}
+          </div>
+        </div>
+      );
+      columns.push(col);
+    }
+
+    this.export_button = <input disabled={true} className="r20btn btn" type="button" onClick={this.on_click_export} value="Export Selected" />
+    // TODO(justasd): sheet disclaimer
+
+    return (
+      <Dialog>
+        <DialogHeader>
+          <h2>Component Export</h2>
+        </DialogHeader>
+
+        <DialogBody>
+          {columns}
+        </DialogBody>
+
+        <DialogFooter>
+          <DialogFooterContent >
+            <div style={{display:"grid"}}>
+              <div style={{marginBottom: "10px"}}>
+                <input 
+                  checked={this.export_individual_files}
+                  type="checkbox" style={{marginRight: "4px"}}
+                  onChange={(e) => { this.export_individual_files = e.target.checked; }}
+                />
+                Export to individual files, zipped.
+              </div>
+
+              <div style={{display:"grid", gridTemplateColumns: "1fr 1fr", gridGap: "16px"}}>
+                <input className="r20btn btn" type="button" onClick={this.close} value="Close" />
+                {this.export_button}
+              </div>
+
+            </div>
+          </DialogFooterContent>
+        </DialogFooter>
+      </Dialog>
+
+    );
+  }
+}
 
 const get_default_character_save = (): any => {
   return {
@@ -357,6 +920,60 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     return pc;
   }
 
+  export_component_dialog: Export_Component_Dialog;
+  import_component_dialog: Import_Component_Dialog;
+
+  on_import_components_click = async (e: any) => {
+    e.stopPropagation();
+
+    const pc = this.getPc(e.target);
+    if(!pc) return;
+
+    const file_selector_element = (
+      <input 
+        type="file"
+        accept=".vttes_component_bundle"
+      />
+    );
+    
+    const listener = async () => {
+      file_selector_element.removeEventListener("change", listener);
+      const f_handle = file_selector_element.files[0];
+
+      try {
+        const data = await this.try_convert_file_handle_to_json(f_handle) as Component_Bundle_Export;
+
+        if(data.schema_version == 1) {
+          if(data.type == "vttes_component_bundle") {
+            this.import_component_dialog.show(pc, data);
+          }
+          else {
+            throw `Unsupported data type: ${data.type}`;
+          }
+        }
+        else {
+          throw `Unsupported version: ${data.schema_version}`;
+        }
+      }
+      catch(e) {
+        alert(e);
+        console.log(e);
+      }
+    };
+
+    file_selector_element.click();
+    file_selector_element.addEventListener("change", listener);
+  }
+
+  on_export_components_click = (e: any) => {
+    e.stopPropagation();
+
+    const pc = this.getPc(e.target);
+    if(!pc) return;
+
+    this.export_component_dialog.show(pc);
+  }
+
   on_export_click = async (e: any) => {
     e.stopPropagation();
 
@@ -543,11 +1160,56 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
           value={canEdit ? "Overwrite" : "You do not have permission to edit this character"}
           disabled={!canEdit}
         />
+
+        <div style={{width:"100%",display:"inline-block"}}>
+          <h3>Export Components</h3>
+
+          <p>
+            Export individual items, weapons, spells, traits etc of a character/NPC.
+          </p>
+          <p>
+            <i>
+            Note that only D&D 5e OGL is supported at the time. However, other sheets should work (albeit they won't be user-friendly).
+            </i>
+          </p>
+
+        </div>
+
+        <div style={{width:"100%",display:"inline-block"}}>
+          <h3>Import Components</h3>
+
+          <p>
+            Import components that were previously exported using the export components feature.
+          </p>
+        </div>
+
+        <input 
+          type="button" 
+          className="btn" 
+          onClick={this.on_export_components_click} 
+          style={{width:"auto"}}
+          data-characterid={data.characterId}
+          value="Export Components"
+        />
+
+        <input 
+          type="button" 
+          className="btn" 
+          style={{width:"auto"}}
+          onClick={this.on_import_components_click} 
+          data-characterid={data.characterId}
+          value={canEdit ? "Import Components" : "You do not have permission to edit this character"}
+          disabled={!canEdit}
+        />
+
       </div>
     )
   };
 
   setup = () => {
+    this.export_component_dialog = new Export_Component_Dialog();
+    this.import_component_dialog = new Import_Component_Dialog();
+
     this.sheetTab = SheetTab.add("Export & Overwrite", this.render_character_tab_widget);
     this.add_journal_widget();
 
@@ -680,7 +1342,9 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
   dispose = () => {
     super.dispose();
 
-    if (this.sheetTab) this.sheetTab.dispose();
+    if(this.export_component_dialog) this.export_component_dialog.dispose();
+    if(this.import_component_dialog) this.import_component_dialog.dispose();
+    if(this.sheetTab) this.sheetTab.dispose();
     findByIdAndRemove(CharacterIOModule.journalWidgetId);
 
     window.r20es.export_handout = null;
