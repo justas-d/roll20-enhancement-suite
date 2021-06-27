@@ -31,6 +31,8 @@ declare namespace Roll20 {
 
     export interface SyncObject<TAttribs> {
         save: (data?: TAttribs | any, extra?: any) => TAttribs;
+        syncedSave: (data? : TAttribs | any) => TAttribs;
+
         get: <T>(attrib: string) => T;
         destroy: () => void; // actually returns some firebase internal stuff that we dont care about
 
@@ -147,7 +149,11 @@ declare namespace Roll20 {
     }
 
     export interface CharacterSheetAttribute extends SyncObject<CharacterSheetAttributeAttributes>{
+      view: CharacterSheetAttributeView;
+    }
 
+    export interface CharacterSheetAttributeView {
+      rebindEvents: (char: Character) => void;
     }
 
     export interface CharacterAbilityAttributes {
@@ -202,6 +208,8 @@ declare namespace Roll20 {
         $el: any;
         showDialog: () => void;
         changedByMe: string | boolean;
+        saveSheetValues: (a: any, b: any) => void;
+        rebindEvents: (char: Character) => void;
     }
 
     export interface CampaignAttributes {

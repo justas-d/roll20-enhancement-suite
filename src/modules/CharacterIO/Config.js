@@ -3,7 +3,7 @@ import MakeConfig from '../MakeConfig'; import Category from '../Category';
 export default MakeConfig(__dirname, {
   id: "characterImportExport",
   name: "Journal Importer/Exporter",
-  description: "Provides character and handout importing and exporting (in the journal and on sheets).",
+  description: "Provides character, handout and character component (i.e weapons, spells, items etc) importing and exporting (in the journal and on sheets).",
   category: Category.exportImport,
   media: {
     "char_import.png": "Journal widget",

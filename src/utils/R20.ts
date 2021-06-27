@@ -226,6 +226,10 @@ namespace R20 {
         return window.generateUUID();
     };
 
+    export const generate_repeating_uuid = (): string => {
+      return window.generateUUID().replace(/_/g, "Z");
+    };
+
     export function getCurrentToolName(): string {
         return window.d20.engine.mode;
     }

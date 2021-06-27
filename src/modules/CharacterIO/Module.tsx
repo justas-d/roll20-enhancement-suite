@@ -7,11 +7,12 @@ import { SheetTab, SheetTabSheetInstanceData } from '../../utils/SheetTab';
 import { LoadingDialog } from '../../utils/DialogComponents';
 import { import_multiple_files } from "../../utils/import_multiple_files";
 import {replaceAll} from "../../utils/MiscUtils";
-import {Handout, Character, CharacterBlobs, CharacterAttributes, CharacterSheetAttributeAttributes } from "roll20";
+import {Handout, Character, CharacterBlobs, CharacterAttributes, CharacterSheetAttributeAttributes, CharacterSheetAttribute} from "roll20";
 import { promiseWait } from "../../utils/promiseWait";
 import {DialogBase} from "../../utils/DialogBase";
 import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../utils/DialogComponents";
 import { zipSync, strToU8} from 'fflate';
+import lexCompare from "../../utils/LexicographicalComparator";
 
 interface Component_Bundle_Export {
   schema_version: number;
@@ -23,15 +24,27 @@ interface Component_Export {
   name: string;
   type: string;
   repeating_id: string;
+  old_character_id: string;
   attributes: Array<CharacterSheetAttributeAttributes>;
+}
+
+interface Import_Dialog_Type_Group {
+  name: string;
+  components: Array<Component_Export>;
+}
+
+interface Import_Dialog_Imported_Attribute {
+  old_repeating_id: string;
+  new_repeating_id: string;
+  attribute: CharacterSheetAttribute;
 }
 
 class Import_Component_Dialog extends DialogBase<string> {
 
   pc: Character;
-  types: Array<any>;
+  types: Array<Import_Dialog_Type_Group> = [];
   import_button: HTMLButtonElement;
-  num_checked = 0
+  num_checked = 0;
 
   public constructor() {
     super(undefined, {minWidth: "30%"});
@@ -65,7 +78,6 @@ class Import_Component_Dialog extends DialogBase<string> {
 
     this.types = [];
     for(const component of data.components) {
-
       var type = this.types.find(t => t.name === component.type);
       if(!type) {
         type = {
@@ -77,6 +89,12 @@ class Import_Component_Dialog extends DialogBase<string> {
 
       type.components.push(component);
     }
+
+    for(const type of this.types) {
+      type.components.sort((a, b) => lexCompare(a, b, (d) => d.name));
+    }
+
+    this.types.sort((a, b) => lexCompare(a, b, (d) => d.name));
 
     super.internalShow();
   }
@@ -102,8 +120,9 @@ class Import_Component_Dialog extends DialogBase<string> {
       }
     }
 
+    const imported_attributes: Array<Import_Dialog_Imported_Attribute> = [];
     for(const component of components) {
-      const new_repeating_id = R20.generateUUID();
+      const new_repeating_id = R20.generate_repeating_uuid();
 
       for(const attribute of component.attributes) {
 
@@ -115,17 +134,55 @@ class Import_Component_Dialog extends DialogBase<string> {
         //  new_id = R20.generateUUID();
         //}
 
-        const new_name = replaceAll(attribute.name, component.repeating_id, new_repeating_id);
-
-        const new_attrib = this.pc.attribs.create({
-          name: new_name,
+        const data = {
+          name: replaceAll(attribute.name || "", component.repeating_id, new_repeating_id),
           current: attribute.current,
           max: attribute.max,
-        });
+        };
 
-        //new_attrib.save({
-        //  id: new_id,
-        //});
+        // NOTE(justasd): Some properties (such as rollcontent in 5e ogl) explicitly reference the
+        // id of the parent character. We hope to rebase the character ids by replacing the old
+        // one char id with the new parent char id here.
+        // 2021-06-27
+        if(typeof(data.current) === "string") {
+          data.current = replaceAll(attribute.current || "", component.old_character_id, this.pc.attributes.id);
+        }
+        if(typeof(data.max) === "string") {
+          data.max = replaceAll(attribute.max || "", component.old_character_id, this.pc.attributes.id);
+        }
+
+        const new_attrib = this.pc.attribs.create(data);
+
+        imported_attributes.push({
+          old_repeating_id: component.repeating_id,
+          new_repeating_id: new_repeating_id,
+          attribute: new_attrib,
+        });
+      }
+    }
+  
+    // NOTE(justasd): resolve cross-component references. In 5e ogl spell attacks components
+    // reference spell component descriptions by repeating id. So without this, if we import a spell
+    // with its spell component and attack component, the attack component's "show description"
+    // button will not work as it will not find the proper spell component.
+    // 2021-06-27
+    for(let outer_it = 0; outer_it < imported_attributes.length; ++outer_it) {
+      for(let inner_it = outer_it + 1; inner_it < imported_attributes.length; ++inner_it) {
+        const outer = imported_attributes[outer_it];
+        const inner = imported_attributes[inner_it];
+
+        const replace = (a: Import_Dialog_Imported_Attribute, b: Import_Dialog_Imported_Attribute) => {
+          if(typeof(a.attribute.attributes.current) !== "string") return;
+
+          if(a.attribute.attributes.current.includes(b.old_repeating_id)) {
+            a.attribute.save({
+              current: replaceAll(a.attribute.attributes.current || "", b.old_repeating_id, b.new_repeating_id),
+            });
+          }
+        }
+
+        replace(outer, inner);
+        replace(inner, outer);
       }
     }
 
@@ -161,8 +218,22 @@ class Import_Component_Dialog extends DialogBase<string> {
     this.update_import_button_state();
   }
 
+  on_select_all_checkboxes = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+      el.checked = true;
+      this.num_checked += 1;
+    }
+
+    this.update_import_button_state();
+  }
+
+
   on_unselect_all_checkboxes = (e) => {
-    const root = e.target.parentElement;
+    const root = e.target.parentElement.parentElement;
     const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
 
     for(const el of all_els) {
@@ -205,7 +276,13 @@ class Import_Component_Dialog extends DialogBase<string> {
 
       rows.push(
         <div style={{minWidth: "180px"}}>
-          <h3>
+          <hr/>
+          <h3 style={{
+            display: "grid",
+            gridTemplateColumns: "1.5fr 1fr 1fr",
+            gridGap: "5px",
+            alignItems: "center",
+          }}>
             {type.name}
             <button className="btn" onClick={this.on_select_all}>Select All</button>
             <button className="btn" onClick={this.on_unselect_all}>Unselect All</button>
@@ -217,7 +294,7 @@ class Import_Component_Dialog extends DialogBase<string> {
       );
     }
 
-    this.import_button = <input className="r20btn btn" type="button" onClick={this.on_click_import} value="Import Selected" />
+    this.import_button = <input className="r20btn btn btn-success" type="button" onClick={this.on_click_import} value="Import Selected" />
     if(rows.length <= 0) {
       this.import_button.disabled = true;
     }
@@ -229,7 +306,14 @@ class Import_Component_Dialog extends DialogBase<string> {
         </DialogHeader>
 
         <DialogBody>
-          <button className="btn" onClick={this.on_unselect_all_checkboxes}>Unselect All</button>
+            
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+          }}>
+            <button className="btn" onClick={this.on_select_all_checkboxes}>Select All</button>
+            <button className="btn" onClick={this.on_unselect_all_checkboxes}>Unselect All</button>
+          </div>
           {rows}
         </DialogBody>
 
@@ -246,11 +330,27 @@ class Import_Component_Dialog extends DialogBase<string> {
   }
 }
 
+interface Export_Dialog_Type_Group {
+  key: string;
+  components: Array<Export_Dialog_Component_Group>;
+}
+
+interface Export_Dialog_Component_Group {
+  repeating_id: string;
+  name: string;
+  properties: Array<Export_Dialog_Component_Property>;
+}
+
+interface Export_Dialog_Component_Property {
+  name: string;
+  attribute: CharacterSheetAttributeAttributes;
+}
 
 class Export_Component_Dialog extends DialogBase<string> {
 
   pc: Character;
-  components = {};
+  types: Array<Export_Dialog_Type_Group> = [];
+
   export_individual_files = false;
   num_checked = 0;
   export_button: HTMLButtonElement;
@@ -300,19 +400,28 @@ class Export_Component_Dialog extends DialogBase<string> {
       var repeating_id = el.getAttribute("repeating_id");
       var name = el.getAttribute("name");
 
-      var type = this.components[type_key];
-      var repeating = type[repeating_id];
+      var type = this.types.find(t => t.key === type_key);
+      if(!type) {
+        console.error(`Could not find type with key '${type_key}'. Type array is`, this.types);
+        continue;
+      }
+
+      var component = type.components.find(c => c.repeating_id === repeating_id);
+      if(!component) {
+        console.error(`Could not find component with repeating id '${repeating_id}'. Type array is`, this.types, "component array is", component);
+        continue;
+      }
 
       var attributes: Array<CharacterSheetAttributeAttributes> = [];
-      for(const key in repeating) {
-        const attrib = repeating[key];
-        attributes.push(attrib);
+      for(const prop of component.properties) {
+        attributes.push(prop.attribute);
       }
 
       all_components.push({
         name: name,
         type: this.get_type_name(type_key),
         repeating_id: repeating_id,
+        old_character_id: this.pc.attributes.id,
         attributes: attributes,
       });
     }
@@ -346,10 +455,6 @@ class Export_Component_Dialog extends DialogBase<string> {
       var file_name = "Components from " + this.pc.attributes.name + ".zip";
 
       saveAs(zip_blob, file_name);
-
-      // TODO(justasd): test some more
-      // TODO(justasd): invalid schema message errors etc
-      // TODO(justasd): chrome test
     }
     else {
       let data: Component_Bundle_Export = {
@@ -396,6 +501,19 @@ class Export_Component_Dialog extends DialogBase<string> {
     this.update_export_button_state();
   }
 
+  on_select_all_checkboxes = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.hasOwnProperty("checked")) continue;
+      el.checked = true;
+      this.num_checked += 1;
+    }
+
+    this.update_export_button_state();
+  }
+
   get_type_name = (type_key) => {
     if(type_key === "attack") return "Attack";
     else if(type_key === "inventory") return "Item";
@@ -420,83 +538,100 @@ class Export_Component_Dialog extends DialogBase<string> {
 
   protected render() {
 
-    this.components = {};
+    this.types = [];
 
     for(const attrib of this.pc.attribs.models) {
       var split = attrib.attributes.name.split("_");
-      if(split.length != 4) continue;
+      if(split.length < 4) continue;
       if(split[0] !== "repeating") continue;
-      var type = split[1];
-      var id = split[2];
-      var property = split[3];
 
-      if(!this.components[type]) {
-        this.components[type] = {};
+      let type_key = split[1];
+      var repeating_id = split[2];
+
+      var sliced = split.slice(3, split.length);
+      var property = sliced.join("_");
+
+      var type = this.types.find(t => t.key === type_key);
+      if(!type) {
+        type = {
+          key: type_key,
+          components: [],
+        };
+        this.types.push(type);
       }
-      var components_of_type = this.components[type];
 
-      if(!components_of_type[id]) {
-        components_of_type[id] = {};
+      var component = type.components.find(c => c.repeating_id === repeating_id);
+      if(!component) {
+        component = {
+          repeating_id: repeating_id,
+          name: "",
+          properties: [],
+        };
+        type.components.push(component);
       }
 
-      var properties = components_of_type[id];
-
-      if(!properties[property]) {
-        properties[property] = attrib.attributes;
-      }
+      component.properties.push({
+        name: property,
+        attribute: attrib.attributes,
+      });
     }
-
-    const columns = [];
-    for(const type_key in this.components) {
-      const type = this.components[type_key];
-
-      const data = [];
-
-      var type_name = this.get_type_name(type_key);
-
-      for(const repeating_id in type) {
-        const repeating_attribute = type[repeating_id];
+    
+    for(const type of this.types) {
+      for(const component of type.components) {
 
         const get_name_from = (name) => {
-          for(const attribute_key in repeating_attribute) {
-            if(attribute_key === name) {
-              const attrib = repeating_attribute[attribute_key];
-              return attrib.current;
+          for(const prop of component.properties) {
+            if(prop.name === name) {
+              return prop.attribute.current;
             }
           }
+
           return name;
         };
 
-        var name = repeating_id;
-
-        if(type_key === "attack") name = get_name_from("atkname");
-        else if(type_key === "inventory") name = get_name_from("itemname");
-        else if(type_key === "proficiencies") name = get_name_from("name");
-        else if(type_key === "spell-1") name = get_name_from("spellname");
-        else if(type_key === "spell-2") name = get_name_from("spellname");
-        else if(type_key === "spell-3") name = get_name_from("spellname");
-        else if(type_key === "spell-4") name = get_name_from("spellname");
-        else if(type_key === "spell-5") name = get_name_from("spellname");
-        else if(type_key === "spell-6") name = get_name_from("spellname");
-        else if(type_key === "spell-7") name = get_name_from("spellname");
-        else if(type_key === "spell-8") name = get_name_from("spellname");
-        else if(type_key === "spell-9") name = get_name_from("spellname");
-        else if(type_key === "spell-cantrip") name = get_name_from("spellname");
-        else if(type_key === "tool") name = get_name_from("toolname");
-        else if(type_key === "traits") name = get_name_from("name"); 
-        else if(type_key === "npctrait") name = get_name_from("name"); 
-        else if(type_key === "npcaction") name = get_name_from("name"); 
-        else if(type_key === "npcaction-l") name = get_name_from("name"); 
+        var name = component.repeating_id;
+        if(type.key === "attack") name = get_name_from("atkname");
+        else if(type.key === "inventory") name = get_name_from("itemname");
+        else if(type.key === "proficiencies") name = get_name_from("name");
+        else if(type.key === "spell-1") name = get_name_from("spellname");
+        else if(type.key === "spell-2") name = get_name_from("spellname");
+        else if(type.key === "spell-3") name = get_name_from("spellname");
+        else if(type.key === "spell-4") name = get_name_from("spellname");
+        else if(type.key === "spell-5") name = get_name_from("spellname");
+        else if(type.key === "spell-6") name = get_name_from("spellname");
+        else if(type.key === "spell-7") name = get_name_from("spellname");
+        else if(type.key === "spell-8") name = get_name_from("spellname");
+        else if(type.key === "spell-9") name = get_name_from("spellname");
+        else if(type.key === "spell-cantrip") name = get_name_from("spellname");
+        else if(type.key === "tool") name = get_name_from("toolname");
+        else if(type.key === "traits") name = get_name_from("name"); 
+        else if(type.key === "npctrait") name = get_name_from("name"); 
+        else if(type.key === "npcaction") name = get_name_from("name"); 
+        else if(type.key === "npcaction-l") name = get_name_from("name"); 
         else {
           // NOTE(justasd): try guessing
-          for(const attribute_key in repeating_attribute) {
-            if(attribute_key.includes("name")) {
-              const attrib = repeating_attribute[attribute_key];
-              name = attrib.current;
+          for(const prop of component.properties) {
+            if(prop.name.includes("name")) {
+              name = prop.attribute.current;
               break;
             }
           }
         }
+
+        component.name = name;
+      }
+      type.components.sort((a, b) => lexCompare(a, b, (d) => d.name));
+    }
+
+    this.types.sort((a, b) => lexCompare(a, b, (d) => d.key));
+
+    const columns = [];
+
+    for(const type of this.types) {
+      const data = [];
+      var type_name = this.get_type_name(type.key);
+
+      for(const component of type.components) {
 
         const checkbox = (<input 
           className="vttes-component" 
@@ -505,14 +640,14 @@ class Export_Component_Dialog extends DialogBase<string> {
           style={{marginRight: "4px"}}
         />);
 
-        checkbox.setAttribute("type_key", type_key);
-        checkbox.setAttribute("repeating_id", repeating_id);
-        checkbox.setAttribute("name", name);
+        checkbox.setAttribute("type_key", type.key);
+        checkbox.setAttribute("repeating_id", component.repeating_id);
+        checkbox.setAttribute("name", component.name);
 
         const el = (
           <div>
             {checkbox}
-            {name}
+            {component.name}
           </div>
         );
 
@@ -521,7 +656,13 @@ class Export_Component_Dialog extends DialogBase<string> {
 
       const col = (
         <div style={{minWidth: "180px"}}>
-          <h3>
+          <hr/>
+          <h3 style={{
+            display: "grid",
+            gridTemplateColumns: "1.5fr 1fr 1fr",
+            gridGap: "5px",
+            alignItems: "center",
+          }}>
             {type_name}
             <button className="btn" onClick={this.on_select_all}>Select All</button>
             <button className="btn" onClick={this.on_unselect_all}>Unselect All</button>
@@ -534,8 +675,15 @@ class Export_Component_Dialog extends DialogBase<string> {
       columns.push(col);
     }
 
-    this.export_button = <input disabled={true} className="r20btn btn" type="button" onClick={this.on_click_export} value="Export Selected" />
-    // TODO(justasd): sheet disclaimer
+    this.export_button = <input disabled={true} className="r20btn btn btn-success" type="button" onClick={this.on_click_export} value="Export Selected" />
+
+    const zip_checkbox = (
+      <input 
+        checked={this.export_individual_files}
+        type="checkbox" style={{marginRight: "4px"}}
+        onChange={(e) => { this.export_individual_files = e.target.checked; }}
+      />
+    );
 
     return (
       <Dialog>
@@ -544,6 +692,9 @@ class Export_Component_Dialog extends DialogBase<string> {
         </DialogHeader>
 
         <DialogBody>
+          <div style={{display: "grid"}}>
+            <button className="btn" onClick={this.on_select_all_checkboxes}>Select All</button>
+          </div>
           {columns}
         </DialogBody>
 
@@ -551,12 +702,10 @@ class Export_Component_Dialog extends DialogBase<string> {
           <DialogFooterContent >
             <div style={{display:"grid"}}>
               <div style={{marginBottom: "10px"}}>
-                <input 
-                  checked={this.export_individual_files}
-                  type="checkbox" style={{marginRight: "4px"}}
-                  onChange={(e) => { this.export_individual_files = e.target.checked; }}
-                />
-                Export to individual files, zipped.
+                {zip_checkbox}
+                <span style={{cursor: "pointer"}} onclick={() => zip_checkbox.click()}>
+                  Export to individual files, zipped.
+                </span>
               </div>
 
               <div style={{display:"grid", gridTemplateColumns: "1fr 1fr", gridGap: "16px"}}>
@@ -574,33 +723,37 @@ class Export_Component_Dialog extends DialogBase<string> {
 }
 
 const get_default_character_save = (): any => {
-  return {
+  const data: any = {
     name: "",
     avatar: "",
-    tags: "",
-    controlledby: "",
-    inplayerjournals: "",
-    defaulttoken: "",
-    bio: "",
-    gmnotes: "",
-    archived: false,
     attrorder: "",
     abilorder: "",
     mancerdata: "",
     mancerget: "",
     mancerstep: "",
   };
+
+  if(R20.isGM()) {
+    data.archived = false;
+    data.tags = "";
+    data.controlledby = "";
+    data.inplayerjournals = "";
+    data.defaulttoken = "";
+    data.bio = "";
+    data.gmnotes = "";
+  }
+  return data;
 };
 
 const SHEET_ID = "r20es-handout-button-enabled-sheet";
 
 const get_default_character_blobs = () => {
   const blob: CharacterBlobs = {
-    defaulttoken: null,
     bio: null
   };
 
   if (R20.isGM()) {
+    blob.defaulttoken = null;
     blob.gmnotes = null;
   }
 
@@ -704,8 +857,15 @@ const overwrite_char_v2 = (pc: Character, data: any): Promise<any> => {
       }
     }
 
-    let save = {...get_default_character_save(), ...data};
-    save.defaulttoken= "";
+    let save = {...get_default_character_save()};
+    save.name = data.name;
+    save.avatar = data.avatar;
+
+    if(R20.isGM()) {
+      save.tags = data.tags;
+      save.controlledby = data.controlledby;
+      save.inplayerjournals = data.inplayerjournals;
+    }
 
     {
       let blobs = get_default_character_blobs();
@@ -718,12 +878,14 @@ const overwrite_char_v2 = (pc: Character, data: any): Promise<any> => {
         blobs.gmnotes = data.gmnotes
       }
 
-      if (hasToken) {
-        blobs.defaulttoken = data.defaulttoken;
-        save.defaulttoken = (new Date).getTime();
-      } else {
-        blobs.defaulttoken = null;
-        save.defaulttoken = "";
+      if(R20.isGM()) {
+        if (hasToken) {
+          blobs.defaulttoken = data.defaulttoken;
+          save.defaulttoken = (new Date).getTime();
+        } else {
+          blobs.defaulttoken = null;
+          save.defaulttoken = "";
+        }
       }
 
       pc.updateBlobs(blobs);
@@ -736,6 +898,8 @@ const overwrite_char_v2 = (pc: Character, data: any): Promise<any> => {
     for(let abil of data.abilities) {
       pc.abilities.create(abil);
     }
+
+    //console.log(save);
 
     pc.save(save, { success: (v) => {
       resolve();
@@ -1169,7 +1333,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
           </p>
           <p>
             <i>
-            Note that only D&D 5e OGL is supported at the time. However, other sheets should work (albeit they won't be user-friendly).
+            Note that only the D&D 5e OGL sheet is supported at the time. However, other sheets should work (albeit they won't be user-friendly).
             </i>
           </p>
 
