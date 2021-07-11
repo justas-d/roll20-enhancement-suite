@@ -2,6 +2,8 @@ import {R20Module} from '../../utils/R20Module'
 import { DOM } from '../../utils/DOM'
 import { R20 } from "../../utils/R20";
 
+const BUTTON_CLASS = "vttes-character-image-from-url";
+
 class CharacterAvatarFromURL extends R20Module.OnAppLoadBase {
 
   observer: MutationObserver;
@@ -24,6 +26,7 @@ class CharacterAvatarFromURL extends R20Module.OnAppLoadBase {
     }
 
     const url = window.prompt("Set character avatar from URL:", this.last_url);
+    if(url == null) return;
 
     if(url) {
       this.last_url = url;
@@ -52,11 +55,11 @@ class CharacterAvatarFromURL extends R20Module.OnAppLoadBase {
               //console.log(insert_before);
               const button = (
                 <button
-                  className="btn"
+                  className={`btn ${BUTTON_CLASS}`}
                   onClick={this.set_image_from_url}
                   data-characterid={character_id}
                 >
-                  VTTES: Set from URL
+                  VTTES: Set avatar image from URL
                 </button>
               )
 
@@ -82,6 +85,8 @@ class CharacterAvatarFromURL extends R20Module.OnAppLoadBase {
     if(this.observer) {
       this.observer.disconnect();
     }
+
+    document.querySelectorAll(`.${BUTTON_CLASS}`).forEach(e => e.remove());
   }
 }
 
