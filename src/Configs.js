@@ -47,6 +47,7 @@ import ChromeUpdateChecker from "./modules/ChromeUpdateChecker/Config"
 import CharacterAvatarFromURL from "./modules/CharacterAvatarFromURL/Config"
 import HideTipsyPopup from "./modules/HideTipsyPopup/Config"
 import CameraStartPosition from "./modules/CameraStartPosition/Config"
+import HandoutImageFromURL  from "./modules/HandoutImageFromURL/Config"
 
 //import LibreAnimatedTokens from "./modules/LibreAnimatedTokens/Config"
 
@@ -101,6 +102,7 @@ addCfg(PerformanceImprovements);
 addCfg(CharacterAvatarFromURL);
 addCfg(HideTipsyPopup);
 addCfg(CameraStartPosition);
+addCfg(HandoutImageFromURL);
 
 if(VTTES_BROWSER == "chrome") {
   addCfg(ChromeUpdateChecker);
