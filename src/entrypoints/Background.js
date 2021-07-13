@@ -4,47 +4,58 @@ import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection"
 import editorUrls from "../utils/EditorURLs";
 import {MESSAGE_KEY_DOM_LOADED} from "../MiscConstants";
 import {getHooks, injectHooks} from "../HookUtils";
+import {replace_all_and_count} from "../utils/MiscUtils";
+
+const is_requesting_editor_html = (request) => {
+  const url = request.url;
+
+  if(url === "https://app.roll20.net/editor/") {
+    return true;
+  }
+
+  if(url === "https://app.roll20.net/editor") {
+    return true;
+  }
+
+  if(url.startsWith("https://app.roll20.net/editor?")) {
+    return true;
+  }
+
+  if(url.startsWith("https://app.roll20.net/editor#")) {
+    return true;
+  }
+
+  return false;
+}
 
 if (doesBrowserNotSupportResponseFiltering()) {
 
     const isEditorRequest = (request) => {
-        const url = request.url;
+      const url = request.url;
+      return is_requesting_editor_html(request);
 
-        if(url.startsWith("https://app.roll20.net/editor/setcampaign/")) {
-            return true;
-        }
+      if(url.startsWith("https://app.roll20.net/editor/setcampaign/")) {
+        return true;
+      }
 
-        if(url === "https://app.roll20.net/editor/") {
-            return true;
-        }
-
-        if(url === "https://app.roll20.net/editor") {
-            return true;
-        }
-
-        if(url.startsWith("https://app.roll20.net/editor?")) {
-            return true;
-        }
-
-        if(url.startsWith("https://app.roll20.net/editor#")) {
-            return true;
-        }
-
-        return false;
+      if(is_requesting_editor_html(request)) {
+        return true;
+      }
+      return false;
     };
 
     const targetScripts = [
-        "https://app.roll20.net/v2/js/jquery",
-        "https://app.roll20.net/v2/js/jquery.migrate.js",
-        "https://app.roll20.net/js/featuredetect.js",
-        "https://app.roll20.net/v2/js/patience.js",
-        "https://app.roll20.net/editor/startjs",
-        "https://app.roll20.net/js/jquery-ui",
-        "https://app.roll20.net/js/d20/loading.js",
-        "https://app.roll20.net/assets/firebase",
-        "https://app.roll20.net/assets/base.js",
-        "https://app.roll20.net/assets/app.js",
-        "https://app.roll20.net/js/tutorial_tips.js"
+      "https://app.roll20.net/v2/js/jquery",
+      "https://app.roll20.net/v2/js/jquery.migrate.js",
+      "https://app.roll20.net/js/featuredetect.js",
+      "https://app.roll20.net/v2/js/patience.js",
+      "https://app.roll20.net/editor/startjs",
+      "https://app.roll20.net/js/jquery-ui",
+      "https://app.roll20.net/js/d20/loading.js",
+      "https://app.roll20.net/assets/firebase",
+      "https://app.roll20.net/assets/base.js",
+      "https://app.roll20.net/assets/app.js",
+      "https://app.roll20.net/js/tutorial_tips.js"
     ];
 
     let alreadyRedirected = {};
@@ -202,8 +213,39 @@ else {
 
     // thanks, Firefox.
     window.requestListener = function (dt) {
+
+      if(is_requesting_editor_html(dt)) {
+        const hookQueue = getHooks(configs, dt.url);
+        const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
+        const decoder = new TextDecoder("utf-8");
+
+        let stringBuffer = "";
+
+        filter.ondata = e => {
+          stringBuffer += decoder.decode(e.data, {stream: true});
+        };
+
+        filter.onstop = e => {
+          const replace = replace_all_and_count(
+            stringBuffer, 
+            "https://www.googletagmanager.com",
+            "https://invalid.asdkljaskldfjalksd"
+          );
+
+          if(replace.count <= 0)
+            console.error("Failed to cancel google analytics on twitter!");
+          else {
+            console.log(`Cancelled google analytics on twitter ${replace.count} times!`);
+          }
+
+          filter.write(new TextEncoder().encode(replace.result));
+          filter.close();
+        };
+      }
+      else {
         const isRedir = isRedirectTarget(dt.url);
         console.log(`${isRedir}: ${dt.url}`);
+
         if (!isRedir) return;
 
         const hookQueue = getHooks(configs, dt.url);
@@ -215,16 +257,16 @@ else {
         let stringBuffer = `console.log("running ${dt.url}");`;
 
         filter.ondata = e => {
-            stringBuffer += decoder.decode(e.data, {stream: true});
+          stringBuffer += decoder.decode(e.data, {stream: true});
         };
 
         filter.onstop = e => {
+          const hookedData = injectHooks(stringBuffer, hookQueue);
 
-            const hookedData = injectHooks(stringBuffer, hookQueue);
-
-            filter.write(new TextEncoder().encode(hookedData));
-            filter.close();
+          filter.write(new TextEncoder().encode(hookedData));
+          filter.close();
         };
+      }
     }
 }
 
