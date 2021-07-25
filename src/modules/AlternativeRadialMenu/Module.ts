@@ -53,7 +53,7 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
 
 #radial-menu .markermenu.open {
     border-radius: 0;
-    top: 47px;
+    top: 62px;
     padding-left: 0;
     left: -80px;
     width: 375px;
