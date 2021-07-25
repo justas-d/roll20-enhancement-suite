@@ -7,7 +7,7 @@ export default MakeConfig(__dirname, {
     description: "Force a certain background. The night mode is deprecated in favor of RedReign's Dark Theme.",
 
     urls: {
-        "You can find it here": "https://github.com/RedReign/Roll20-Dark-Theme"
+        "You can find it here": "https://openuserjs.org/scripts/Pharonix/Roll20_Dark/source"
     },
 
     category: Category.canvas,
