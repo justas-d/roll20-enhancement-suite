@@ -43,32 +43,29 @@ class CharacterAvatarFromURL extends R20Module.OnAppLoadBase {
         if(!el.firstElementChild) continue;
 
         if(el.firstElementChild.classList.contains("charactereditor")) {
-          //console.log(el);
+          console.log(el);
 
           const character_id = el.getAttribute("data-characterid");
 
           const avatar_el = el.querySelector(".avatar");
-          if(avatar_el) {
-            //console.log(avatar_el);
-            const insert_before = avatar_el.nextElementSibling.nextElementSibling;
-            if(insert_before) {
-              //console.log(insert_before);
-              const button = (
-                <button
-                  className={`btn ${BUTTON_CLASS}`}
-                  onClick={this.set_image_from_url}
-                  data-characterid={character_id}
-                >
-                  VTTES: Set avatar image from URL
-                </button>
-              )
 
-              avatar_el.parentNode.insertBefore(button, insert_before);
-            }
+          if(avatar_el) {
+            const button = (
+              <button
+                className={`btn ${BUTTON_CLASS}`}
+                onClick={this.set_image_from_url}
+                data-characterid={character_id}
+                style={{marginTop: "8px"}}
+              >
+                VTTES: Set avatar image from URL
+              </button>
+            );
+
+            avatar_el.parentNode.insertBefore(button, avatar_el.nextElementSibling);
           }
-          //else {
-          //  console.error("Could not find avatar_el");
-          //}
+          else {
+            console.error("Could not find avatar_el");
+          }
         }
       }
     }
