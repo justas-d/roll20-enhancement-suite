@@ -23,7 +23,6 @@ class CustomPathWidth extends R20Module.OnAppLoadBase {
 
     const selected_tokens = R20.getSelectedTokens();
     for(const token of selected_tokens) {
-      console.log(token);
       if(token.type != "path") continue;
 
       // @ts-ignore
@@ -61,7 +60,6 @@ class CustomPathWidth extends R20Module.OnAppLoadBase {
   }
 
   on_shape_selected = (e, t) => {
-    console.log(e, t);
 
     const select = this.try_get_select_element();
     if(select) {
