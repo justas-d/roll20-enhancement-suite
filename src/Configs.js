@@ -48,15 +48,13 @@ import CharacterAvatarFromURL from "./modules/CharacterAvatarFromURL/Config"
 import HideTipsyPopup from "./modules/HideTipsyPopup/Config"
 import CameraStartPosition from "./modules/CameraStartPosition/Config"
 import HandoutImageFromURL  from "./modules/HandoutImageFromURL/Config"
-
-//import LibreAnimatedTokens from "./modules/LibreAnimatedTokens/Config"
+import CustomPathWidth from "./modules/CustomPathWidth/Config"
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
 
 addCfg(DisablePlayerDrawings);
 addCfg(TokenBarPositionAdjust);
-//addCfg(LibreAnimatedTokens);
 addCfg(LibreAudio);
 addCfg(TokenFromImg);
 addCfg(AdjustableOpacity);
@@ -103,6 +101,7 @@ addCfg(CharacterAvatarFromURL);
 addCfg(HideTipsyPopup);
 addCfg(CameraStartPosition);
 addCfg(HandoutImageFromURL);
+addCfg(CustomPathWidth);
 
 if(VTTES_BROWSER == "chrome") {
   addCfg(ChromeUpdateChecker);

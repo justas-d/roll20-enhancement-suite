@@ -576,6 +576,10 @@ ${content}
         return window["d20plus"] !== undefined;
     };
 
+    export const set_drawing_brush_size = (size: number) => {
+      window.d20.engine.canvas.freeDrawingBrush.width = size;
+    }
+
     export const wipeObjectStorage = <T>(storage: ObjectStorage<SyncObject<T>>): void => {
 
         const len = storage.length;

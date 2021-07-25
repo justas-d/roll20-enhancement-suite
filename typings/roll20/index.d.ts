@@ -425,6 +425,7 @@ declare namespace Roll20 {
         angle: number;
         flipX: boolean;
         flipY: boolean;
+        type: "path";
 
         _nameplate_data: {
             font_size: number,
@@ -555,10 +556,15 @@ declare namespace Roll20 {
         collection: ObjectStorage<Character>
     }
     export interface Canvas {
-        getObjects: () => CanvasObject[];
-        containsPoint: (e: MouseEvent, obj: CanvasObject) => boolean;
-        width: number;
-        height: number;
+      getObjects: () => CanvasObject[];
+      containsPoint: (e: MouseEvent, obj: CanvasObject) => boolean;
+      width: number;
+      height: number;
+      freeDrawingBrush: FreeDrawingBrush;
+    }
+
+    export interface FreeDrawingBrush {
+      width: number;
     }
 
     export interface Utils {
