@@ -2,7 +2,7 @@ import MakeConfig from '../MakeConfig'; import Category from '../Category';
 
 export default MakeConfig(__dirname, {
   id: "handoutImageFromUrl",
-  name: "Set Hadnout Image from URL",
+  name: "Set Handout Image from URL",
   description: "Allows you to set the handout image via a URL.",
   category: Category.misc,
   gmOnly: false,
