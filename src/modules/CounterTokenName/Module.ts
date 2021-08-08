@@ -6,52 +6,50 @@ import {TOKEN_CONTEXT_MENU_ORDER_NAME_COUNTER} from '../TokenContextMenuApi/Cons
 const ENUMERATE_TOKENS = "Add Counter";
 
 class EnumerateTokensModule extends R20Module.SimpleBase {
-    public constructor() {
-        super(__dirname);
+  public constructor() {
+    super(__dirname);
+  }
+
+  private onClickMenuItem = () => {
+    const objects = R20.getSelectedTokens();
+
+    // tokens will locally disappear if we do not unselect them here
+    R20.unselectTokens();
+
+    let counter = {};
+    for (let token of objects) {
+      const model = R20.try_get_canvas_object_model(token);
+      if(!model) {
+        return;
+      }
+
+      let originalName = model.character && model.character.attributes.name;
+      if (!originalName) {
+        originalName = model.attributes.name;
+      }
+
+      if (!counter[originalName]) {
+        counter[originalName] = 0;
+      }
+
+      if (originalName) {
+        const save = {name: `${originalName} ${++counter[originalName]}`};
+        model.save(save);
+      }
     }
+  };
 
-    private onClickMenuItem = () => {
+  public setup() {
+    if(!R20.isGM()) return;
 
-        const objects = R20.getSelectedTokens();
+    TokenContextMenu.addButton(ENUMERATE_TOKENS, this.onClickMenuItem, TOKEN_CONTEXT_MENU_ORDER_NAME_COUNTER, {
+      mustHaveSelection: true
+    });
+  }
 
-        // tokens will locally disappear if we do not unselect them here
-        R20.unselectTokens();
-
-        let counter = {};
-        for (let token of objects) {
-            const model = R20.try_get_canvas_object_model(token);
-
-            if(!model) {
-                return;
-            }
-
-            let originalName = model.character && model.character.attributes.name;
-            if (!originalName) {
-                originalName = model.attributes.name;
-            }
-
-            if (!counter[originalName]) {
-                counter[originalName] = 0;
-            }
-
-            if (originalName) {
-                const save = {name: `${originalName} ${++counter[originalName]}`};
-                model.save(save);
-            }
-        }
-    };
-
-    public setup() {
-        if(!R20.isGM()) return;
-
-        TokenContextMenu.addButton(ENUMERATE_TOKENS, this.onClickMenuItem, TOKEN_CONTEXT_MENU_ORDER_NAME_COUNTER, {
-            mustHaveSelection: true
-        });
-    }
-
-    public dispose() {
-        TokenContextMenu.removeButton(ENUMERATE_TOKENS, this.onClickMenuItem);
-    }
+  public dispose() {
+    TokenContextMenu.removeButton(ENUMERATE_TOKENS, this.onClickMenuItem);
+  }
 }
 
 if (R20Module.canInstall()) new EnumerateTokensModule().install();
