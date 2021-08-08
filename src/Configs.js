@@ -49,6 +49,7 @@ import HideTipsyPopup from "./modules/HideTipsyPopup/Config"
 import CameraStartPosition from "./modules/CameraStartPosition/Config"
 import HandoutImageFromURL  from "./modules/HandoutImageFromURL/Config"
 import CustomPathWidth from "./modules/CustomPathWidth/Config"
+import ExtraRulers from "./modules/ExtraRulers/Config"
 
 let configs = {};
 const addCfg = cfg => configs[cfg.id] = cfg;
@@ -102,6 +103,7 @@ addCfg(HideTipsyPopup);
 addCfg(CameraStartPosition);
 addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
+addCfg(ExtraRulers);
 
 if(VTTES_BROWSER == "chrome") {
   addCfg(ChromeUpdateChecker);

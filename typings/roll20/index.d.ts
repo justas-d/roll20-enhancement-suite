@@ -630,6 +630,19 @@ declare namespace Roll20 {
 
     export interface R20ES {
       syncConfigs: () => void;
+      render_extra_rulers: Function;
+      extra_ruler_set_mode: Function;
+
+      extra_ruler: {
+        radius_mode: number;
+        box_mode: number;
+        cone_mode: number;
+        cone_degrees: number;
+        line_mode: number;
+        line_width: number;
+        ruler_mode: number;
+      };
+
         is_drawing_bars_at_the_bottom: boolean;
         prepNameplateBack: Function;
         prepNameplateText: Function;
@@ -659,8 +672,8 @@ declare namespace Roll20 {
     }
 
     export interface Mousetrap {
-        bind: (keys: string, cb: () => void) => void;
-        unbind: (keys: string) => void;
+        bind: (keys: string, cb: Function) => void;
+        unbind: (keys: string, cb?: Function) => void;
     }
 
 
@@ -671,6 +684,8 @@ declare namespace Roll20 {
 
 
 interface Window {
+    d20setMode: (str: string) => void;
+
     Jukebox: Roll20.GlobalJukebox;
     Campaign: Roll20.Campaign;
     d20: Roll20.D20;
