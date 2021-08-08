@@ -6,6 +6,7 @@ import AutoSortInitiative from './modules/AutoSortInitiative/Config'
 import BulkMacro from './modules/BulkMacro/Config'
 import ChangeIdWhenDuplicating from './modules/ChangeIdWhenDuplicating/Config'
 import CharacterIO from './modules/CharacterIO/Config'
+import CounterTokenName from './modules/CounterTokenName/Config'
 import DrawCurrentLayer from './modules/DrawCurrentLayer/Config'
 import DuplicateButton from './modules/DuplicateButton/Config'
 import ExposeD20 from './modules/ExposeD20/Config'
@@ -71,6 +72,7 @@ addCfg(AutoSelectNextToken);
 addCfg(AutoSortInitiative);
 addCfg(BulkMacro);
 addCfg(ToolsMenu);
+addCfg(CounterTokenName);
 addCfg(ChangeIdWhenDuplicating);
 addCfg(CharacterIO);
 addCfg(NightMode);
