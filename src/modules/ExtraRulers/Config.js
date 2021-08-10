@@ -5,7 +5,7 @@ import {RULER_NORMAL, RADIUS_MODE_BURST, BOX_MODE_BURST, CONE_MODE_FLAT, LINE_MO
 export default MakeConfig(__dirname, {
   id: "extraRulers",
   name: "Extra Rulers",
-  description: "Adds radius, box, thick line and cone ruler options.",
+  description: "Adds radius, box, thick line and cone ruler options. Other players need to have VTTES installed to see them.",
   category: Category.canvas,
 
   media: {
@@ -77,7 +77,7 @@ vttes_ruler_mode: t.vttes_ruler_mode,
       includes: "assets/app.js",
       find: "d20.engine.announceMeasure=function(e){",
       patch: `>>R20ES_MOD_FIND>>
-if(window.r20es.extra_ruler_set_mode) {
+if(window.r20es && window.r20es.extra_ruler_set_mode) {
   e.vttes_radius_mode = window.r20es.extra_ruler.radius_mode;
   e.vttes_box_mode = window.r20es.extra_ruler.box_mode;
   e.vttes_cone_mode = window.r20es.extra_ruler.cone_mode;
