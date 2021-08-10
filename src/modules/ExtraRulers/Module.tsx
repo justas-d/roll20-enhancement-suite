@@ -252,6 +252,39 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
   }
 
   setup = () => {
+    setTimeout(() => {
+      // @ts-ignore
+      let b20_version_str = window.d20plus.version;
+      do { 
+        if(typeof(b20_version_str) != "string") break;
+
+        var split: Array<any> = b20_version_str.split(".");
+
+        let major = 0;
+        let minor = 0;
+        for(var i = 0; i < split.length; i++) {
+          split[i] = parseInt(split[i], 10);
+        }
+
+        if(split.length >= 1 && typeof(split[0]) == "number") {
+          major = split[0];
+        }
+        else break;
+
+        if(split.length >= 2 && typeof(split[1]) == "number") {
+          minor = split[1];
+        }
+        else break
+
+        if(major > 1) break;
+        if(minor > 24) break;
+
+        R20.saySystem("Extra Rulers are disabled until betteR20 is updated to at least 1.25.0!");
+        this.dispose_quick();
+
+      } while(false) ;
+    }, 5000);
+    
     // @ts-ignore
     window.r20es.extra_ruler = {};
 
@@ -437,7 +470,7 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
 		window.Mousetrap.bind("q w", this.hotkey_ruler_line);
   }
 
-  dispose = () => {
+  dispose_quick = () => {
 		window.Mousetrap.unbind("q q", this.hotkey_ruler_normal);
 		window.Mousetrap.unbind("q r", this.hotkey_ruler_radius);
 		window.Mousetrap.unbind("q c", this.hotkey_ruler_cone);
@@ -452,6 +485,10 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
       this.ruler_ui_el = null;
     }
 
+  };
+
+  dispose = () => {
+    this.dispose_quick();
     super.dispose();
   }
 }
