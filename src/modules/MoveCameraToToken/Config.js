@@ -10,8 +10,12 @@ export default MakeConfig(__dirname,{
         "move_cam.webm": "Camera moving between 4 tokens"
     },
 
-    includes: "assets/app.js",
-    find: "e.push(t[0]);",
-    patch: `e.push(t[0]);
-    if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(e[0]); }`
+    mods: [
+      {
+        includes: "assets/app.js",
+        find: "e.push(t[0]);",
+        patch: `e.push(t[0]);
+        if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(e[0]); }`
+      },
+    ],
 });

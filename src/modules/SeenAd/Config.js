@@ -12,7 +12,11 @@ export default {
   //find: "d20ext.showGoogleAd();",
   //patch: 'window.d20ext.seenad = !0, $("#loading-overlay").find("div").hide(), window.currentPlayer && d20.Campaign.pages.length > 0 && d20.Campaign.handlePlayerPageChanges(), void $.get("/editor/startping/true");'
 
-  includes: "/editor/startjs",
-  find: `$(document).on("ready", function() { d20ext.showGoogleAd(); });`,
-  patch: `d20ext.seenad = true; /* replaced */ `,
+  mods: [
+    {
+      includes: "/editor/startjs",
+      find: `$(document).on("ready", function() { d20ext.showGoogleAd(); });`,
+      patch: `d20ext.seenad = true; /* replaced */ `,
+    },
+  ],
 };

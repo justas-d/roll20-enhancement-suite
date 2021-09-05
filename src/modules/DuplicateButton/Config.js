@@ -10,12 +10,16 @@ export default MakeConfig(__dirname, {
         "duplicate.png": "The duplicate button"
     },
 
-    includes: "assets/app.js",
-    find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
+    mods: [
+      {
+        includes: "assets/app.js",
+        find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
 
-    patch: `
-      $("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]", function () {
-        if(window.r20es && window.r20es.onJournalDuplicate) window.r20es.onJournalDuplicate(a.attr("data-itemid"))
-      }),
-      $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
+        patch: `
+          $("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]", function () {
+            if(window.r20es && window.r20es.onJournalDuplicate) window.r20es.onJournalDuplicate(a.attr("data-itemid"))
+          }),
+          $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`
+      },
+    ]
 });

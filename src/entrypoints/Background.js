@@ -215,7 +215,6 @@ else {
     window.requestListener = function (dt) {
 
       if(is_requesting_editor_html(dt)) {
-        const hookQueue = getHooks(configs, dt.url);
         const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
         const decoder = new TextDecoder("utf-8");
 

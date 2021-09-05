@@ -629,9 +629,13 @@ declare namespace Roll20 {
     }
 
     export interface R20ES {
+      onLoadingOverlayHide: () => void;
+
       syncConfigs: () => void;
       render_extra_rulers: Function;
       extra_ruler_set_mode: Function;
+
+      canInstallModules: boolean;
 
       extra_ruler: {
         radius_mode: number;
@@ -643,32 +647,40 @@ declare namespace Roll20 {
         ruler_mode: number;
       };
 
-        is_drawing_bars_at_the_bottom: boolean;
-        prepNameplateBack: Function;
-        prepNameplateText: Function;
-        togglePageToolbar: () => void;
-        tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
-        pingInitiativeToken: (token: Token) => void;
-        setModePrologue: (mode: string) => void;
-        selectInitiativeToken: (token: Token) => void;
-        keys: R20ESKeys;
-        replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
-        onJournalDuplicate: (id: string) => void;
-        moveCameraTo: (tokenId: string) => void;
-        hooks: {[id: string]: any};
-        shouldDoCustomAnim: (key: string) => boolean;
-        onPageChange: {on: (fx: Function) => void, off: (fx: Function) => void};
-        isWindowLoaded: boolean;
-        onResizeCanvas: (width: number, height: number) => void;
-        onZoomChange: (zoomCoef: number) => void;
-        isLoading: boolean;
-        onAppLoad: {
-            addEventListener: (ev: Function) => void;
-            removeEventListener: (ev: Function) => void;
-        }
+      is_drawing_bars_at_the_bottom: boolean;
+      prepNameplateBack: Function;
+      prepNameplateText: Function;
+      togglePageToolbar: () => void;
+      tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
+      pingInitiativeToken: (token: Token) => void;
+      setModePrologue: (mode: string) => void;
+      selectInitiativeToken: (token: Token) => void;
+      keys: R20ESKeys;
+      replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
+      onJournalDuplicate: (id: string) => void;
+      moveCameraTo: (tokenId: string) => void;
+      hooks: {[id: string]: any};
+      shouldDoCustomAnim: (key: string) => boolean;
+      // should match EventEmitter.ts
+      onPageChange: {
+        on: (fx: Function) => void, 
+        off: (fx: Function) => void
+        fire: Function;
+      };
+      isWindowLoaded: boolean;
+      onResizeCanvas: (width: number, height: number) => void;
+      onZoomChange: (zoomCoef: number) => void;
+      isLoading: boolean;
 
-        export_handout: Function;
-        overwrite_handout : Function;
+      // should match EventEmitter.ts
+      onAppLoad: {
+        addEventListener: (ev: Function) => void;
+        removeEventListener: (ev: Function) => void;
+        fire: Function;
+      };
+
+      export_handout: Function;
+      overwrite_handout : Function;
     }
 
     export interface Mousetrap {
@@ -682,23 +694,24 @@ declare namespace Roll20 {
     }
 }
 
-
 interface Window {
-    d20setMode: (str: string) => void;
+  d20setMode: (str: string) => void;
+  Jukebox: Roll20.GlobalJukebox;
+  Campaign: Roll20.Campaign;
+  d20: Roll20.D20;
+  currentPlayer: Roll20.Player;
+  is_gm: boolean;
+  currentEditingLayer: string;
+  generateUUID: () => string;
+  Mousetrap: Roll20.Mousetrap;
+  soundManager: Roll20.SoundManager;
 
-    Jukebox: Roll20.GlobalJukebox;
-    Campaign: Roll20.Campaign;
-    d20: Roll20.D20;
-    currentPlayer: Roll20.Player;
-    is_gm: boolean;
-    currentEditingLayer: string;
-    generateUUID: () => string;
-    r20es: Roll20.R20ES;
-    Mousetrap: Roll20.Mousetrap;
-    soundManager: Roll20.SoundManager;
+  r20es: Roll20.R20ES;
+  r20esInstalledModuleTable: {[id: string]: any};
+  r20esDisposeTable: {[id: string]: any};
 }
 
 declare module 'roll20' {
-    export = Roll20;
+  export = Roll20;
 }
 

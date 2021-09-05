@@ -93,8 +93,11 @@ export default MakeConfig(__dirname, {
         corner: "bottomRight"
     },
 
-    includes: "assets/app.js",
-    find: "function setMode(e){",
-    patch: "function setMode(e){if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(e);}",
-
+    mods: [
+      {
+        includes: "assets/app.js",
+        find: "function setMode(e){",
+        patch: "function setMode(e){if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(e);}",
+      },
+    ],
 });

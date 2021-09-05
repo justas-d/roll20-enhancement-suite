@@ -11,7 +11,11 @@ export default MakeConfig(__dirname,{
         "select_token.webm": "Automated token selection"
     },
 
-    includes: "assets/app.js",
-    find: "e.push(t[0]);",
-    patch: "e.push(t[0]);if(window.r20es && window.r20es.selectInitiativeToken) { window.r20es.selectInitiativeToken(e[0]);}"
+    mods: [
+      {
+        includes: "assets/app.js",
+        find: "e.push(t[0]);",
+        patch: "e.push(t[0]);if(window.r20es && window.r20es.selectInitiativeToken) { window.r20es.selectInitiativeToken(e[0]);}"
+      },
+    ],
 });

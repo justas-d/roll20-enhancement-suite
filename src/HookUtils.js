@@ -3,22 +3,16 @@ import {replace_all_and_count} from "utils/MiscUtils";
 export const getHooks = (hooks, url) => {
   let hookQueue = [];
 
-  const addModToQueueIfOk = (mod, hook) => {
-    if (mod.includes && url.includes(mod.includes) && mod.find && mod.patch) {
-      hookQueue.push({mod, hook});
-    }
-  };
-
-  for (let id in hooks) {
+  for(let id in hooks) {
     let hook = hooks[id];
 
-    if (hook.mods) {
+    if(hook.mods) {
       for (let mod of hook.mods) {
-        addModToQueueIfOk(mod, hook);
+        if (mod.includes && url.includes(mod.includes) && mod.find && mod.patch) {
+          hookQueue.push({mod, hook});
+        }
       }
-    } else {
-      addModToQueueIfOk(hook, hook);
-    }
+    } 
   }
 
   return hookQueue;
