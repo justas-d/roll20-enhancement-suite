@@ -22,4 +22,7 @@ class MoveCameraToTokenModule extends R20Module.SimpleBase {
     }
 }
 
-if(R20Module.canInstall()) new MoveCameraToTokenModule().install();
+export default () => {
+  new MoveCameraToTokenModule().install();
+};
+

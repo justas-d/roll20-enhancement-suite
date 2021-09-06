@@ -184,9 +184,7 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new DrawCurrentLayerModule().install();
-
-//export default () => {
-//  new DrawCurrentLayerModule().install();
-//};
+export default () => {
+  new DrawCurrentLayerModule().install();
+};
 

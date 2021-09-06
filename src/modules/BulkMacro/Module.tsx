@@ -151,4 +151,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new BulkMacroModule().install();
+export default () => {
+  new BulkMacroModule().install();
+};
+

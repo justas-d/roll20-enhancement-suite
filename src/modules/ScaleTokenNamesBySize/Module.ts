@@ -65,4 +65,7 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new ScaleTokenNamesBySizeModule().install();
+export default () => {
+  new ScaleTokenNamesBySizeModule().install();
+};
+

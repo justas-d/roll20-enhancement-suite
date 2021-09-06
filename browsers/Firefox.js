@@ -2,11 +2,6 @@ const firefox = {
     id: "firefox",
     target: "firefox",
 
-    extraFiles: [
-        "./thirdparty/dialog-polyfill/dialog-polyfill.css",
-        "./thirdparty/dialog-polyfill/dialog-polyfill.js"
-    ],
-
     manifest: {
         applications: {
             gecko: {

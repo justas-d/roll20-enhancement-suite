@@ -112,4 +112,7 @@ class CustomPathWidth extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new CustomPathWidth().install();
+export default () => {
+  new CustomPathWidth().install();
+};
+

@@ -4,10 +4,6 @@ import {Config} from "../utils/Config";
 import MediaWidget from "../MediaWidget";
 import * as semverCompare from "semver-compare";
 
-declare namespace build {
-    export const R20ES_CHANGELOG: string;
-}
-
 interface IChangelog {
     current: string;
     versions: { [version: string]: IVersion };
@@ -42,7 +38,7 @@ class ChangelogWidget extends DOM.ElementBase {
     public constructor({listAllVersions}: any) {
         super();
 
-        const changelogData: IChangelog = JSON.parse(build.R20ES_CHANGELOG);
+        const changelogData: IChangelog = JSON.parse(BUILD_CONSTANT_CHANGELOG);
 
         if (listAllVersions) {
             console.log("in list all");

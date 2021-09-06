@@ -34,4 +34,7 @@ class TransparentPaperModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new TransparentPaperModule().install();
+export default () => {
+  new TransparentPaperModule().install();
+};
+

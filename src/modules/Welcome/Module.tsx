@@ -1,14 +1,9 @@
 import {R20Module} from "../../utils/R20Module";
 import {DOM} from "../../utils/DOM";
-import {getExtUrlFromPage} from "../../utils/MiscUtils";
 import WelcomePopup from "./WelcomePopup";
 import ChangelogPopup from "./ChangelogPopup";
 import {R20} from "../../utils/R20";
 import {Config} from "../../utils/Config";
-
-declare namespace build {
-    export const R20ES_VERSION: string;
-}
 
 class WelcomeModule extends R20Module.OnAppLoadBase {
     private welcome: WelcomePopup;
@@ -26,7 +21,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
             if (cfg.showWelcomePopup) {
                 R20.saySystem(`
 <h2 style="font-size: 18px; color: whitesmoke">VTT Enhancement Suite</h2>
-<span>The enhancement suite (aka R20ES) v${build.R20ES_VERSION} has been loaded!</span>
+<span>The enhancement suite (aka R20ES) v${BUILD_CONSTANT_VERSION} has been loaded!</span>
 <br/>
 <br/>
 
@@ -65,17 +60,17 @@ View the full details on our
 
         console.log(`showChangelog: ${cfg.showChangelog}`);
         console.log(`cfg.previousVersion": ${cfg.previousVersion}`);
-        console.log(`R20ES_VERSION": ${build.R20ES_VERSION}`);
+        console.log(`BUILD_CONSTANT_VERSION": ${BUILD_CONSTANT_VERSION}`);
 
         if (cfg.showStartupGuide) {
             this.welcome = new WelcomePopup(this);
             elem = this.welcome.render();
-        } else if (cfg.showChangelog && cfg.previousVersion !== build.R20ES_VERSION) {
+        } else if (cfg.showChangelog && cfg.previousVersion !== BUILD_CONSTANT_VERSION) {
             this.changelog = new ChangelogPopup();
             elem = this.changelog.render();
         }
 
-        this.setConfigValue("previousVersion", build.R20ES_VERSION);
+        this.setConfigValue("previousVersion", BUILD_CONSTANT_VERSION);
 
         if (elem) {
             root.parentElement.insertBefore(elem, root);
@@ -88,4 +83,7 @@ View the full details on our
     }
 }
 
-if (R20Module.canInstall()) new WelcomeModule().install();
+export default () => {
+  new WelcomeModule().install();
+};
+

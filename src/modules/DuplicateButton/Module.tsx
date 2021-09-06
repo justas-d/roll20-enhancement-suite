@@ -72,4 +72,7 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
 }
 
 
-if (R20Module.canInstall()) new DuplicateButtonModule().install();
+export default () => {
+  new DuplicateButtonModule().install();
+};
+

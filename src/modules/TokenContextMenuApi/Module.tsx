@@ -76,6 +76,7 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
     }
 }
 
-if (R20Module.canInstall()) new TokenContextMenuApiModule().install();
-
+export default () => {
+  new TokenContextMenuApiModule().install();
+};
 

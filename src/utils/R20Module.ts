@@ -85,7 +85,8 @@ export namespace R20Module {
 
       const oldVal = config[key];
       config[key] = value;
-      hook.saveConfig();
+
+      window.r20es.save_configs();
 
       if(config.enabled &&
         "onSettingChange" in this
@@ -125,7 +126,8 @@ export namespace R20Module {
 
       const oldEnabled = hook.config.enabled;
       hook.config.enabled = newState;
-      hook.saveConfig();
+
+      window.r20es.save_configs();
 
       if (oldEnabled && !newState) {
         console.log("disabling");
@@ -203,18 +205,9 @@ export namespace R20Module {
     }
   }
 
-  export const canInstall = () => {
-    return window.r20es && "canInstallModules" in window.r20es && window.r20es.canInstallModules;
-  }
-
   export const getModule = (filename) => {
     if (!("r20esInstalledModuleTable" in window)) return null;
     return window.r20esInstalledModuleTable[filename];
-  }
-
-  export const getModuleById = (id) => {
-    if (!("r20esInstalledModuleTable" in window)) return null;
-    return R20Module.getModule(window.r20es.hooks[id].filename);
   }
 }
 

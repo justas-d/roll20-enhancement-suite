@@ -147,5 +147,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new LibreAudio().install();
+export default () => {
+  new LibreAudio().install();
+};
 

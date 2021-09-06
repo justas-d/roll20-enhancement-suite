@@ -97,4 +97,7 @@ class TokenResizeModule extends R20Module.SimpleBase {
     }
 }
 
-if (R20Module.canInstall()) new TokenResizeModule().install();
+export default () => {
+  new TokenResizeModule().install();
+};
+

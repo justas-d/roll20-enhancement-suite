@@ -1,21 +1,19 @@
 import browser from 'browser-detect';
 
-const isChromium = () => {
-    const data = browser();
-    return data.name === "chrome" || data.name === "opera";
+export const isChromium = () => {
+  const data = browser();
+  return data.name === "chrome" || data.name === "opera";
 };
 
-const doesBrowserNotSupportResponseFiltering = () => {
-    const browserData = browser();
-    console.log(browserData);
+export const doesBrowserNotSupportResponseFiltering = () => {
+  const browserData = browser();
+  console.log(browserData);
 
-    if(isChromium()) return true;
+  if(isChromium()) return true;
 
-    if (browserData.name === "firefox") {
-        if (browserData.versionNumber < 57) return true;
-    }
+  if (browserData.name === "firefox") {
+    if (browserData.versionNumber < 57) return true;
+  }
 
-    return false;
+  return false;
 };
-
-export {isChromium, doesBrowserNotSupportResponseFiltering}

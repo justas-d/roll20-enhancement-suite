@@ -48,4 +48,7 @@ class DarkModeModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new DarkModeModule().install();
+export default () => {
+  new DarkModeModule().install();
+};
+

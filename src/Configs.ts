@@ -52,8 +52,8 @@ import HandoutImageFromURL  from "./modules/HandoutImageFromURL/Config"
 import CustomPathWidth from "./modules/CustomPathWidth/Config"
 import ExtraRulers from "./modules/ExtraRulers/Config"
 
-let configs = {};
-const addCfg = cfg => configs[cfg.id] = cfg;
+const VTTES_MODULE_CONFIGS = {};
+const addCfg = cfg => VTTES_MODULE_CONFIGS[cfg.id] = cfg;
 
 addCfg(DisablePlayerDrawings);
 addCfg(TokenBarPositionAdjust);
@@ -107,12 +107,11 @@ addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
 addCfg(ExtraRulers);
 
-// @ts-ignore
-if(VTTES_BROWSER == "chrome") {
+if(BUILD_CONSTANT_FOR_BROWSER == "chrome") {
   addCfg(ChromeUpdateChecker);
 }
 
 addCfg(Welcome);
 
-export default configs;
+export { VTTES_MODULE_CONFIGS };
 

@@ -107,5 +107,7 @@ class SetTableEntryAvatarByUrl extends R20Module.OnAppLoadBase {
     };
 }
 
-if (R20Module.canInstall()) new SetTableEntryAvatarByUrl().install();
+export default () => {
+  new SetTableEntryAvatarByUrl().install();
+};
 

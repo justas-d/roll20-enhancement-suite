@@ -49,6 +49,8 @@ const changelog = fs.readFileSync(changelogFile, "utf8");
 module.exports = (_env, argv) => {
   let env = _env || {};
 
+  const logo_data_b64 = "data:image/svg+xml;base64," + btoa(fs.readFileSync("./assets/logo/logo.svg", "utf8"));
+
   const browsers = env.browsers && env.browsers.split(',');
   if (!browsers || browsers.length <= 0) {
     console.error("CLI arg --env.browsers with valid values expected but not found.");
@@ -126,51 +128,25 @@ module.exports = (_env, argv) => {
     const entry = {};
     const staticFiles = {};
 
-    const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
     const addEntryPoint = (mappedName, sourcePath) => entry[mappedName] = sourcePath;
+    const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
 
-    const addStaticFolder = (root) => {
-      fs.readdirSync(root).forEach(f => {
-        const rootFile = root + f;
-        if (fs.lstatSync(rootFile).isDirectory()) {
-          return;
-        }
-        addStaticFile(f, rootFile);
-      });
-    };
-
-    addStaticFolder("./css/");
-    addStaticFolder("./assets/logo/");
-
-    {
-      const root = "./src/modules/";
-      fs.readdirSync(root).forEach(dirname => {
-        const rootDirname = root + dirname;
-        if (!fs.lstatSync(rootDirname).isDirectory()) return;
-
-        // look for the entry point
-        const entryRegex = /Module(\.js.?$|\.ts.?$)/i;
-        fs.readdirSync(rootDirname).forEach(f => {
-          if (!f.match(entryRegex)) {
-            return;
-          }
-
-          addEntryPoint(dirname + ".js", "./" + path.join(root, dirname, f));
-        });
-      });
+    addEntryPoint("Background.js", "./src/entrypoints/Background.ts");
+    if(b === "chrome") {
+      addEntryPoint(
+        "ChromePostInjectScriptsPayload.js", 
+        "./src/entrypoints/ChromePostInjectScriptsPayload.ts"
+      );
     }
+    addEntryPoint("ContentScript.js", "./src/entrypoints/ContentScript.tsx");
+    addEntryPoint("EarlyContentScript.js", "./src/entrypoints/EarlyContentScript.ts");
+    addEntryPoint("WebsiteBootstrap.js", "./src/entrypoints/WebsiteBootstrap.tsx");
+    addEntryPoint("WebsiteBootstrapBefore.js", "./src/entrypoints/WebsiteBootstrapBefore.ts");
 
-    {
-      const root = "./src/entrypoints/"
-      fs.readdirSync(root).forEach(f => {
-        const rootFile = root + f;
-        if(fs.lstatSync(rootFile).isDirectory()) {
-          return;
-        }
-
-        addEntryPoint(f, rootFile);
-      });
-    }
+    addStaticFile("logo128.png", "./assets/logo/logo128.png");
+    addStaticFile("logo96.png", "./assets/logo/logo96.png");
+    addStaticFile("logo48.png", "./assets/logo/logo48.png");
+    addStaticFile("logo16.png", "./assets/logo/logo16.png");
 
     const browser = browserDefinitions[b];
     const sourceOutputPath = path.join(
@@ -181,16 +157,9 @@ module.exports = (_env, argv) => {
       path.resolve(__dirname), "dist", browser.target, isProd ? "prod" : "dev"
     );
 
-    if (browser.extraFiles) {
-      for (const file of browser.extraFiles) {
-        addStaticFile(path.basename(file), file);
-      }
-    }
-
     const finalManifest = manifestGen(browser, git.version);
 
     console.log(entry);
-    console.log(staticFiles);
 
     let config = {
       performance: {
@@ -250,13 +219,14 @@ module.exports = (_env, argv) => {
         }, [])),
 
         new webpack.DefinePlugin({
-          "build.R20ES_VERSION": JSON.stringify(git.version),
-          "build.R20ES_COMMIT": JSON.stringify(git.commit),
-          "build.R20ES_BRANCH": JSON.stringify(git.branch),
-          "build.R20ES_BROWSER": JSON.stringify(browser.target),
-          "VTTES_BROWSER": JSON.stringify(browser.target),
-          "build.R20ES_CHANGELOG": JSON.stringify(changelog),
-          'build_R20ES_IS_DEV': JSON.stringify(isProd === false),
+          "BUILD_CONSTANT_VERSION": JSON.stringify(git.version),
+          "BUILD_CONSTANT_COMMIT": JSON.stringify(git.commit),
+          "BUILD_CONSTANT_BRANCH": JSON.stringify(git.branch),
+          "BUILD_CONSTANT_FOR_BROWSER": JSON.stringify(browser.target),
+          "BUILD_CONSTANT_IS_FOR_USERSCRIPT": JSON.stringify(false),
+          "BUILD_CONSTANT_CHANGELOG": JSON.stringify(changelog),
+          'BUILD_CONSTANT_VTTES_IS_DEV': JSON.stringify(isProd === false),
+          'BUILD_CONSTANT_LOGO_B64': `"${logo_data_b64}"`,
           'process.env.NODE_ENV': JSON.stringify('production'),
         }),
         new GenerateJsonPlugin("manifest.json", finalManifest),

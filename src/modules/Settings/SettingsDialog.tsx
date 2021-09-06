@@ -76,7 +76,7 @@ export default class SettingsDialog extends DialogBase<null> {
           }
         }
 
-        window.r20es.syncConfigs();
+        window.r20es.save_configs();
 
         this.rerender();
       } catch(e) {

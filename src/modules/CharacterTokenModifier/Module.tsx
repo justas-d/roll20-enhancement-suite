@@ -1111,5 +1111,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new CharacterTokenModifierModule().install();
+export default () => {
+  new CharacterTokenModifierModule().install();
+};
 

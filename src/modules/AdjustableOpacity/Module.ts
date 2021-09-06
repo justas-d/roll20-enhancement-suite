@@ -32,4 +32,7 @@ class AdjustableOpacityModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new AdjustableOpacityModule().install();
+export default () => {
+  new AdjustableOpacityModule().install();
+};
+

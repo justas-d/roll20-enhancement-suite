@@ -274,4 +274,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new SheetTabApiModule().install();
+export default () => {
+  new SheetTabApiModule().install();
+};
+

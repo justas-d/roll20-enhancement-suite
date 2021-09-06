@@ -347,4 +347,7 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new AlternativePageToolbarMenu().install();
+export default () => {
+  new AlternativePageToolbarMenu().install();
+};
+

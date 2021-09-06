@@ -49,5 +49,7 @@ class JukeboxIOModule extends IOModuleCommon<IApplyableJukeboxPlaylist> {
   }
 }
 
-if (R20Module.canInstall()) new JukeboxIOModule().install();
+export default () => {
+  new JukeboxIOModule().install();
+};
 

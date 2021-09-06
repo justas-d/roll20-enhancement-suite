@@ -162,4 +162,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
   }
 }
 
-if (R20Module.canInstall()) new RollAndApplyHitDiceModule().install();
+export default () => {
+  new RollAndApplyHitDiceModule().install();
+};
+

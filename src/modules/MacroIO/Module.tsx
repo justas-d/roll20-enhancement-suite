@@ -76,5 +76,7 @@ class MacroIOModule extends IOModuleCommon<IApplyableMacroData> {
   }
 }
 
-if (R20Module.canInstall()) new MacroIOModule().install();
+export default () => {
+  new MacroIOModule().install();
+};
 

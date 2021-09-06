@@ -119,5 +119,7 @@ class TokenFromImgModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new TokenFromImgModule().install();
+export default () => {
+  new TokenFromImgModule().install();
+};
 

@@ -52,4 +52,7 @@ class EnumerateTokensModule extends R20Module.SimpleBase {
   }
 }
 
-if (R20Module.canInstall()) new EnumerateTokensModule().install();
+export default () => {
+  new EnumerateTokensModule().install();
+};
+

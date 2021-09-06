@@ -1,4 +1,4 @@
-import configs from '../Configs'
+import { VTTES_MODULE_CONFIGS } from '../Configs'
 import {getBrowser, replaceAll} from '../utils/MiscUtils';
 import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection";
 import {MESSAGE_KEY_DOM_LOADED} from "../MiscConstants";
@@ -261,7 +261,7 @@ else {
 
       if (!isRedir) return;
 
-      const hookQueue = getHooks(configs, dt.url);
+      const hookQueue = getHooks(VTTES_MODULE_CONFIGS, dt.url);
       const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
       const decoder = new TextDecoder("utf-8");
 

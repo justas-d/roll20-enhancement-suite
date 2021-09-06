@@ -3,10 +3,6 @@ import {DOM} from "../../utils/DOM";
 import {R20} from "../../utils/R20";
 import {Config} from "../../utils/Config";
 
-declare namespace build {
-    export const R20ES_VERSION: string;
-}
-
 class ChromeUpdateChecker extends R20Module.OnAppLoadBase {
 
     public constructor() {
@@ -21,7 +17,7 @@ class ChromeUpdateChecker extends R20Module.OnAppLoadBase {
           let text = await request.text();
           text = text.trim();
 
-          if(text != build.R20ES_VERSION) {
+          if(text != BUILD_CONSTANT_VERSION) {
             R20.saySystem(`
 <h2 style="color: whitesmoke">Update Available!</h2>
 <span>VTTES Has an update available. Grab it 
@@ -43,4 +39,7 @@ class ChromeUpdateChecker extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new ChromeUpdateChecker().install();
+export default () => {
+  new ChromeUpdateChecker().install();
+};
+

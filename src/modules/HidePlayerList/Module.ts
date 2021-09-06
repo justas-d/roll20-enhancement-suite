@@ -23,5 +23,7 @@ class HidePlayerListModule extends R20Module.SimpleBase {
     }
 }
 
+export default () => {
+  new HidePlayerListModule().install();
+};
 
-if (R20Module.canInstall()) new HidePlayerListModule().install();

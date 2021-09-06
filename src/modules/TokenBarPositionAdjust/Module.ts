@@ -93,4 +93,7 @@ class TokenBarPositionAdjust  extends R20Module.SimpleBase {
     }
 }
 
-if (R20Module.canInstall()) new TokenBarPositionAdjust().install();
+export default () => {
+  new TokenBarPositionAdjust().install();
+};
+

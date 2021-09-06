@@ -129,4 +129,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new AutoSortInitiativeModule().install();
+export default () => {
+  new AutoSortInitiativeModule().install();
+};
+

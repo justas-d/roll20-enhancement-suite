@@ -1,93 +1,93 @@
 import { Config } from "./Config";
 
 const copy = function(what, overrides) {
-    let copy = Object.assign({}, what);
-    if (overrides) {
-        copy = Object.assign(copy, overrides);
-    }
-    return copy;
+  let copy = Object.assign({}, what);
+  if (overrides) {
+    copy = Object.assign(copy, overrides);
+  }
+  return copy;
 }
 
 const getTransform = function(ctx) {
-    if ('currentTransform' in ctx) {
-        return ctx.currentTransform
-    } else if ("getTransform" in ctx) {
-        return ctx.getTransform();
-    } else if (ctx.mozCurrentTransform) {
-        let a = ctx.mozCurrentTransform;
-        // restructure FF's array to an Matrix like object
-        return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] };
-    }
+  if ('currentTransform' in ctx) {
+    return ctx.currentTransform
+  } else if ("getTransform" in ctx) {
+    return ctx.getTransform();
+  } else if (ctx.mozCurrentTransform) {
+    let a = ctx.mozCurrentTransform;
+    // restructure FF's array to an Matrix like object
+    return { a: a[0], b: a[1], c: a[2], d: a[3], e: a[4], f: a[5] };
+  }
 };
 
 export const nearly_format_file_url = (url: string) => {
-    let title = "" ;
+  let title = "" ;
 
-    try
-    {
-        const cut_after_first_occurence_of_char = (str:string , char: string) => {
-            const idx = str.indexOf(char);
-            if(idx > 0) {
-                return str.substring(0, idx)
-            }
-            return str;
-        };
-        const last_delimiter_index = url.lastIndexOf("/");
+  try
+  {
+    const cut_after_first_occurence_of_char = (str:string , char: string) => {
+      const idx = str.indexOf(char);
+      if(idx > 0) {
+        return str.substring(0, idx)
+      }
+      return str;
+    };
+    const last_delimiter_index = url.lastIndexOf("/");
 
-        title = url.substring(last_delimiter_index + 1);
-        title = cut_after_first_occurence_of_char(title, ".");
-        title = cut_after_first_occurence_of_char(title, "?");
-        title = cut_after_first_occurence_of_char(title, "#");
-        title = decodeURIComponent(title);
-    }
-    catch(e) {
-        title = url;
-    }
+    title = url.substring(last_delimiter_index + 1);
+    title = cut_after_first_occurence_of_char(title, ".");
+    title = cut_after_first_occurence_of_char(title, "?");
+    title = cut_after_first_occurence_of_char(title, "#");
+    title = decodeURIComponent(title);
+  }
+  catch(e) {
+    title = url;
+  }
 
-    return title;
+  return title;
 };
 
 const getRotation = function(ctx) {
-    let t = getTransform(ctx);
-    let rad = Math.atan2(t.b, t.a);
-    if (rad < 0) { // angle is > Math.PI
-        rad += Math.PI * 2;
-    }
-    return rad;
+  let t = getTransform(ctx);
+  let rad = Math.atan2(t.b, t.a);
+  if (rad < 0) { // angle is > Math.PI
+    rad += Math.PI * 2;
+  }
+  return rad;
 };
 
 const findByIdAndRemove = function(id) {
-    const elem = document.getElementById(id);
-    if (elem) {
-        elem.remove();
-    }
+  const elem = document.getElementById(id);
+  if (elem) {
+    elem.remove();
+  }
 }
 
 const mapObj = function(obj, fx) {
-    return Object.keys(obj).reduce((accum, curVal) => {
-        let val = fx(obj[curVal], curVal);
+  return Object.keys(obj).reduce((accum, curVal) => {
+    let val = fx(obj[curVal], curVal);
 
-        if (val !== undefined && val !== null) {
-            accum.push(val);
-        }
+    if (val !== undefined && val !== null) {
+      accum.push(val);
+    }
 
-        return accum;
-    }, []);
+    return accum;
+  }, []);
 }
 
 const safeCall = function(fx) {
-    try {
-        fx();
-    }
-    catch (err) {
-        console.error(err);
-    }
+  try {
+    fx();
+  }
+  catch (err) {
+    console.error(err);
+  }
 }
 
 const removeAllChildren = function(root) {
-    while (root.firstChild) {
-        root.removeChild(root.firstChild);
-    }
+  while (root.firstChild) {
+    root.removeChild(root.firstChild);
+  }
 }
 
 const escapeRegExp = (str) => {
@@ -120,105 +120,80 @@ export const replace_all_and_count = function(where, find, replace) {
 }
 
 const safeParseJson = function(str) {
-
-    try {
-        return JSON.parse(str);
-    } catch (err) {
-        alert("File is not a valid JSON file.");
-    }
-    return null;
+  try {
+    return JSON.parse(str);
+  } catch (err) {
+    alert("File is not a valid JSON file.");
+  }
+  return null;
 }
 
 const readFile = function(file) {
-    return new Promise((resolve, reject) => {
-        if (!file) {
-            reject("No file given.");
-            return;
-        }
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      reject("No file given.");
+      return;
+    }
 
-        let reader = new FileReader();
-        reader.readAsText(file);
+    let reader = new FileReader();
+    reader.readAsText(file);
 
-        reader.onload = e => {
-            resolve((<any>e.target).result as string);
-        };
-    });
+    reader.onload = e => {
+      resolve((<any>e.target).result as string);
+    };
+  });
 }
 
-const getBrowser = (): any => chrome || browser;
+const getBrowser = (): any => {
+  if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.log("=====================");
+    console.error("getBrowser call in userscript!");
+    console.trace();
+  }
+  return chrome || browser;
+}
 
 const injectScript = function(name) {
-    console.log(`Injecting ${name}`);
+  console.log(`Injecting ${name}`);
 
-    var s = document.createElement("script");
-    s.async = false;
-    s.src = getBrowser().extension.getURL(name);
+  var s = document.createElement("script");
+  s.async = false;
+  s.src = getBrowser().extension.getURL(name);
 
-    s.onload = () => { s.remove(); };
-    document.head.appendChild(s);
+  s.onload = () => { s.remove(); };
+  document.head.appendChild(s);
 }
 
 
 const strIsNullOrEmpty = function(str) {
-    return str === null || str === undefined || str.length <= 0 || str.trim().length <= 0;
+  return str === null || str === undefined || str.length <= 0 || str.trim().length <= 0;
 }
 
 const createCSSElement = function(css, id) {
-    const el = document.createElement("style");
-    el.innerHTML = css;
-    el.id = id;
-    return el;
+  const el = document.createElement("style");
+  el.innerHTML = css;
+  el.id = id;
+  return el;
 }
 
-const getExtUrlFromPage = function(resource: string, _waitMs: number): Promise<string> {
-    const waitMs = (_waitMs === undefined || _waitMs === null) ? 1000 : _waitMs;
-
-    return new Promise((ok, err) => {
-        try {
-            let worked = false;
-
-            const removeCb = function() { window.removeEventListener("message", callback); }
-            const reqId = window.generateUUID();
-
-            const callback = function(e) {
-                if (e.origin !== Config.appUrl) return;
-
-                if (e.data.r20esGivesResourceUrl && e.data.r20esGivesResourceUrl.id === reqId) {
-                    worked = true;
-                    
-                    removeCb();
-                    ok(e.data.r20esGivesResourceUrl.url as string);
-                }
-            };
-
-            window.addEventListener("message", callback);
-
-            const payload = {
-                resource,
-                id: reqId
-            };
-
-            window.postMessage({ r20esWantsResourceUrl: payload }, Config.appUrl);
-
-            setTimeout(() => {
-                try {
-                    if (!worked) {
-                        removeCb();
-                        err(`Timed out after ${waitMs}ms`);
-                    }
-                } catch (ex) { err(ex); }
-
-            }, waitMs);
-        } catch (ex) { err(ex); }
-    });
-}
+export const LOGO_SVG_B64 = BUILD_CONSTANT_LOGO_B64;
 
 export {
-    getBrowser, readFile, safeParseJson,
-    replaceAll, findByIdAndRemove,
-    copy, getTransform, getRotation,
-    safeCall, removeAllChildren,
-    injectScript, strIsNullOrEmpty,
-    mapObj, createCSSElement, getExtUrlFromPage,
+  getBrowser, readFile, safeParseJson,
+  replaceAll, findByIdAndRemove,
+  copy, getTransform, getRotation,
+  safeCall, removeAllChildren,
+  injectScript, strIsNullOrEmpty,
+  mapObj, createCSSElement,
 };
 

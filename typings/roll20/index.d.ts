@@ -631,11 +631,9 @@ declare namespace Roll20 {
 
     onLoadingOverlayHide: () => void;
 
-    syncConfigs: () => void;
+    save_configs: () => void;
     render_extra_rulers: Function;
     extra_ruler_set_mode: Function;
-
-    canInstallModules: boolean;
 
     extra_ruler: {
       radius_mode: number;
@@ -710,7 +708,6 @@ interface Window {
   r20esDisposeTable: {[id: string]: any};
 
   enhancementSuiteEnabled: boolean;
-  bootstrapTable: {[id: string]: any};
   injectBackgroundOK: boolean;
   injectWebsiteOK: boolean;
   hasInjectedModules: boolean;
@@ -720,3 +717,11 @@ declare module 'roll20' {
   export = Roll20;
 }
 
+declare const BUILD_CONSTANT_VERSION: string;
+declare const BUILD_CONSTANT_COMMIT: string;
+declare const BUILD_CONSTANT_BRANCH: string;
+declare const BUILD_CONSTANT_FOR_BROWSER: string;
+declare const BUILD_CONSTANT_IS_FOR_USERSCRIPT: boolean;
+declare const BUILD_CONSTANT_CHANGELOG: string;
+declare const BUILD_CONSTANT_VTTES_IS_DEV: boolean;
+declare const BUILD_CONSTANT_LOGO_B64: string;

@@ -28,4 +28,7 @@ class AutoSelectNextTokenModule extends R20Module.SimpleBase {
     }
 }
 
-if (R20Module.canInstall()) new AutoSelectNextTokenModule().install();
+export default () => {
+  new AutoSelectNextTokenModule().install();
+};
+

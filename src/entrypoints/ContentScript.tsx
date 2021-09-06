@@ -1,9 +1,7 @@
 import {Config} from "../utils/Config";
-import hooks from "../Configs";
+import {isChromium} from "../utils/BrowserDetection";
+import { VTTES_MODULE_CONFIGS } from "../Configs";
 import {injectScript, getBrowser, findByIdAndRemove} from "../utils/MiscUtils";
-import SettingsBootstrapper from "../modules/Settings/Bootstrapper"
-import {DialogFormsBootstrapper} from "../modules/Dialog/Bootstrapper";
-import {LocalStorageBootstrapper} from "../modules/LocalStorage/Bootstrapper";
 import {DOM} from "../utils/DOM";
 import showProblemPopup from "../utils/ProblemPopup";
 import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection";
@@ -11,7 +9,8 @@ import {
   ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE,
   MESSAGE_KEY_CHROME_INJECTION_DONE,
   MESSAGE_KEY_DOM_LOADED,
-  MESSAGE_KEY_LOAD_MODULES
+  MESSAGE_KEY_LOAD_MODULES,
+  MESSAGE_KEY_INJECT_MODULES
 } from "../MiscConstants";
 import {getHooks, injectHooks} from "../HookUtils";
 
@@ -19,58 +18,48 @@ console.log("====================");
 console.log("VTTES ContentScript");
 console.log("====================");
 
-window.bootstrapTable = {};
-window.hasInjectedModules = false;
-
-new DialogFormsBootstrapper().bootstrap();
-new SettingsBootstrapper().bootstrap();
-new LocalStorageBootstrapper().bootstrap();
-
-injectScript("WebsiteBootstrap.js");
-
-console.log("==============================================================");
-console.log(window.bootstrapTable);
-
-for (let id in window.bootstrapTable) {
-  window.bootstrapTable[id].setup();
-}
-
-function injectModules() {
-  if (window.hasInjectedModules) {
-    return;
-  }
-
-  window.hasInjectedModules = true;
-
-  try {
-    console.log("ContentScript.js is injecting modules.");
-
-    // inject modules
-    for (let hookId in hooks) {
-      const hook = hooks[hookId];
-
-      if (!("filename" in hook)) continue;
-
-      injectScript(hook.filename);
-    }
-  } 
-  catch (err) {
-    console.error(err);
-  }
-
-  injectScript("WebsiteBootstrapAfter.js");
-  window.bootstrapTable = undefined;
-
-  console.log("ContentScript.js is done!");
-
-  // @BootstrapFlashWorkaroundStyle
-  findByIdAndRemove(ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE);
-}
-
 const recvMsgFromApp = (e) => {
-  if (e.origin !== Config.appUrl) return;
+  if(e.origin !== Config.appUrl) return;
 
-  if (e.data.r20esWantsResourceUrl) {
+  console.log("ContenScript msg:", e);
+
+  if(e.data.r20sAppWantsInitialConfigs) {
+    const generatePatch = (ids, externalCallback) => {
+      function callback(p) {
+        let patch = {};
+        //console.log("generating patch, got values:");
+        //console.log(p);
+
+        for (const key of ids) {
+          patch[key] = key in p ? p[key] : {};
+        }
+
+        //console.log("done!");
+        //console.log(patch);
+
+        externalCallback(patch);
+      }
+
+      if (isChromium()) {
+        chrome.storage.local.get(callback);
+      } 
+      else {
+        browser.storage.local.get().then(callback)
+      }
+    };
+
+    generatePatch(e.data.r20sAppWantsInitialConfigs, p => {
+      //console.log("Content-script is dispatching a config patch:");
+      //console.log(p);
+      window.postMessage({ r20esInitialConfigs: p }, Config.appUrl);
+    });
+  } 
+  else if(e.data.r20esAppWantsSync) {
+    const patch = e.data.r20esAppWantsSync;
+    console.log("Updating local storage with", patch);
+    getBrowser().storage.local.set(patch);
+  }
+  else if(e.data.r20esWantsResourceUrl) {
 
     const url = getBrowser().extension.getURL(e.data.r20esWantsResourceUrl.resource);
     const payload = {
@@ -81,47 +70,33 @@ const recvMsgFromApp = (e) => {
     window.postMessage({r20esGivesResourceUrl: payload}, Config.appUrl);
   } 
   else {
-    console.log(e.data);
+    if(doesBrowserNotSupportResponseFiltering()) {
 
-    if (doesBrowserNotSupportResponseFiltering()) {
+      const try_inject_modules = () => {
+        if(window.injectBackgroundOK && window.injectWebsiteOK) {
+          window.postMessage({[MESSAGE_KEY_INJECT_MODULES]: true}, Config.appUrl);
+        }
+      };
 
-      if (e.data[MESSAGE_KEY_LOAD_MODULES]) {
+      if(e.data[MESSAGE_KEY_LOAD_MODULES]) {
         window.injectWebsiteOK = true;
+        try_inject_modules();
       }
 
-      if (e.data[MESSAGE_KEY_CHROME_INJECTION_DONE]) {
+      if(e.data[MESSAGE_KEY_CHROME_INJECTION_DONE]) {
         window.injectBackgroundOK = true;
+        try_inject_modules();
       }
-
-      if (window.injectBackgroundOK && window.injectWebsiteOK) {
-        injectModules();
-      }
-
-    } else {
-      if (e.data[MESSAGE_KEY_LOAD_MODULES]) {
-        injectModules();
+    } 
+    else {
+      if(e.data[MESSAGE_KEY_LOAD_MODULES]) {
+        window.postMessage({[MESSAGE_KEY_INJECT_MODULES]: true}, Config.appUrl);
       }
     }
   }
 };
 
 window.addEventListener("message", recvMsgFromApp);
-
-console.log("ContentScript.js is waiting for an OK from WebsiteBootstrap.js to inject modules.");
-
-setTimeout(() => {
-  if (window.hasInjectedModules) return;
-
-  showProblemPopup(
-    <div>
-    {`window.hasInjectedModules: ${typeof (window.hasInjectedModules)} ${window.hasInjectedModules}`}<br/>
-    {`window.injectWebsiteOK: ${typeof (window.injectWebsiteOK)} ${window.injectWebsiteOK}`}<br/>
-    {`window.injectBackgroundOK: ${typeof (window.injectBackgroundOK)} ${window.injectBackgroundOK}`}<br/>
-    {`window.bootstrapTable: ${typeof (window.bootstrapTable)} ${window.bootstrapTable}`}<br/>
-    </div>
-  );
-
-}, 25 * 1000);
 
 if(doesBrowserNotSupportResponseFiltering()) {
 
@@ -143,8 +118,9 @@ if(doesBrowserNotSupportResponseFiltering()) {
           urlIndex < redirectQueue.length;
           urlIndex++
       ) {
+        const url = redirectQueue[urlIndex];
+
         try {
-          const url = redirectQueue[urlIndex];
           const response = await fetch(url);
           const originalScriptSource = await response.text();
 
@@ -164,7 +140,7 @@ if(doesBrowserNotSupportResponseFiltering()) {
               "},250))"
             );
 
-            const hookQueue = getHooks(hooks, url);
+            const hookQueue = getHooks(VTTES_MODULE_CONFIGS, url);
             hookedData = injectHooks(hookedData, hookQueue);
 
             const blob = new Blob([hookedData]);
@@ -216,5 +192,8 @@ if(doesBrowserNotSupportResponseFiltering()) {
 
     getBrowser().runtime.sendMessage({[MESSAGE_KEY_DOM_LOADED]: true}, response_callback);
   };
+
   waitForDepts();
 }
+
+injectScript("WebsiteBootstrap.js");

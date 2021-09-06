@@ -230,4 +230,7 @@ class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new AlternativeRadialMenuModule().install();
+export default () => {
+  new AlternativeRadialMenuModule().install();
+};
+

@@ -1517,4 +1517,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new CharacterIOModule().install();
+export default () => {
+  new CharacterIOModule().install();
+};
+

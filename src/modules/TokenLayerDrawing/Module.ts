@@ -123,4 +123,7 @@ class TokenLayerDrawing extends R20Module.SimpleBase {
     }
 }
 
-if (R20Module.canInstall()) new TokenLayerDrawing().install();
+export default () => {
+  new TokenLayerDrawing().install();
+};
+

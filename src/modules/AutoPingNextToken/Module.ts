@@ -37,5 +37,7 @@ class AutoPingNextTokenModule extends R20Module.SimpleBase {
   }
 }
 
-if (R20Module.canInstall()) new AutoPingNextTokenModule().install();
+export default () => {
+  new AutoPingNextTokenModule().install();
+};
 

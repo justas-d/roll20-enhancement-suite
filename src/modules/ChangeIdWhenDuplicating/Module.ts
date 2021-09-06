@@ -23,4 +23,7 @@ class ChangeIdWhenDuplicatingModule extends R20Module.SimpleBase {
     }
 }
 
-if(R20Module.canInstall()) new ChangeIdWhenDuplicatingModule().install();
+export default () => {
+  new ChangeIdWhenDuplicatingModule().install();
+};
+

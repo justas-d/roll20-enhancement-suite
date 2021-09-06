@@ -156,4 +156,7 @@ class AnimationDisableModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new AnimationDisableModule().install();
+export default () => {
+  new AnimationDisableModule().install();
+};
+

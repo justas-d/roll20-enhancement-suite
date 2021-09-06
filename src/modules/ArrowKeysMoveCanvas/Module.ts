@@ -57,4 +57,7 @@ class ArrowKeysMoveCanvasModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new ArrowKeysMoveCanvasModule().install();
+export default () => {
+  new ArrowKeysMoveCanvasModule().install();
+};
+

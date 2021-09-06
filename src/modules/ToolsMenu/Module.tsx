@@ -38,5 +38,7 @@ class ToolsModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new ToolsModule().install();
-console.log("TOOLS");
+export default () => {
+  new ToolsModule().install();
+};
+

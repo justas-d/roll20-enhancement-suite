@@ -25,4 +25,7 @@ class HideTipsyPopup extends R20Module.SimpleBase {
   }
 }
 
-if (R20Module.canInstall()) new HideTipsyPopup().install();
+export default () => {
+  new HideTipsyPopup().install();
+};
+

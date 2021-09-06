@@ -90,4 +90,7 @@ class RememberTextToolSettingsModule extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new RememberTextToolSettingsModule().install();
+export default () => {
+  new RememberTextToolSettingsModule().install();
+};
+

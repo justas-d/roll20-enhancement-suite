@@ -243,4 +243,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new TableIOModule().install();
+export default () => {
+  new TableIOModule().install();
+};
+

@@ -321,4 +321,7 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
     }
 }
 
-if (R20Module.canInstall()) new DisablePlayerDrawings().install();
+export default () => {
+  new DisablePlayerDrawings().install();
+};
+

@@ -253,6 +253,10 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
 
   setup = () => {
     setTimeout(() => {
+      if(!("d20plus" in window)) {
+        return;
+      }
+
       // @ts-ignore
       let b20_version_str = window.d20plus.version;
       do { 
@@ -493,5 +497,7 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new ExtraRulers().install();
+export default () => {
+  new ExtraRulers().install();
+};
 

@@ -1,153 +1,145 @@
 import {DialogBase} from "../../utils/DialogBase";
-import {getExtUrlFromPage} from "../../utils/MiscUtils";
 import {Dialog, DialogHeader, DialogBody} from "../../utils/DialogComponents";
 import {DOM} from "../../utils/DOM";
 import {Config} from "../../utils/Config";
 
-declare namespace build {
-  export const R20ES_VERSION: string;
-  export const R20ES_COMMIT: string;
-  export const R20ES_BRANCH: string;
-  export const R20ES_BROWSER: string;
-}
-
 export default class AboutDialog extends DialogBase<null> {
-    private logoUrl: string = null;
+  public show = this.internalShow;
 
-    public show = this.internalShow;
+  constructor() {
+    super(null, {
+      maxHeight: "100%"
+    }, true); // recenter workaround
+  }
 
-    constructor() {
-        super(null, {
-            maxHeight: "100%"
-        }, true); // recenter workaround
+  private openUrl(url: string) {
+    var redir = window.open(url, "_blank");
+    redir.location;
+  }
 
-        getExtUrlFromPage("logo.svg", 5000)
-            .then((url: string) => this.logoUrl = url)
-            .catch(err => console.error(`Failed to get logo.svg: ${err}`));
-    }
+  protected render = (): HTMLElement => {
+    const mkEntry = (what, data) =>
+      <div>
+        {what}
+        <span style={{float: "right"}}>{data}</span>
+      </div>
 
-    private openUrl(url: string) {
-        var redir = window.open(url, "_blank");
-        redir.location;
-    }
+    return (
+      <Dialog>
+        <DialogHeader style={{textAlign: "center"}}>
+          <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
+             onClick={() => this.openUrl(Config.website)}
+          >
+            <h1 style="color: blue">VTT Enhancement Suite</h1>
+            <small>aka R20ES</small>
+          </a>
+          <h2>Version {BUILD_CONSTANT_VERSION}</h2>
+          <h3>Built for {(()=>{ 
+            if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+              return `${BUILD_CONSTANT_FOR_BROWSER} (userscript)`;
+            }
+            return BUILD_CONSTANT_FOR_BROWSER ;
+          })()}, Roll20</h3>
+        </DialogHeader>
 
-    protected render = (): HTMLElement => {
-        const mkEntry = (what, data) =>
-            <div>
-                {what}
-                <span style={{float: "right"}}>{data}</span>
+        <DialogBody>
+            <div style={{display: "flex"}}>
+
+            <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
+              <div>
+                <b>Built by</b>
+                <p>Justas Dabrila, Giddy, gludington, Blesmol, OLStefan</p>
+              </div>
+
+              <div>
+                <b>And other work by</b>
+                <p style={{maxWidth: "180px"}}>
+                  Jay "Vanguard" Fothergill, Ryan Wenneker
+                </p>
+              </div>
+
+              <div>
+                <b>Tested by</b>
+                <p style={{maxWidth: "180px"}}>
+                  Axecleft, TEU_Snoopy, keablah, Nikolay, Colorblind,
+                  DoomRice, Daj, Angor de Redjak, Ryan Wenneker, Tielc,
+                  Giddy, Grigdusher, Knilk, Dominic, Neverr, SmoothAsFelt,
+                  dunedain, Vlad.D, Mike W, Hagenkopter, Ackerfe, shaosam
+                </p>
+              </div>
             </div>
 
-        return (
-            <Dialog>
-                <DialogHeader style={{textAlign: "center"}}>
-                    <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
-                       onClick={() => this.openUrl(Config.website)}>
-                        <h1 style="color: blue">VTT Enhancement Suite</h1>
-                        <small>aka R20ES</small>
-                    </a>
-                    <h2>Version {build.R20ES_VERSION}</h2>
-                    <h3>Built for {build.R20ES_BROWSER}, <i>Roll20</i></h3>
-                </DialogHeader>
+            <div style={{display: "flex", flexDirection: "column", direction: "rtl", justifyContent: "center"}}>
+              <div>
+                <b>With contributions from</b>
+                <div style={{maxWidth: "180px"}}>
+                    Mike, Aaron, Blurn Glanstone, Tobyn, Fredrik, Ryan Wenneker,
+                    BuckeyeFan79, Jakob, Daniel (Daj), Morris Kennedy, KarateHawk,
+                    Jason Backus, Tielc, Spencer Oldemeyer, Hawks, S.Ziterman,
+                    Worst DM Ever, Curtis T, TEU_Snoopy, Jeremy, Alex, Teddy,
+                    John Finley, Shemetz, Jon, Mike Schaeffer, Anthony Diaz,
+                    Patrick Lane, Raphael Riedl, GrapeDrank, Michael Graeper,
+                    Michael Wilson, Bruce Frankford, Shona Dixon, Gabriel Diedrich,
+                    Kyle B. Bachman, The Griffin Moon Collaborative
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <hr/>
 
-                <DialogBody>
+          <div style={{display: "grid", gridTemplateColumns: "auto auto"}}>
+            <span>Branch</span>
+            <span>{BUILD_CONSTANT_BRANCH}</span>
 
-                    <div style={{display: "flex"}}>
+            <span>Commit</span>
+            <span>{BUILD_CONSTANT_COMMIT}</span>
+          </div>
 
-                        <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
-                            <div>
-                                <b>Built by</b>
-                                <p>Justas Dabrila, Giddy, gludington, Blesmol, OLStefan</p>
-                            </div>
+          <div style={{marginTop: "16px", marginBottom: "16px", textAlign: "center"}}>
+            <span style={{marginRight: "8px"}}>
+              <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
+                 onClick={() => this.openUrl(Config.discordInvite)}>
+                  <img height="32" width="32" className="discord-logo"
+                       src="https://unpkg.com/simple-icons@5.13.0/icons/discord.svg"
+                  />
+              </a>
+            </span>
 
-                            <div>
-                                <b>And other work by</b>
-                                <p style={{maxWidth: "180px"}}>
-                                    Jay "Vanguard" Fothergill, Ryan Wenneker
-                                </p>
-                            </div>
+            <span style={{marginRight: "8px"}}>
+              <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
+                 onClick={() => this.openUrl("https://github.com/justas-d/roll20-enhancement-suite/")}
+                >
+                  <img height="32" width="32" className="github-logo"
+                       src="https://unpkg.com/simple-icons@latest/icons/github.svg"
+                  />
+              </a>
+            </span>
 
-                            <div>
-                                <b>Tested by</b>
-                                <p style={{maxWidth: "180px"}}>
-                                    Axecleft, TEU_Snoopy, keablah, Nikolay, Colorblind,
-                                    DoomRice, Daj, Angor de Redjak, Ryan Wenneker, Tielc,
-                                    Giddy, Grigdusher, Knilk, Dominic, Neverr, SmoothAsFelt,
-                                    dunedain, Vlad.D, Mike W, Hagenkopter, Ackerfe, shaosam
-                                </p>
-                            </div>
-                        </div>
+            <span>
+              <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
+                 onClick={() => this.openUrl(Config.contributeUrl)}
+              >
+                <img height="32" width="32"
+                     src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg"
+                     alt="Buy me a coffee"
+                />
+              </a>
+            </span>
+          </div>
+        </DialogBody>
 
-                        <div style={{display: "flex", flexDirection: "column", direction: "rtl", justifyContent: "center"}}>
-                            <div>
-                                <b>With contributions from</b>
-                                <div style={{maxWidth: "180px"}}>
-                                    Mike, Aaron, Blurn Glanstone, Tobyn, Fredrik, Ryan Wenneker,
-                                    BuckeyeFan79, Jakob, Daniel (Daj), Morris Kennedy, KarateHawk,
-                                    Jason Backus, Tielc, Spencer Oldemeyer, Hawks, S.Ziterman,
-                                    Worst DM Ever, Curtis T, TEU_Snoopy, Jeremy, Alex, Teddy,
-                                    John Finley, Shemetz, Jon, Mike Schaeffer, Anthony Diaz,
-                                    Patrick Lane, Raphael Riedl, GrapeDrank, Michael Graeper,
-                                    Michael Wilson, Bruce Frankford, Shona Dixon, Gabriel Diedrich,
-                                    Kyle B. Bachman, The Griffin Moon Collaborative
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <section style={{margin: "20px"}}>
+          <input
+            className="btn"
+            style={{width: "100%", height: "auto", boxSizing: "border-box"}}
+            type="button"
+            onClick={this.close}
+            value="OK"
+          />
+        </section>
 
-
-                    <hr/>
-
-                    <div style={{display: "grid", gridTemplateColumns: "auto auto"}}>
-                        <span>Branch</span>
-                        <span>{build.R20ES_BRANCH}</span>
-
-                        <span>Commit</span>
-                        <span>{build.R20ES_COMMIT}</span>
-                    </div>
-
-                    <div style={{marginTop: "16px", marginBottom: "16px", textAlign: "center"}}>
-
-                        <span style={{marginRight: "8px"}}>
-                            <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
-                               onClick={() => this.openUrl(Config.discordInvite)}>
-                                <img height="32" width="32" className="discord-logo"
-                                     src="https://discordapp.com/assets/41484d92c876f76b20c7f746221e8151.svg"/>
-                            </a>
-                        </span>
-
-                        <span style={{marginRight: "8px"}}>
-                            <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
-                               onClick={() => this.openUrl("https://github.com/justas-d/roll20-enhancement-suite/")}>
-                                <img height="32" width="32" className="github-logo"
-                                     src="https://unpkg.com/simple-icons@latest/icons/github.svg"/>
-                            </a>
-                        </span>
-
-                        <span>
-                            <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
-                               onClick={() => this.openUrl(Config.contributeUrl)}>
-                                <img height="32" width="32"
-                                     src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg"
-                                     alt="Buy me a coffee"/>
-                            </a>
-                        </span>
-
-                    </div>
-
-                </DialogBody>
-
-                <section style={{margin: "20px"}}>
-                    <input
-                        className="btn"
-                        style={{width: "100%", height: "auto", boxSizing: "border-box"}}
-                        type="button"
-                        onClick={this.close}
-                        value="OK"/>
-                </section>
-
-            </Dialog> as any
-        )
-    }
+      </Dialog>
+    ) as any;
+  }
 }

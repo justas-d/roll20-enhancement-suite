@@ -87,4 +87,7 @@ class CharacterAvatarFromURL extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new CharacterAvatarFromURL().install();
+export default () => {
+  new CharacterAvatarFromURL().install();
+};
+

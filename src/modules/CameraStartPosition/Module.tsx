@@ -278,5 +278,7 @@ class CameraStartPositionModule extends R20Module.OnAppLoadBase {
   }
 }
 
-if (R20Module.canInstall()) new CameraStartPositionModule().install();
+export default () => {
+  new CameraStartPositionModule().install();
+};
 

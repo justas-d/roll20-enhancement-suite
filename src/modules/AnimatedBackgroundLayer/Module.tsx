@@ -690,7 +690,7 @@ class AnimBackgroundSetup extends DialogBase<null> {
   }
 }
 
-if (R20Module.canInstall()) new AnimatedBackgroundLayer().install();
-
-
+export default () => {
+  new AnimatedBackgroundLayer().install();
+};
 

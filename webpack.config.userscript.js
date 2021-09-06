@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const fs = require('fs');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 let git = {};
 
@@ -30,76 +31,14 @@ let changelog = '';
   changelog = fs.readFileSync(changelogFile, "utf8");
 }
 
+const logo_data_b64 = "data:image/svg+xml;base64," + btoa(fs.readFileSync("./assets/logo/logo.svg", "utf8"));
+
 module.exports = (_env, argv) => {
-  const is_prod = false;
+  const is_prod = argv.mode === "production";
 
   const source_output_path = path.join(
     path.resolve(__dirname), "builds", "userscript", is_prod ? "prod" : "dev"
   );
-
-  const entry = {};
-  const staticFiles = {};
-
-  const add_static_file = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
-  const add_entry_point = (mappedName, sourcePath) => entry[mappedName] = sourcePath;
-
-  const add_static_folder = (root) => {
-    fs.readdirSync(root).forEach(f => {
-      const rootFile = root + f;
-      if (fs.lstatSync(rootFile).isDirectory()) {
-        return;
-      }
-      add_static_file(f, rootFile);
-    });
-  };
-
-  add_static_folder("./css/");
-  add_static_folder("./assets/logo/");
-  add_entry_point("userscript.js", "./src/userscript.ts");
-
-  /*
-  {
-    const root = "./src/modules/";
-    fs.readdirSync(root).forEach(dirname => {
-      const rootDirname = root + dirname;
-      if (!fs.lstatSync(rootDirname).isDirectory()) return;
-
-      // look for the entry point
-      const entryRegex = /Module(\.js.?$|\.ts.?$)/i;
-      fs.readdirSync(rootDirname).forEach(f => {
-        if (!f.match(entryRegex)) {
-          return;
-        }
-
-        add_entry_point(dirname + ".js", "./" + path.join(root, dirname, f));
-      });
-    });
-  }
-  */
-
-  /*
-  {
-    const root = "./src/entrypoints/"
-    fs.readdirSync(root).forEach(f => {
-      const rootFile = root + f;
-      if(fs.lstatSync(rootFile).isDirectory()) {
-        return;
-      }
-
-      add_entry_point(f, rootFile);
-    });
-  }
-  */
-
-  // NOTE(justasd): only if we're doing firefox, as ff needs the dialog polyfill
-  //if (browser.extraFiles) {
-  //  for (const file of browser.extraFiles) {
-  //    add_static_file(path.basename(file), file);
-  //  }
-  //}
-
-    console.log(entry);
-    console.log(staticFiles);
 
   let config = {
     performance: {
@@ -111,7 +50,9 @@ module.exports = (_env, argv) => {
     target: "web",
     mode: is_prod ? "production" : "development",
 
-    entry: entry,
+    entry: {
+      ["userscript.js"]: "./src/userscript.ts",
+    },
 
     output: {
       path: source_output_path,
@@ -154,22 +95,15 @@ module.exports = (_env, argv) => {
     },
 
     plugins: [
-      new CopyWebpackPlugin(Object.keys(staticFiles).reduce((accum, mappedName) => {
-        accum.push({
-          from: staticFiles[mappedName],
-          to: path.join(source_output_path, mappedName)
-        });
-        return accum;
-      }, [])),
-
       new webpack.DefinePlugin({
-        "build.R20ES_VERSION": JSON.stringify(git.version),
-        "build.R20ES_COMMIT": JSON.stringify(git.commit),
-        "build.R20ES_BRANCH": JSON.stringify(git.branch),
-        "build.R20ES_BROWSER": JSON.stringify("chrome"),
-        "VTTES_BROWSER": JSON.stringify("chrome"),
-        "build.R20ES_CHANGELOG": JSON.stringify(changelog),
-        'build_R20ES_IS_DEV': JSON.stringify(is_prod === false),
+        "BUILD_CONSTANT_VERSION": JSON.stringify(git.version),
+        "BUILD_CONSTANT_COMMIT": JSON.stringify(git.commit),
+        "BUILD_CONSTANT_BRANCH": JSON.stringify(git.branch),
+        "BUILD_CONSTANT_FOR_BROWSER": JSON.stringify("chrome"),
+        "BUILD_CONSTANT_IS_FOR_USERSCRIPT": JSON.stringify(true),
+        "BUILD_CONSTANT_CHANGELOG": JSON.stringify(changelog),
+        'BUILD_CONSTANT_VTTES_IS_DEV': JSON.stringify(is_prod === false),
+        'BUILD_CONSTANT_LOGO_B64': `"${logo_data_b64}"`,
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
     ],
@@ -177,7 +111,17 @@ module.exports = (_env, argv) => {
 
   if(is_prod) {
     config.optimization = { 
-      minimizer: [new UglifyJsPlugin({ test: /\.js$|\.jsx$|\.ts$|\.tsx$/i, parallel: true })] 
+      minimizer: [
+        new UglifyJsPlugin({
+          uglifyOptions: {
+            output: {
+              comments: false,
+            },
+          },
+          test: /\.js$|\.jsx$|\.ts$|\.tsx$/i, 
+          parallel: true,
+        })
+      ]
     };
   }
 
