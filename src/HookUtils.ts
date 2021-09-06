@@ -1,4 +1,4 @@
-import {replace_all_and_count} from "utils/MiscUtils";
+import {replace_all_and_count} from "./utils/MiscUtils";
 
 export const getHooks = (hooks, url) => {
   let hookQueue = [];

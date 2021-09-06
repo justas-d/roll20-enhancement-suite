@@ -145,7 +145,7 @@ const readFile = function(file) {
     });
 }
 
-const getBrowser = () => chrome || browser;
+const getBrowser = (): any => chrome || browser;
 
 const injectScript = function(name) {
     console.log(`Injecting ${name}`);

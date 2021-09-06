@@ -146,7 +146,7 @@ namespace R20 {
         return window.Campaign.pages.models;
     }
 
-    export function createRollableTable(initialAttributes): RollableTable {
+    export function createRollableTable(initialAttributes?: any): RollableTable {
         return window.d20.Campaign.rollabletables.create(initialAttributes);
     }
 

@@ -97,7 +97,10 @@ export namespace R20Module {
       }
     }
 
-    getAllHooks = _ => window.r20es.hooks;
+    getAllHooks = () => {
+      return window.r20es.hooks;
+    }
+
     getHook() {
       if (!(("hooks") in window.r20es)) return null;
 

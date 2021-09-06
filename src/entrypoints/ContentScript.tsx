@@ -136,94 +136,85 @@ if(doesBrowserNotSupportResponseFiltering()) {
 
     console.log("DOM LOADED, requesting redirectQueue.");
 
-    getBrowser().runtime.sendMessage({
-      [MESSAGE_KEY_DOM_LOADED]: true,
-    }, (redirectQueue) => {
+    const response_callback = async (redirectQueue: any) => {
       console.log("Received redirectQueue from background:", redirectQueue);
 
-      for(
-        let urlIndex = 0;
-        urlIndex < redirectQueue.length;
-        urlIndex++)
-      {
-        const url = redirectQueue[urlIndex];
-        const response = fetch(url);
+      for(let urlIndex = 0;
+          urlIndex < redirectQueue.length;
+          urlIndex++
+      ) {
+        try {
+          const url = redirectQueue[urlIndex];
+          const response = await fetch(url);
+          const originalScriptSource = await response.text();
 
-        response.then(response => {
+          {
+            let hookedData = originalScriptSource;
+            // take over jquery .ready
+            hookedData = hookedData.replace(
+              "jQuery.ready.promise().done( fn );",
+              `if(!window.r20esChrome) window.r20esChrome = {};
+               if(!window.r20esChrome.readyCallbacks) window.r20esChrome.readyCallbacks = [];
+              window.r20esChrome.readyCallbacks.push(fn);`
+            );
 
-          const textPromise = response.text();
+            // incredibly long loading screens fix
+            hookedData = hookedData.replace(
+              "},6e4))",
+              "},250))"
+            );
 
-          textPromise.then(originalScriptSource => {
+            const hookQueue = getHooks(hooks, url);
+            hookedData = injectHooks(hookedData, hookQueue);
+
+            const blob = new Blob([hookedData]);
+            const hookedScriptUrl = URL.createObjectURL(blob);
+            const scriptElement = document.createElement("script");
+
+            scriptElement.async = false;
+            scriptElement.src = hookedScriptUrl;
+            scriptElement.id = url;
+
+            hookedScriptQueue[urlIndex] = scriptElement;
+          }
+
+          numScriptsDone++;
+
+          if(numScriptsDone === redirectQueue.length) {
+            /*
+              NOTE(justas);
+              for some reason, when we call document.body.appendChild(scriptElement);
+              the screen flashes white because the styles get all messed up.
+              This style change bodges a workaround by making the background black,
+              thus the flash becomes subtle.
+              @BootstrapFlashWorkaroundStyle
+             */
             {
-              let hookedData = originalScriptSource;
-              // take over jquery .ready
-              hookedData = hookedData.replace(
-                  "jQuery.ready.promise().done( fn );",
-                  `if(!window.r20esChrome) window.r20esChrome = {};
-                   if(!window.r20esChrome.readyCallbacks) window.r20esChrome.readyCallbacks = [];
-                  window.r20esChrome.readyCallbacks.push(fn);`);
-
-              // incredibly long loading screens fix
-              hookedData = hookedData.replace(
-                  `},6e4))`,
-                  `},250))`);
-
-              const hookQueue = getHooks(hooks, url);
-              hookedData = injectHooks(hookedData, hookQueue);
-
-              const blob = new Blob([hookedData]);
-              const hookedScriptUrl = URL.createObjectURL(blob);
-              const scriptElement = document.createElement("script");
-
-              scriptElement.async = false;
-              scriptElement.src = hookedScriptUrl;
-              scriptElement.id = url;
-
-              hookedScriptQueue[urlIndex] = scriptElement;
+              const style = document.createElement("style");
+              style.innerHTML = "body { background: black !important; }";
+              style.id = ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE;
+              document.head.appendChild(style);
             }
 
-            numScriptsDone++;
+            console.log("Scripts are done, dumping", hookedScriptQueue);
 
+            for(const indexKey in hookedScriptQueue) {
+              const scriptElement = hookedScriptQueue[indexKey];
 
-            if(numScriptsDone === redirectQueue.length) {
-              /*
-                  NOTE(justas);
-                  for some reason, when we call document.body.appendChild(scriptElement);
-                  the screen flashes white because the styles get all messed up.
-                  This style change bodges a workaround by making the background black,
-                  thus the flash becomes subtle.
-                  @BootstrapFlashWorkaroundStyle
-               */
-              {
-                  const style = document.createElement("style");
-                  style.innerHTML = "body { background: black !important; }";
-                  style.id = ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE;
-                  document.head.appendChild(style);
-              }
-
-              console.log("Scripts are done, dumping", hookedScriptQueue);
-
-              for(const indexKey in hookedScriptQueue) {
-                  const scriptElement = hookedScriptQueue[indexKey];
-
-                  console.log("Injecting ", scriptElement);
-                  document.body.appendChild(scriptElement);
-              }
-
-              injectScript("ChromePostInjectScriptsPayload.js");
+              console.log("Injecting ", scriptElement);
+              document.body.appendChild(scriptElement);
             }
-          });
 
-          textPromise.catch(e => {
-            console.error("FATAL: textPromise of redirectQueue fetch failed: ", url, e);
-          })
-        });
-
-        response.catch(e => {
-          console.error("FATAL: fetch redirectQueue promise failed: ", url, e);
-        });
+            injectScript("ChromePostInjectScriptsPayload.js");
+          }
+        }
+        catch(e) {
+          console.error("FATAL: redirectQueue promise failed: ", url, e);
+        }
       }
-    });
+    };
+
+    getBrowser().runtime.sendMessage({[MESSAGE_KEY_DOM_LOADED]: true}, response_callback);
   };
   waitForDepts();
 }

@@ -4,9 +4,15 @@ import { SheetTab } from '../../utils/SheetTab';
 import { R20 } from "../../utils/R20";
 import { promiseWait } from "../../utils/promiseWait";
 
-const charIdAttribute = "data-characterid";
+const CHAR_ID_ATTRIBUTE = "data-characterid";
+const ATTRIB_NAV_HAS_LISTENER = "data-r20es-character-sheet-nav-event";
+const TAB_STYLE = "r20es-character-sheet-tab";
+const ATTRIB_CUSTOM_NAV = "data-r20es-nav";
 
 class SheetTabApiModule extends R20Module.OnAppLoadBase {
+  observer: MutationObserver;
+  infectedNavs: Array<HTMLElement>;
+
   constructor() {
     super(__dirname);
 
@@ -17,16 +23,12 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
     this.onClickNormalNavs = this.onClickNormalNavs.bind(this);
     this.rescan = this.rescan.bind(this);
 
-    this.tabStyle = "r20es-character-sheet-tab";
-    this.attribNavHasListener = "data-r20es-character-sheet-nav-event";
-    this.attribCustomNav = "data-r20es-nav";
-
     // bookkeeping for disposal
     this.infectedNavs = [];
   }
 
   getWidgetTabRoots(navAElement) {
-    return $(navAElement.parentNode.parentNode.parentNode).find("." + this.tabStyle);
+    return $(navAElement.parentNode.parentNode.parentNode).find("." + TAB_STYLE);
   }
 
   unselectSyntheticNavs(e) {
@@ -49,7 +51,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
     const internalTabs = SheetTab._getInternalData();
     const tab = internalTabs.tabsById[targetTabClass];
 
-    const char_id = e.target.getAttribute(charIdAttribute);
+    const char_id = e.target.getAttribute(CHAR_ID_ATTRIBUTE);
     const tabInstance = tab.getInstanceData(char_id);
 
     //console.log(tabInstance);
@@ -84,7 +86,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
     if(!character_dialog) return false
     if(!character_dialog.classList.contains("characterdialog")) return false;
 
-    const characterId = character_dialog.getAttribute(charIdAttribute);
+    const characterId = character_dialog.getAttribute(CHAR_ID_ATTRIBUTE);
 
     if(tab.predicate) {
       const char = R20.getCharacter(characterId);
@@ -176,7 +178,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
         </li>
       );
 
-      nav.firstElementChild.setAttribute(this.attribCustomNav, true);
+      nav.firstElementChild.setAttribute(ATTRIB_CUSTOM_NAV, true);
 
       tab._addElem(nav);
 
@@ -185,10 +187,10 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
       // register an event handler on the normal navbar tabs
       // onClickNormalNavs will hide the custom stuff, state active state for the custom nav
       $(navTabsRoot).find("a[data-tab]").each((i, el) => {
-        if (el.hasAttribute(this.attribCustomNav)) return;
-        if (el.hasAttribute(this.attribNavHasListener)) return;
+        if (el.hasAttribute(ATTRIB_CUSTOM_NAV)) return;
+        if (el.hasAttribute(ATTRIB_NAV_HAS_LISTENER)) return;
 
-        el.setAttribute(this.attribNavHasListener, true);
+        el.setAttribute(ATTRIB_NAV_HAS_LISTENER, true);
         el.addEventListener("click", this.onClickNormalNavs);
         this.infectedNavs.push(el);
       });
@@ -202,7 +204,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
       tabInstanceData.root = renderFxResult;
 
       const widget = (
-        <div className={[this.tabStyle, tab.id, "tab-pane"]} style={{ display: "none" }}>
+        <div className={[TAB_STYLE, tab.id, "tab-pane"]} style={{ display: "none" }}>
           {renderFxResult}
         </div>
       );
@@ -233,10 +235,9 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
 
   rescan(tab) {
     const existingHeaders = document.querySelectorAll("iframe");
-
-    for (const header of existingHeaders) {
+    existingHeaders.forEach(header => {
       this.try_injecting_single_widget(header, tab);
-    }
+    });
   }
 
   setup() {
@@ -245,10 +246,9 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
 
     {
       const existingHeaders = document.querySelectorAll("iframe");
-
-      for (const header of existingHeaders) {
+      existingHeaders.forEach(header => {
         this.try_injecting_widget(header);
-      }
+      });
     }
 
     SheetTab._getInternalData().rescanFunc = this.rescan;
@@ -263,10 +263,10 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
     }
     data.tabs = [];
 
-    this.infectedNavs.each(el => {
+    for(const el of this.infectedNavs) {
       el.removeEventListener("click", this.onClickNormalNavs);
-      el.removeAttribute(this.attribNavHasListener);
-    });
+      el.removeAttribute(ATTRIB_NAV_HAS_LISTENER);
+    }
 
     this.infectedNavs.length = 0;
 

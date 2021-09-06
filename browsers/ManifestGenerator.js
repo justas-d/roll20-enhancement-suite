@@ -1,6 +1,15 @@
 const VersionNameGen = require("./VersionNameGen");
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
-const editorUrls = require("../src/utils/EditorURLs");
+
+// Must match the one in Background.js
+const editorUrls = [
+  "https://app.roll20.net/editor",
+  "https://app.roll20.net/editor/",
+  "https://app.roll20.net/editor/#*", // handle all fragments
+  "https://app.roll20.net/editor#*",
+  "https://app.roll20.net/editor/?*", // handle all queries
+  "https://app.roll20.net/editor?*"
+];
 
 const gen = (browser, origVersionName) => {
     let manifest = {

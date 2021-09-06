@@ -3,34 +3,38 @@ import { R20 } from "../../utils/R20";
 import {Token} from "roll20";
 
 class AutoPingNextTokenModule extends R20Module.SimpleBase {
-    public constructor() {
-        super(__dirname);
+  public constructor() {
+    super(__dirname);
+  }
+
+  private static ping(data: Token) {
+    if (!data.id) return;
+
+    const obj = R20.getCurrentPageTokenByUUID(data.id);
+
+    if (!obj) return;
+
+    const model = R20.try_get_canvas_object_model(obj);
+    if(!model) {
+      return;
     }
 
-    private static ping(data: Token) {
-        if (!data.id) return;
-
-        const obj = R20.getCurrentPageTokenByUUID(data.id);
-
-        if (!obj) return;
-
-        const model = R20.try_get_canvas_object_model(obj);
-        if(!model) {
-            return;
-        }
-        if (model.get("layer") !== "objects") return;
-        R20.ping(obj.left, obj.top, null, null, R20.CanvasLayer.PlayerTokens);
+    if (model.get("layer") !== "objects") {
+      return;
     }
 
-    public setup() {
-        if (!R20.isGM()) return;
+    R20.ping(obj.left, obj.top, null, null, R20.CanvasLayer.PlayerTokens);
+  }
 
-        window.r20es.pingInitiativeToken = AutoPingNextTokenModule.ping;
-    }
+  public setup() {
+    if (!R20.isGM()) return;
 
-    public dispose() {
-        window.r20es.pingInitiativeToken = null;
-    }
+    window.r20es.pingInitiativeToken = AutoPingNextTokenModule.ping;
+  }
+
+  public dispose() {
+    window.r20es.pingInitiativeToken = null;
+  }
 }
 
 if (R20Module.canInstall()) new AutoPingNextTokenModule().install();

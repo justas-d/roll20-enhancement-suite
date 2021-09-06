@@ -107,6 +107,7 @@ addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
 addCfg(ExtraRulers);
 
+// @ts-ignore
 if(VTTES_BROWSER == "chrome") {
   addCfg(ChromeUpdateChecker);
 }

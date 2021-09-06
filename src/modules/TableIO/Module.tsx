@@ -1,6 +1,5 @@
 import { R20Module } from "../../utils/R20Module";
 import { R20 } from "../../utils/R20";
-import { TableIO } from "../../utils/TableIO";
 import { saveAs } from 'save-as'
 import { DOM, SidebarSeparator, SidebarCategoryTitle } from "../../utils/DOM";
 import { TableExportLang } from "../../utils/TableExportLang";
@@ -9,6 +8,25 @@ import { import_multiple_files } from "../../utils/import_multiple_files";
 import { LoadingDialog } from "../../utils/DialogComponents";
 import Vars from './Vars';
 import PasteTableExportDialog from "./PasteTableExportDialog";
+
+const importJson = (json: any) => {
+  // NOTE(justasd): yeah make sure to version your data. rip.
+  // 2021-03-12
+  if(!json) return;
+
+  let table = R20.createRollableTable();
+
+  for (let id in json.items) {
+    let item = json.items[id];
+    delete item.id;
+
+    table.tableitems.create(item);
+  }
+
+  delete json.id;
+  delete json.items;
+  table.save(json);
+};
 
 class TableIOModule extends R20Module.OnAppLoadBase {
 
@@ -42,7 +60,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
     let table = R20.getRollableTable(tableId);
     if (!table) { alert(`Failed to get table. Table id: ${tableId}`); return; }
 
-    let data = TableIO.exportJson(table);
+    let data = JSON.stringify(table.attributes, null, 4);
 
     let jsonBlob = new Blob([data], { type: 'data:application/json;charset=utf-8' });
     saveAs(jsonBlob, table.get("name") + ".json");
@@ -75,20 +93,20 @@ class TableIOModule extends R20Module.OnAppLoadBase {
     const json = safeParseJson(e);
     if (!json) return;
 
-    TableIO.importJson(json);
+    importJson(json);
   }
 
   importTablesTableExport(e: string)  {
     if (!TableExportLang.naiveVerify(e)) return;
 
-    const tables = TableExportLang.parse(e);
+    const tables = TableExportLang.parse(e) as any;
 
     if (!tables) return;
 
     if (!tables || tables.length <= 0) return;
 
     for (let tableName in tables) {
-      TableIO.importJson(tables[tableName]);
+      importJson(tables[tableName]);
     }
   }
 

@@ -1,5 +1,5 @@
 import {MESSAGE_KEY_CHROME_INJECTION_DONE} from "../MiscConstants";
-import {Config} from 'utils/Config';
+import {Config} from '../utils/Config';
 
 {
   {
@@ -13,7 +13,7 @@ import {Config} from 'utils/Config';
 
   const waitForDepts = () => {
 
-    const hasJQuery = typeof(window.$) !== "undefined";
+    const hasJQuery = typeof(window["$"]) !== "undefined";
     const hasSoundManager = typeof(window.soundManager) !== "undefined";
     const hasD20 = typeof(window.d20) !== "undefined";
 

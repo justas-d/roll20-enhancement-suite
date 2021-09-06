@@ -25,6 +25,7 @@ setTimeout(() => {
   window.postMessage({ r20sAppWantsInitialConfigs: ids }, Config.appUrl);
 }
 
+// @ts-ignore
 window.r20es = window.r20es || {};
 window.r20es.hooks = hooks;
 
@@ -47,16 +48,13 @@ if ("r20esDisposeTable" in window) {
 
 window.r20esInstalledModuleTable = window.r20esInstalledModuleTable || {};
 window.r20esDisposeTable = window.r20esDisposeTable || {};
-
-if (!("isLoading" in window.r20es)) {
-  window.r20es.isLoading = true;
-}
+window.r20es.isLoading = true;
 
 if (window.r20es.recvPluginMsg) {
   window.removeEventListener("message", window.r20es.recvPluginMsg);
 }
 
-window.r20es.recvPluginMsg = function (e) {
+window.r20es.recvPluginMsg = (e) => {
   if (e.origin !== Config.appUrl) return;
 
   console.log("Injected WebsiteBootstrap.js received message from content-script with proper origin.");
@@ -148,7 +146,13 @@ window.r20es.canInstallModules = true;
 document.removeEventListener("keyup", window.r20es.onDocumentMouseUp);
 document.removeEventListener("keydown", window.r20es.onDocumentMouseUp);
 
-window.r20es.keys = window.r20es.keys || {};
+window.r20es.keys = window.r20es.keys || {
+  altDown: false,
+  shiftDown: false,
+  ctrlDown: false,
+  metaDown: false,
+};
+
 window.r20es.onDocumentMouseUp = e => {
   window.r20es.keys.altDown = e.altKey;
   window.r20es.keys.shiftDown = e.shiftKey;

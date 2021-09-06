@@ -5,10 +5,10 @@ import {DOM} from "../../utils/DOM";
 import {Config} from "../../utils/Config";
 
 declare namespace build {
-    export const R20ES_VERSION: string;
-    export const R20ES_COMMIT: string;
-    export const R20ES_BRANCH: string;
-    export const R20ES_BROWSER: string;
+  export const R20ES_VERSION: string;
+  export const R20ES_COMMIT: string;
+  export const R20ES_BRANCH: string;
+  export const R20ES_BROWSER: string;
 }
 
 export default class AboutDialog extends DialogBase<null> {
