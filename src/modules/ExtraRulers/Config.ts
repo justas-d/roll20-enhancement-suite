@@ -16,15 +16,13 @@ export default MakeConfig(__dirname, {
     radius_mode: RADIUS_MODE_BURST,
     box_mode: BOX_MODE_BURST,
     cone_mode: CONE_MODE_FLAT,
-    cone_degrees: 90,
+    cone_degrees: 1.0 * (180.0/3.14159265359), /* 1 rad -> deg */
     line_mode: LINE_MODE_TOTAL_WIDTH,
     line_width: 5,
     ruler_mode: RULER_NORMAL,
   },
 
   mods: [
-
-            
     {
       includes: "assets/app.js",
       find: `function setMode(e){`,
