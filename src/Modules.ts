@@ -95,6 +95,7 @@ add_module(Mod_RememberTextToolSettings);
 add_module(Mod_RollAndApplyHitDice);
 add_module(Mod_ScaleTokenNamesBySize);
 add_module(Mod_SetTableEntryAvatarByUrl);
+add_module(Mod_ToolsMenu);
 add_module(Mod_Settings);
 add_module(Mod_SheetTabApi);
 add_module(Mod_TableIO);
@@ -103,7 +104,6 @@ add_module(Mod_TokenContextMenuApi);
 add_module(Mod_TokenFromImg);
 add_module(Mod_TokenLayerDrawing);
 add_module(Mod_TokenResize);
-add_module(Mod_ToolsMenu);
 add_module(Mod_TransparentPaper);
 add_module(Mod_Welcome);
 
