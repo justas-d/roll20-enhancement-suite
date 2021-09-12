@@ -1,5 +1,5 @@
 {
-    "current": "1.24.0",
+    "current": "1.24.1",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1681,6 +1681,38 @@
                 {
                     "id": "",
                     "content": "Add Token Counter module (submitted by OLStefan)."
+                }
+            ]
+        },
+        "1.24.1": {
+            "info": {
+                "title": "Tweaks & Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Set Table Entry Avatarby URL: fix some urls not working (thanks, Qwert, for the report!)"
+                },
+                {
+                    "id": "",
+                    "content": "Extra Rulers: default to 1 rad for cones degrees."
+                },
+                {
+                    "id": "",
+                    "content": "Character Token Modifier: Show previous token image url."
+                },
+                {
+                    "id": "",
+                    "content": "Handout Image From URL: Show previous image url."
+                },
+                {
+                    "id": "",
+                    "content": "Set Table Entry Avatarby URL: Show previous image url."
+                },
+                {
+                    "id": "",
+                    "content": "Character Avatar From URL: Show previous image url."
                 }
             ]
         }
