@@ -772,7 +772,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
     const setFromUrl = (e: Event) => {
       e.stopPropagation();
-      const url = prompt("Image URL.", "www.example.com/image.png");
+      const url = prompt("Image URL.", data.token.imgsrc);
       if (!url) return;
 
       data.token.imgsrc = url;
