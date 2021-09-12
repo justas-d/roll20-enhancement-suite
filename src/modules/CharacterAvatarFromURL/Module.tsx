@@ -7,7 +7,6 @@ const BUTTON_CLASS = "vttes-character-image-from-url";
 class CharacterAvatarFromURL extends R20Module.OnAppLoadBase {
 
   observer: MutationObserver;
-  last_url: string;
 
   constructor() {
     super(__dirname);
@@ -25,11 +24,10 @@ class CharacterAvatarFromURL extends R20Module.OnAppLoadBase {
       return;
     }
 
-    const url = window.prompt("Set character avatar from URL:", this.last_url);
+    const url = window.prompt("Set character avatar from URL:", pc.attributes.avatar);
     if(url == null) return;
 
     if(url) {
-      this.last_url = url;
       pc.save({avatar: url});
     }
     else {
