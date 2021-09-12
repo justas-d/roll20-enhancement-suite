@@ -1,24 +1,83 @@
-  import { VTTES_MODULE_CONFIGS } from "./Configs";
-  import { VTTES_MODULES }from "./Modules";
-  import { Config } from "./utils/Config";
-  import { safeCall, findByIdAndRemove } from "./utils/MiscUtils";
-  import showProblemPopup from "./utils/ProblemPopup";
-  import { DOM } from "./utils/DOM";
-  import {EventEmitter} from "./utils/EventEmitter";
-  import { saveAs } from 'save-as'
-  import {isChromium} from "./utils/BrowserDetection";
-  import {getBrowser} from "./utils/MiscUtils";
-  import {
-    ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE,
-    MESSAGE_KEY_LOAD_MODULES,
-    MESSAGE_KEY_INJECT_MODULES
-  } from "./MiscConstants";
+import { VTTES_MODULE_CONFIGS } from "./Configs";
+import { VTTES_MODULES }from "./Modules";
+import { Config } from "./utils/Config";
+import { safeCall, findByIdAndRemove } from "./utils/MiscUtils";
+import showProblemPopup from "./utils/ProblemPopup";
+import { DOM } from "./utils/DOM";
+import {EventEmitter} from "./utils/EventEmitter";
+import { saveAs } from 'save-as'
+import {isChromium} from "./utils/BrowserDetection";
+import {getHooks, injectHooks} from './HookUtils';
+import {getBrowser} from "./utils/MiscUtils";
+import {
+  ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE,
+  MESSAGE_KEY_LOAD_MODULES,
+  MESSAGE_KEY_INJECT_MODULES
+} from "./MiscConstants";
 
-  import { dialog_polyfill_script, dialog_polyfill_css } from "./dialog_polyfill";
+import { dialog_polyfill_script, dialog_polyfill_css } from "./dialog_polyfill";
 
-  const USERSCRIPT_SAVE_DATA_KEY = "vttes_userscript_config";
+const USERSCRIPT_SAVE_DATA_KEY = "vttes_userscript_config";
 
 export const bootstrap = () => {
+
+  if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+    window.enhancementSuiteEnabled = true;
+
+    let app_script = "";
+
+    const fetch_script = async () => {
+      const url = `/assets/app.js?n${Date.now()}`;
+      const hooks = getHooks(window.r20es.hooks, url);
+
+      const response = await fetch(url);
+      let text = await response.text();
+
+      text = injectHooks(text, hooks);
+
+      app_script = text;
+    };
+
+    fetch_script();
+
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(({ addedNodes }) => {
+        addedNodes.forEach(void_node => {
+
+          var node = void_node as any as HTMLScriptElement;
+
+          // @ts-ignore
+          if(node.nodeType === 1 && node.tagName === 'SCRIPT') {
+            const src = node.src || '';
+            if(src.indexOf('assets/app.js') > -1) {
+              node.type = 'javascript/blocked';
+              node.parentElement.removeChild(node);
+              observer.disconnect();
+
+              console.log(app_script.length);
+              if(app_script.length == 0) {
+                console.log("===================================");
+                console.log("===================================");
+                console.log("===================================");
+                console.log("===================================");
+                console.log("===================================");
+                console.log("tried to inject app.js but app_script.length == 0");
+              }
+
+              // @ts-ignore
+              window.eval(app_script);
+            }
+          }
+        });
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  }
+
   window.hasInjectedModules = false;
 
   setTimeout(() => {
