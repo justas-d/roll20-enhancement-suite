@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import NavBar from 'NavBar.js'
 import GTag from 'GTag.js'
-import {Config} from "../src/utils/Config";
+import {Config} from "../src/utils/Config.ts"
 
 function Chrome() {
 

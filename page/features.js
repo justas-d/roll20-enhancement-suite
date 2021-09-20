@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import Configs from '../src/Configs';
+import {VTTES_MODULE_CONFIGS}from '../src/Configs.ts';
 import GTag from 'GTag.js'
 import NavBar from 'NavBar.js'
 
@@ -40,8 +40,8 @@ function FeatureCard(props) {
 
 function Features() {
     const cards = [];
-    for (const id in Configs) {
-        const config = Configs[id];
+    for (const id in VTTES_MODULE_CONFIGS) {
+        const config = VTTES_MODULE_CONFIGS[id];
         if (config.name && config.description) {
             cards.push(<div>
                 <h2 id={id}>{config.name}</h2>

@@ -9,7 +9,7 @@
         "changelog": "node utils/makeChangelog.js",
         "build": "webpack -w --display-error-details --progress --colors",
         "start-page": "webpack-dev-server --config ./webpack.config.page.js --mode development --open",
-        "build-page": "webpack --config ./webpack.config.page.js --mode production ; node ./pagerender/renderPage.js",
+        "build-page": "webpack --config ./webpack.config.page.js --mode production",
         "build-userscript": "node utils/build_userscript.js",
         "deploy-page": "cd ../r20es-web/ ; git add . ; git commit ; git push origin gh-pages",
         "clean": "rm -rf builds dist",
