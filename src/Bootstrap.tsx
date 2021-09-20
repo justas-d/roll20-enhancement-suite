@@ -24,6 +24,164 @@ export const bootstrap = () => {
   if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
     window.enhancementSuiteEnabled = true;
 
+    const fetch_tasks = [];
+    const scripts = [];
+
+    const fetch_script = (order, url) => {
+
+      const task_proc = async () => {
+        console.log("fetching", url, order);
+
+        const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
+
+        const response = await fetch(url);
+        let text = await response.text();
+
+        text = injectHooks(text, hooks);
+
+        // take over jquery .ready
+        text = text.replace(
+          "jQuery.ready.promise().done( fn );",
+          `if(!window.r20esChrome) window.r20esChrome = {};
+           if(!window.r20esChrome.readyCallbacks) window.r20esChrome.readyCallbacks = [];
+          window.r20esChrome.readyCallbacks.push(fn);`
+        );
+
+        // incredibly long loading screens fix
+        text= text.replace(
+          "},6e4))",
+          "},250))"
+        );
+
+        //text = text.replace("window.d20ext.loading.showfunnymessage", "(()=>{})");
+        //text = text.replace("d20ext.loading = ", "window.d20ext = window.d20ext || {}; window.d20ext.loading =");
+
+        //if(url.includes("/editor/startjs/")) {
+        //  text = text.replace("const ", "window.");
+        //  text = text.replace("let ", "window.");
+        //  console.log(text);
+        //}
+
+        scripts.push({order: order, text: text, url: url});
+      };
+
+      const task = task_proc();
+      fetch_tasks.push(task);
+    };
+
+    fetch_script(0, "https://app.roll20.net/v2/js/jquery-1.9.1.js?n");
+    fetch_script(1, "https://app.roll20.net/v2/js/jquery.migrate.js?n");
+    fetch_script(2, "https://app.roll20.net/js/featuredetect.js?2n");
+    fetch_script(3, "https://app.roll20.net/v2/js/patience.js?n");
+    //fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11");
+    fetch_script(7, "https://app.roll20.net/assets/firebase.2.4.0.js?n");
+    fetch_script(10, "https://app.roll20.net/js/tutorial_tips.js?n");
+
+    const now = Date.now();
+    fetch_script(5, `https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n${now}`);
+    fetch_script(8, `https://app.roll20.net/assets/base.js?n${now}`);
+    fetch_script(9, `https://app.roll20.net/assets/app.js?n${now}`);
+
+    const all_script_els = document.querySelectorAll("script") as any as HTMLScriptElement[];
+    let startjs_url = null;
+    for(const el of all_script_els) {
+      console.log(el);
+      console.log(el.src);
+      if(el.src && el.src.includes("/editor/startjs/")) {
+        startjs_url = el.src;
+        break;
+      }
+    }
+
+    if(startjs_url) {
+      const idx = startjs_url.indexOf("?timestamp");
+      console.log("startjs_url before", startjs_url);
+      startjs_url = startjs_url.slice(0, idx) + "?n=1&" + startjs_url.slice(idx+1);
+      console.log("startjs_url after", startjs_url);
+
+      // HACK, we don't need to fetch it
+      fetch_script(4, startjs_url);
+    }
+    else {
+      console.error("could not find startjs_url!");
+      return;
+    }
+
+    Promise.all(fetch_tasks).then(() => {
+      console.log(`${fetch_tasks.length} fetch_tasks are done!`);
+
+      scripts.sort((a,b) => a.order - b.order);
+
+      console.log(scripts);
+      let delay = 0;
+      for(const el of scripts) {
+
+        // HACK
+        setTimeout(() => {
+            console.log(`dumping ${el.url}`);
+
+          // HACK (ish)
+          if(el.url.includes("startjs")) {
+            const e = document.createElement("script");
+            e.src = el.url;
+            document.body.appendChild(e);
+          }
+          else {
+            // @ts-ignore
+            window.eval(el.text);
+
+            // HACK
+            // @ts-ignore
+            window.eval(`
+              window.d20ext = window.d20ext || {};
+              window.d20ext.loading = window.d20ext.loading || {};
+              window.d20ext.loading.showfunnymessage = window.d20ext.loading.showfunnymessage || (() => {});
+              console.log(window.d20ext.loading.showfunnymessage);
+            `);
+          }
+        }, delay);
+
+        delay += 500;
+      }
+
+      setTimeout(() => {
+        const wait = () => {
+          const has_jq = typeof(window["$"]) !== "undefined";
+          const has_sound_manager = typeof(window.soundManager) !== "undefined";
+          const has_d20 = typeof(window.d20) !== "undefined";
+          const has_body = !!document.body;
+
+          if(has_jq && has_sound_manager && has_d20 && has_body) {
+
+            //{
+            //  const DOMContentLoaded_event = document.createEvent("Event");
+            //  DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
+            //  window.document.dispatchEvent(DOMContentLoaded_event);
+            //}
+
+            console.log("vttes userscript has all depts satisfied, dumping");
+            inject_dialog_stuff();
+            inject_modules();
+
+            for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
+              try {
+                window.r20esChrome.readyCallbacks[i]();
+              }
+              catch(e) {
+                console.error(e);
+              }
+            }
+          }
+          else {
+            console.log(`vttes userscript is waiting for depts...`);
+            setTimeout(wait, 10);
+          }
+        };
+        wait();
+      }, delay + 500);
+    });
+
+    /*
     let app_script = "";
 
     const fetch_script = async () => {
@@ -76,6 +234,7 @@ export const bootstrap = () => {
       childList: true,
       subtree: true
     });
+    */
   }
 
   window.hasInjectedModules = false;
@@ -490,18 +649,5 @@ export const bootstrap = () => {
         }
       }
     }
-
-    const wait = () => {
-      if(document.body && window.d20) {
-        console.log("vttes userscript has all depts satisfied, dumping");
-        inject_dialog_stuff();
-        inject_modules();
-      }
-      else {
-        console.log("vttes userscript is waiting for depts...");
-        setTimeout(wait, 10);
-      }
-    };
-    wait();
   }
 };

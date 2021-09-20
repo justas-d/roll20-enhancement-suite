@@ -28,7 +28,12 @@ import {Config} from '../utils/Config';
     console.log(`All dependencies fulfilled after ${waitedFor}ms`);
 
     for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
-      window.r20esChrome.readyCallbacks[i]();
+      try {
+        window.r20esChrome.readyCallbacks[i]();
+      }
+      catch(e) {
+        console.error(e);
+      }
     }
 
     /*
