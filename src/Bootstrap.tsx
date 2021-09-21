@@ -122,6 +122,7 @@ export const bootstrap = () => {
 
     Promise.all(fetch_tasks).then(() => {
       console.log(`${fetch_tasks.length} fetch_tasks are done!`);
+
       scripts.sort((a,b) => a.order - b.order);
 
       // @BootstrapFlashWorkaroundStyle
@@ -183,61 +184,6 @@ export const bootstrap = () => {
         wait();
       }, delay + 500);
     });
-
-    /*
-    let app_script = "";
-
-    const fetch_script = async () => {
-      const url = `/assets/app.js?n${Date.now()}`;
-      const hooks = getHooks(window.r20es.hooks, url);
-
-      const response = await fetch(url);
-      let text = await response.text();
-
-      text = injectHooks(text, hooks);
-
-      app_script = text;
-    };
-
-    fetch_script();
-
-    const observer = new MutationObserver(mutations => {
-      mutations.forEach(({ addedNodes }) => {
-        addedNodes.forEach(void_node => {
-
-          var node = void_node as any as HTMLScriptElement;
-
-          // @ts-ignore
-          if(node.nodeType === 1 && node.tagName === 'SCRIPT') {
-            const src = node.src || '';
-            if(src.indexOf('assets/app.js') > -1) {
-              node.type = 'javascript/blocked';
-              node.parentElement.removeChild(node);
-              observer.disconnect();
-
-              console.log(app_script.length);
-              if(app_script.length == 0) {
-                console.log("===================================");
-                console.log("===================================");
-                console.log("===================================");
-                console.log("===================================");
-                console.log("===================================");
-                console.log("tried to inject app.js but app_script.length == 0");
-              }
-
-              // @ts-ignore
-              window.eval(app_script);
-            }
-          }
-        });
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true
-    });
-    */
   }
 
   window.hasInjectedModules = false;
@@ -548,15 +494,16 @@ export const bootstrap = () => {
     let patch = {};
     for(const id in window.r20es.hooks) {
       const hook = window.r20es.hooks[id];
-
       patch[id] = hook.config;
     }
 
-    if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
-      const str = JSON.stringify(patch, null, 0);
-      window.localStorage.setItem(USERSCRIPT_SAVE_DATA_KEY, str);
-    }
-    else {
+    // NOTE(justasd): save on localstorage as well so that folks going between the extension and the
+    // userscript have their settings carry over.
+    // 2021-09-21
+    const str = JSON.stringify(patch, null, 0);
+    window.localStorage.setItem(USERSCRIPT_SAVE_DATA_KEY, str);
+
+    if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
       window.postMessage({ r20esAppWantsSync: patch }, Config.appUrl);
     }
   };

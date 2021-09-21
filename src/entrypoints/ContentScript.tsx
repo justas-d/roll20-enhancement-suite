@@ -25,20 +25,16 @@ const recvMsgFromApp = (e) => {
 
   if(e.data.r20sAppWantsInitialConfigs) {
     const generatePatch = (ids, externalCallback) => {
-      function callback(p) {
+
+      const callback = (p) => {
         let patch = {};
-        //console.log("generating patch, got values:");
-        //console.log(p);
 
         for (const key of ids) {
           patch[key] = key in p ? p[key] : {};
         }
 
-        //console.log("done!");
-        //console.log(patch);
-
         externalCallback(patch);
-      }
+      };
 
       if (isChromium()) {
         chrome.storage.local.get(callback);
@@ -59,19 +55,8 @@ const recvMsgFromApp = (e) => {
     console.log("Updating local storage with", patch);
     getBrowser().storage.local.set(patch);
   }
-  else if(e.data.r20esWantsResourceUrl) {
-
-    const url = getBrowser().extension.getURL(e.data.r20esWantsResourceUrl.resource);
-    const payload = {
-      url,
-      id: e.data.r20esWantsResourceUrl.id
-    };
-
-    window.postMessage({r20esGivesResourceUrl: payload}, Config.appUrl);
-  } 
   else {
     if(doesBrowserNotSupportResponseFiltering()) {
-
       const try_inject_modules = () => {
         if(window.injectBackgroundOK && window.injectWebsiteOK) {
           window.postMessage({[MESSAGE_KEY_INJECT_MODULES]: true}, Config.appUrl);
