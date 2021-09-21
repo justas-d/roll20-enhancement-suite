@@ -53,15 +53,6 @@ export const bootstrap = () => {
           "},250))"
         );
 
-        //text = text.replace("window.d20ext.loading.showfunnymessage", "(()=>{})");
-        //text = text.replace("d20ext.loading = ", "window.d20ext = window.d20ext || {}; window.d20ext.loading =");
-
-        //if(url.includes("/editor/startjs/")) {
-        //  text = text.replace("const ", "window.");
-        //  text = text.replace("let ", "window.");
-        //  console.log(text);
-        //}
-
         scripts.push({order: order, text: text, url: url});
       };
 
@@ -73,7 +64,7 @@ export const bootstrap = () => {
     fetch_script(1, "https://app.roll20.net/v2/js/jquery.migrate.js?n");
     fetch_script(2, "https://app.roll20.net/js/featuredetect.js?2n");
     fetch_script(3, "https://app.roll20.net/v2/js/patience.js?n");
-    //fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11");
+    fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11");
     fetch_script(7, "https://app.roll20.net/assets/firebase.2.4.0.js?n");
     fetch_script(10, "https://app.roll20.net/js/tutorial_tips.js?n");
 
@@ -82,66 +73,75 @@ export const bootstrap = () => {
     fetch_script(8, `https://app.roll20.net/assets/base.js?n${now}`);
     fetch_script(9, `https://app.roll20.net/assets/app.js?n${now}`);
 
-    const all_script_els = document.querySelectorAll("script") as any as HTMLScriptElement[];
-    let startjs_url = null;
-    for(const el of all_script_els) {
-      console.log(el);
-      console.log(el.src);
-      if(el.src && el.src.includes("/editor/startjs/")) {
-        startjs_url = el.src;
-        break;
+    let script_nonce = "";
+    fetch_tasks.push(new Promise(ok => {
+      const retry = () => {
+        const script_with_nonce = document.querySelectorAll("script[nonce]")[0] as any;
+        if(script_with_nonce) {
+          script_nonce = script_with_nonce.nonce;
+          console.log("got nonce!", script_nonce);
+          ok();
+        }
+        else {
+          console.log("nonce retry");
+          setTimeout(retry, 10);
+        }
       }
-    }
+      retry();
+    }));
 
-    if(startjs_url) {
-      const idx = startjs_url.indexOf("?timestamp");
-      console.log("startjs_url before", startjs_url);
-      startjs_url = startjs_url.slice(0, idx) + "?n=1&" + startjs_url.slice(idx+1);
-      console.log("startjs_url after", startjs_url);
+    fetch_tasks.push(new Promise(ok => {
+      const retry = () => {
+        console.log("retry");
 
-      // HACK, we don't need to fetch it
-      fetch_script(4, startjs_url);
-    }
-    else {
-      console.error("could not find startjs_url!");
-      return;
-    }
+        const all_script_els = document.querySelectorAll("script") as any as HTMLScriptElement[];
+        let startjs_url = null;
+        for(const el of all_script_els) {
+          if(el.src && el.src.includes("/editor/startjs/")) {
+            startjs_url = el.src;
+            break;
+          }
+        }
+
+        if(startjs_url) {
+          const idx = startjs_url.indexOf("?timestamp");
+          console.log("startjs_url before", startjs_url);
+          startjs_url = startjs_url.slice(0, idx) + "?n=1&" + startjs_url.slice(idx+1);
+          console.log("startjs_url after", startjs_url);
+
+          fetch_script(4, startjs_url);
+          ok();
+        }
+        else {
+          setTimeout(retry, 10);
+        }
+      };
+
+      retry();
+    }));
 
     Promise.all(fetch_tasks).then(() => {
       console.log(`${fetch_tasks.length} fetch_tasks are done!`);
-
       scripts.sort((a,b) => a.order - b.order);
 
+      // @BootstrapFlashWorkaroundStyle
+      {
+        const style = document.createElement("style");
+        style.innerHTML = "body { background: black !important; }";
+        style.id = ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE;
+        document.head.appendChild(style);
+      }
+
       console.log(scripts);
-      let delay = 0;
       for(const el of scripts) {
 
-        // HACK
-        setTimeout(() => {
-            console.log(`dumping ${el.url}`);
-
-          // HACK (ish)
-          if(el.url.includes("startjs")) {
-            const e = document.createElement("script");
-            e.src = el.url;
-            document.body.appendChild(e);
-          }
-          else {
-            // @ts-ignore
-            window.eval(el.text);
-
-            // HACK
-            // @ts-ignore
-            window.eval(`
-              window.d20ext = window.d20ext || {};
-              window.d20ext.loading = window.d20ext.loading || {};
-              window.d20ext.loading.showfunnymessage = window.d20ext.loading.showfunnymessage || (() => {});
-              console.log(window.d20ext.loading.showfunnymessage);
-            `);
-          }
-        }, delay);
-
-        delay += 500;
+        console.log(`dumping ${el.url}`);
+        const script_el = document.createElement("script");
+        script_el.type = "text/javascript";
+        // @ts-ignore
+        script_el.nonce = script_nonce;
+        script_el.text = el.text;
+        document.body.appendChild(script_el);
       }
 
       setTimeout(() => {
@@ -171,6 +171,9 @@ export const bootstrap = () => {
                 console.error(e);
               }
             }
+
+            // @BootstrapFlashWorkaroundStyle
+            findByIdAndRemove(ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE);
           }
           else {
             console.log(`vttes userscript is waiting for depts...`);
