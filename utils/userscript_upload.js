@@ -13,4 +13,5 @@ noFail(`cp builds/userscript/prod/vttes.meta.js ../r20es-web/`)
 noFail("cd ../r20es-web");
 noFail(`git add .`);
 noFail(`git commit -m "script"`);
+noFail(`git push"`);
 
