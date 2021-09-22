@@ -117,7 +117,7 @@ For development, use this loader script:
 // @author       You
 // @match        https://app.roll20.net/editor/
 // @run-at       document-start
-// @require      file:///work/vttes/builds/userscript/dev/userscript.js
+// @require      file:///work/vttes/builds/userscript/dev/vttes.user.js
 // @webRequest [{"selector":{"include":"*://browser.sentry-cdn.com/*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://www.datadoghq-browser-agent.com/datadog-rum.js"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://cdn.userleap.com/*"},"action":"cancel"}]
@@ -136,5 +136,5 @@ For development, use this loader script:
 
 // ==/UserScript==
 
-change the @require path to the dev userscript.js
+change the @require path to the dev vttes.user.js
  */

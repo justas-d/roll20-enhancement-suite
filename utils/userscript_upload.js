@@ -10,8 +10,7 @@ const noFail = (script) => {
 
 noFail(`cp builds/userscript/prod/vttes.user.js ../r20es-web/`)
 noFail(`cp builds/userscript/prod/vttes.meta.js ../r20es-web/`)
-noFail("cd ../r20es-web");
-noFail(`git add .`);
-noFail(`git commit -m "script"`);
-noFail(`git push`);
+noFail(`cd ../r20es-web/ ; git add .`);
+noFail(`cd ../r20es-web/ ; git commit -m "script"`);
+noFail(`cd ../r20es-web/ ; git push`);
 
