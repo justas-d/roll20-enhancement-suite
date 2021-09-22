@@ -38,6 +38,7 @@
         "@babel/preset-env": "7.0.0-beta.54",
         "@babel/preset-react": "7.0.0",
         "@babel/preset-typescript": "7.0.0-rc.3",
+        "@octokit/core": "3.5.1",
         "@types/chrome": "0.0.72",
         "@types/firefox-webext-browser": "58.0.3",
         "@types/jquery": "3.3.6",

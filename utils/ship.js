@@ -2,16 +2,19 @@ const fs = require('fs');
 const shell = require('shelljs');
 
 const noFail = (script) => {
-    const result = shell.exec(script);
-    if(result.code != 0) {
-        process.exit(result.code);
-    }
+  const result = shell.exec(script);
+  if(result.code != 0) {
+    console.log(`==> noFail failed on '${script}'`);
+    process.exit(result.code);
+  }
 };
 
 const assert = (expr, msg) => {
-    if(expr) return;
-    console.error(msg);
-    process.exit(1);
+  if(expr) {
+    return;
+  }
+  console.error(`==> ASSERTION FAILED: ${msg}`);
+  process.exit(1);
 };
 
 const canFail = shell.exec;

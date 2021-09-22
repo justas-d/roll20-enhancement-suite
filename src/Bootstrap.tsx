@@ -145,44 +145,41 @@ export const bootstrap = () => {
         document.body.appendChild(script_el);
       }
 
-      setTimeout(() => {
-        const wait = () => {
-          const has_jq = typeof(window["$"]) !== "undefined";
-          const has_sound_manager = typeof(window.soundManager) !== "undefined";
-          const has_d20 = typeof(window.d20) !== "undefined";
-          const has_body = !!document.body;
+      const wait = () => {
+        const has_jq = typeof(window["$"]) !== "undefined";
+        const has_sound_manager = typeof(window.soundManager) !== "undefined";
+        const has_d20 = typeof(window.d20) !== "undefined";
+        const has_body = !!document.body;
 
-          if(has_jq && has_sound_manager && has_d20 && has_body) {
+        if(has_jq && has_sound_manager && has_d20 && has_body) {
 
-            //{
-            //  const DOMContentLoaded_event = document.createEvent("Event");
-            //  DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
-            //  window.document.dispatchEvent(DOMContentLoaded_event);
-            //}
+          //{
+          //  const DOMContentLoaded_event = document.createEvent("Event");
+          //  DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
+          //  window.document.dispatchEvent(DOMContentLoaded_event);
+          //}
 
-            console.log("vttes userscript has all depts satisfied, dumping");
-            inject_dialog_stuff();
-            inject_modules();
+          console.log("vttes userscript has all depts satisfied, dumping");
+          inject_dialog_stuff();
+          inject_modules();
 
-            for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
-              try {
-                window.r20esChrome.readyCallbacks[i]();
-              }
-              catch(e) {
-                console.error(e);
-              }
+          for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
+            try {
+              window.r20esChrome.readyCallbacks[i]();
             }
+            catch(e) {
+              console.error(e);
+            }
+          }
 
-            // @BootstrapFlashWorkaroundStyle
-            findByIdAndRemove(ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE);
-          }
-          else {
-            console.log(`vttes userscript is waiting for depts...`);
-            setTimeout(wait, 10);
-          }
-        };
-        wait();
-      }, delay + 500);
+          // @BootstrapFlashWorkaroundStyle
+          findByIdAndRemove(ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE);
+        }
+        else {
+          console.log(`vttes userscript is waiting for depts...`);
+          setTimeout(wait, 10);
+        }
+      };
     });
   }
 

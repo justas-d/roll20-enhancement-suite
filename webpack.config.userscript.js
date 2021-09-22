@@ -51,7 +51,7 @@ module.exports = (_env, argv) => {
     mode: is_prod ? "production" : "development",
 
     entry: {
-      ["userscript.js"]: "./src/entrypoints/userscript.ts",
+      ["vttes.user.js"]: "./src/entrypoints/userscript.ts",
     },
 
     output: {

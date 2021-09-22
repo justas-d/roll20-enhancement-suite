@@ -36,25 +36,29 @@ assert(changelog.current != "TODO");
 
 const can_fail = shell.exec;
 let path_to_script = "";
+let path_to_meta = "";
 
 if(is_prod) {
   no_fail("webpack --mode production --display-error-details --progress --colors --config ./webpack.config.userscript.js");
-  path_to_script = "builds/userscript/prod/userscript.js";
+  path_to_script = "builds/userscript/prod/vttes.user.js";
+  path_to_meta = "builds/userscript/prod/vttes.meta.js";
 }
 else {
   no_fail("webpack --mode development --display-error-details --progress --colors --config ./webpack.config.userscript.js");
-  path_to_script = "builds/userscript/dev/userscript.js";
+  path_to_script = "builds/userscript/dev/vttes.user.js";
+  path_to_meta = "builds/userscript/dev/vttes.meta.js";
 }
 
 let script = fs.readFileSync(path_to_script, "utf8");
 
-if(is_prod) {
-  script = `// ==UserScript==
+const meta = `// ==UserScript==
 // @name         VTT Enhancement Suite
 // @namespace    https://justas-d.github.io/
 // @version      ${changelog.current}
 // @description  aka R20ES. Provides quality-of-life and workflow speed improvements to Roll20.
 // @author       @Justas_Dabrila
+// @updateURL    https://justas-d.github.io/roll20-enhancement-suite/vttes.meta.js
+// @downloadURL  https://justas-d.github.io/roll20-enhancement-suite/vttes.user.js
 // @match        https://app.roll20.net/editor
 // @match        https://app.roll20.net/editor#*
 // @match        https://app.roll20.net/editor?*
@@ -78,7 +82,10 @@ if(is_prod) {
 // @webRequest [{"selector":{"include":"*://app.roll20.net/assets/app.js?*","exclude":"*://app.roll20.net/assets/app.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/tutorial_tips.js","exclude":"*://app.roll20.net/js/tutorial_tips.js?n*"},"action":"cancel"}]
 // ==/UserScript==
+`;
 
+if(is_prod) {
+  script = `${meta}
 function boot() {
 ${script}
 };
@@ -97,6 +104,7 @@ window.eval(str);
 }
 
 fs.writeFileSync(path_to_script, script);
+fs.writeFileSync(path_to_meta, meta);
 
 /*
 For development, use this loader script:
