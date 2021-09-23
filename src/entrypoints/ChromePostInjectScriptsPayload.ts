@@ -2,12 +2,6 @@ import {MESSAGE_KEY_CHROME_INJECTION_DONE} from "../MiscConstants";
 import {Config} from '../utils/Config';
 
 {
-  {
-    const DOMContentLoaded_event = document.createEvent("Event");
-    DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
-    window.document.dispatchEvent(DOMContentLoaded_event);
-  }
-
   const waitTime = 200;
   let waitedFor = 0;
 
@@ -42,7 +36,6 @@ import {Config} from '../utils/Config';
       Without this on Chrome, the modules would be injected BEFORE any roll20 scripts are run,
       contrary to what happens on Firefox.
     */
-
     window.postMessage({
       [MESSAGE_KEY_CHROME_INJECTION_DONE]: true
     }, Config.appUrl);

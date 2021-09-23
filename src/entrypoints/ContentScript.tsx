@@ -6,7 +6,6 @@ import {DOM} from "../utils/DOM";
 import showProblemPopup from "../utils/ProblemPopup";
 import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection";
 import {
-  ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE,
   MESSAGE_KEY_CHROME_INJECTION_DONE,
   MESSAGE_KEY_DOM_LOADED,
   MESSAGE_KEY_LOAD_MODULES,
@@ -142,21 +141,6 @@ if(doesBrowserNotSupportResponseFiltering()) {
           numScriptsDone++;
 
           if(numScriptsDone === redirectQueue.length) {
-            /*
-              NOTE(justas);
-              for some reason, when we call document.body.appendChild(scriptElement);
-              the screen flashes white because the styles get all messed up.
-              This style change bodges a workaround by making the background black,
-              thus the flash becomes subtle.
-              @BootstrapFlashWorkaroundStyle
-             */
-            {
-              const style = document.createElement("style");
-              style.innerHTML = "body { background: black !important; }";
-              style.id = ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE;
-              document.head.appendChild(style);
-            }
-
             console.log("Scripts are done, dumping", hookedScriptQueue);
 
             for(const indexKey in hookedScriptQueue) {

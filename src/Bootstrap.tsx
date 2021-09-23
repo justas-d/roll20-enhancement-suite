@@ -10,7 +10,6 @@ import {isChromium} from "./utils/BrowserDetection";
 import {getHooks, injectHooks} from './HookUtils';
 import {getBrowser} from "./utils/MiscUtils";
 import {
-  ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE,
   MESSAGE_KEY_LOAD_MODULES,
   MESSAGE_KEY_INJECT_MODULES
 } from "./MiscConstants";
@@ -421,11 +420,6 @@ export const bootstrap = () => {
 
     window.hasInjectedModules = true;
     console.log("modules injected!");
-
-    if(BUILD_CONSTANT_FOR_BROWSER === "chrome") {
-      // @BootstrapFlashWorkaroundStyle
-      findByIdAndRemove(ELEMENT_ID_BOOTSTRAP_FLASH_WORKAROUND_STYLE);
-    }
   }
 
   if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {

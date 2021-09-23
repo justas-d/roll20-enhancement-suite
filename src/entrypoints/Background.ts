@@ -227,59 +227,29 @@ else {
 
   // thanks, Firefox.
   const requestListener = (dt) => {
+    const isRedir = isRedirectTarget(dt.url);
+    console.log(`${isRedir}: ${dt.url}`);
 
-    if(is_requesting_editor_html(dt)) {
-      const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
-      const decoder = new TextDecoder("utf-8");
+    if (!isRedir) return;
 
-      let stringBuffer = "";
+    const hookQueue = getHooks(VTTES_MODULE_CONFIGS, dt.url);
+    const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
+    const decoder = new TextDecoder("utf-8");
 
-      filter.ondata = e => {
-        stringBuffer += decoder.decode(e.data, {stream: true});
-      };
+    // Note(Justas): the console.log here forces scripts to run in order
+    // and not randomly, avoiding race conditions
+    let stringBuffer = `console.log("running ${dt.url}");`;
 
-      filter.onstop = e => {
-        const replace = replace_all_and_count(
-          stringBuffer, 
-          "https://www.googletagmanager.com",
-          "https://invalid.asdkljaskldfjalksd"
-        );
+    filter.ondata = e => {
+      stringBuffer += decoder.decode(e.data, {stream: true});
+    };
 
-        if(replace.count <= 0)
-          console.error("Failed to cancel google analytics on twitter!");
-        else {
-          console.log(`Cancelled google analytics on twitter ${replace.count} times!`);
-        }
+    filter.onstop = e => {
+      const hookedData = injectHooks(stringBuffer, hookQueue);
 
-        filter.write(new TextEncoder().encode(replace.result));
-        filter.close();
-      };
-    }
-    else {
-      const isRedir = isRedirectTarget(dt.url);
-      console.log(`${isRedir}: ${dt.url}`);
-
-      if (!isRedir) return;
-
-      const hookQueue = getHooks(VTTES_MODULE_CONFIGS, dt.url);
-      const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
-      const decoder = new TextDecoder("utf-8");
-
-      // Note(Justas): the console.log here forces scripts to run in order
-      // and not randomly, avoiding race conditions
-      let stringBuffer = `console.log("running ${dt.url}");`;
-
-      filter.ondata = e => {
-        stringBuffer += decoder.decode(e.data, {stream: true});
-      };
-
-      filter.onstop = e => {
-        const hookedData = injectHooks(stringBuffer, hookQueue);
-
-        filter.write(new TextEncoder().encode(hookedData));
-        filter.close();
-      };
-    }
+      filter.write(new TextEncoder().encode(hookedData));
+      filter.close();
+    };
   }
 
   getBrowser().webRequest.onBeforeRequest.addListener(

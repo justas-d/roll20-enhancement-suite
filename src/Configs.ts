@@ -108,7 +108,7 @@ addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
 addCfg(ExtraRulers);
 
-if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+if(BUILD_CONSTANT_IS_FOR_USERSCRIPT || BUILD_CONSTANT_FOR_BROWSER == "chrome") {
   addCfg(FixPatienceJs);
 }
 
