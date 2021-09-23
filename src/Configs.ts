@@ -51,6 +51,7 @@ import CameraStartPosition from "./modules/CameraStartPosition/Config"
 import HandoutImageFromURL  from "./modules/HandoutImageFromURL/Config"
 import CustomPathWidth from "./modules/CustomPathWidth/Config"
 import ExtraRulers from "./modules/ExtraRulers/Config"
+import FixPatienceJs from "./modules/FixPatienceJs/Config"
 
 const VTTES_MODULE_CONFIGS = {};
 const addCfg = cfg => VTTES_MODULE_CONFIGS[cfg.id] = cfg;
@@ -106,6 +107,10 @@ addCfg(CameraStartPosition);
 addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
 addCfg(ExtraRulers);
+
+if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+  addCfg(FixPatienceJs);
+}
 
 if(BUILD_CONSTANT_FOR_BROWSER == "chrome") {
   addCfg(ChromeUpdateChecker);

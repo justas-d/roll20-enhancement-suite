@@ -50,13 +50,19 @@ noFail("npm run package");
   let time = new Date();
 
   let day = time.getDate();
-  let month = time.getMonth() + 1;
+  let month = `${time.getMonth() + 1}`;
+  if(month.length == 1) {
+    month = `0${month}`;
+  }
+
   let year = time.getFullYear();
   let time_str = `${year}-${month}-${day}`
   fs.writeFileSync('page/chrome_last_update_time', time_str, 'utf8');
 }
 
 noFail(`cp dist/chrome/prod/r20es_${changelog.current}_chrome.zip page/`);
+
+noFail("node utils/deploy_userscript.js");
 
 noFail("npm run build-page");
 noFail("npm run deploy-page");
