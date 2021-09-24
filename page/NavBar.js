@@ -1,7 +1,7 @@
 import React from "react";
 import {Config} from "../src/utils/Config.ts";
 
-const NavBar = ({noLanding}) => {
+const NavBar = ({noLanding = false}) => {
   let classes = "navbar navbar-expand-lg navbar-light "
   if(!noLanding) {
     classes = classes + "navbar-landing"

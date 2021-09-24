@@ -42,9 +42,7 @@ noFail(`git tag -a ${changelog.current} -m "${changelog.current}"`);
 
 noFail("npm run package");
 
-{
-  fs.writeFileSync('page/latest_chrome_version', changelog.current, 'utf8');
-}
+fs.writeFileSync('page/latest_chrome_version', changelog.current, 'utf8');
 
 {
   let time = new Date();

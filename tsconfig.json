@@ -1,28 +1,29 @@
 {
-    "compilerOptions": {
-        "allowJs": true,
-        "sourceMap": true,
-        "jsx": "react",
-        "jsxFactory": "DOM.createElement",
-        "module": "commonjs",
-        "types": [
-            "node",
-            "jquery",
-            "roll20",
-            "chrome",
-            "firefox-webext-browser",
-            "underscore",
-            "webgl2"
-        ],
-        "lib": ["es7", "dom", "esnext.promise"],
-        "typeRoots": ["node_modules/@types", "./typings"]
-    },
-    "exclude": [
-        "*"
+  "compilerOptions": {
+    "allowJs": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "jsxFactory": "DOM.createElement",
+    "module": "commonjs",
+    "types": [
+      "node",
+      "jquery",
+      "roll20",
+      "chrome",
+      "firefox-webext-browser",
+      "underscore",
+      "webgl2"
     ],
-    "include": [
-        "src/**/*",
-        "node_modules/@types/**/*",
-        "typings/**/*"
-    ]
+    "lib": ["es7", "dom", "esnext.promise"],
+    "typeRoots": ["node_modules/@types", "./typings"]
+  },
+  "exclude": [
+    "*"
+  ],
+  "include": [
+    "src/**/*",
+    "node_modules/@types/**/*",
+    "typings/**/*"
+  ]
 }
+

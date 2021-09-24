@@ -10,13 +10,13 @@ const path = require("path");
 
 const buildDir = "../r20es-web/";
 
-const addStaticFile = (mappedName, sourcePath) => fs.copyFile(sourcePath, path.join(buildDir, mappedName), console.log);
+const addStaticFile = (mappedName, sourcePath) => fs.copyFile(sourcePath, path.join(buildDir, mappedName), () => {});
 
 const buildPage = (fx, resource) => {
-    addStaticFile(`${resource}.css`, `./page/${resource}.css`);
-    const data = ReactDOMServer.renderToStaticMarkup(fx);
+  addStaticFile(`${resource}.css`, `./page/${resource}.css`);
+  const data = ReactDOMServer.renderToStaticMarkup(fx);
 
-    const page = `<!DOCTYPE html>
+  const page = `<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -35,17 +35,18 @@ const buildPage = (fx, resource) => {
 </html>
 `;
 
-  fs.writeFile(path.join(buildDir, resource +".html"), page, console.log);
+  fs.writeFile(path.join(buildDir, resource +".html"), page, () => {});
 }
+
 buildPage(<About/>, "about");
-buildPage(<Features/>, "features");
+//buildPage(<Features/>, "features");
 buildPage(<Index/>, "index");
 buildPage(<Chrome/>, "chrome");
 
 const addStaticFolder = (folder) => {
-    fs.readdirSync(folder).forEach(f => {
-        addStaticFile(f, folder + f);
-    });
+  fs.readdirSync(folder).forEach(f => {
+    addStaticFile(f, folder + f);
+  });
 }
 
 addStaticFolder("./assets/settings/");

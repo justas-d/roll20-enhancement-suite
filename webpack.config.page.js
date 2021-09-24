@@ -23,7 +23,12 @@ const cfgModule = {
     },
     {
       test: /(\.ts|\.tsx)$/,
-      loaders: ['awesome-typescript-loader']
+      use: [{
+        loader: 'awesome-typescript-loader',
+        options: {
+          configFileName: "tsconfig-page.json"
+        }
+      }]
     },
   ]
 };
@@ -41,6 +46,7 @@ const getPlugins = (isProd) => {
       "VTTES_BROWSER": JSON.stringify("none"),
       "LATEST_CHROME_VERSION": JSON.stringify(latest_chrome_version),
       "CHROME_LAST_UPDATE_TIME": JSON.stringify(chrome_last_update_time),
+      "BUILD_CONSTANT_TARGET_PLATFORM" : JSON.stringify("page"),
     }),
   ];
 };
@@ -65,7 +71,7 @@ module.exports = (_env, argv) => {
       plugins: getPlugins(isProd),
 
       resolve: {
-        extensions: ['.js'],
+        extensions: ['.tsx', '.ts', '.js', '.jsx'],
         modules: ['page', 'node_modules'],
       },
     }
@@ -117,7 +123,7 @@ module.exports = (_env, argv) => {
     module: cfgModule,
 
     resolve: {
-      extensions: ['.js'],
+      extensions: ['.tsx', '.ts', '.js', '.jsx'],
       modules: ['page', 'node_modules'],
     },
 

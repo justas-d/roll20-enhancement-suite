@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "lib": ["es7", "dom", "esnext.promise"]
+  },
+  "exclude": [
+    "*"
+  ]
+}
+
