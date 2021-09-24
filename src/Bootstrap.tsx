@@ -9,17 +9,18 @@ import { saveAs } from 'save-as'
 import {isChromium} from "./utils/BrowserDetection";
 import {getHooks, injectHooks} from './HookUtils';
 import {getBrowser} from "./utils/MiscUtils";
-import {
-  MESSAGE_KEY_LOAD_MODULES,
-  MESSAGE_KEY_INJECT_MODULES
-} from "./MiscConstants";
 
 import { dialog_polyfill_script, dialog_polyfill_css } from "./dialog_polyfill";
 
-const USERSCRIPT_SAVE_DATA_KEY = "vttes_userscript_config";
+const LOCALSTORAGE_SAVE_DATA_KEY = "vttes_userscript_config";
 
 export const bootstrap = () => {
 
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
+    window.enhancementSuiteEnabled = true;
+  }
+
+  // @FirefoxExtensionReloading
   window.hasInjectedModules = false;
 
   setTimeout(() => {
@@ -30,7 +31,7 @@ export const bootstrap = () => {
       return;
     }
 
-    if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+    if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
       showProblemPopup(
         <div>
           {`window.d20: ${typeof (window.d20)} ${window.d20}`}<br />
@@ -46,17 +47,15 @@ export const bootstrap = () => {
           {`window.d20: ${typeof (window.d20)} ${window.d20}`}<br />
           {`window.r20es: ${typeof (window.r20es)} ${window.r20es}`}<br />
           {`window.hasInjectedModules: ${typeof (window.hasInjectedModules)} ${window.hasInjectedModules}`}<br/>
-          {`window.injectWebsiteOK: ${typeof (window.injectWebsiteOK)} ${window.injectWebsiteOK}`}<br/>
-          {`window.injectBackgroundOK: ${typeof (window.injectBackgroundOK)} ${window.injectBackgroundOK}`}<br/>
 
         </div>
       );
     }
   }, 25 * 1000);
 
-  if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
-    window.enhancementSuiteEnabled = true;
-
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome" ||
+     BUILD_CONSTANT_TARGET_PLATFORM === "userscript"
+  ) {
     const jobs = [];
     const scripts = [];
 
@@ -102,17 +101,26 @@ export const bootstrap = () => {
 
     let script_nonce = "";
     jobs.push(new Promise(ok => {
+      let nth_attempt = 0;
       const retry = () => {
-        const script_with_nonce = document.querySelectorAll("script[nonce]")[0] as any;
-        if(script_with_nonce) {
-          script_nonce = script_with_nonce.nonce;
-          console.log("got nonce!", script_nonce);
-          ok();
+        const scripts_with_nonce = document.querySelectorAll("script[nonce]") as any;
+
+        for(const script of scripts_with_nonce) {
+          const nonce = script.nonce;
+
+          if(nonce && nonce.length && nonce.length > 0) {
+            script_nonce = nonce;
+            console.log(`got nonce! it is: '${script_nonce}'`, script);
+            ok();
+            return;
+          }
         }
-        else {
+
+        nth_attempt += 1;
+        if((nth_attempt % 100) == 0) {
           console.log("nonce retry");
-          setTimeout(retry, 10);
         }
+        setTimeout(retry, 10);
       }
       retry();
     }));
@@ -149,11 +157,12 @@ export const bootstrap = () => {
     }));
 
     Promise.all(jobs).then(() => {
-      console.log(`${jobs.length} jobs are done!`, jobs);
 
       scripts.sort((a,b) => a.order - b.order);
 
+      console.log(`${jobs.length} jobs are done!`, jobs);
       console.log(scripts);
+
       for(const el of scripts) {
 
         console.log(`dumping ${el.url}`);
@@ -167,15 +176,16 @@ export const bootstrap = () => {
         document.body.appendChild(script_el);
       }
 
+      let nth_wait = 0;
       const wait = () => {
         const has_jq = typeof(window["$"]) !== "undefined";
         const has_sound_manager = typeof(window.soundManager) !== "undefined";
         const has_d20 = typeof(window.d20) !== "undefined";
         const has_body = !!document.body;
+        const configs_loaded = window.r20es && window.r20es.have_configs_been_loaded;
 
-        if(has_jq && has_sound_manager && has_d20 && has_body) {
-          console.log("vttes userscript has all depts satisfied, dumping");
-          inject_dialog_stuff();
+        if(has_jq && has_sound_manager && has_d20 && has_body && configs_loaded) {
+          console.log("vttes has all depts satisfied, dumping");
           inject_modules();
 
           for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
@@ -188,7 +198,10 @@ export const bootstrap = () => {
           }
         }
         else {
-          console.log(`vttes userscript is waiting for depts...`);
+          nth_wait += 1;
+          if((nth_wait % 100) == 0) {
+            console.log(`vttes is waiting for depts...`);
+          }
           setTimeout(wait, 10);
         }
       };
@@ -196,7 +209,7 @@ export const bootstrap = () => {
     });
   }
 
-  const inject_dialog_stuff = () => {
+  {
     const dialog_style = `
       .r20es-indent {
           margin-left: 20px;
@@ -344,10 +357,11 @@ export const bootstrap = () => {
     const STYLE_CSS = "r20es-dialog-style-css";
     const POLYFILL_CSS = "r20es-dialo-gpolyfill-css";
 
+    // @FirefoxExtensionReloading
     findByIdAndRemove(POLYFILL_CSS);
     findByIdAndRemove(STYLE_CSS);
 
-    if(BUILD_CONSTANT_FOR_BROWSER === "firefox") {
+    if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox") {
       console.log("DialogFormsBootstrapper: injecting dialog-polyfill");
 
       dialog_polyfill_script();
@@ -357,35 +371,35 @@ export const bootstrap = () => {
     }
 
     injectCSS(dialog_style, document.body, STYLE_CSS);
-  };
-
-  if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
-    inject_dialog_stuff();
   }
 
-  if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox" ||
+     BUILD_CONSTANT_TARGET_PLATFORM === "chrome" 
+  ) {
     let ids = [];
     for(const id in VTTES_MODULE_CONFIGS) {
       ids.push(id);
     }
-    window.postMessage({ r20sAppWantsInitialConfigs: ids }, Config.appUrl);
+    window.postMessage({r20sAppWantsInitialConfigs: ids}, Config.appUrl);
   }
 
   // @ts-ignore
   window.r20es = window.r20es || {};
   window.r20es.hooks = VTTES_MODULE_CONFIGS;
 
-  if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
-    // dispose modules
-    if ("r20esDisposeTable" in window) {
-      for (const key in window.r20esDisposeTable) {
+  // @FirefoxExtensionReloading
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox") {
+    // NOTE(justasd): dispose previously installed modules, in case there are any (this allows us to
+    // quickly reload the extension during development on firefox)
+    if("r20esDisposeTable" in window) {
+      for(const key in window.r20esDisposeTable) {
         const fx = window.r20esDisposeTable[key];
-        console.log(`Disposing module by key ${key}`);
 
         try {
           fx();
         } 
         catch (err) {
+          console.log(`Exception when disposing module by key ${key}`);
           console.error(err);
         }
       }
@@ -397,12 +411,6 @@ export const bootstrap = () => {
   window.r20esInstalledModuleTable = window.r20esInstalledModuleTable || {};
   window.r20esDisposeTable = window.r20esDisposeTable || {};
   window.r20es.isLoading = true;
-
-  if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
-    if(window.r20es.recvPluginMsg) {
-      window.removeEventListener("message", window.r20es.recvPluginMsg);
-    }
-  }
 
   const inject_modules = () => {
     if(window.hasInjectedModules) {
@@ -422,15 +430,26 @@ export const bootstrap = () => {
     console.log("modules injected!");
   }
 
-  if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
-    window.r20es.recvPluginMsg = (e) => {
-      if (e.origin !== Config.appUrl) return;
-      console.log("WebsiteBootstrap msg:", e);
+  // @FirefoxExtensionReloading
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox") {
+    if(window.r20es.receive_message_from_content_script) {
+      window.removeEventListener("message", window.r20es.receive_message_from_content_script);
+    }
+  }
+
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox" ||
+     BUILD_CONSTANT_TARGET_PLATFORM === "chrome" 
+  ) {
+    window.r20es.receive_message_from_content_script = (e) => {
+      if(e.origin !== Config.appUrl) {
+        return;
+      }
+      console.log("WebsiteBootstrap received message:", e);
 
       if(e.data.r20esInitialConfigs) {
         const configs = e.data.r20esInitialConfigs;
 
-        for (var id in configs) {
+        for(var id in configs) {
           const hook = window.r20es.hooks[id];
           const cfg = configs[id];
 
@@ -446,19 +465,16 @@ export const bootstrap = () => {
           }
         }
 
-        console.log("WebsiteBootstrap.js applied INITIAL configs.");
-        window.injectWebsiteOK = true;
-
-        window.postMessage({[MESSAGE_KEY_LOAD_MODULES]: true}, Config.appUrl);
-
         window.r20es.save_configs();
-      }
-      else if(e.data[MESSAGE_KEY_INJECT_MODULES]) {
-        inject_modules();
+        window.r20es.have_configs_been_loaded = true;
+
+        if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox") {
+          inject_modules();
+        }
       }
     };
 
-    window.addEventListener("message", window.r20es.recvPluginMsg);
+    window.addEventListener("message", window.r20es.receive_message_from_content_script);
   }
 
   window.r20es.save_configs = () => {
@@ -472,23 +488,23 @@ export const bootstrap = () => {
     // userscript have their settings carry over.
     // 2021-09-21
     const str = JSON.stringify(patch, null, 0);
-    window.localStorage.setItem(USERSCRIPT_SAVE_DATA_KEY, str);
+    window.localStorage.setItem(LOCALSTORAGE_SAVE_DATA_KEY, str);
 
-    if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+    if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox" ||
+       BUILD_CONSTANT_TARGET_PLATFORM === "chrome" 
+    ) {
       window.postMessage({ r20esAppWantsSync: patch }, Config.appUrl);
     }
   };
 
+  // @FirefoxExtensionReloading for the copy
   window.r20es.onAppLoad = EventEmitter.copyExisting(window.r20es.onAppLoad);
   window.r20es.onPageChange = EventEmitter.copyExisting(window.r20es.onPageChange);
 
   if(window.r20es.isLoading) {
-    const cb = () => {
+    window.r20es.onAppLoad.addEventListener(() => {
       window.r20es.isLoading = false;
-    };
-
-    window.r20es.onAppLoad.removeEventListener(cb);
-    window.r20es.onAppLoad.addEventListener(cb);
+    });
   }
 
   window.r20es.onLoadingOverlayHide = () => {
@@ -508,14 +524,13 @@ export const bootstrap = () => {
     }
   };
 
-  if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+  // @FirefoxExtensionReloading
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox") {
     if(window.r20es.isWindowLoaded) {
       window.r20es.onAppLoad.fire();
       window.r20es.onPageChange.fire(false);
     }
-  }
 
-  if(!BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
     document.removeEventListener("keyup", window.r20es.onDocumentMouseUp);
     document.removeEventListener("keydown", window.r20es.onDocumentMouseUp);
   }
@@ -540,35 +555,34 @@ export const bootstrap = () => {
   document.addEventListener("keyup", window.r20es.onDocumentMouseUp);
   document.addEventListener("keydown", window.r20es.onDocumentMouseUp);
 
-  if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
+    let str_data = window.localStorage.getItem(LOCALSTORAGE_SAVE_DATA_KEY);
+    let config = {};
 
-    {
-      let str_data = window.localStorage.getItem(USERSCRIPT_SAVE_DATA_KEY);
-      let config = {};
-
-      if(str_data) {
-        try {
-          config = JSON.parse(str_data);
-        }
-        catch(e) {
-          console.error("Failed to parse vttes config data", str_data, e);
-        }
+    if(str_data) {
+      try {
+        config = JSON.parse(str_data);
       }
-
-      for(const key in window.r20es.hooks) {
-        const hook = window.r20es.hooks[key];
-        const loaded_config = config[key] || {};
-
-        if(hook.config) {
-          Object.assign(hook.config, loaded_config);
-        } else {
-          hook.config = loaded_config;
-        }
-
-        if(!("enabled" in hook.config)) {
-          hook.config.enabled = true;
-        }
+      catch(e) {
+        console.error("Failed to parse vttes config data", str_data, e);
       }
     }
+
+    for(const key in window.r20es.hooks) {
+      const hook = window.r20es.hooks[key];
+      const loaded_config = config[key] || {};
+
+      if(hook.config) {
+        Object.assign(hook.config, loaded_config);
+      } else {
+        hook.config = loaded_config;
+      }
+
+      if(!("enabled" in hook.config)) {
+        hook.config.enabled = true;
+      }
+    }
+
+    window.r20es.have_configs_been_loaded = true;
   }
 };

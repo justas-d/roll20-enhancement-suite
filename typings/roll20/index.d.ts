@@ -670,7 +670,8 @@ declare namespace Roll20 {
     export_handout: Function;
     overwrite_handout : Function;
     
-    recvPluginMsg: (e: any) => void;
+    receive_message_from_content_script: (e: any) => void;
+    have_configs_been_loaded: boolean;
   }
 
   export interface Mousetrap {
@@ -686,7 +687,6 @@ declare namespace Roll20 {
   export interface R20ESChrome {
     readyCallbacks: Array<Function>;
   }
-
 }
 
 interface Window {
@@ -720,8 +720,7 @@ declare module 'roll20' {
 declare const BUILD_CONSTANT_VERSION: string;
 declare const BUILD_CONSTANT_COMMIT: string;
 declare const BUILD_CONSTANT_BRANCH: string;
-declare const BUILD_CONSTANT_FOR_BROWSER: string;
-declare const BUILD_CONSTANT_IS_FOR_USERSCRIPT: boolean;
+declare const BUILD_CONSTANT_TARGET_PLATFORM : string;
 declare const BUILD_CONSTANT_CHANGELOG: string;
 declare const BUILD_CONSTANT_VTTES_IS_DEV: boolean;
 declare const BUILD_CONSTANT_LOGO_B64: string;

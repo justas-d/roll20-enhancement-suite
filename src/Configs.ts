@@ -108,13 +108,17 @@ addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
 addCfg(ExtraRulers);
 
-if(BUILD_CONSTANT_IS_FOR_USERSCRIPT || BUILD_CONSTANT_FOR_BROWSER == "chrome") {
+if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript" ||
+   BUILD_CONSTANT_TARGET_PLATFORM === "chrome" 
+) {
   addCfg(FixPatienceJs);
 }
 
-if(BUILD_CONSTANT_FOR_BROWSER == "chrome") {
+if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
   addCfg(ChromeUpdateChecker);
 }
+
+// TODO(justasd): update checker for userscript
 
 addCfg(Welcome);
 

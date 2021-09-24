@@ -1,217 +1,80 @@
 import { VTTES_MODULE_CONFIGS } from '../Configs'
 import {getBrowser, replaceAll} from '../utils/MiscUtils';
 import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection";
-import {MESSAGE_KEY_DOM_LOADED} from "../MiscConstants";
 import {getHooks, injectHooks} from "../HookUtils";
 import {replace_all_and_count} from "../utils/MiscUtils";
 
-// Must match the one in ManifestGenerator.js
-const editorUrls = [
-  "https://app.roll20.net/editor",
-  "https://app.roll20.net/editor/",
-  "https://app.roll20.net/editor/#*", // handle all fragments
-  "https://app.roll20.net/editor#*",
-  "https://app.roll20.net/editor/?*", // handle all queries
-  "https://app.roll20.net/editor?*"
-];
-
-
-const is_requesting_editor_html = (request) => {
-  const url = request.url;
-
-  if(url === "https://app.roll20.net/editor/") {
-    return true;
-  }
-
-  if(url === "https://app.roll20.net/editor") {
-    return true;
-  }
-
-  if(url.startsWith("https://app.roll20.net/editor?")) {
-    return true;
-  }
-
-  if(url.startsWith("https://app.roll20.net/editor#")) {
-    return true;
-  }
-
-  return false;
-}
-
-if (doesBrowserNotSupportResponseFiltering()) {
-
-  const isEditorRequest = (request) => {
-    const url = request.url;
-    return is_requesting_editor_html(request);
-
-    if(url.startsWith("https://app.roll20.net/editor/setcampaign/")) {
-      return true;
+if(doesBrowserNotSupportResponseFiltering()) {
+  const request_blocker = (request) => {
+    if(request.url.includes("cdn.userleap.com")) {
+      return { cancel: true };
     }
-
-    if(is_requesting_editor_html(request)) {
-      return true;
+    else if(request.url.includes("google-analytics.com")) {
+      return { cancel: true };
     }
-    return false;
-  };
-
-  const targetScripts = [
-    "https://app.roll20.net/v2/js/jquery",
-    "https://app.roll20.net/v2/js/jquery.migrate.js",
-    "https://app.roll20.net/js/featuredetect.js",
-    "https://app.roll20.net/v2/js/patience.js",
-    "https://app.roll20.net/editor/startjs",
-    "https://app.roll20.net/js/jquery-ui",
-    "https://app.roll20.net/js/d20/loading.js",
-    "https://app.roll20.net/assets/firebase",
-    "https://app.roll20.net/assets/base.js",
-    "https://app.roll20.net/assets/app.js",
-    "https://app.roll20.net/js/tutorial_tips.js"
-  ];
-
-  let alreadyRedirected = {};
-  let redirectQueue = [];
-  let isRedirecting = false;
-
-  const beginRedirectQueue = () => {
-    if(isRedirecting) {
-      return;
-    }
-
-    isRedirecting = true;
-    alreadyRedirected = {};
-    redirectQueue = [];
-
-    console.log("Beginning redirect queue.");
-  };
-
-  const endRedirectQueue = () => {
-    console.log("Ending redirect queue.");
-    isRedirecting = false;
-  };
-
-  getBrowser().runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if(msg[MESSAGE_KEY_DOM_LOADED]) {
-      endRedirectQueue();
-
-      console.log("Received MESSAGE_KEY_DOM_LOADED from content script, responding with redirectQueue:", redirectQueue);
-      sendResponse(redirectQueue);
-    }
-  });
-
-  let last_character_request_timestamp = 0;
-
-  const heuristic_is_character_resource  = (request) => {
-    if(isRedirecting) {
-      return false;
-    }
-
-    const ms_threshold = 5000;
-    if(request.timeStamp < last_character_request_timestamp + ms_threshold) {
-      return true;
-    }
-
-    return false;
-  }
-
-  const requestListener = (request) => {
-    {
-      const is_character_request = request.url.includes("/editor/character/");
-      if(is_character_request) {
-        last_character_request_timestamp = request.timeStamp;
-        console.log("Cought character request, setting last_character_request_timestamp to", 
-          last_character_request_timestamp
-        );
-
-        if(isRedirecting) {
-          console.log("cancelling redirect queue");
-          isRedirecting = false;
-          alreadyRedirected = {};
-          redirectQueue = [];
-        }
-
-        return;
+    else if(request.url.includes("app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?")) {
+      if(!request.url.includes("app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n")) {
+        return { cancel: true };
       }
     }
-
-    if(isEditorRequest(request)) {
-      console.log("Editor, blocking:", request.url, request);
-      beginRedirectQueue();
+    else if(request.url.includes("app.roll20.net/v2/js/jquery-1.9.1.js?")) {
+      if(!request.url.includes("app.roll20.net/v2/js/jquery-1.9.1.js?n")) {
+        return { cancel: true };
+      }
     }
-    else if(request.type === "script") {
-      for(const url of targetScripts) {
-        if(request.url.startsWith(url)) {
-          if(heuristic_is_character_resource(request)) {
-            console.log("Ignoring request as it's likely a character resource", request.url, "last_character_request_timestamp is", last_character_request_timestamp);
-            continue;
-          }
-
-          beginRedirectQueue();
-
-          if (alreadyRedirected[request.url]) {
-            console.log(`not queueing request due to alreadyRedirected: ${request.url}`, request);
-          }
-          else {
-            console.log(`queueing ${request.url}`);
-            redirectQueue.push(request.url);
-            alreadyRedirected[request.url] = true;
-
-            return {
-              cancel: true
-            };
-          }
-          break;
-        }
+    else if(request.url.includes("app.roll20.net/v2/js/jquery.migrate.js?")) {
+      if(!request.url.includes("app.roll20.net/v2/js/jquery.migrate.js?n")) {
+        return { cancel: true };
+      }
+    }
+    else if(request.url.includes("app.roll20.net/js/featuredetect.js?2")) {
+      if(!request.url.includes("app.roll20.net/js/featuredetect.js?2n")) {
+        return { cancel: true };
+      }
+    }
+    else if(request.url.includes("app.roll20.net/v2/js/patience.js?")) {
+      if(!request.url.includes("app.roll20.net/v2/js/patience.js?n")) {
+        return { cancel: true };
+      }
+    }
+    else if(request.url.includes("app.roll20.net/editor/startjs/?timestamp")) {
+      return { cancel: true };
+    }
+    else if(request.url.includes("app.roll20.net/js/d20/loading.js?v=11")) {
+      if(!request.url.includes("app.roll20.net/js/d20/loading.js?n=11&v=11")) {
+        return { cancel: true };
+      }
+    }
+    else if(request.url.includes("app.roll20.net/assets/firebase.2.4.0.js")) {
+      if(!request.url.includes("app.roll20.net/assets/firebase.2.4.0.js?n")) {
+        return { cancel: true };
+      }
+    }
+    else if(request.url.includes("app.roll20.net/assets/base.js?")) {
+      if(!request.url.includes("app.roll20.net/assets/base.js?n")) {
+        return { cancel: true };
+      }
+    }
+    else if(request.url.includes("app.roll20.net/assets/app.js?")) {
+      if(!request.url.includes("app.roll20.net/assets/app.js?n")) {
+        return { cancel: true };
+      }
+    }
+    else if(request.url.includes("app.roll20.net/js/tutorial_tips.js")) {
+      if(!request.url.includes("app.roll20.net/js/tutorial_tips.js?n")) {
+        return { cancel: true };
       }
     }
   };
 
   getBrowser().webRequest.onBeforeRequest.addListener(
-    requestListener,
+    request_blocker,
     {urls: ["*://app.roll20.net/*"]},
     ["blocking"]
   );
-
-  {
-    const headerCallback = (req) => {
-
-      if(!isEditorRequest(req)) {
-        return;
-      }
-
-      console.log("Editor, headers:", req.url, req);
-      beginRedirectQueue();
-
-      console.log(`HEADER CALLBACK (processing headers) for ${req.url}`, req);
-
-      const headers = JSON.parse(JSON.stringify(req.responseHeaders));
-
-      let idx = headers.length;
-      while (idx-- > 0) {
-        const header = headers[idx];
-
-        const name = header.name.toLowerCase();
-        if (name !== "content-security-policy") {
-          console.log(`ignoring header ${name}`);
-          continue;
-        }
-
-        header.value += " blob:";
-        console.log("!!MODIFIED HEADERS!!");
-        break;
-      }
-
-      return {responseHeaders: headers};
-    };
-
-    chrome.webRequest.onHeadersReceived.addListener(
-      headerCallback,
-      {urls: editorUrls},
-      ["blocking", "responseHeaders"]
-    );
-  }
 }
 else {
-  const redirectTargets = [
+  const redirect_targets = [
     "https://app.roll20.net/v2/js/jquery",
     "https://app.roll20.net/js/featuredetect.js",
     "https://app.roll20.net/editor/startjs",
@@ -223,22 +86,22 @@ else {
     "https://app.roll20.net/js/tutorial_tips.js",
   ];
 
-  const isRedirectTarget = (url) => typeof(redirectTargets.find(f => url.startsWith(f))) !== "undefined";
-
   // thanks, Firefox.
-  const requestListener = (dt) => {
-    const isRedir = isRedirectTarget(dt.url);
-    console.log(`${isRedir}: ${dt.url}`);
+  const request_listener = (request) => {
+    const is_redir = typeof(redirect_targets.find(f => request.url.startsWith(f))) !== "undefined";
+    console.log(`${is_redir}: ${request.url}`);
 
-    if (!isRedir) return;
+    if(!is_redir) {
+      return;
+    }
 
-    const hookQueue = getHooks(VTTES_MODULE_CONFIGS, dt.url);
-    const filter = getBrowser().webRequest.filterResponseData(dt.requestId);
+    const hookQueue = getHooks(VTTES_MODULE_CONFIGS, request.url);
+    const filter = getBrowser().webRequest.filterResponseData(request.requestId);
     const decoder = new TextDecoder("utf-8");
 
     // Note(Justas): the console.log here forces scripts to run in order
     // and not randomly, avoiding race conditions
-    let stringBuffer = `console.log("running ${dt.url}");`;
+    let stringBuffer = `console.log("running ${request.url}");`;
 
     filter.ondata = e => {
       stringBuffer += decoder.decode(e.data, {stream: true});
@@ -250,10 +113,10 @@ else {
       filter.write(new TextEncoder().encode(hookedData));
       filter.close();
     };
-  }
+  };
 
   getBrowser().webRequest.onBeforeRequest.addListener(
-    requestListener,
+    request_listener,
     {urls: ["*://app.roll20.net/*"]},
     ["blocking"]
   );

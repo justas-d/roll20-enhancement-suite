@@ -69,7 +69,9 @@ add_module(Mod_CharacterAvatarFromURL);
 add_module(Mod_CharacterIO);
 add_module(Mod_CharacterTokenModifier);
 
-if(BUILD_CONSTANT_FOR_BROWSER == "chrome") {
+// TODO(justasd): update checker for userscript
+
+if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
   add_module(Mod_ChromeUpdateChecker);
 }
 

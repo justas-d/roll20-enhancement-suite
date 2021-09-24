@@ -132,12 +132,6 @@ module.exports = (_env, argv) => {
     const addStaticFile = (mappedName, sourcePath) => staticFiles[mappedName] = sourcePath;
 
     addEntryPoint("Background.js", "./src/entrypoints/Background.ts");
-    if(b === "chrome") {
-      addEntryPoint(
-        "ChromePostInjectScriptsPayload.js", 
-        "./src/entrypoints/ChromePostInjectScriptsPayload.ts"
-      );
-    }
     addEntryPoint("ContentScript.js", "./src/entrypoints/ContentScript.tsx");
     addEntryPoint("EarlyContentScript.js", "./src/entrypoints/EarlyContentScript.ts");
     addEntryPoint("WebsiteBootstrap.js", "./src/entrypoints/WebsiteBootstrap.tsx");
@@ -222,8 +216,7 @@ module.exports = (_env, argv) => {
           "BUILD_CONSTANT_VERSION": JSON.stringify(git.version),
           "BUILD_CONSTANT_COMMIT": JSON.stringify(git.commit),
           "BUILD_CONSTANT_BRANCH": JSON.stringify(git.branch),
-          "BUILD_CONSTANT_FOR_BROWSER": JSON.stringify(browser.target),
-          "BUILD_CONSTANT_IS_FOR_USERSCRIPT": JSON.stringify(false),
+          "BUILD_CONSTANT_TARGET_PLATFORM": JSON.stringify(browser.target),
           "BUILD_CONSTANT_CHANGELOG": JSON.stringify(changelog),
           'BUILD_CONSTANT_VTTES_IS_DEV': JSON.stringify(isProd === false),
           'BUILD_CONSTANT_LOGO_B64': `"${logo_data_b64}"`,

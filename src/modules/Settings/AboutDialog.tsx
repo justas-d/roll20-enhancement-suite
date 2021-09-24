@@ -34,12 +34,7 @@ export default class AboutDialog extends DialogBase<null> {
             <small>aka R20ES</small>
           </a>
           <h2>Version {BUILD_CONSTANT_VERSION}</h2>
-          <h3>Built for {(()=>{ 
-            if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
-              return `${BUILD_CONSTANT_FOR_BROWSER} (userscript)`;
-            }
-            return BUILD_CONSTANT_FOR_BROWSER ;
-          })()}, Roll20</h3>
+          <h3>Built for {BUILD_CONSTANT_TARGET_PLATFORM}, Roll20</h3>
         </DialogHeader>
 
         <DialogBody>

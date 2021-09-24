@@ -145,7 +145,7 @@ const readFile = function(file) {
 }
 
 const getBrowser = (): any => {
-  if(BUILD_CONSTANT_IS_FOR_USERSCRIPT) {
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
     console.log("=====================");
     console.log("=====================");
     console.log("=====================");
