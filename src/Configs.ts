@@ -1,5 +1,3 @@
-/// <reference path="../typings/vttes_page/index.d.ts"/> /* fuck all the ts tooling jfc */
-
 import AlternativeRadialMenu from './modules/AlternativeRadialMenu/Config'
 import AnimationDisable from './modules/AnimationDisable/Config'
 import AutoPingNextToken from './modules/AutoPingNextToken/Config'
