@@ -484,16 +484,14 @@ export const bootstrap = () => {
       patch[id] = hook.config;
     }
 
-    // NOTE(justasd): save on localstorage as well so that folks going between the extension and the
-    // userscript have their settings carry over.
-    // 2021-09-21
-    const str = JSON.stringify(patch, null, 0);
-    window.localStorage.setItem(LOCALSTORAGE_SAVE_DATA_KEY, str);
-
     if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox" ||
        BUILD_CONSTANT_TARGET_PLATFORM === "chrome" 
     ) {
-      window.postMessage({ r20esAppWantsSync: patch }, Config.appUrl);
+      window.postMessage({r20esAppWantsSync: patch}, Config.appUrl);
+    }
+    else if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
+      const str = JSON.stringify(patch, null, 0);
+      window.localStorage.setItem(LOCALSTORAGE_SAVE_DATA_KEY, str);
     }
   };
 
