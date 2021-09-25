@@ -53,163 +53,7 @@ export const bootstrap = () => {
     }
   }, 25 * 1000);
 
-  if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome" ||
-     BUILD_CONSTANT_TARGET_PLATFORM === "userscript"
-  ) {
-    const jobs = [];
-    const scripts = [];
-
-    const fetch_script = async (order, url) => {
-      console.log("fetching", url, order);
-
-      const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
-
-      const response = await fetch(url);
-      let text = await response.text();
-
-      text = injectHooks(text, hooks);
-
-      // take over jquery .ready
-      text = text.replace(
-        "jQuery.ready.promise().done( fn );",
-        `if(!window.r20esChrome) window.r20esChrome = {};
-         if(!window.r20esChrome.readyCallbacks) window.r20esChrome.readyCallbacks = [];
-        window.r20esChrome.readyCallbacks.push(fn);`
-      );
-
-      // incredibly long loading screens fix
-      text= text.replace(
-        "},6e4))",
-        "},250))"
-      );
-
-      scripts.push({order: order, text: text, url: url});
-    };
-
-    jobs.push(fetch_script(0, "https://app.roll20.net/v2/js/jquery-1.9.1.js?n"));
-    jobs.push(fetch_script(1, "https://app.roll20.net/v2/js/jquery.migrate.js?n"));
-    jobs.push(fetch_script(2, "https://app.roll20.net/js/featuredetect.js?2n"));
-    jobs.push(fetch_script(3, "https://app.roll20.net/v2/js/patience.js?n"));
-    jobs.push(fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11"));
-    jobs.push(fetch_script(7, "https://app.roll20.net/assets/firebase.2.4.0.js?n"));
-    jobs.push(fetch_script(10, "https://app.roll20.net/js/tutorial_tips.js?n"));
-
-    const now = Date.now();
-    jobs.push(fetch_script(5, `https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n${now}`));
-    jobs.push(fetch_script(8, `https://app.roll20.net/assets/base.js?n${now}`));
-    jobs.push(fetch_script(9, `https://app.roll20.net/assets/app.js?n${now}`));
-
-    let script_nonce = "";
-    jobs.push(new Promise(ok => {
-      let nth_attempt = 0;
-      const retry = () => {
-        const scripts_with_nonce = document.querySelectorAll("script[nonce]") as any;
-
-        for(const script of scripts_with_nonce) {
-          const nonce = script.nonce;
-
-          if(nonce && nonce.length && nonce.length > 0) {
-            script_nonce = nonce;
-            console.log(`got nonce! it is: '${script_nonce}'`, script);
-            ok();
-            return;
-          }
-        }
-
-        nth_attempt += 1;
-        if((nth_attempt % 100) == 0) {
-          console.log("nonce retry");
-        }
-        setTimeout(retry, 10);
-      }
-      retry();
-    }));
-
-    jobs.push(new Promise(ok => {
-      const retry = async () => {
-        console.log("retry");
-
-        const all_script_els = document.querySelectorAll("script") as any as HTMLScriptElement[];
-        let startjs_url = null;
-        for(const el of all_script_els) {
-          if(el.src && el.src.includes("/editor/startjs/")) {
-            startjs_url = el.src;
-            break;
-          }
-        }
-
-        if(startjs_url) {
-          const idx = startjs_url.indexOf("?timestamp");
-          console.log("startjs_url before", startjs_url);
-          startjs_url = startjs_url.slice(0, idx) + "?n=1&" + startjs_url.slice(idx+1);
-          console.log("startjs_url after", startjs_url);
-
-          await fetch_script(4, startjs_url);
-
-          ok();
-        }
-        else {
-          setTimeout(retry, 10);
-        }
-      };
-
-      retry();
-    }));
-
-    Promise.all(jobs).then(() => {
-
-      scripts.sort((a,b) => a.order - b.order);
-
-      console.log(`${jobs.length} jobs are done!`, jobs);
-      console.log(scripts);
-
-      for(const el of scripts) {
-
-        console.log(`dumping ${el.url}`);
-        const script_el = document.createElement("script");
-        script_el.type = "text/javascript";
-        // @ts-ignore
-        script_el.nonce = script_nonce;
-        script_el.text = el.text;
-        script_el.async = false;
-        script_el.defer = false;
-        document.body.appendChild(script_el);
-      }
-
-      let nth_wait = 0;
-      const wait = () => {
-        const has_jq = typeof(window["$"]) !== "undefined";
-        const has_sound_manager = typeof(window.soundManager) !== "undefined";
-        const has_d20 = typeof(window.d20) !== "undefined";
-        const has_body = !!document.body;
-        const configs_loaded = window.r20es && window.r20es.have_configs_been_loaded;
-
-        if(has_jq && has_sound_manager && has_d20 && has_body && configs_loaded) {
-          console.log("vttes has all depts satisfied, dumping");
-          inject_modules();
-
-          for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
-            try {
-              window.r20esChrome.readyCallbacks[i]();
-            }
-            catch(e) {
-              console.error(e);
-            }
-          }
-        }
-        else {
-          nth_wait += 1;
-          if((nth_wait % 100) == 0) {
-            console.log(`vttes is waiting for depts...`);
-          }
-          setTimeout(wait, 10);
-        }
-      };
-      wait();
-    });
-  }
-
-  {
+  const inject_dialog_stuff = () => {
     const dialog_style = `
       .r20es-indent {
           margin-left: 20px;
@@ -371,6 +215,168 @@ export const bootstrap = () => {
     }
 
     injectCSS(dialog_style, document.body, STYLE_CSS);
+  }
+
+
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome" ||
+     BUILD_CONSTANT_TARGET_PLATFORM === "userscript"
+  ) {
+    const jobs = [];
+    const scripts = [];
+
+    const fetch_script = async (order, url) => {
+      console.log("fetching", url, order);
+
+      const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
+
+      const response = await fetch(url);
+      let text = await response.text();
+
+      text = injectHooks(text, hooks);
+
+      // take over jquery .ready
+      text = text.replace(
+        "jQuery.ready.promise().done( fn );",
+        `if(!window.r20esChrome) window.r20esChrome = {};
+         if(!window.r20esChrome.readyCallbacks) window.r20esChrome.readyCallbacks = [];
+        window.r20esChrome.readyCallbacks.push(fn);`
+      );
+
+      // incredibly long loading screens fix
+      text= text.replace(
+        "},6e4))",
+        "},250))"
+      );
+
+      scripts.push({order: order, text: text, url: url});
+    };
+
+    jobs.push(fetch_script(0, "https://app.roll20.net/v2/js/jquery-1.9.1.js?n"));
+    jobs.push(fetch_script(1, "https://app.roll20.net/v2/js/jquery.migrate.js?n"));
+    jobs.push(fetch_script(2, "https://app.roll20.net/js/featuredetect.js?2n"));
+    jobs.push(fetch_script(3, "https://app.roll20.net/v2/js/patience.js?n"));
+    jobs.push(fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11"));
+    jobs.push(fetch_script(7, "https://app.roll20.net/assets/firebase.2.4.0.js?n"));
+    jobs.push(fetch_script(10, "https://app.roll20.net/js/tutorial_tips.js?n"));
+
+    const now = Date.now();
+    jobs.push(fetch_script(5, `https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n${now}`));
+    jobs.push(fetch_script(8, `https://app.roll20.net/assets/base.js?n${now}`));
+    jobs.push(fetch_script(9, `https://app.roll20.net/assets/app.js?n${now}`));
+
+    let script_nonce = "";
+    jobs.push(new Promise(ok => {
+      let nth_attempt = 0;
+      const retry = () => {
+        const scripts_with_nonce = document.querySelectorAll("script[nonce]") as any;
+
+        for(const script of scripts_with_nonce) {
+          const nonce = script.nonce;
+
+          if(nonce && nonce.length && nonce.length > 0) {
+            script_nonce = nonce;
+            console.log(`got nonce! it is: '${script_nonce}'`, script);
+            ok();
+            return;
+          }
+        }
+
+        nth_attempt += 1;
+        if((nth_attempt % 100) == 0) {
+          console.log("nonce retry");
+        }
+        setTimeout(retry, 10);
+      }
+      retry();
+    }));
+
+    jobs.push(new Promise(ok => {
+      const retry = async () => {
+        console.log("retry");
+
+        const all_script_els = document.querySelectorAll("script") as any as HTMLScriptElement[];
+        let startjs_url = null;
+        for(const el of all_script_els) {
+          if(el.src && el.src.includes("/editor/startjs/")) {
+            startjs_url = el.src;
+            break;
+          }
+        }
+
+        if(startjs_url) {
+          const idx = startjs_url.indexOf("?timestamp");
+          console.log("startjs_url before", startjs_url);
+          startjs_url = startjs_url.slice(0, idx) + "?n=1&" + startjs_url.slice(idx+1);
+          console.log("startjs_url after", startjs_url);
+
+          await fetch_script(4, startjs_url);
+
+          ok();
+        }
+        else {
+          setTimeout(retry, 10);
+        }
+      };
+
+      retry();
+    }));
+
+    Promise.all(jobs).then(() => {
+
+      scripts.sort((a,b) => a.order - b.order);
+
+      console.log(`${jobs.length} jobs are done!`, jobs);
+      console.log(scripts);
+
+      for(const el of scripts) {
+
+        console.log(`dumping ${el.url}`);
+        const script_el = document.createElement("script");
+        script_el.type = "text/javascript";
+        // @ts-ignore
+        script_el.nonce = script_nonce;
+        script_el.text = el.text;
+        script_el.async = false;
+        script_el.defer = false;
+        document.body.appendChild(script_el);
+      }
+
+      let nth_wait = 0;
+      const wait = () => {
+        const has_jq = typeof(window["$"]) !== "undefined";
+        const has_sound_manager = typeof(window.soundManager) !== "undefined";
+        const has_d20 = typeof(window.d20) !== "undefined";
+        const has_body = !!document.body;
+        const configs_loaded = window.r20es && window.r20es.have_configs_been_loaded;
+
+        if(has_jq && has_sound_manager && has_d20 && has_body && configs_loaded) {
+          console.log("vttes has all depts satisfied, dumping");
+          inject_dialog_stuff();
+          inject_modules();
+
+          for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
+            try {
+              window.r20esChrome.readyCallbacks[i]();
+            }
+            catch(e) {
+              console.error(e);
+            }
+          }
+        }
+        else {
+          nth_wait += 1;
+          if((nth_wait % 100) == 0) {
+            console.log(`vttes is waiting for depts...`);
+          }
+          setTimeout(wait, 10);
+        }
+      };
+      wait();
+    });
+  }
+
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox") {
+    inject_dialog_stuff();
   }
 
   if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox" ||
