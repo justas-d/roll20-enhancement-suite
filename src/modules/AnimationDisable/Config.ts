@@ -13,26 +13,23 @@ export default MakeConfig(__dirname, {
 
     mods: [
 
-      /*
-        { // radial button proportionally timed animation
-            includes: "assets/app.js",
-            find: `setTimeout(function(){$(e).addClass("open"),n.find(".button div.hasnumber").textfill(20)},30*r),r++`,
-            patch: `;
-            if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(e).addClass("open");n.find(".button div.hasnumber").textfill(20);}
-            else { >>R20ES_MOD_FIND>>; }`,
-        },
-        */
+      { // radial button proportionally timed animation
+          includes: "assets/app.js",
+          find: `setTimeout(function(){$(e).addClass("open"),o.find(".button div.hasnumber").textfill(20)},30*a),a++`,
+          patch: `;
+          if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(e).addClass("open");o.find(".button div.hasnumber").textfill(20);}
+          else { >>R20ES_MOD_FIND>>; }`,
+      },
 
-      /*
-        { // radial final
-            includes: "assets/app.js",
-            find: `setTimeout(function(){n.find(".button").addClass("animcomplete")},250)`,
-            patch: `1;
-            if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { n.find(".button").addClass("animcomplete");}
-            else { >>R20ES_MOD_FIND>>; }`,
-        },
-        */
+      { // radial final
+          includes: "assets/app.js",
+          find: `setTimeout(function(){o.find(".button").addClass("animcomplete")},250)`,
+          patch: `1;
+          if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { o.find(".button").addClass("animcomplete");}
+          else { >>R20ES_MOD_FIND>>; }`,
+      },
 
+       /*
         { // marker menu hide
             includes: "assets/app.js",
             find: `setTimeout(function(){t&&t.remove()},300)`,
@@ -40,6 +37,7 @@ export default MakeConfig(__dirname, {
             if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { t && t.remove(); }
             else { >>R20ES_MOD_FIND>>; }`,
         },
+        */
 
       /*
         { // marker menu show

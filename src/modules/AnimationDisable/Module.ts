@@ -21,6 +21,14 @@ class NoAnimTokenRadial implements IAnimationMod {
     transition:none;
 }
 
+#radial-menu .markermenu {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  -ms-transition:none;
+  transition:none;
+}
+
 #radial-menu .button.open {
     -webkit-transition-timing-function: none;
     -webkit-transition-timing-function: none;
