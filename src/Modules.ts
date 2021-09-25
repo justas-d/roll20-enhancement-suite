@@ -48,6 +48,7 @@ import Mod_TokenResize                from "./modules/TokenResize/Module";
 import Mod_ToolsMenu                  from "./modules/ToolsMenu/Module";
 import Mod_TransparentPaper           from "./modules/TransparentPaper/Module";
 import Mod_Welcome                    from "./modules/Welcome/Module";
+import Mod_UserscriptUpdateChecker    from "./modules/UserscriptUpdateChecker/Module";
 
 const VTTES_MODULES = [];
 const add_module = (m) => VTTES_MODULES.push(m);
@@ -69,10 +70,12 @@ add_module(Mod_CharacterAvatarFromURL);
 add_module(Mod_CharacterIO);
 add_module(Mod_CharacterTokenModifier);
 
-// TODO(justasd): update checker for userscript
-
 if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
   add_module(Mod_ChromeUpdateChecker);
+}
+
+if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
+  add_module(Mod_UserscriptUpdateChecker);
 }
 
 add_module(Mod_CounterTokenName);

@@ -52,6 +52,7 @@ import HandoutImageFromURL  from "./modules/HandoutImageFromURL/Config"
 import CustomPathWidth from "./modules/CustomPathWidth/Config"
 import ExtraRulers from "./modules/ExtraRulers/Config"
 import FixPatienceJs from "./modules/FixPatienceJs/Config"
+import UserscriptUpdateChecker from "./modules/UserscriptUpdateChecker/Config"
 
 const VTTES_MODULE_CONFIGS = {};
 const addCfg = cfg => VTTES_MODULE_CONFIGS[cfg.id] = cfg;
@@ -117,6 +118,11 @@ if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript" ||
 if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
   addCfg(ChromeUpdateChecker);
 }
+
+if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
+  addCfg(UserscriptUpdateChecker);
+}
+
 
 // TODO(justasd): update checker for userscript
 
