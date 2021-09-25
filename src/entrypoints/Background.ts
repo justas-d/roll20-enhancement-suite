@@ -69,7 +69,7 @@ if(doesBrowserNotSupportResponseFiltering()) {
 
   getBrowser().webRequest.onBeforeRequest.addListener(
     request_blocker,
-    {urls: ["*://app.roll20.net/*"]},
+    {urls: ["*://app.roll20.net/editor/*"]},
     ["blocking"]
   );
 }
