@@ -354,6 +354,14 @@ export const bootstrap = () => {
           inject_dialog_stuff();
           inject_modules();
 
+          // NOTE(justasd): beyond20 depends on this event.
+          // 2021-10-02
+          {
+            const DOMContentLoaded_event = document.createEvent("Event");
+            DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
+            window.document.dispatchEvent(DOMContentLoaded_event);
+          }
+
           for (let i = 0; i < window.r20esChrome.readyCallbacks.length; i++) {
             try {
               window.r20esChrome.readyCallbacks[i]();
