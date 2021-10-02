@@ -6,62 +6,85 @@ import {replace_all_and_count} from "../utils/MiscUtils";
 
 if(doesBrowserNotSupportResponseFiltering()) {
   const request_blocker = (request) => {
+    //console.log(request);
+
+    // NOTE(justasd): ignore any requests from iframes. We need this for char sheets to work as they
+    // request some of the same scripts (jquery, patience etc) as the editor and we don't want to
+    // cancel those!
+    // 2021-10-02
+    if(request.parentFrameId != -1) {
+      return;
+    }
+
     if(request.url.includes("cdn.userleap.com")) {
+      //console.log("cancel", request);
       return { cancel: true };
     }
     else if(request.url.includes("google-analytics.com")) {
+      //console.log("cancel", request);
       return { cancel: true };
     }
     else if(request.url.includes("app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?")) {
       if(!request.url.includes("app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
-    else if(request.url.includes("app.roll20.net/v2/js/jquery-1.9.1.js?")) {
+    else if(request.url.includes("app.roll20.net/v2/js/jquery-1.9.1.js")) {
       if(!request.url.includes("app.roll20.net/v2/js/jquery-1.9.1.js?n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
-    else if(request.url.includes("app.roll20.net/v2/js/jquery.migrate.js?")) {
+    else if(request.url.includes("app.roll20.net/v2/js/jquery.migrate.js")) {
       if(!request.url.includes("app.roll20.net/v2/js/jquery.migrate.js?n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
     else if(request.url.includes("app.roll20.net/js/featuredetect.js?2")) {
       if(!request.url.includes("app.roll20.net/js/featuredetect.js?2n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
-    else if(request.url.includes("app.roll20.net/v2/js/patience.js?")) {
+    else if(request.url.includes("app.roll20.net/v2/js/patience.js")) {
       if(!request.url.includes("app.roll20.net/v2/js/patience.js?n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
     else if(request.url.includes("app.roll20.net/editor/startjs/?timestamp")) {
+      //console.log("cancel", request);
       return { cancel: true };
     }
     else if(request.url.includes("app.roll20.net/js/d20/loading.js?v=11")) {
       if(!request.url.includes("app.roll20.net/js/d20/loading.js?n=11&v=11")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
     else if(request.url.includes("app.roll20.net/assets/firebase.2.4.0.js")) {
       if(!request.url.includes("app.roll20.net/assets/firebase.2.4.0.js?n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
     else if(request.url.includes("app.roll20.net/assets/base.js?")) {
       if(!request.url.includes("app.roll20.net/assets/base.js?n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
     else if(request.url.includes("app.roll20.net/assets/app.js?")) {
       if(!request.url.includes("app.roll20.net/assets/app.js?n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
     else if(request.url.includes("app.roll20.net/js/tutorial_tips.js")) {
       if(!request.url.includes("app.roll20.net/js/tutorial_tips.js?n")) {
+        //console.log("cancel", request);
         return { cancel: true };
       }
     }
@@ -69,7 +92,7 @@ if(doesBrowserNotSupportResponseFiltering()) {
 
   getBrowser().webRequest.onBeforeRequest.addListener(
     request_blocker,
-    {urls: ["*://app.roll20.net/editor/*"]},
+    {urls: ["*://app.roll20.net/*"]},
     ["blocking"]
   );
 }

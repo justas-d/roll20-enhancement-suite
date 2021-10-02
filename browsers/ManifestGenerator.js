@@ -1,7 +1,6 @@
 const VersionNameGen = require("./VersionNameGen");
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
-// Must match the one in Background.js
 const editorUrls = [
   "https://app.roll20.net/editor",
   "https://app.roll20.net/editor/",
