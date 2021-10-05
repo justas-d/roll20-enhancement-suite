@@ -5,8 +5,36 @@ import {getHooks, injectHooks} from "../HookUtils";
 import {replace_all_and_count} from "../utils/MiscUtils";
 
 if(doesBrowserNotSupportResponseFiltering()) {
+  let is_requesting_char_sheet = false;
+  let last_char_sheet_request = 0;
+
   const request_blocker = (request) => {
-    //console.log(request);
+
+    // NOTE(justasd): if we see a char sheet request, ignore any scripts within the next 5 seconds
+    // as the char sheet popout will request the same scripts that we would want to block when
+    // requesting the editor. I haven't found a way to 'know' when a script was requested by a
+    // popout char sheet request, but it clearly seems doable as Tampermonkey does it somehow.
+    // 2021-10-05
+    {
+      if(is_requesting_char_sheet) {
+        const now = new Date().getTime()/1000;
+        const delta = now - last_char_sheet_request;
+        if(delta < 5) {
+          console.log("ignoring due to sheet", delta, request);
+          return;
+        }
+      }
+
+      if(request.url.includes("app.roll20.net/editor/character/")) {
+        console.log("sheet request!", request);
+
+        is_requesting_char_sheet = true;
+        last_char_sheet_request = new Date().getTime()/1000;
+        return;
+      }
+    }
+
+    console.log(request);
 
     // NOTE(justasd): ignore any requests from iframes. We need this for char sheets to work as they
     // request some of the same scripts (jquery, patience etc) as the editor and we don't want to
@@ -16,83 +44,79 @@ if(doesBrowserNotSupportResponseFiltering()) {
       return;
     }
 
+    let cancel = false;
     if(request.url.includes("cdn.userleap.com")) {
-      //console.log("cancel", request);
-      return { cancel: true };
+      cancel = true;
     }
     else if(request.url.includes("google-analytics.com")) {
-      //console.log("cancel", request);
-      return { cancel: true };
+      cancel = true;
     }
     else if(request.url.includes("app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?")) {
       if(!request.url.includes("app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/v2/js/jquery-1.9.1.js")) {
       if(!request.url.includes("app.roll20.net/v2/js/jquery-1.9.1.js?n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/v2/js/jquery.migrate.js")) {
       if(!request.url.includes("app.roll20.net/v2/js/jquery.migrate.js?n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/js/featuredetect.js?2")) {
       if(!request.url.includes("app.roll20.net/js/featuredetect.js?2n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/v2/js/patience.js")) {
       if(!request.url.includes("app.roll20.net/v2/js/patience.js?n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/editor/startjs/?timestamp")) {
-      //console.log("cancel", request);
-      return { cancel: true };
+      cancel = true;
     }
     else if(request.url.includes("app.roll20.net/js/d20/loading.js?v=11")) {
       if(!request.url.includes("app.roll20.net/js/d20/loading.js?n=11&v=11")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/assets/firebase.2.4.0.js")) {
       if(!request.url.includes("app.roll20.net/assets/firebase.2.4.0.js?n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/assets/base.js?")) {
       if(!request.url.includes("app.roll20.net/assets/base.js?n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/assets/app.js?")) {
       if(!request.url.includes("app.roll20.net/assets/app.js?n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/js/tutorial_tips.js")) {
       if(!request.url.includes("app.roll20.net/js/tutorial_tips.js?n")) {
-        //console.log("cancel", request);
-        return { cancel: true };
+        cancel = true;
       }
+    }
+
+    if(cancel) {
+      console.log("cancel", request);
+      return { cancel: true };
     }
   };
 
   getBrowser().webRequest.onBeforeRequest.addListener(
     request_blocker,
-    {urls: ["*://app.roll20.net/*"]},
+    {
+      urls: ["*://app.roll20.net/*"],
+      types: ["main_frame", "script"],
+    },
     ["blocking"]
   );
 }
