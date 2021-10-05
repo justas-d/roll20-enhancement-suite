@@ -1,5 +1,5 @@
 {
-    "current": "1.25.3",
+    "current": "1.25.4",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1753,6 +1753,18 @@
                 {
                     "id": "",
                     "content": "Fix Beyond20 rolls not being correctly formatted. (thanks, kiloforce, for the report!)"
+                }
+            ]
+        },
+        "1.25.4": {
+            "info": {
+                "title": "Popout Sheet Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix character sheets not loading on Chrome. (thanks, Batdaf and fillin, for the report!)"
                 }
             ]
         }
