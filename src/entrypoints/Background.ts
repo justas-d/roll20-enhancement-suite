@@ -12,14 +12,16 @@ if(doesBrowserNotSupportResponseFiltering()) {
 
     // NOTE(justasd): if we see a char sheet request, ignore any scripts within the next 5 seconds
     // as the char sheet popout will request the same scripts that we would want to block when
-    // requesting the editor. I haven't found a way to 'know' when a script was requested by a
-    // popout char sheet request, but it clearly seems doable as Tampermonkey does it somehow.
+    // requesting the editor. 
+    //
+    // I haven't found a way to 'know' when a script was requested by a popout char sheet request,
+    // but it clearly seems doable as Tampermonkey does it somehow.
     // 2021-10-05
     {
       if(is_requesting_char_sheet) {
         const now = new Date().getTime()/1000;
         const delta = now - last_char_sheet_request;
-        if(delta < 5) {
+        if(delta < 7) {
           console.log("ignoring due to sheet", delta, request);
           return;
         }
