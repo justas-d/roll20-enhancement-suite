@@ -5,38 +5,21 @@ import {getHooks, injectHooks} from "../HookUtils";
 import {replace_all_and_count} from "../utils/MiscUtils";
 
 if(doesBrowserNotSupportResponseFiltering()) {
-  let is_requesting_char_sheet = false;
-  let last_char_sheet_request = 0;
+  let editor_requested_at = 0;
 
   const request_blocker = (request) => {
 
-    // NOTE(justasd): if we see a char sheet request, ignore any scripts within the next 5 seconds
-    // as the char sheet popout will request the same scripts that we would want to block when
-    // requesting the editor. 
-    //
-    // I haven't found a way to 'know' when a script was requested by a popout char sheet request,
-    // but it clearly seems doable as Tampermonkey does it somehow.
-    // 2021-10-05
-    {
-      if(is_requesting_char_sheet) {
-        const now = new Date().getTime()/1000;
-        const delta = now - last_char_sheet_request;
-        if(delta < 7) {
-          console.log("ignoring due to sheet", delta, request);
-          return;
-        }
-      }
-
-      if(request.url.includes("app.roll20.net/editor/character/")) {
-        console.log("sheet request!", request);
-
-        is_requesting_char_sheet = true;
-        last_char_sheet_request = new Date().getTime()/1000;
-        return;
-      }
+    if(request.url === "https://app.roll20.net/editor" ||
+       request.url === "https://app.roll20.net/editor/" ||
+       request.url.startsWith("https://app.roll20.net/editor/#") ||
+       request.url.startsWith("https://app.roll20.net/editor#") ||
+       request.url.startsWith("https://app.roll20.net/editor/?") ||
+       request.url.startsWith("https://app.roll20.net/editor?")
+    ) {
+      editor_requested_at = request.timeStamp;
     }
 
-    console.log(request);
+    //console.log(request);
 
     // NOTE(justasd): ignore any requests from iframes. We need this for char sheets to work as they
     // request some of the same scripts (jquery, patience etc) as the editor and we don't want to
@@ -108,7 +91,16 @@ if(doesBrowserNotSupportResponseFiltering()) {
     }
 
     if(cancel) {
-      console.log("cancel", request);
+
+      {
+        const delta = request.timeStamp - editor_requested_at;
+        if(delta > 4000) {
+          console.log("Would have cancelled this request, but it's too late since the last editor request to do so", request);
+          return;
+        }
+      }
+
+      //console.log("cancel", request);
       return { cancel: true };
     }
   };
@@ -138,7 +130,7 @@ else {
   // thanks, Firefox.
   const request_listener = (request) => {
     const is_redir = typeof(redirect_targets.find(f => request.url.startsWith(f))) !== "undefined";
-    console.log(`${is_redir}: ${request.url}`);
+    //console.log(`${is_redir}: ${request.url}`);
 
     if(!is_redir) {
       return;
@@ -150,6 +142,8 @@ else {
 
     // Note(Justas): the console.log here forces scripts to run in order
     // and not randomly, avoiding race conditions
+    //
+    // 2021-10-10: Does it really? -justasd
     let stringBuffer = `console.log("running ${request.url}");`;
 
     filter.ondata = e => {
