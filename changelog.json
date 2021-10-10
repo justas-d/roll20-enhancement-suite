@@ -1758,13 +1758,17 @@
         },
         "1.25.4": {
             "info": {
-                "title": "Popout Sheet Fix",
+                "title": "Popout Sheet & Chat Archive Fix",
                 "media": ""
             },
             "changes": [
                 {
                     "id": "",
-                    "content": "Fix character sheets not loading on Chrome. (thanks, Batdaf and fillin, for the report!)"
+                    "content": "Fix character sheets not loading on Chrome. (thanks, Batdaf, fillin and Liam, for the report!)"
+                },
+                {
+                    "id": "",
+                    "content": "Fix chat archive not loading on Chrome. (thanks, Keldin145014, for the report!)"
                 }
             ]
         }
