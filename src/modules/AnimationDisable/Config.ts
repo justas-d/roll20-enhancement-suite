@@ -69,7 +69,7 @@ export default MakeConfig(__dirname, {
       // toolbar anim
       {
         includes: "assets/app.js",
-        find: `t.animate({top:\`-\${t.height()}px\`},300,()=>{t.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(()=>{$("#page-toolbar .pages input:text").trigger("blur")})})`,
+        find: `t.animate({top:\`-\${t.height()}px\`},300,(()=>{t.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay((()=>{$("#page-toolbar .pages input:text").trigger("blur")}))}))`,
         patch: `t.animate({top:"-"+t.height()+"px"},
       (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
       function(){t.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(function(){$("#page-toolbar .pages input").trigger("blur")})})`,
