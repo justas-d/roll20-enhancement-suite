@@ -10,8 +10,8 @@ export default MakeConfig(__dirname, {
     mods: [
       {
         includes: "assets/app.js",
-        find: "o.defaulttoken=e.model._blobcache.defaulttoken",
-        patch: `o.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(e, n) : e.model._blobcache.defaulttoken)`
+        find: `a.defaulttoken=e.model._blobcache.defaulttoken`,
+        patch: `a.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(e, n) : e.model._blobcache.defaulttoken)`
       },
     ],
 })

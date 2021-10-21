@@ -33,10 +33,9 @@ export default MakeConfig(__dirname, {
     },
     {
       includes: "assets/app.js",
-      find: `d20.Campaign.players.filter(e=>e.get("online")).length>15`,
+      find: `d20.Campaign.players.filter((e=>e.get("online"))).length>15`,
       patch: "false",
     }
-
   ]
 });
 
