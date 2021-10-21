@@ -46,7 +46,7 @@ export default MakeConfig(__dirname, {
         },
         {
             includes: "assets/app.js",
-            find: `$("#font-size").val(a).trigger("keyup"),$("#font-color").val(l).trigger("change-silent"),$("#font-family").val(s);`,
+            find: `$("#font-size").val(o).trigger("keyup"),$("#font-color").val(l).trigger("change-silent"),$("#font-family").val(s);`,
             patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`
         }
     ]
