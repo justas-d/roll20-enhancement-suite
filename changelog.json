@@ -1,5 +1,5 @@
 {
-    "current": "1.25.4",
+    "current": "1.25.5",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1769,6 +1769,42 @@
                 {
                     "id": "",
                     "content": "Fix chat archive not loading on Chrome. (thanks, Keldin145014, for the report!)"
+                }
+            ]
+        },
+        "1.25.5": {
+            "info": {
+                "title": "Bug Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the animation disable module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the reassign default token id module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the duplicate button module not working (thanks, JoshLikesBeer and Scott, for the report!)"
+                },
+                {
+                    "id": "",
+                    "content": "Libre Audio fix."
+                },
+                {
+                    "id": "",
+                    "content": "Fix remember text tool settings module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fix set table entry avatar from URL module not working (thanks, Jeff Brunner, for the report!)"
+                },
+                {
+                    "id": "",
+                    "content": "Make the OK button on the changelog always appear at the bottom of the dialog."
                 }
             ]
         }
