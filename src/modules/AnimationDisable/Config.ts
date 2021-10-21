@@ -15,7 +15,7 @@ export default MakeConfig(__dirname, {
 
       { // radial button proportionally timed animation
           includes: "assets/app.js",
-          find: `setTimeout(function(){$(e).addClass("open"),a.find(".button div.hasnumber").textfill(20)},30*o),o++`,
+          find: `setTimeout((function(){$(e).addClass("open"),a.find(".button div.hasnumber").textfill(20)}),30*o),o++`,
           patch: `;
           if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(e).addClass("open");a.find(".button div.hasnumber").textfill(20);}
           else { >>R20ES_MOD_FIND>>; }`,
@@ -23,7 +23,7 @@ export default MakeConfig(__dirname, {
 
       { // radial final
           includes: "assets/app.js",
-          find: `setTimeout(function(){a.find(".button").addClass("animcomplete")},250)`,
+          find: `setTimeout((function(){a.find(".button").addClass("animcomplete")}),250)`,
           patch: `1;
           if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { a.find(".button").addClass("animcomplete");}
           else { >>R20ES_MOD_FIND>>; }`,
