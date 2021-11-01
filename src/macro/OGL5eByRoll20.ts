@@ -23,6 +23,14 @@ let dataSet: {[id: string]: RepeatingDataSet} = {
         canMakeFolder: true,
     },
 
+    "NPC Bonus Actions": {
+        group: "repeating_npcbonusaction",
+        name: "name",
+        macro: idx => `selected|repeating_npcbonusaction_$${idx}_npc_action`,
+        canMakeFolder: true,
+    },
+
+
     "NPC Legendary Actions": {
         group: "repeating_npcaction-l",
         name: "name",
