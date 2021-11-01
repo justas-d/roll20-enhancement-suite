@@ -1,5 +1,5 @@
 {
-    "current": "1.25.5",
+    "current": "1.25.6",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1805,6 +1805,18 @@
                 {
                     "id": "",
                     "content": "Make the OK button on the changelog always appear at the bottom of the dialog."
+                }
+            ]
+        },
+        "1.25.6": {
+            "info": {
+                "title": "5e sheet NPC Bonus Actions",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added support for NPC Bonus Actions to the 5e sheet macro generator."
                 }
             ]
         }
