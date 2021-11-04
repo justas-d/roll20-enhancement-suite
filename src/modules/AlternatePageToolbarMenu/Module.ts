@@ -3,6 +3,10 @@ import { createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
 
 const constantStyle = `
 
+#page-toolbar .page-create-new-after {
+  display: none;
+}
+
 #page-toolbar .pages .availablepage .page-duplication {
   display: none;
   top: unset;
