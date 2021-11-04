@@ -1,5 +1,5 @@
 {
-    "current": "1.25.6",
+    "current": "1.25.7",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1817,6 +1817,18 @@
                 {
                     "id": "",
                     "content": "Added support for NPC Bonus Actions to the 5e sheet macro generator."
+                }
+            ]
+        },
+        "1.25.7": {
+            "info": {
+                "title": "Alternate Page Toolbar Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix spacing in the alternate page toolbar (thanks, Oldewyrm, for the report!)"
                 }
             ]
         }
