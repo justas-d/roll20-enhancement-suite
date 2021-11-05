@@ -205,7 +205,7 @@ export const bootstrap = () => {
     findByIdAndRemove(POLYFILL_CSS);
     findByIdAndRemove(STYLE_CSS);
 
-    if(BUILD_CONSTANT_TARGET_PLATFORM === "firefox") {
+    if(typeof HTMLDialogElement != "function") {
       console.log("DialogFormsBootstrapper: injecting dialog-polyfill");
 
       dialog_polyfill_script();
