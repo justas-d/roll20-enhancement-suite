@@ -1,5 +1,5 @@
 {
-    "current": "1.25.7.1",
+    "current": "1.26",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1841,6 +1841,18 @@
                 {
                     "id": "",
                     "content": "Fix dialogs not working when using the userscript on Firefox (thanks, lucky13, for the report!)"
+                }
+            ]
+        },
+        "1.26": {
+            "info": {
+                "title": "Loading Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed VTTES not loading due to a Roll20 update."
                 }
             ]
         }
