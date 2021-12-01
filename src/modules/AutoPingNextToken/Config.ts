@@ -13,9 +13,9 @@ export default MakeConfig(__dirname,{
 
   mods: [
     {
-      includes: "assets/app.js",
-      find: "e.push(t[0]);",
-      patch: "e.push(t[0]);if(window.r20es && window.r20es.pingInitiativeToken) {window.r20es.pingInitiativeToken(e[0]);}"
+      includes: "vtt.bundle.js",
+      find: `A.push(w[0]);`,
+      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.pingInitiativeToken) {window.r20es.pingInitiativeToken(A[0]);}"
     },
   ],
 });

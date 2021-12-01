@@ -14,7 +14,7 @@ export default MakeConfig(__dirname, {
 
     mods: [
         { // add table id to popup
-            includes: "assets/app.js",
+            includes: "vtt.bundle.js",
             find: `this.$el.on("click",".deleterollabletable"`,
             patch: `this.el.setAttribute("${Vars.TableIdAttribute}", this.model.get("id")),this.$el.on("click",".deleterollabletable"`,
         }

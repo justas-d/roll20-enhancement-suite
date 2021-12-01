@@ -40,13 +40,16 @@ export default MakeConfig(__dirname, {
 
   mods: [
     {
-      includes: "assets/app.js",
-      find: `"text"==t.type&&($("#font-size").val(t.model.get("font_size"))`,
+      includes: "vtt.bundle.js",
+
+      //find: `"text"==t.type&&($("#font-size").val(t.model.get("font_size"))`,
+      find: `h.type=="text"&&($("#font-size").val(h.model.get("font_size"))`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) >>R20ES_MOD_FIND>>`,
     },
     {
-      includes: "assets/app.js",
-      find: `$("#font-size").val(o).trigger("keyup"),$("#font-color").val(l).trigger("change-silent"),$("#font-family").val(s);`,
+      includes: "vtt.bundle.js",
+      //find: `$("#font-size").val(o).trigger("keyup"),$("#font-color").val(l).trigger("change-silent"),$("#font-family").val(s);`,
+      find: `$("#font-size").val(re).trigger("keyup"),$("#font-color").val(xe).trigger("change-silent"),$("#font-family").val(oe);`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`,
     }
   ]

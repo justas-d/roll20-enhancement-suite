@@ -224,14 +224,7 @@ export const bootstrap = () => {
     const jobs = [];
     const scripts = [];
 
-    const fetch_script = async (order, url) => {
-      console.log("fetching", url, order);
-
-      const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
-
-      const response = await fetch(url);
-      let text = await response.text();
-
+    const do_replacing = (text: string, hooks: any) => {
       text = injectHooks(text, hooks);
 
       // take over jquery .ready
@@ -248,22 +241,128 @@ export const bootstrap = () => {
         "},250))"
       );
 
+      return text;
+    };
+
+    const fetch_script = async (order: number, url: string) => {
+      console.log("fetching", url, order);
+
+      const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
+
+      const response = await fetch(url);
+      let text = await response.text();
+
+      text = do_replacing(text, hooks);
+
       scripts.push({order: order, text: text, url: url});
     };
+
+    // @UserscriptScriptFetching
+    const fetch_script_from_userscript = (order: number, key: string, url: string) => new Promise(ok => {
+
+      console.log("fetching from userscript", key, url, order);
+      const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
+
+      const wait = () => {
+        let data = window[key];
+        const did_we_get_it = typeof(data) === "string";
+
+        if(did_we_get_it) {
+          data = do_replacing(data, hooks);
+          scripts.push({order: order, text: data, url: url});
+          window[key] = undefined;
+          ok();
+          return;
+        }
+        else {
+          setTimeout(wait, 10);
+        }
+      }
+
+      wait();
+    });
+
+    /*
+      NOTE(justasd): script order as of 2021-12-01
+      running https://app.roll20.net/v2/js/jquery-1.9.1.js
+      running https://app.roll20.net/v2/js/jquery.migrate.js
+      running https://app.roll20.net/js/featuredetect.js?2
+      running https://app.roll20.net/v2/js/patience.js
+      running https://app.roll20.net/editor/startjs/?timestamp=
+      running https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?
+      running https://app.roll20.net/js/d20/loading.js?v=11
+      running https://cdn.roll20.net/production/base.js
+      running https://cdn.roll20.net/production/app.js
+      running https://app.roll20.net/assets/firebase.8.8.1.js
+      running https://cdn.roll20.net/production/vtt.bundle.js
+      running https://app.roll20.net/js/tutorial_tips.js
+     */
+
+    const now = Date.now();
 
     jobs.push(fetch_script(0, "https://app.roll20.net/v2/js/jquery-1.9.1.js?n"));
     jobs.push(fetch_script(1, "https://app.roll20.net/v2/js/jquery.migrate.js?n"));
     jobs.push(fetch_script(2, "https://app.roll20.net/js/featuredetect.js?2n"));
     jobs.push(fetch_script(3, "https://app.roll20.net/v2/js/patience.js?n"));
-    jobs.push(fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11"));
-    jobs.push(fetch_script(7, "https://app.roll20.net/assets/firebase.2.4.0.js?n"));
-    jobs.push(fetch_script(10, "https://app.roll20.net/js/tutorial_tips.js?n"));
 
-    const now = Date.now();
     jobs.push(fetch_script(5, `https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n${now}`));
-    jobs.push(fetch_script(8, `https://app.roll20.net/assets/base.js?n${now}`));
-    jobs.push(fetch_script(9, `https://app.roll20.net/assets/app.js?n${now}`));
+    jobs.push(fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11"));
 
+    if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
+      // @ChromeScriptFetching
+      jobs.push(new Promise(ok => {
+        console.log("Bootstrap sending VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS");
+        window.postMessage({VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS: true}, Config.appUrl);
+
+        const listener = (msg) => {
+          if(msg.origin !== Config.appUrl) {
+            return;
+          }
+
+          if(msg.data.VTTES_CDN_SCRIPTS) {
+            console.log("Bootstrap got VTTES_CDN_SCRIPTS", msg.data);
+            const data = msg.data.VTTES_CDN_SCRIPTS;
+
+            const handle_script = (order: number, data: string, url: string) => {
+
+              const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
+
+              data = do_replacing(data, hooks);
+
+              scripts.push({
+                order: order, 
+                text: data,
+                url: url
+              });
+            };
+
+            handle_script(7, data.BASE, "https://cdn.roll20.net/production/base.js");
+            handle_script(8, data.APP, "https://cdn.roll20.net/production/app.js");
+            handle_script(10, data.VTT_BUNDLE, "https://cdn.roll20.net/production/vtt.bundle.js");
+
+            window.removeEventListener("message", listener);
+            ok();
+          }
+        };
+
+        window.addEventListener("message", listener);
+      }));
+    }
+    else if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
+      // @UserscriptScriptFetching
+      jobs.push(fetch_script_from_userscript(
+        7, "USERSCRIPT_BASE_DATA", `https://cdn.roll20.net/production/base.js?n${now}`)
+      );
+      jobs.push(fetch_script_from_userscript(
+        8, "USERSCRIPT_APP_DATA", `https://cdn.roll20.net/production/app.js?n${now}`)
+      );
+      jobs.push(fetch_script_from_userscript(
+        10, "USERSCRIPT_VTT_BUNDLE_DATA", `https://cdn.roll20.net/production/vtt.bundle.js?n${now}`)
+      );
+    }
+    jobs.push(fetch_script(9, "https://app.roll20.net/assets/firebase.8.8.1.js?n"));
+    jobs.push(fetch_script(11, "https://app.roll20.net/js/tutorial_tips.js?n"));
+    
     let script_nonce = "";
     jobs.push(new Promise(ok => {
       let nth_attempt = 0;
@@ -458,6 +557,7 @@ export const bootstrap = () => {
       if(e.origin !== Config.appUrl) {
         return;
       }
+
       console.log("WebsiteBootstrap received message:", e);
 
       if(e.data.r20esInitialConfigs) {

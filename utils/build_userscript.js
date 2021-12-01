@@ -65,6 +65,8 @@ const meta = `// ==UserScript==
 // @match        https://app.roll20.net/editor/
 // @match        https://app.roll20.net/editor/#*
 // @match        https://app.roll20.net/editor/?*
+// @grant        GM.xmlHttpRequest
+// @connect      cdn.roll20.net
 // @run-at       document-start
 // @webRequest [{"selector":{"include":"*://browser.sentry-cdn.com/*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://www.datadoghq-browser-agent.com/datadog-rum.js"},"action":"cancel"}]
@@ -77,29 +79,57 @@ const meta = `// ==UserScript==
 // @webRequest [{"selector":{"include":"*://app.roll20.net/v2/js/patience.js","exclude":"*://app.roll20.net/v2/js/patience.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/editor/startjs/?timestamp*","exclude":"*://app.roll20.net/editor/startjs/?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/d20/loading.js?v=11","exclude":"*://app.roll20.net/js/d20/loading.js?n=11&v=11"},"action":"cancel"}]
-// @webRequest [{"selector":{"include":"*://app.roll20.net/assets/firebase.2.4.0.js","exclude":"*://app.roll20.net/assets/firebase.2.4.0.js?n*"},"action":"cancel"}]
-// @webRequest [{"selector":{"include":"*://app.roll20.net/assets/base.js?*","exclude":"*://app.roll20.net/assets/base.js?n*"},"action":"cancel"}]
-// @webRequest [{"selector":{"include":"*://app.roll20.net/assets/app.js?*","exclude":"*://app.roll20.net/assets/app.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://app.roll20.net/assets/firebase.8.8.1.js","exclude":"*://app.roll20.net/assets/firebase.8.8.1.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://cdn.roll20.net/production/base.js","exclude":"*://cdn.roll20.net/production/base.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://cdn.roll20.net/production/app.js","exclude":"*://cdn.roll20.net/production/app.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://cdn.roll20.net/production/vtt.bundle.js","exclude":"*://cdn.roll20.net/production/vtt.bundle.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/tutorial_tips.js","exclude":"*://app.roll20.net/js/tutorial_tips.js?n*"},"action":"cancel"}]
 // ==/UserScript==
 `;
 
+script = `
+const now = Date.now();
+
+// @UserscriptScriptFetching
+GM.xmlHttpRequest({
+  method: "GET",
+  url: \`https://cdn.roll20.net/production/vtt.bundle.js?n\${now}\`,
+  onload: (response) => {
+    console.log("Userscript got vtt.bundle.js response:", response);
+    unsafeWindow.USERSCRIPT_VTT_BUNDLE_DATA = response.responseText;
+  }
+});
+
+// @UserscriptScriptFetching
+GM.xmlHttpRequest({
+  method: "GET",
+  url: \`https://cdn.roll20.net/production/base.js?n\${now}\`,
+  onload: (response) => {
+    console.log("Userscript got base.js response:", response);
+    unsafeWindow.USERSCRIPT_BASE_DATA = response.responseText;
+  }
+});
+
+// @UserscriptScriptFetching
+GM.xmlHttpRequest({
+  method: "GET",
+  url: \`https://cdn.roll20.net/production/app.js?n\${now}\`,
+  onload: (response) => {
+    console.log("Userscript got app.js response:", response);
+    unsafeWindow.USERSCRIPT_APP_DATA = response.responseText;
+  }
+});
+
+function boot() {
+${script}
+};
+const str = \`(\${boot.toString()})()\`;
+window.eval(str);
+`;
+
 if(is_prod) {
   script = `${meta}
-function boot() {
 ${script}
-};
-const str = \`(\${boot.toString()})()\`;
-window.eval(str);
-  `;
-}
-else {
-  script = `
-function boot() {
-${script}
-};
-const str = \`(\${boot.toString()})()\`;
-window.eval(str);
 `;
 }
 
@@ -117,6 +147,8 @@ For development, use this loader script:
 // @author       You
 // @match        https://app.roll20.net/editor/
 // @run-at       document-start
+// @grant        GM.xmlHttpRequest
+// @connect      cdn.roll20.net
 // @require      file:///work/vttes/builds/userscript/dev/vttes.user.js
 // @webRequest [{"selector":{"include":"*://browser.sentry-cdn.com/*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://www.datadoghq-browser-agent.com/datadog-rum.js"},"action":"cancel"}]
@@ -129,9 +161,10 @@ For development, use this loader script:
 // @webRequest [{"selector":{"include":"*://app.roll20.net/v2/js/patience.js","exclude":"*://app.roll20.net/v2/js/patience.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/editor/startjs/?timestamp*","exclude":"*://app.roll20.net/editor/startjs/?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/d20/loading.js?v=11","exclude":"*://app.roll20.net/js/d20/loading.js?n=11&v=11"},"action":"cancel"}]
-// @webRequest [{"selector":{"include":"*://app.roll20.net/assets/firebase.2.4.0.js","exclude":"*://app.roll20.net/assets/firebase.2.4.0.js?n*"},"action":"cancel"}]
-// @webRequest [{"selector":{"include":"*://app.roll20.net/assets/base.js?*","exclude":"*://app.roll20.net/assets/base.js?n*"},"action":"cancel"}]
-// @webRequest [{"selector":{"include":"*://app.roll20.net/assets/app.js?*","exclude":"*://app.roll20.net/assets/app.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://app.roll20.net/assets/firebase.8.8.1.js","exclude":"*://app.roll20.net/assets/firebase.8.8.1.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://cdn.roll20.net/production/base.js","exclude":"*://cdn.roll20.net/production/base.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://cdn.roll20.net/production/app.js","exclude":"*://cdn.roll20.net/production/app.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://cdn.roll20.net/production/vtt.bundle.js","exclude":"*://cdn.roll20.net/production/vtt.bundle.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/tutorial_tips.js","exclude":"*://app.roll20.net/js/tutorial_tips.js?n*"},"action":"cancel"}]
 
 // ==/UserScript==

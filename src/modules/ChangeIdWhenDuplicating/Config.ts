@@ -9,9 +9,9 @@ export default MakeConfig(__dirname, {
 
     mods: [
       {
-        includes: "assets/app.js",
-        find: `a.defaulttoken=e.model._blobcache.defaulttoken`,
-        patch: `a.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(e, n) : e.model._blobcache.defaulttoken)`
+        includes: "vtt.bundle.js",
+        find: `f.defaulttoken=n.model._blobcache.defaulttoken`,
+        patch: `f.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(n, m) : n.model._blobcache.defaulttoken)`
       },
     ],
 })

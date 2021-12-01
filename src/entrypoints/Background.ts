@@ -5,6 +5,37 @@ import {getHooks, injectHooks} from "../HookUtils";
 import {replace_all_and_count} from "../utils/MiscUtils";
 
 if(doesBrowserNotSupportResponseFiltering()) {
+
+  // @ChromeScriptFetching
+  getBrowser().runtime.onMessage.addListener((request, sender, send_response) => {
+    if(request.VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND) {
+      console.log("got VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND");
+
+      const jobs = [];
+      const results = {};
+
+      const fetch_job = async (url: string, key: string) => {
+        console.log("fetching", url, key);
+        const req = await fetch(url);
+        const text = await req.text();
+        results[key] = text;
+      };
+
+      jobs.push(fetch_job("https://cdn.roll20.net/production/app.js?n", "APP"));
+      jobs.push(fetch_job("https://cdn.roll20.net/production/base.js?n", "BASE"));
+      jobs.push(fetch_job("https://cdn.roll20.net/production/vtt.bundle.js?n", "VTT_BUNDLE"));
+
+      Promise.all(jobs).then(() => {
+        console.log("VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND results:", results);
+        send_response(results);
+      });
+
+      return true;
+    }
+
+    return false;
+  });
+
   let editor_requested_at = 0;
 
   const request_blocker = (request) => {
@@ -19,7 +50,7 @@ if(doesBrowserNotSupportResponseFiltering()) {
       editor_requested_at = request.timeStamp;
     }
 
-    //console.log(request);
+    //console.log(request.url);
 
     // NOTE(justasd): ignore any requests from iframes. We need this for char sheets to work as they
     // request some of the same scripts (jquery, patience etc) as the editor and we don't want to
@@ -51,6 +82,7 @@ if(doesBrowserNotSupportResponseFiltering()) {
         cancel = true;
       }
     }
+
     else if(request.url.includes("app.roll20.net/js/featuredetect.js?2")) {
       if(!request.url.includes("app.roll20.net/js/featuredetect.js?2n")) {
         cancel = true;
@@ -69,23 +101,28 @@ if(doesBrowserNotSupportResponseFiltering()) {
         cancel = true;
       }
     }
-    else if(request.url.includes("app.roll20.net/assets/firebase.2.4.0.js")) {
-      if(!request.url.includes("app.roll20.net/assets/firebase.2.4.0.js?n")) {
+    else if(request.url.includes("app.roll20.net/assets/firebase.8.8.1.js")) {
+      if(!request.url.includes("app.roll20.net/assets/firebase.8.8.1.js?n")) {
         cancel = true;
       }
     }
-    else if(request.url.includes("app.roll20.net/assets/base.js?")) {
-      if(!request.url.includes("app.roll20.net/assets/base.js?n")) {
+    else if(request.url.includes("cdn.roll20.net/production/base.js")) {
+      if(!request.url.includes("cdn.roll20.net/production/base.js?n")) {
         cancel = true;
       }
     }
-    else if(request.url.includes("app.roll20.net/assets/app.js?")) {
-      if(!request.url.includes("app.roll20.net/assets/app.js?n")) {
+    else if(request.url.includes("cdn.roll20.net/production/app.js")) {
+      if(!request.url.includes("cdn.roll20.net/production/app.js?n")) {
         cancel = true;
       }
     }
     else if(request.url.includes("app.roll20.net/js/tutorial_tips.js")) {
       if(!request.url.includes("app.roll20.net/js/tutorial_tips.js?n")) {
+        cancel = true;
+      }
+    }
+    else if(request.url.includes("cdn.roll20.net/production/vtt.bundle.js")) {
+      if(!request.url.includes("cdn.roll20.net/production/vtt.bundle.js?n")) {
         cancel = true;
       }
     }
@@ -100,15 +137,20 @@ if(doesBrowserNotSupportResponseFiltering()) {
         }
       }
 
-      //console.log("cancel", request);
+      //console.log("cancel", request.url, request);
       return { cancel: true };
     }
+    
+    //console.log("pass", request.url, request);
   };
 
   getBrowser().webRequest.onBeforeRequest.addListener(
     request_blocker,
     {
-      urls: ["*://app.roll20.net/*"],
+      urls: [
+        "*://app.roll20.net/*",
+        "*://cdn.roll20.net/*",
+      ],
       types: ["main_frame", "script"],
     },
     ["blocking"]
@@ -116,19 +158,13 @@ if(doesBrowserNotSupportResponseFiltering()) {
 }
 else {
   const redirect_targets = [
-    "https://app.roll20.net/v2/js/jquery",
-    "https://app.roll20.net/js/featuredetect.js",
     "https://app.roll20.net/editor/startjs",
-    "https://app.roll20.net/js/jquery",
-    "https://app.roll20.net/js/d20/loading.js",
-    "https://app.roll20.net/assets/firebase",
-    "https://app.roll20.net/assets/base.js",
-    "https://app.roll20.net/assets/app.js",
-    "https://app.roll20.net/js/tutorial_tips.js",
+    "https://cdn.roll20.net/production/vtt.bundle.js",
   ];
 
   // thanks, Firefox.
   const request_listener = (request) => {
+
     const is_redir = typeof(redirect_targets.find(f => request.url.startsWith(f))) !== "undefined";
     //console.log(`${is_redir}: ${request.url}`);
 
@@ -144,7 +180,8 @@ else {
     // and not randomly, avoiding race conditions
     //
     // 2021-10-10: Does it really? -justasd
-    let stringBuffer = `console.log("running ${request.url}");`;
+    //let stringBuffer = `console.log("running ${request.url}");`;
+    let stringBuffer = "";
 
     filter.ondata = e => {
       stringBuffer += decoder.decode(e.data, {stream: true});
@@ -160,7 +197,10 @@ else {
 
   getBrowser().webRequest.onBeforeRequest.addListener(
     request_listener,
-    {urls: ["*://app.roll20.net/*"]},
+    {urls: [
+      "*://app.roll20.net/*",
+      "*://cdn.roll20.net/*"
+    ]},
     ["blocking"]
   );
 }

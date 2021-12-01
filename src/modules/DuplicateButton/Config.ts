@@ -12,7 +12,7 @@ export default MakeConfig(__dirname, {
 
     mods: [
       {
-        includes: "assets/app.js",
+        includes: "vtt.bundle.js",
         find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
 
         patch: `

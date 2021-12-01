@@ -11,65 +11,66 @@ const editorUrls = [
 ];
 
 const gen = (browser, origVersionName) => {
-    let manifest = {
-        manifest_version: 2,
-        name: 'VTT Enhancement Suite',
-        version: VersionNameGen(origVersionName),
-        description: 'aka R20ES. Provides quality-of-life and workflow speed improvements to Roll20.',
+  let manifest = {
+    manifest_version: 2,
+    name: 'VTT Enhancement Suite',
+    version: VersionNameGen(origVersionName),
+    description: 'aka R20ES. Provides quality-of-life and workflow speed improvements to Roll20.',
 
-        permissions: [
-            '*://app.roll20.net/editor/',
-            '*://app.roll20.net/editor',
-            '*://app.roll20.net/editor?*',
-            '*://app.roll20.net/editor#*',
-            'webRequest',
-            'webRequestBlocking',
-            'storage'
-        ],
-        icons: {
-            "16": "logo16.png",
-            "48": "logo48.png",
-            "96": "logo96.png",
-            "128": "logo128.png"
-        },
-        content_scripts: [
-            {
-                matches: editorUrls,
-                js: [
-                    'ContentScript.js'
-                ]
-            },
-
-            {
-                matches: editorUrls,
-                js: [
-                    "EarlyContentScript.js",
-                ],
-                run_at: "document_start"
-            },
-        ],
-        background: {
-            scripts: [
-                'Background.js'
-            ]
-        },
-
-        web_accessible_resources: [
-            '*.tsx',
-            '*.ts',
-            '*.js',
-            '*.css',
-            'logo.svg',
-            '*.png',
-            '*.webm'
+    permissions: [
+      '*://app.roll20.net/editor/',
+      '*://app.roll20.net/editor',
+      '*://app.roll20.net/editor?*',
+      '*://app.roll20.net/editor#*',
+      '*://cdn.roll20.net/*',
+      'webRequest',
+      'webRequestBlocking',
+      'storage',
+    ],
+    icons: {
+      "16": "logo16.png",
+      "48": "logo48.png",
+      "96": "logo96.png",
+      "128": "logo128.png"
+    },
+    content_scripts: [
+      {
+        matches: editorUrls,
+        js: [
+          'ContentScript.js'
         ]
-    }
+      },
 
-    if (browser.id === "chrome") {
-        manifest.version_name = origVersionName;
-    }
+      {
+        matches: editorUrls,
+        js: [
+          "EarlyContentScript.js",
+        ],
+        run_at: "document_start"
+      },
+    ],
+    background: {
+      scripts: [
+        'Background.js'
+      ]
+    },
 
-    return Object.assign(manifest, browser.manifest);
+    web_accessible_resources: [
+      '*.tsx',
+      '*.ts',
+      '*.js',
+      '*.css',
+      'logo.svg',
+      '*.png',
+      '*.webm'
+    ]
+  }
+
+  if (browser.id === "chrome") {
+    manifest.version_name = origVersionName;
+  }
+
+  return Object.assign(manifest, browser.manifest);
 }
 
 module.exports = gen;

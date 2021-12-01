@@ -290,7 +290,7 @@ declare namespace Roll20 {
 
   export interface FirebaseReference<T> {
       val: () => T;
-      key: () => string;
+      key: string;
       getPriority: () => number;
   }
 
@@ -711,6 +711,11 @@ interface Window {
   injectBackgroundOK: boolean;
   injectWebsiteOK: boolean;
   hasInjectedModules: boolean;
+
+
+  USERSCRIPT_VTT_BUNDLE_DATA : string | undefined;
+  USERSCRIPT_BASE_DATA : string | undefined;
+  USERSCRIPT_APP_DATA : string | undefined;
 }
 
 declare module 'roll20' {
