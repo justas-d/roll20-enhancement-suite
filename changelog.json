@@ -1,5 +1,5 @@
 {
-    "current": "1.26",
+    "current": "1.26.1",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1853,6 +1853,18 @@
                 {
                     "id": "",
                     "content": "Fixed VTTES not loading due to a Roll20 update."
+                }
+            ]
+        },
+        "1.26.1": {
+            "info": {
+                "title": "Duplicate Button Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the character and handout duplicate button not working (thanks, FaustMe, for the report!)"
                 }
             ]
         }
