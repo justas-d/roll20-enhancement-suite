@@ -1,5 +1,5 @@
 {
-    "current": "1.26.1",
+    "current": "1.26.2",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1865,6 +1865,18 @@
                 {
                     "id": "",
                     "content": "Fix the character and handout duplicate button not working (thanks, FaustMe, for the report!)"
+                }
+            ]
+        },
+        "1.26.2": {
+            "info": {
+                "title": "Bug Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed a bunch of modules not working due to a Roll20 update."
                 }
             ]
         }
