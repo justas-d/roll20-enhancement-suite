@@ -13,8 +13,8 @@ export default MakeConfig(__dirname,{
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `A.push(w[0]);`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(A[0]); }`,
+      find: `y.push(A[0]);`,
+      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(y[0]); }`,
     },
   ],
 });

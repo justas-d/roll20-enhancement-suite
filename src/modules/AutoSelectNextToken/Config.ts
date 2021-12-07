@@ -14,8 +14,8 @@ export default MakeConfig(__dirname,{
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `A.push(w[0]);`,
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.selectInitiativeToken) { window.r20es.selectInitiativeToken(A[0]);}"
+      find: `y.push(A[0]);`,
+      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.selectInitiativeToken) { window.r20es.selectInitiativeToken(y[0]);}"
     },
   ],
 });

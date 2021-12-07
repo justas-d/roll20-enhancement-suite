@@ -96,8 +96,8 @@ export default MakeConfig(__dirname, {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: "function setMode(n){",
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(n);}",
+      find: "function setMode(i){",
+      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(i);}",
     },
   ],
 });

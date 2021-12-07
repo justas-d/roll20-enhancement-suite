@@ -12,30 +12,16 @@ export default MakeConfig(__dirname, {
   },
 
   mods: [
-    /*
-        { // play hook
-            includes: "vtt.bundle.js",
-            find: `"My Audio"===r&&`,
-            patch: `("My Audio" === r && window.r20es && window.r20es.canPlaySound && window.r20es.playSound && window.r20es.canPlaySound(n)) ? window.r20es.playSound(n) : "My Audio" === r &&`
-        },
-        { // play hook
-            includes: "vtt.bundle.js",
-            find: `if("My Audio"===r){`,
-            patch: `if(window.r20es && window.r20es.canPlaySound && window.r20es.playSound && window.r20es.canPlaySound(n)) { window.r20es.playSound(n) } else if("My Audio" === r) {`,
-        },
-        */
 
     // play libreaudio sounds
     {
       includes: "vtt.bundle.js",
-      //find: `\`/audio_library/play/\${campaign_id}/\${n.split("-")[0]}\``,
-      find: `\`/audio_library/play/\${campaign_id}/\${I.split("-")[0]}\``,
-      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(S)) ? I : >>R20ES_MOD_FIND>>)`,
+      find: `\`/audio_library/play/\${campaign_id}/\${D.split("-")[0]}\``,
+      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(S)) ? D : >>R20ES_MOD_FIND>>)`,
     },
     {
       includes: "vtt.bundle.js",
-      //find: `d20.Campaign.players.filter((e=>e.get("online"))).length>15`,
-      find: `d20.Campaign.players.filter(oe=>oe.get("online")).length>15`,
+      find: `d20.Campaign.players.filter(se=>se.get("online")).length>15`,
       patch: "false",
     }
   ]

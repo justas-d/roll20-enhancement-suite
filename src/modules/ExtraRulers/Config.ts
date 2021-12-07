@@ -25,26 +25,25 @@ export default MakeConfig(__dirname, {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `function setMode(n){`,
+      find: `function setMode(i){`,
       patch: `>>R20ES_MOD_FIND>>{window.d20setMode=setMode;}`,
     },
 
     {
       includes: "vtt.bundle.js",
       find: `y:[0,1]};`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(w,S); }`,
+      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(A,S); }`,
     },
 
     {
       includes: "vtt.bundle.js",
-      find: "function setMode(n){",
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(n);}",
+      find: "function setMode(i){",
+      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(i);}",
 
     },
 
     {
       includes: "vtt.bundle.js",
-      //find: "x:t.x-d20.engine.currentCanvasOffset[0]",
       find: "x:S.x-d20.engine.currentCanvasOffset[0],",
       patch: `
 vttes_radius_mode: S.vttes_radius_mode,
@@ -61,7 +60,6 @@ vttes_ruler_mode: S.vttes_ruler_mode,
     // NOTE(justasd): will replace two occurances.
     {
       includes: "vtt.bundle.js",
-      //find: "color:t.color,flags:t.flags,",
       find: "color:S.color,flags:S.flags,",
       patch: `
 vttes_radius_mode: S.vttes_radius_mode,
@@ -76,16 +74,16 @@ vttes_ruler_mode: S.vttes_ruler_mode,
     },
     {
       includes: "vtt.bundle.js",
-      find: "d20.engine.announceMeasure=function(w){",
+      find: "d20.engine.announceMeasure=function(A){",
       patch: `>>R20ES_MOD_FIND>>
 if(window.r20es && window.r20es.extra_ruler_set_mode) {
-  w.vttes_radius_mode = window.r20es.extra_ruler.radius_mode;
-  w.vttes_box_mode = window.r20es.extra_ruler.box_mode;
-  w.vttes_cone_mode = window.r20es.extra_ruler.cone_mode;
-  w.vttes_cone_degrees = window.r20es.extra_ruler.cone_degrees;
-  w.vttes_line_mode = window.r20es.extra_ruler.line_mode;
-  w.vttes_line_width = window.r20es.extra_ruler.line_width;
-  w.vttes_ruler_mode = window.r20es.extra_ruler.ruler_mode;
+  A.vttes_radius_mode = window.r20es.extra_ruler.radius_mode;
+  A.vttes_box_mode = window.r20es.extra_ruler.box_mode;
+  A.vttes_cone_mode = window.r20es.extra_ruler.cone_mode;
+  A.vttes_cone_degrees = window.r20es.extra_ruler.cone_degrees;
+  A.vttes_line_mode = window.r20es.extra_ruler.line_mode;
+  A.vttes_line_width = window.r20es.extra_ruler.line_width;
+  A.vttes_ruler_mode = window.r20es.extra_ruler.ruler_mode;
 }
 `,
     },

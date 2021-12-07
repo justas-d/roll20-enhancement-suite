@@ -10,8 +10,8 @@ export default MakeConfig(__dirname, {
     mods: [
       {
         includes: "vtt.bundle.js",
-        find: `f.defaulttoken=n.model._blobcache.defaulttoken`,
-        patch: `f.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(n, c) : n.model._blobcache.defaulttoken)`
+        find: `u.defaulttoken=i.model._blobcache.defaulttoken`,
+        patch: `u.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(i, d) : i.model._blobcache.defaulttoken)`
       },
     ],
 })

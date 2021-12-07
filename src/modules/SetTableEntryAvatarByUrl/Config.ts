@@ -13,9 +13,8 @@ export default MakeConfig(__dirname, {
   mods: [
     { // add table entry && table ids to popup
         includes: "vtt.bundle.js",
-        //find: `this.$el.on("click",".deleteitem",(()=>{`,
         find: `this.$el.on("click",".deleteitem",()=>{`,
-        patch: `this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", A.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", A.model.id),>>R20ES_MOD_FIND>>`,
+        patch: `this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", y.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", y.model.id),>>R20ES_MOD_FIND>>`,
     },
   ]
 });

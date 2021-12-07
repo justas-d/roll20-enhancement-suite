@@ -35,12 +35,13 @@ export default MakeConfig(__dirname, {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `updateCanvasZoom:()=>d20.engine.canvasZoom=U.canvasZoom`,
+      find: `updateCanvasZoom:()=>d20.engine.canvasZoom=z.canvasZoom`,
+
       patch: `updateCanvasZoom:()=> {
         if(window.r20es && window.r20es.onZoomChange) {
-          window.r20es.onZoomChange(w);
+          window.r20es.onZoomChange(A);
         }
-        d20.engine.canvasZoom = U.canvasZoom;
+        d20.engine.canvasZoom = z.canvasZoom;
       }`,
     }
   ]

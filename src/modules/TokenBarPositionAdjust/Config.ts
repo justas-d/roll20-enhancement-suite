@@ -14,17 +14,16 @@ export default MakeConfig(__dirname, {
   mods: [
     {
       includes: "vtt.bundle.js",
-      //find: `this._positionAndScaleStatusIcons(r,n.length),e.save(),`,
-      find: `this._positionAndScaleStatusIcons(d,f.length),c.save(),`,
+      find: `this._positionAndScaleStatusIcons(o,u.length),d.save(),`,
       patch: `
 if(window.r20es.statusDraw) { 
-  if(!window.r20es.statusDraw(c, this, f, d)) { 
+  if(!window.r20es.statusDraw(d, this, u, o)) { 
       return;
   } 
 } 
 else { 
-  this._positionAndScaleStatusIcons(d,f.length);
-  c.save();
+  this._positionAndScaleStatusIcons(o,u.length);
+  d.save();
 }
 `
     }

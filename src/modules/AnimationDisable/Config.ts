@@ -15,29 +15,28 @@ export default MakeConfig(__dirname, {
 
     { // radial button proportionally timed animation
       includes: "vtt.bundle.js",
-      find: `setTimeout(function(){$(d).addClass("open"),m.find(".button div.hasnumber").textfill(20)},o*30),o++`,
-
+      find: `setTimeout(function(){$(o).addClass("open"),p.find(".button div.hasnumber").textfill(20)},s*30),s++`,
       patch: `;
-      if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(d).addClass("open");m.find(".button div.hasnumber").textfill(20);}
+      if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(o).addClass("open");p.find(".button div.hasnumber").textfill(20);}
       else { >>R20ES_MOD_FIND>>; }
       `,
     },
 
     { // radial final
       includes: "vtt.bundle.js",
-      find: `setTimeout(function(){m.find(".button").addClass("animcomplete")},250)`,
+      find: `setTimeout(function(){p.find(".button").addClass("animcomplete")},250)`,
 
       patch: `1;
-      if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { m.find(".button").addClass("animcomplete");}
+      if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { p.find(".button").addClass("animcomplete");}
       else { >>R20ES_MOD_FIND>>; }`,
     },
 
     // toolbar anim
     {
       includes: "vtt.bundle.js",
-      find: `g.animate({top:"-1px"},300).removeClass("closed"),`,
+      find: `h.animate({top:"-1px"},300).removeClass("closed"),`,
 
-      patch: `g.animate({top:"-1px"},
+      patch: `h.animate({top:"-1px"},
     (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
   ).removeClass("closed"),`,
     },
@@ -45,11 +44,11 @@ export default MakeConfig(__dirname, {
     // toolbar anim
     {
       includes: "vtt.bundle.js",
-      find: `g.animate({top:\`-\${g.height()}px\`},300,()=>{g.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(()=>{$("#page-toolbar .pages input:text").trigger("blur")})})`,
+      find: `h.animate({top:\`-\${h.height()}px\`},300,()=>{h.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(()=>{$("#page-toolbar .pages input:text").trigger("blur")})})`,
 
-      patch: `g.animate({top:"-"+g.height()+"px"},
+      patch: `h.animate({top:"-"+h.height()+"px"},
     (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
-    function(){g.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(function(){$("#page-toolbar .pages input").trigger("blur")})})`,
+    function(){h.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(function(){$("#page-toolbar .pages input").trigger("blur")})})`,
     }
   ],
 
