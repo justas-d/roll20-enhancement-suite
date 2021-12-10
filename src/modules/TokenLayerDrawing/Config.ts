@@ -16,8 +16,8 @@ export default MakeConfig(__dirname, {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `this._drawNameplate(d)),d.restore(),this`,
-      patch: `this._drawNameplate(d)),d.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(d, this)),this`,
+      find: `this._drawNameplate(c)),c.restore(),this`,
+      patch: `this._drawNameplate(c)),c.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(c, this)),this`,
     },
   ],
 
