@@ -32,27 +32,26 @@ export default MakeConfig(__dirname, {
     {
       includes: "vtt.bundle.js",
       find: `y:[0,1]};`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(A,S); }`,
+      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(A,k); }`,
     },
 
     {
       includes: "vtt.bundle.js",
       find: "function setMode(i){",
       patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(i);}",
-
     },
 
     {
       includes: "vtt.bundle.js",
-      find: "x:S.x-d20.engine.currentCanvasOffset[0],",
+      find: "x:k.x-d20.engine.currentCanvasOffset[0],",
       patch: `
-vttes_radius_mode: S.vttes_radius_mode,
-vttes_box_mode: S.vttes_box_mode,
-vttes_cone_mode: S.vttes_cone_mode,
-vttes_cone_degrees: S.vttes_cone_degrees,
-vttes_line_mode: S.vttes_line_mode,
-vttes_line_width: S.vttes_line_width,
-vttes_ruler_mode: S.vttes_ruler_mode,
+vttes_radius_mode: k.vttes_radius_mode,
+vttes_box_mode: k.vttes_box_mode,
+vttes_cone_mode: k.vttes_cone_mode,
+vttes_cone_degrees: k.vttes_cone_degrees,
+vttes_line_mode: k.vttes_line_mode,
+vttes_line_width: k.vttes_line_width,
+vttes_ruler_mode: k.vttes_ruler_mode,
 >>R20ES_MOD_FIND>>
 `,
     },
@@ -60,15 +59,15 @@ vttes_ruler_mode: S.vttes_ruler_mode,
     // NOTE(justasd): will replace two occurances.
     {
       includes: "vtt.bundle.js",
-      find: "color:S.color,flags:S.flags,",
+      find: "color:k.color,flags:k.flags,",
       patch: `
-vttes_radius_mode: S.vttes_radius_mode,
-vttes_box_mode: S.vttes_box_mode,
-vttes_cone_mode: S.vttes_cone_mode,
-vttes_cone_degrees: S.vttes_cone_degrees,
-vttes_line_mode: S.vttes_line_mode,
-vttes_line_width: S.vttes_line_width,
-vttes_ruler_mode: S.vttes_ruler_mode,
+vttes_radius_mode: k.vttes_radius_mode,
+vttes_box_mode: k.vttes_box_mode,
+vttes_cone_mode: k.vttes_cone_mode,
+vttes_cone_degrees: k.vttes_cone_degrees,
+vttes_line_mode: k.vttes_line_mode,
+vttes_line_width: k.vttes_line_width,
+vttes_ruler_mode: k.vttes_ruler_mode,
 >>R20ES_MOD_FIND>>
 `,
     },
