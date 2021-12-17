@@ -17,7 +17,7 @@ export default MakeConfig(__dirname, {
     {
       includes: "vtt.bundle.js",
       find: `\`/audio_library/play/\${campaign_id}/\${D.split("-")[0]}\``,
-      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(S)) ? D : >>R20ES_MOD_FIND>>)`,
+      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(k)) ? D : >>R20ES_MOD_FIND>>)`,
     },
     {
       includes: "vtt.bundle.js",
