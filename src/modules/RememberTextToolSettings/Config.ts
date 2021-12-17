@@ -46,7 +46,7 @@ export default MakeConfig(__dirname, {
     },
     {
       includes: "vtt.bundle.js",
-      find: `$("#font-size").val(ne).trigger("keyup"),$("#font-color").val(Te).trigger("change-silent"),$("#font-family").val(se);`,
+      find: `$("#font-size").val(re).trigger("keyup"),$("#font-color").val(Ee).trigger("change-silent"),$("#font-family").val(se);`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`,
     }
   ]
