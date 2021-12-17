@@ -15,7 +15,7 @@ export default MakeConfig(__dirname, {
 
     { // radial button proportionally timed animation
       includes: "vtt.bundle.js",
-      find: `setTimeout(function(){$(o).addClass("open"),p.find(".button div.hasnumber").textfill(20)},s*30),s++`,
+      find: `setTimeout(function(){$(o).addClass("open"),p.find(".button div.hasnumber").textfill(20)},a*30),a++`,
       patch: `;
       if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(o).addClass("open");p.find(".button div.hasnumber").textfill(20);}
       else { >>R20ES_MOD_FIND>>; }
