@@ -1,5 +1,5 @@
 {
-    "current": "1.26.3",
+    "current": "1.26.4",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1889,6 +1889,34 @@
                 {
                     "id": "",
                     "content": "Fix some canvas modules not working (thanks, Lycaon1765, for the report!)"
+                }
+            ]
+        },
+        "1.26.4": {
+            "info": {
+                "title": "Module Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix Extra Rulers from breaking the page rendering."
+                },
+                {
+                    "id": "",
+                    "content": "Fix Token Layer Drawing module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fix Scale Token Names By Size module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fix Remember Text Tool Settings module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fix 1/4th of Animation Disable not working."
                 }
             ]
         }
