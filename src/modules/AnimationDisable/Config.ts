@@ -1,12 +1,13 @@
-import MakeConfig from "../MakeConfig";
-import ConfigViews from "../../utils/ConfigViews";
-import Category from "../Category";
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "animationDisable",
   name: "Disable Animations",
   description: "Disables animations: token radial menu opening, page toolbar menu opening/close.",
-  category: Category.canvas,
+  category: VTTES.Module_Category.canvas,
+  gmOnly: false,
+
   media: {
     "no_radial_anim.webm": "No token radial menu animation"
   },
@@ -54,12 +55,12 @@ export default MakeConfig(__dirname, {
 
   configView: {
     disableRadial: {
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
       display: "Disable token radial button menu animations"
     },
 
     disablePageToolbar: {
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
       display: "Disable page toolbar animations"
     }
   },
@@ -68,4 +69,4 @@ export default MakeConfig(__dirname, {
     disableRadial: false,
     disablePageToolbar: false
   },
-});
+};

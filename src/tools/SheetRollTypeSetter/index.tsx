@@ -1,7 +1,6 @@
 import {ITool} from "../ITool";
 import {DOM} from "../../utils/DOM";
 import {R20} from "../../utils/R20";
-import {CharacterSheetAttribute} from "roll20";
 
 interface IConfigurableAttribute {
     label: string;
@@ -66,7 +65,7 @@ const onSetForAll = (e: Event) => {
 
         for (const char of chars) {
 
-            let attrib: CharacterSheetAttribute | null = null;
+            let attrib: Roll20.CharacterSheetAttribute | null = null;
             for (const tempAttrib of char.attribs.models) {
                 if (tempAttrib.attributes.name !== attribData.attributeName) continue;
                 attrib = tempAttrib;

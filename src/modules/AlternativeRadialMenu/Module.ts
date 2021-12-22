@@ -1,6 +1,5 @@
 import { R20Module } from "../../utils/R20Module"
 import { createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
-import {CanvasObject} from "roll20";
 import {R20} from "../../utils/R20";
 
 class AlternativeRadialMenuModule extends R20Module.OnAppLoadBase {

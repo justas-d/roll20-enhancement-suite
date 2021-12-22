@@ -7,7 +7,6 @@ import {replaceAll} from "../../utils/MiscUtils";
 import {IGeneratedMacro, IMacroDiff, IMacroFactory, IMacroGenerator} from "./IMacroGenerator";
 import OGL5eByRoll20 from "../../macro/OGL5eByRoll20";
 import PF2ByRoll20 from "../../macro/PF2ByRoll20";
-import {Character, CharacterAbility} from "roll20";
 import DuplicateResolveDialog from "./DuplicateResolveDialog";
 import VerifyMacrosDialog from "./VerifyMacrosDialog";
 import NoMacrosDialog from "./NoMacrosDialog";
@@ -172,7 +171,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
 
     public generators: { [id: string]: IMacroGenerator } = {};
 
-    private activePc: Character;
+    private activePc: Roll20.Character;
     public activeGenerator: IMacroGenerator;
 
     public setIsTokenAction: boolean = true;
@@ -202,7 +201,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
             const name = val.get<string>("name");
             accum[name] = val;
             return accum;
-        }, {} as { [id: string]: CharacterAbility });
+        }, {} as { [id: string]: Roll20.CharacterAbility });
 
         this.macroBuffer.forEach(macro => {
             if (macro.name in abilitiesByName) {

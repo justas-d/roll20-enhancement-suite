@@ -1,24 +1,3 @@
-/// <reference path="../../typings/roll20/index.d.ts"/>
-
-import {
-    Campaign,
-    CanvasObject,
-    Character,
-    HandoutAttributes,
-    Handout,
-    IBlobObject,
-    InitiativeData,
-    InitiativeTracker,
-    JukeboxFileStructure,
-    JukeboxSong,
-    ObjectStorage,
-    Page,
-    PlayerAttributes,
-    RollableTable,
-    SyncObject,
-    JukeboxSongAttributes,
-    Token
-} from "roll20";
 import {IApplyableSong} from "./JukeboxIO";
 import {EventSubscriber} from "./EventSubscriber";
 import {Optional} from "./TypescriptUtils";
@@ -70,7 +49,7 @@ namespace R20 {
         return new EventSubscriber("change:turnorder", callback, getter);
     }
 
-    export function setCanvasObjectLocation(obj: CanvasObject, left: number, top: number) {
+    export function setCanvasObjectLocation(obj: Roll20.CanvasObject, left: number, top: number) {
         const model = try_get_canvas_object_model(obj);
         if(!model) {
             return;
@@ -82,16 +61,16 @@ namespace R20 {
         });
     }
 
-    export const getBlob = (obj: IBlobObject<any>, blobName: string, timeout: number = 5000) => new Promise<string>((ok, err) => {
+    export const getBlob = (obj: Roll20.IBlobObject<any>, blobName: string, timeout: number = 5000) => new Promise<string>((ok, err) => {
         obj._getLatestBlob(blobName, ok);
         setTimeout(err, timeout);
     });
 
-    export function getCampaign(): Campaign {
+    export function getCampaign(): Roll20.Campaign {
         return window.Campaign;
     }
 
-    export const canEditCharacter = (char: Character): boolean => {
+    export const canEditCharacter = (char: Roll20.Character): boolean => {
         const controlledby = char.attributes.controlledby;
 
         if(R20.isGM()) return true;
@@ -101,19 +80,19 @@ namespace R20 {
         return false;
     };
 
-    export function getHandout(uuid: string): Handout {
+    export function getHandout(uuid: string): Roll20.Handout {
         return window.Campaign.handouts.get(uuid);
     }
 
-    export function createCharacter(initialAttributes?: PlayerAttributes): Character {
+    export function createCharacter(initialAttributes?: Roll20.PlayerAttributes): Roll20.Character {
         return window.Campaign.characters.create(initialAttributes);
     }
 
-    export function create_handout(initialAttributes?: HandoutAttributes): Handout {
+    export function create_handout(initialAttributes?: Roll20.HandoutAttributes): Roll20.Handout {
       return window.Campaign.handouts.create(initialAttributes);
     }
 
-    export function setCanvasObjectDimensions(obj: CanvasObject, width: number, height: number) {
+    export function setCanvasObjectDimensions(obj: Roll20.CanvasObject, width: number, height: number) {
         const model = try_get_canvas_object_model(obj);
         if(!model) return;
 
@@ -123,15 +102,15 @@ namespace R20 {
         });
     }
 
-    export function getCharacter(uuid): Character {
+    export function getCharacter(uuid): Roll20.Character {
         return window.Campaign.characters.get(uuid);
     }
 
-    export function getAllCharacters(): Character[] {
+    export function getAllCharacters(): Roll20.Character[] {
         return window.Campaign.characters.models;
     }
 
-    export function rerender_character_sheet(sheet: Character) {
+    export function rerender_character_sheet(sheet: Roll20.Character) {
       try {
         sheet.view.$el.dialog("close");
         setTimeout(() => {
@@ -142,19 +121,19 @@ namespace R20 {
       }
     }
 
-    export function getAllPages(): Page[] {
+    export function getAllPages(): Roll20.Page[] {
         return window.Campaign.pages.models;
     }
 
-    export function createRollableTable(initialAttributes?: any): RollableTable {
+    export function createRollableTable(initialAttributes?: any): Roll20.RollableTable {
         return window.d20.Campaign.rollabletables.create(initialAttributes);
     }
 
-    export function getRollableTable(uuid): RollableTable {
+    export function getRollableTable(uuid): Roll20.RollableTable {
         return window.d20.Campaign.rollabletables.get(uuid);
     }
 
-    export function getSelectedTokens(): CanvasObject[] {
+    export function getSelectedTokens(): Roll20.CanvasObject[] {
         return window.d20.engine.selected();
     }
 
@@ -210,7 +189,7 @@ namespace R20 {
         return window.d20.engine.currentCanvasOffset[1];
     };
 
-    export const getPageById = (id: string): Optional<Page> => {
+    export const getPageById = (id: string): Optional<Roll20.Page> => {
         return window.Campaign.pages.get(id);
     };
 
@@ -286,7 +265,7 @@ namespace R20 {
         $(selector).click();
     }
 
-    export function getInitiativeWindow(): InitiativeTracker {
+    export function getInitiativeWindow(): Roll20.InitiativeTracker {
         return window.d20.Campaign.initiativewindow;
     }
 
@@ -294,10 +273,10 @@ namespace R20 {
         id: string;
         name: string;
         mode: string;
-        songs: JukeboxSong[];
+        songs: Roll20.JukeboxSong[];
     }
 
-    export type JukeboxFileSystem = (JukeboxFileStructure | string)[];
+    export type JukeboxFileSystem = (Roll20.JukeboxFileStructure | string)[];
 
     export function getJukeboxFileStructure(): JukeboxFileSystem {
         //return window.d20.jukebox.lastFolderStructure;
@@ -326,7 +305,7 @@ namespace R20 {
         return window.d20.jukebox.addItemToFolderStructure(track_id, playlist_id);
     };
 
-    export function getSongById(id: string): JukeboxSong | null {
+    export function getSongById(id: string): Roll20.JukeboxSong | null {
         return window.Jukebox.playlist.get(id);
     }
 
@@ -339,7 +318,7 @@ namespace R20 {
             if (typeof(fsItem) === "string")
                 continue;
 
-            const rawPlaylist: JukeboxFileStructure = fsItem;
+            const rawPlaylist: Roll20.JukeboxFileStructure = fsItem;
 
             const playlist: JukeboxPlaylist = {
                 id: rawPlaylist.id,
@@ -372,11 +351,11 @@ namespace R20 {
         });
     };
 
-    export function createSong(data: any | IApplyableSong | JukeboxSongAttributes): JukeboxSong {
+    export function createSong(data: any | IApplyableSong | Roll20.JukeboxSongAttributes): Roll20.JukeboxSong {
         return window.Jukebox.playlist.create(data);
     }
 
-    export function makePlaylistStructure(name: string, mode: string, songIds?: string[]): JukeboxFileStructure {
+    export function makePlaylistStructure(name: string, mode: string, songIds?: string[]): Roll20.JukeboxFileStructure {
         return {
             id: window.generateUUID(),
             n: name,
@@ -385,7 +364,7 @@ namespace R20 {
         };
     }
 
-    export function getInitiativeData(): InitiativeData[] {
+    export function getInitiativeData(): Roll20.InitiativeData[] {
         return window.d20.Campaign.initiativewindow.cleanList();
     }
 
@@ -395,11 +374,11 @@ namespace R20 {
         });
     }
 
-    export function getCurrentPage(): Page {
+    export function getCurrentPage(): Roll20.Page {
         return window.d20.Campaign.activePage();
     }
 
-    export function getCurrentPageTokens(): CanvasObject[] {
+    export function getCurrentPageTokens(): Roll20.CanvasObject[] {
         return window.d20.engine.canvas.getObjects();
     }
 
@@ -407,7 +386,7 @@ namespace R20 {
         return window.d20.engine.canvas.containsPoint(mouseEvent, token);
     }
 
-    export function getCurrentPageTokenByUUID(uuid: string): CanvasObject {
+    export function getCurrentPageTokenByUUID(uuid: string): Roll20.CanvasObject {
         const tokens = getCurrentPageTokens();
         for (let obj of tokens) {
             const model = try_get_canvas_object_model(obj);
@@ -422,7 +401,7 @@ namespace R20 {
         return null;
     }
 
-    export const try_get_canvas_object_model = (obj: CanvasObject): Token => {
+    export const try_get_canvas_object_model = (obj: Roll20.CanvasObject): Roll20.Token => {
         if(obj["_model"]) return obj["_model"];
         if(obj["model"]) return obj["model"];
         return null;
@@ -585,7 +564,7 @@ ${content}
       window.d20.engine.canvas.freeDrawingBrush.width = size;
     }
 
-    export const wipeObjectStorage = <T>(storage: ObjectStorage<SyncObject<T>>): void => {
+    export const wipeObjectStorage = <T>(storage: Roll20.ObjectStorage<Roll20.SyncObject<T>>): void => {
 
         const len = storage.length;
         for (let __unusedIndex = 0; __unusedIndex < len; __unusedIndex++) {
@@ -605,11 +584,11 @@ ${content}
     };
 
     /*
-    export const on_select_shape_add_event_listener = (callback: (e: any, shape: CanvasObject) => void) => {
+    export const on_select_shape_add_event_listener = (callback: (e: any, shape: Roll20.CanvasObject) => void) => {
         $("body").on("shape_selected", "#editor", callback);
     };
 
-    export const on_select_shape_remove_event_listener = (callback: (e: any, shape: CanvasObject) => void) => {
+    export const on_select_shape_remove_event_listener = (callback: (e: any, shape: Roll20.CanvasObject) => void) => {
         $("body").off("shape_selected", "#editor", callback);
     };
     */

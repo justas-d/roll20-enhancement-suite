@@ -1,13 +1,12 @@
 import { R20Module } from "../../utils/R20Module";
 import { R20 } from "../../utils/R20";
-import {Token} from "roll20";
 
 class AutoSelectNextTokenModule extends R20Module.SimpleBase {
     constructor() {
         super(__dirname);
     }
 
-    private static select(data: Token) {
+    private static select(data: Roll20.Token) {
         if(!data.id) return;
 
         let obj = R20.getCurrentPageTokenByUUID(data.id);

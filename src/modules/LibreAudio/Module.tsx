@@ -1,10 +1,8 @@
 import {R20Module} from '../../utils/R20Module'
 import {LIBRE_AUDIO_TRACK_KEY} from "./Constants";
-import {JukeboxSong, JukeboxSongAttributes} from 'roll20';
 import {R20} from "../../utils/R20";
 import {DOM} from "../../utils/DOM";
 import {findByIdAndRemove} from "../../utils/MiscUtils";
-import {FirebaseReference} from "roll20";
 import LibreAudioDialogWidget from "./LibreAudioDialogWidget";
 
 class LibreAudio extends R20Module.OnAppLoadBase {
@@ -30,7 +28,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
         before_root.parentNode.insertBefore(widget, before_root);
     };
 
-    tryUpgradeTrackToNewestLibreAudioTrackVersion = (track: JukeboxSong) => {
+    tryUpgradeTrackToNewestLibreAudioTrackVersion = (track: Roll20.JukeboxSong) => {
         /*
             NOTE(justas): convert between LibreAudio track versions
             Current: v2
@@ -38,7 +36,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
             v1 -> v2 changes:  source changed from "Fanburst" to "My Audio"
          */
 
-        console.log("Trying to upgrade", track);
+        //console.log("Trying to upgrade", track);
 
         if(track.attributes[LIBRE_AUDIO_TRACK_KEY]) {
             // v1 -> v2
@@ -50,7 +48,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
         }
     };
 
-    databaseOnAddJukeboxTrack = (ref: FirebaseReference<JukeboxSongAttributes>) => {
+    databaseOnAddJukeboxTrack = (ref: Roll20.FirebaseReference<Roll20.JukeboxSongAttributes>) => {
 
         // NOTE(justas); we delay here so that the object is basically guaranteed to be stored in Roll20's firebase objs
         const attribs = ref.val();
@@ -76,7 +74,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
         this.add_url_dialog.show();
     };
 
-    canPlaySound = (audio: JukeboxSong) => {
+    canPlaySound = (audio: Roll20.JukeboxSong) => {
         console.log("querying", audio);
 
         if(audio.attributes[LIBRE_AUDIO_TRACK_KEY]) {
@@ -86,7 +84,7 @@ class LibreAudio extends R20Module.OnAppLoadBase {
     };
 
     /*
-    playSound= (audio: JukeboxSong) => {
+    playSound= (audio: Roll20.JukeboxSong) => {
         console.log("playing", audio);
         const url = audio.attributes.track_id;
         R20.playAudio(url, url);

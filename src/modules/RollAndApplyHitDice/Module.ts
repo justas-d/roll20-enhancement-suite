@@ -4,7 +4,6 @@ import { DOM } from "../../utils/DOM";
 import { findByIdAndRemove } from "../../utils/MiscUtils";
 import { TokenContextMenu } from "../../utils/TokenContextMenu";
 import SayCallback = R20.SayCallback;
-import {CanvasObject, Character} from "roll20";
 import {Optional} from "../../utils/TypescriptUtils";
 import {TOKEN_CONTEXT_MENU_ORDER_HIT_DICE} from '../TokenContextMenuApi/Constants'
 
@@ -21,7 +20,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     RollAndApplyHitDiceModule.fancySay("Token doesn't have a character.");
   };
 
-  private tryGetCharacter(obj: CanvasObject): Optional<Character> {
+  private tryGetCharacter(obj: Roll20.CanvasObject): Optional<Roll20.Character> {
     const model = R20.try_get_canvas_object_model(obj);
 
     if(model && model.character) {
@@ -30,7 +29,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     return;
   }
 
-  private setHealth = (token: CanvasObject, health: number) => {
+  private setHealth = (token: Roll20.CanvasObject, health: number) => {
     const config = this.getHook().config;
 
     let barValue = config.bar + "_value";

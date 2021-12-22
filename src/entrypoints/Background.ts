@@ -1,7 +1,7 @@
 import { VTTES_MODULE_CONFIGS } from '../Configs'
 import {getBrowser, replaceAll} from '../utils/MiscUtils';
 import {doesBrowserNotSupportResponseFiltering} from "../utils/BrowserDetection";
-import {getHooks, injectHooks} from "../HookUtils";
+import { apply_mods_to_text } from "../HookUtils";
 import {replace_all_and_count} from "../utils/MiscUtils";
 
 if(doesBrowserNotSupportResponseFiltering()) {
@@ -172,25 +172,19 @@ else {
       return;
     }
 
-    const hookQueue = getHooks(VTTES_MODULE_CONFIGS, request.url);
     const filter = getBrowser().webRequest.filterResponseData(request.requestId);
     const decoder = new TextDecoder("utf-8");
 
-    // Note(Justas): the console.log here forces scripts to run in order
-    // and not randomly, avoiding race conditions
-    //
-    // 2021-10-10: Does it really? -justasd
-    //let stringBuffer = `console.log("running ${request.url}");`;
-    let stringBuffer = "";
+    let string_buffer = "";
 
     filter.ondata = e => {
-      stringBuffer += decoder.decode(e.data, {stream: true});
+      string_buffer += decoder.decode(e.data, {stream: true});
     };
 
     filter.onstop = e => {
-      const hookedData = injectHooks(stringBuffer, hookQueue);
+      const hooked_data = apply_mods_to_text(string_buffer, request.url, VTTES_MODULE_CONFIGS);
 
-      filter.write(new TextEncoder().encode(hookedData));
+      filter.write(new TextEncoder().encode(hooked_data));
       filter.close();
     };
   };

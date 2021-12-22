@@ -1,6 +1,5 @@
 import { R20Module } from '../../utils/R20Module'
 import { DOM } from '../../utils/DOM'
-import {PageAttributes, FirebaseReference, PathTokenAttributes, TextTokenAttributes, Page, ObjectStorage, SyncObject} from 'roll20';
 import {R20} from "../../utils/R20";
 import {Optional} from "../../utils/TypescriptUtils";
 
@@ -21,7 +20,10 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
   _playerCardQuery = "#playerzone .player";
   _storageKey = "r20es_player_ids_by_who_can_draw";
 
-  handleObjectPlacement = (data: FirebaseReference<MapObj>, dataPoolGetter: (page: Page) => ObjectStorage<SyncObject<MapObj>>) => {
+  handleObjectPlacement = (
+    data: Roll20.FirebaseReference<MapObj>, 
+    dataPoolGetter: (page: Roll20.Page) => Roll20.ObjectStorage<Roll20.SyncObject<MapObj>>
+  ) => {
     if(this._shouldIgnoreEvents) {
       return;
     }
@@ -56,15 +58,15 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
     return true;
   };
 
-  onTextAdded = (firebaseObject: FirebaseReference<TextTokenAttributes>) => {
+  onTextAdded = (firebaseObject: Roll20.FirebaseReference<Roll20.TextTokenAttributes>) => {
     this.handleObjectPlacement(firebaseObject, (page) => page.thetexts);
   };
 
-  onDrawingAdded = (firebaseObject: FirebaseReference<PathTokenAttributes>) => {
+  onDrawingAdded = (firebaseObject: Roll20.FirebaseReference<Roll20.PathTokenAttributes>) => {
     this.handleObjectPlacement(firebaseObject, (page) => page.thepaths);
   };
 
-  unhookPage = (page: Page) => {
+  unhookPage = (page: Roll20.Page) => {
     page.thepaths.backboneFirebase.reference.off("child_added", this.onDrawingAdded);
     page.thetexts.backboneFirebase.reference.off("child_added", this.onTextAdded);
   };
@@ -77,7 +79,7 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
     console.error("[DisablePlayerDrawings] onPageAdded failed to find wrapped page object after receiving firebase event!");
   };
 
-  onPageAdded = (firebaseObject: FirebaseReference<PageAttributes>) => {
+  onPageAdded = (firebaseObject: Roll20.FirebaseReference<Roll20.PageAttributes>) => {
     const page = R20.getPageById(firebaseObject.key);
 
     if(!page) {
@@ -94,7 +96,7 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
     }, 1000);
   };
 
-  onPageRemoved = (firebaseObject: FirebaseReference<PageAttributes>) => {
+  onPageRemoved = (firebaseObject: Roll20.FirebaseReference<Roll20.PageAttributes>) => {
     const page = R20.getPageById(firebaseObject.key);
 
     if(!page) {

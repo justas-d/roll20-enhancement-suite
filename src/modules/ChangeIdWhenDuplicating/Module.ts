@@ -1,14 +1,13 @@
 import { R20Module } from "../../utils/R20Module";
 import { replaceAll } from "../../utils/MiscUtils";
 import { R20 } from "../../utils/R20";
-import {Character,CharacterEditor} from "roll20";
 
 class ChangeIdWhenDuplicatingModule extends R20Module.SimpleBase {
   public constructor() {
     super(__dirname);
   }
 
-  private static doReplace(original: CharacterEditor, clone: Character) {
+  private static doReplace(original: Roll20.CharacterEditor, clone: Roll20.Character) {
     return replaceAll(
       original.model._blobcache.defaulttoken, 
       original.model.get("id"), 

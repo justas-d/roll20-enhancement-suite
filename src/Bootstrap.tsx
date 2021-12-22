@@ -7,7 +7,7 @@ import { DOM } from "./utils/DOM";
 import {EventEmitter} from "./utils/EventEmitter";
 import { saveAs } from 'save-as'
 import {isChromium} from "./utils/BrowserDetection";
-import {getHooks, injectHooks} from './HookUtils';
+import {apply_mods_to_text} from './HookUtils';
 import {getBrowser} from "./utils/MiscUtils";
 
 import { dialog_polyfill_script, dialog_polyfill_css } from "./dialog_polyfill";
@@ -205,7 +205,8 @@ export const bootstrap = () => {
     findByIdAndRemove(POLYFILL_CSS);
     findByIdAndRemove(STYLE_CSS);
 
-    if(typeof HTMLDialogElement != "function") {
+    // @ts-ignore
+    if(typeof(HTMLDialogElement) != "function") {
       console.log("DialogFormsBootstrapper: injecting dialog-polyfill");
 
       dialog_polyfill_script();
@@ -224,8 +225,8 @@ export const bootstrap = () => {
     const jobs = [];
     const scripts = [];
 
-    const do_replacing = (text: string, hooks: any) => {
-      text = injectHooks(text, hooks);
+    const do_replacing = (text: string, url: string) => {
+      text = apply_mods_to_text(text, url, VTTES_MODULE_CONFIGS);
 
       // take over jquery .ready
       text = text.replace(
@@ -247,28 +248,25 @@ export const bootstrap = () => {
     const fetch_script = async (order: number, url: string) => {
       console.log("fetching", url, order);
 
-      const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
-
       const response = await fetch(url);
       let text = await response.text();
 
-      text = do_replacing(text, hooks);
+      text = do_replacing(text, url);
 
       scripts.push({order: order, text: text, url: url});
     };
 
     // @UserscriptScriptFetching
-    const fetch_script_from_userscript = (order: number, key: string, url: string) => new Promise(ok => {
+    const fetch_script_from_userscript = (order: number, key: string, url: string) => new Promise<void>(ok => {
 
       console.log("fetching from userscript", key, url, order);
-      const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
 
       const wait = () => {
         let data = window[key];
         const did_we_get_it = typeof(data) === "string";
 
         if(did_we_get_it) {
-          data = do_replacing(data, hooks);
+          data = do_replacing(data, url);
           scripts.push({order: order, text: data, url: url});
           window[key] = undefined;
           ok();
@@ -310,7 +308,7 @@ export const bootstrap = () => {
 
     if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
       // @ChromeScriptFetching
-      jobs.push(new Promise(ok => {
+      jobs.push(new Promise<void>(ok => {
         console.log("Bootstrap sending VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS");
         window.postMessage({VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS: true}, Config.appUrl);
 
@@ -324,10 +322,7 @@ export const bootstrap = () => {
             const data = msg.data.VTTES_CDN_SCRIPTS;
 
             const handle_script = (order: number, data: string, url: string) => {
-
-              const hooks = getHooks(VTTES_MODULE_CONFIGS, url);
-
-              data = do_replacing(data, hooks);
+              data = do_replacing(data, url);
 
               scripts.push({
                 order: order, 
@@ -364,7 +359,7 @@ export const bootstrap = () => {
     jobs.push(fetch_script(11, "https://app.roll20.net/js/tutorial_tips.js?n"));
     
     let script_nonce = "";
-    jobs.push(new Promise(ok => {
+    jobs.push(new Promise<void>(ok => {
       let nth_attempt = 0;
       const retry = () => {
         const scripts_with_nonce = document.querySelectorAll("script[nonce]") as any;
@@ -389,7 +384,7 @@ export const bootstrap = () => {
       retry();
     }));
 
-    jobs.push(new Promise(ok => {
+    jobs.push(new Promise<void>(ok => {
       const retry = async () => {
         console.log("retry");
 

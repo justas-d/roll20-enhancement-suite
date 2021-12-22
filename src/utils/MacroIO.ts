@@ -1,4 +1,3 @@
-import { Player, MacroAttributes } from "roll20";
 import { IResult, Ok, Err } from "./Result";
 import { R20 } from "./R20";
 import IOCommon from "./IOCommon";
@@ -11,7 +10,7 @@ interface IParseStrategy {
 interface DataV1 {
     schema_version: number;
     macrobar: string;
-    macros: MacroAttributes[];
+    macros: Roll20.MacroAttributes[];
     playerId: string;
 }
 
@@ -96,7 +95,10 @@ class ParseV1 implements IParseStrategy {
 //-LLDzVWKvJl7qGUiF0m5|-LFqTKwDbqJQ3raPTwNI|#cc4125|%E2%9A%94%EF%B8%8F
 const getUserMacrobarData = (rawMacroBar: string) => rawMacroBar.split(',').map(r => r.split('|'));
 
-const makeApplyableMacro = (macro: MacroAttributes, macrobarData: string[][]): IApplyableMacroData => {
+const makeApplyableMacro = (
+  macro: Roll20.MacroAttributes, 
+  macrobarData: string[][]
+): IApplyableMacroData => {
     const macrobarIndex = macrobarData.findIndex(arr => arr.length >= 2 && arr[1] === macro.id);
 
     const retval: IApplyableMacroData = {
@@ -120,7 +122,7 @@ const makeApplyableMacro = (macro: MacroAttributes, macrobarData: string[][]): I
 }
 
 namespace MacroIO {
-    export const wipeMacros = (player: Player): void => {
+    export const wipeMacros = (player: Roll20.Player): void => {
         R20.wipeObjectStorage(player.macros);
         player.save({
             macrobar: ""
@@ -132,7 +134,7 @@ namespace MacroIO {
         2: new ParseV2()
     }
 
-    export const prepareMacroList = (player: Player): IApplyableMacroData[] => {
+    export const prepareMacroList = (player: Roll20.Player): IApplyableMacroData[] => {
         const macrobarData = getUserMacrobarData(player.attributes.macrobar);
         return player.macros.models.map(m => makeApplyableMacro(m.attributes, macrobarData));
     }
@@ -158,7 +160,7 @@ namespace MacroIO {
         return stratLookup.ok().unwrap().parse(data);
     }
 
-    const createMacroBarEntry = (player: Player, macroId: string, macroData: IApplyableMacroData) => {
+    const createMacroBarEntry = (player: Roll20.Player, macroId: string, macroData: IApplyableMacroData) => {
         let macrobar = `${player.id}|${macroId}`;
 
         const hasCol = macroData.macrobar.color !== null;
@@ -182,7 +184,7 @@ namespace MacroIO {
     }
 
     export const applyToPlayer = (
-        player: Player, 
+        player: Roll20.Player, 
         macros: IApplyableMacroData[], 
         strategy: ImportStrategy
     ) => {

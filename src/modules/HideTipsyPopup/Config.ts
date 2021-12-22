@@ -1,11 +1,11 @@
-import MakeConfig from '../MakeConfig'; import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "hideTipsyPopup",
   name: "Hide Stuck Top-Left Tipsy Popups",
   description: `Prevents a tooltip from being stuck at the top-left of the screen. Should only be toggled when needed as this will hide other tooltips. Made by Pharonix.`,
-  category: Category.misc,
+  category: VTTES.Module_Category.misc,
   gmOnly: false,
 
   media: {
@@ -15,5 +15,5 @@ export default MakeConfig(__dirname, {
   config: {
     enabled: false,
   }
-});
+};
 

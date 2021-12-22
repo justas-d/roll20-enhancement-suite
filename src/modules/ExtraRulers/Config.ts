@@ -1,12 +1,14 @@
-import MakeConfig from '../MakeConfig';
-import Category from '../Category';
 import {RULER_NORMAL, RADIUS_MODE_BURST, BOX_MODE_BURST, CONE_MODE_FLAT, LINE_MODE_TOTAL_WIDTH} from "./Constants";
 
-export default MakeConfig(__dirname, {
+import TransformDirname from '../../utils/TransformDirname'
+
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "extraRulers",
   name: "Extra Rulers",
   description: "Adds radius, box, thick line and cone ruler options. Other players need to have VTTES installed to see them.",
-  category: Category.canvas,
+  category: VTTES.Module_Category.canvas,
+  gmOnly: false,
 
   media: {
     "extra_rulers.png": "Two of the extra rulers.",
@@ -31,14 +33,18 @@ export default MakeConfig(__dirname, {
 
     {
       includes: "vtt.bundle.js",
-      find: `y:[0,1]};`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(A,k); }`,
+      find: "function setMode(i){",
+      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(i);}",
     },
 
     {
       includes: "vtt.bundle.js",
-      find: "function setMode(i){",
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(i);}",
+      find: `y:[0,1]};`,
+      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(A,k); }`,
+
+      stability_checks: [
+        `y=function(A,k,D,z,F,N)`,
+      ],
     },
 
     {
@@ -54,6 +60,9 @@ vttes_line_width: k.vttes_line_width,
 vttes_ruler_mode: k.vttes_ruler_mode,
 >>R20ES_MOD_FIND>>
 `,
+      stability_checks: [
+        '_.each(d20.engine.measurements,function(k)',
+      ],
     },
 
     // NOTE(justasd): will replace two occurances.
@@ -70,6 +79,9 @@ vttes_line_width: k.vttes_line_width,
 vttes_ruler_mode: k.vttes_ruler_mode,
 >>R20ES_MOD_FIND>>
 `,
+      stability_checks: [
+        'var G=function(A,k)'
+      ],
     },
     {
       includes: "vtt.bundle.js",
@@ -86,9 +98,5 @@ if(window.r20es && window.r20es.extra_ruler_set_mode) {
 }
 `,
     },
-
-
-
   ]
-});
-
+};

@@ -54,8 +54,8 @@ import ExtraRulers from "./modules/ExtraRulers/Config"
 import FixPatienceJs from "./modules/FixPatienceJs/Config"
 import UserscriptUpdateChecker from "./modules/UserscriptUpdateChecker/Config"
 
-const VTTES_MODULE_CONFIGS = {};
-const addCfg = cfg => VTTES_MODULE_CONFIGS[cfg.id] = cfg;
+const VTTES_MODULE_CONFIGS: Record<string, VTTES.Module_Config> = {};
+const addCfg = (cfg: VTTES.Module_Config) => VTTES_MODULE_CONFIGS[cfg.id] = cfg;
 
 addCfg(DisablePlayerDrawings);
 addCfg(TokenBarPositionAdjust);
@@ -122,9 +122,6 @@ if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
 if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
   addCfg(UserscriptUpdateChecker);
 }
-
-
-// TODO(justasd): update checker for userscript
 
 addCfg(Welcome);
 

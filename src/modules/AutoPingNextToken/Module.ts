@@ -1,13 +1,12 @@
 import { R20Module } from "../../utils/R20Module";
 import { R20 } from "../../utils/R20";
-import {Token} from "roll20";
 
 class AutoPingNextTokenModule extends R20Module.SimpleBase {
   public constructor() {
     super(__dirname);
   }
 
-  private static ping(data: Token) {
+  private static ping(data: Roll20.Token) {
     if (!data.id) return;
 
     const obj = R20.getCurrentPageTokenByUUID(data.id);

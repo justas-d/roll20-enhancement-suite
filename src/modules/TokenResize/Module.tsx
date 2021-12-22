@@ -2,7 +2,6 @@ import {R20Module} from "../../utils/R20Module";
 import {R20} from "../../utils/R20";
 import {TokenContextMenu} from "../../utils/TokenContextMenu";
 import TokenResizeDialog from "./TokenResizeDialog";
-import {CanvasObject} from "roll20";
 import {scaleToFit} from "../../utils/FitWithinTools";
 import {TOKEN_CONTEXT_MENU_ORDER_RESIZE_FIT, TOKEN_CONTEXT_MENU_ORDER_RESIZE_CUSTOM} from '../TokenContextMenuApi/Constants'
 
@@ -14,7 +13,7 @@ class TokenResizeModule extends R20Module.SimpleBase {
         super(__dirname);
     }
 
-    private tryPlaceTopLeft = (obj: CanvasObject) => {
+    private tryPlaceTopLeft = (obj: Roll20.CanvasObject) => {
         if(!this.getHook().config.placeTopLeft) return;
 
         R20.setCanvasObjectLocation(obj, obj.width / 2, obj.height/ 2);

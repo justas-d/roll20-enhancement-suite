@@ -1,12 +1,12 @@
-import MakeConfig from '../MakeConfig';
-import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "animatedBackground",
   name: "Animated Background",
   description: "Displays an animated background if the GM has one set up for the page. Setup can be found in the top-right corner, look for a orange film button.",
-  category: Category.canvas,
+  category: VTTES.Module_Category.canvas,
+  gmOnly: false,
 
   media: {
     "animated_bg.webm": "Setup & usage"
@@ -21,12 +21,12 @@ export default MakeConfig(__dirname, {
   configView: {
     muteAudio: {
       display: "Mute Audio?",
-      type: ConfigViews.Checkbox
+      type: VTTES.Config_View_Type.Checkbox
     },
 
     audioVolume: {
       display: "Audio Volume",
-      type: ConfigViews.Slider,
+      type: VTTES.Config_View_Type.Slider,
       sliderMin: 0,
       sliderMax: 1,
     }
@@ -43,6 +43,10 @@ export default MakeConfig(__dirname, {
         }
         d20.engine.canvasZoom = z.canvasZoom;
       }`,
+
+      stability_checks: [
+        'd20.engine.setZoom=(A,k,D)',
+      ],
     }
   ]
-});
+};

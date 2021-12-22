@@ -1,14 +1,18 @@
-import MakeConfig from '../MakeConfig'; import Category from '../Category';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "characterImportExport",
   name: "Journal Importer/Exporter",
   description: "Provides character, handout and character component (i.e weapons, spells, items etc) importing and exporting (in the journal and on sheets).",
-  category: Category.exportImport,
+  category: VTTES.Module_Category.exportImport,
+  gmOnly: false,
+
   media: {
     "char_import.png": "Journal widget",
     "sheet_export.png": "Sheet tab",
   },
+
   mods: [
     {
       includes: "vtt.bundle.js",
@@ -30,4 +34,4 @@ export default MakeConfig(__dirname, {
       }), >>R20ES_MOD_FIND>>`,
     },
   ],
-});
+};

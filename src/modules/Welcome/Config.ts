@@ -1,36 +1,37 @@
-import MakeConfig from '../MakeConfig'; 
-import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
-    name: "Welcome",
-    id: "welcomeScreen",
-    force: true,
-    forceShowConfig: true,
-    category: Category.misc,
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
+  name: "Welcome",
+  id: "welcomeScreen",
+  description: "The welcome popup message.",
+  force: true,
+  forceShowConfig: true,
+  gmOnly: false,
+  category: VTTES.Module_Category.misc,
 
-    configView: {
-        showWelcomePopup: {
-            display: "Show welcome message.",
-            type: ConfigViews.Checkbox
-        },
-
-        showStartupGuide: {
-            display: "Show startup guide",
-            type: ConfigViews.Checkbox
-        },
-
-        showChangelog: {
-            display: "Show changelog",
-            type: ConfigViews.Checkbox
-        },
+  configView: {
+    showWelcomePopup: {
+      display: "Show welcome message.",
+      type: VTTES.Config_View_Type.Checkbox
     },
 
-    config: {
-        hasShownDiscordPoll: false,
-        showWelcomePopup: true,
-        showStartupGuide: true,
-        showChangelog: true,
-        previousVersion: "",
+    showStartupGuide: {
+      display: "Show startup guide",
+      type: VTTES.Config_View_Type.Checkbox
     },
-});
+
+    showChangelog: {
+      display: "Show changelog",
+      type: VTTES.Config_View_Type.Checkbox
+    },
+  },
+
+  config: {
+    hasShownDiscordPoll: false,
+    showWelcomePopup: true,
+    showStartupGuide: true,
+    showChangelog: true,
+    previousVersion: "",
+  },
+};

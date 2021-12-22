@@ -1,11 +1,11 @@
-import MakeConfig from '../MakeConfig'; import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "tokenLayerDrawing",
   name: "Draw Token Layer on Tokens",
   description: "Draws an indicator at the bottom left of each token that indicates which layer it is on.",
-  category: Category.canvas,
+  category: VTTES.Module_Category.canvas,
   gmOnly: true,
   media: {
     "token_mp.png": "A token in the map layer",
@@ -24,7 +24,7 @@ export default MakeConfig(__dirname, {
   configView: {
     globalAlpha: {
       display: "Global opacity",
-      type: ConfigViews.Slider,
+      type: VTTES.Config_View_Type.Slider,
 
       sliderMin: 0,
       sliderMax: 1,
@@ -32,7 +32,7 @@ export default MakeConfig(__dirname, {
 
     backgroundOpacity: {
       display: "Background opacity",
-      type: ConfigViews.Slider,
+      type: VTTES.Config_View_Type.Slider,
 
       sliderMin: 0,
       sliderMax: 1,
@@ -40,19 +40,19 @@ export default MakeConfig(__dirname, {
 
     rotateAlongWithToken: {
       display: "Rotate overlay along with token",
-      type: ConfigViews.Checkbox
+      type: VTTES.Config_View_Type.Checkbox
     },
 
     textStrokeWidth: {
       display: "Text outline width",
-      type: ConfigViews.Number,
+      type: VTTES.Config_View_Type.Number,
 
       numberMin: 0,
     },
 
     textStrokeOpacity: {
       display: "Text stroke opacity",
-      type: ConfigViews.Slider,
+      type: VTTES.Config_View_Type.Slider,
 
       sliderMin: 0,
       sliderMax: 1,
@@ -60,12 +60,12 @@ export default MakeConfig(__dirname, {
 
     textStrokeColor: {
       display: "Text stroke color",
-      type: ConfigViews.Color
+      type: VTTES.Config_View_Type.Color
     },
 
     textFillOpacity: {
       display: "Text fill opacity",
-      type: ConfigViews.Slider,
+      type: VTTES.Config_View_Type.Slider,
 
       sliderMin: 0,
       sliderMax: 1,
@@ -73,52 +73,52 @@ export default MakeConfig(__dirname, {
 
     textFontSize: {
       display: "Font size",
-      type: ConfigViews.Number,
+      type: VTTES.Config_View_Type.Number,
 
       numberMin: 0,
     },
 
     textFillColor: {
       display: "Text fill color",
-      type: ConfigViews.Color
+      type: VTTES.Config_View_Type.Color
     },
 
     drawOnGmLayer: {
       display: "Draw on tokens in the GM layer.",
-      type: ConfigViews.Checkbox
+      type: VTTES.Config_View_Type.Checkbox
     },
     
     drawOnTokenLayer: {
       display: "Draw on tokens in the player token layer.",
-      type: ConfigViews.Checkbox
+      type: VTTES.Config_View_Type.Checkbox
     },
     
     drawOnMapLayer: {
       display: "Draw on tokens in the map layer.",
-      type: ConfigViews.Checkbox
+      type: VTTES.Config_View_Type.Checkbox
     },
 
     drawOnLightsLayer: {
       display: "Draw on tokens in the lights layer",
-      type: ConfigViews.Checkbox
+      type: VTTES.Config_View_Type.Checkbox
     },
 
     drawOnForegroundLayer: {
       display: "Draw on tokens in the betteR20 foreground layer",
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
 
       onlyWhenHasB20: true,
     },
 
     drawOnWeatherLayer: {
       display: "Draw on tokens in the betteR20 weather layer",
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
 
       onlyWhenHasB20: true,
     },
     drawOnBackgroundLayer: {
       display: "Draw on tokens in the betteR20 background layer",
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
 
       onlyWhenHasB20: true,
     }
@@ -144,4 +144,4 @@ export default MakeConfig(__dirname, {
     drawOnForegroundLayer: true,
     drawOnBackgroundLayer: true
   },
-});
+};

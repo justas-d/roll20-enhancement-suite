@@ -1,7 +1,11 @@
+import TransformDirname from '../../utils/TransformDirname'
 
-import MakeConfig from '../MakeConfig'; import Category from '../Category';
-
-export default MakeConfig(__dirname, {
-    id: "sheetTabApi",
-    force: true,
-});
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
+  id: "sheetTabApi",
+  name: "sheetTabApi",
+  description: "",
+  category: VTTES.Module_Category.misc,
+  gmOnly: false,
+  force: true,
+};

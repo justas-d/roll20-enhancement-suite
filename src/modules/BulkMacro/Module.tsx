@@ -4,9 +4,7 @@ import {promiseWait} from '../../utils/promiseWait';
 import {TokenContextMenu} from '../../utils/TokenContextMenu';
 import MacroSelectDialog from './MacroSelectDialog';
 import {TableOfMacrosByCategoryAndId} from './Types';
-import {Macro} from 'roll20';
 import {TOKEN_CONTEXT_MENU_ORDER_ROLL_BULK_MACRO} from '../TokenContextMenuApi/Constants'
-import {CanvasObject} from "roll20";
 
 class BulkMacroModule extends R20Module.OnAppLoadBase {
 
@@ -29,7 +27,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
 
     R20.unselectTokens();
 
-    const roll_for_obj = async (obj: CanvasObject) => {
+    const roll_for_obj = async (obj: Roll20.CanvasObject) => {
 
       R20.selectToken(obj);
 
@@ -76,7 +74,7 @@ class BulkMacroModule extends R20Module.OnAppLoadBase {
 
     let macros: TableOfMacrosByCategoryAndId = {};
 
-    const addMacro = (macro: Macro, category: string) => {
+    const addMacro = (macro: Roll20.Macro, category: string) => {
       if (!(category in macros)) macros[category] = {};
       let cat = macros[category][macro.get<string>("id")] = {
         name: macro.get("name"),

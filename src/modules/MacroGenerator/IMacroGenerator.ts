@@ -1,9 +1,7 @@
-import { Character } from "roll20";
-
 export interface IMacroFactory {
     name: string;
-    create: (char: Character) => IGeneratedMacro[];
-    createFolderEntries?: (char: Character) => string[];
+    create: (char: Roll20.Character) => IGeneratedMacro[];
+    createFolderEntries?: (char: Roll20.Character) => string[];
     categoryNameModifier?: (name: string) => string;
 }
 

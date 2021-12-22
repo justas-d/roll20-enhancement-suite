@@ -1,41 +1,42 @@
-import MakeConfig from '../MakeConfig'; 
-import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
-    id: "alternativeRadialMenu",
-    name: "Alternative Token Radial Menu",
-    media: {
-        "radial.png": "Reworked radial menu",
-        "radial_min.png":
-            "Compact version"
-    },
-    description: "Replaces the default token radial token menu with a more compact and simplistic one.",
-    category: Category.canvas,
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
 
-    configView: {
-        opacity: {
-            type: ConfigViews.Slider,
-            display: "Opacity",
+  id: "alternativeRadialMenu",
+  name: "Alternative Token Radial Menu",
+  description: "Replaces the default token radial token menu with a more compact and simplistic one.",
+  category: VTTES.Module_Category.canvas,
+  gmOnly: false,
 
-            sliderMin: 0,
-            sliderMax: 1
-        },
+  media: {
+    "radial.png": "Reworked radial menu",
+    "radial_min.png": "Compact version"
+  },
 
-        superMinimal: {
-            type: ConfigViews.Checkbox,
-            display: "Compact mode",
-        },
+  configView: {
+    opacity: {
+      type: VTTES.Config_View_Type.Slider,
+      display: "Opacity",
 
-        auto_width: {
-            type: ConfigViews.Checkbox,
-            display: "Automatically space the left and right sides to not cover up the token."
-        }
+      sliderMin: 0,
+      sliderMax: 1
     },
 
-    config: {
-        opacity: 1,
-        superMinimal: false,
-        auto_width: true
+    superMinimal: {
+      type: VTTES.Config_View_Type.Checkbox,
+      display: "Compact mode",
+    },
+
+    auto_width: {
+      type: VTTES.Config_View_Type.Checkbox,
+      display: "Automatically space the left and right sides to not cover up the token."
     }
-});
+  },
+
+  config: {
+    opacity: 1,
+    superMinimal: false,
+    auto_width: true
+  }
+};

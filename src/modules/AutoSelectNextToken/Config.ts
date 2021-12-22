@@ -1,12 +1,13 @@
-import MakeConfig from "../MakeConfig";
-import Category from "../Category";
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname,{
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "autoSelectNextToken",
   name: "Select Token",
   description: "When advancing initiative, this module will automatically select the next token in the initiative order.",
-  category: Category.initiative,
+  category: VTTES.Module_Category.initiative,
   gmOnly: true,
+
   media: {
     "select_token.webm": "Automated token selection"
   },
@@ -18,4 +19,4 @@ export default MakeConfig(__dirname,{
       patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.selectInitiativeToken) { window.r20es.selectInitiativeToken(y[0]);}"
     },
   ],
-});
+}

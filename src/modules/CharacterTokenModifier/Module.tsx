@@ -2,7 +2,6 @@ import {R20Module} from '../../utils/R20Module'
 import {DOM} from '../../utils/DOM'
 import {SheetTab, SheetTabSheetInstanceData} from '../../utils/SheetTab';
 import {R20} from "../../utils/R20";
-import {Character, CharacterSheetAttribute, TokenAttributes} from 'roll20';
 import {strIsNullOrEmpty, createCSSElement, findByIdAndRemove } from "../../utils/MiscUtils";
 import lexCompare from "../../utils/LexicographicalComparator";
 import {isChromium} from "../../utils/BrowserDetection";
@@ -43,7 +42,7 @@ const AuraEditor = ({tokenAttribs, name, index}) => {
 };
 
 const BarEditor = ({name, color, character, tokenAttribs, index, onChange}) => {
-    const char: Character = character;
+    const char: Roll20.Character = character;
     const value = `bar${index}_value`;
     const max = `bar${index}_max`;
     const link = `bar${index}_link`;
@@ -194,7 +193,7 @@ const setOverrideTokenData = (element: HTMLElement, value: string) => {
 const tokenAttributeDataKey = "data-token-prop-name";
 
 const InputWrapper = ({Component = "input", type = undefined, token, propName, defaultVal, ...otherProps}: any) => {
-  const t: TokenAttributes = token;
+  const t: Roll20.TokenAttributes = token;
   const widget = <Component {...otherProps} /> as HTMLInputElement;
 
   if(type) {
@@ -519,8 +518,8 @@ const LegacyLightSettings = ({tokenAttribs}) => {
 };
 
 class TabInstanceData {
-  public token: TokenAttributes = null;
-  public char: Character = null;
+  public token: Roll20.TokenAttributes = null;
+  public char: Roll20.Character = null;
 }
 
 const DEFAULT_AVATAR_URL = "/images/character.png";
@@ -555,7 +554,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
       .then((jsonToken) => {
         if (strIsNullOrEmpty(jsonToken)) {
           // @ts-ignore
-          const tkn: TokenAttributes = {
+          const tkn: Roll20.TokenAttributes = {
             imgsrc: data.char.attributes.avatar || DEFAULT_AVATAR_URL,
             height: 70,
             width: 70,

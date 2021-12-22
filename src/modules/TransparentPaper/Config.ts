@@ -1,28 +1,28 @@
+import TransformDirname from '../../utils/TransformDirname'
 
-import MakeConfig from '../MakeConfig'; 
-import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
+  id: "transparentPaperDivs",
+  name: "Transparent Canvas UI Dialogs",
+  description: "Provides a way to set the opacity of floating UI dialogs.",
+  category: VTTES.Module_Category.canvas,
+  gmOnly: false,
 
-export default MakeConfig(__dirname, {
-    id: "transparentPaperDivs",
-    name: "Transparent Canvas UI Dialogs",
-    description: "Provides a way to set the opacity of floating UI dialogs.",
-    category: Category.canvas,
-    media: {
-        "transparent_dialog.png": "A transparent edit token dialog."
+  media: {
+    "transparent_dialog.png": "A transparent edit token dialog."
+  },
+
+  configView: {
+    opacity: {
+      display: "Opacity",
+      type: VTTES.Config_View_Type.Slider,
+
+      sliderMin: 0,
+      sliderMax: 1,
     },
+  },
 
-    configView: {
-        opacity: {
-            display: "Opacity",
-            type: ConfigViews.Slider,
-
-            sliderMin: 0,
-            sliderMax: 1,
-        },
-    },
-
-    config: {
-        opacity: 1,
-    },
-});
+  config: {
+    opacity: 1,
+  },
+};

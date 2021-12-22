@@ -1,6 +1,11 @@
-import MakeConfig from '../MakeConfig';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
-    id: "toolsMenu",
-    force: true,
-});
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
+  id: "toolsMenu",
+  name: "toolsMenu",
+  description: "",
+  category: VTTES.Module_Category.misc,
+  gmOnly: false,
+  force: true,
+};

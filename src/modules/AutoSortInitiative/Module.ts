@@ -1,11 +1,10 @@
 import { R20Module } from "../../utils/R20Module";
 import { R20 } from "../../utils/R20";
-import { InitiativeData} from "roll20";
 import * as _ from 'underscore'
 import {EventSubscriber} from "../../utils/EventSubscriber";
 
 class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
-    private localInitiativeData: InitiativeData[] = [];
+    private localInitiativeData: Roll20.InitiativeData[] = [];
     private debouncedDoSorting: () => void;
 
     private _sub: EventSubscriber;
@@ -19,8 +18,11 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
 
     private onTurnOrderChanged = (e) => this.debouncedDoSorting();
 
-    private static getNew(a: InitiativeData[], b: InitiativeData[]): InitiativeData[] {
-        let added: InitiativeData[] = [];
+    private static getNew(
+      a: Roll20.InitiativeData[], 
+      b: Roll20.InitiativeData[]
+    ): Roll20.InitiativeData[] {
+        let added: Roll20.InitiativeData[] = [];
 
         for(const bObj of b) {
             let has = false;
@@ -40,7 +42,7 @@ class AutoSortInitiativeModule extends R20Module.OnAppLoadBase {
         return added;
     }
 
-    private setLocalInitiative(initiative: InitiativeData[]) {
+    private setLocalInitiative(initiative: Roll20.InitiativeData[]) {
         // Note(Justas): clone or else it ain't workin'
         this.localInitiativeData = JSON.parse(JSON.stringify(initiative));
     }

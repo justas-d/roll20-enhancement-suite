@@ -2,7 +2,6 @@ import { R20Module } from "../../utils/R20Module"
 import { DOM } from "../../utils/DOM"
 import { R20 } from "../../utils/R20";
 import { findByIdAndRemove } from "../../utils/MiscUtils";
-import {HandoutBlobs, IBlobObject} from "roll20";
 
 class DuplicateButtonModule extends R20Module.SimpleBase {
   static readonly optionId = "window.r20es-duplicate-journal";
@@ -38,7 +37,7 @@ class DuplicateButtonModule extends R20Module.SimpleBase {
       let json = note.toJSON();
       delete json.id;
 
-      var blobs: HandoutBlobs = {};
+      var blobs: Roll20.HandoutBlobs = {};
       let newNote = note.collection.create(json);
 
       Promise.all([

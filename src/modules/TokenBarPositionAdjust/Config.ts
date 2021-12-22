@@ -1,11 +1,12 @@
-import MakeConfig from '../MakeConfig'; import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "tokenBarPositionAdjust",
   name: "Token Status Display Adjustments",
   description: "Allows adjusting how status icons are displayed on tokens.",
-  category: Category.token,
+  category: VTTES.Module_Category.token,
+  gmOnly: false,
 
   media: {
     "adjusted_token_status.png": "Idle & opaque status icons displayed outside of the token.",
@@ -33,19 +34,19 @@ else {
   configView: {
     idle_status_icon_opacity: {
       display: "Idle status icon alpha (when the token is not selected)",
-      type: ConfigViews.Slider,
+      type: VTTES.Config_View_Type.Slider,
       sliderMin: 0,
       sliderMax: 1,
     },
     active_status_icon_opacity: {
       display: "Selected status icon alpha",
-      type: ConfigViews.Slider,
+      type: VTTES.Config_View_Type.Slider,
       sliderMin: 0,
       sliderMax: 1,
     },
     position_status_icons_outside_the_token: {
       display: "Place the status icons outside of the token.",
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
     },
   },
 
@@ -54,4 +55,4 @@ else {
     active_status_icon_opacity: 1,
     position_status_icons_outside_the_token: false,
   }
-});
+};

@@ -7,7 +7,6 @@ import { SheetTab, SheetTabSheetInstanceData } from '../../utils/SheetTab';
 import { LoadingDialog } from '../../utils/DialogComponents';
 import { import_multiple_files } from "../../utils/import_multiple_files";
 import {replaceAll} from "../../utils/MiscUtils";
-import {Handout, Character, CharacterBlobs, CharacterAttributes, CharacterSheetAttributeAttributes, CharacterSheetAttribute} from "roll20";
 import { promiseWait } from "../../utils/promiseWait";
 import {DialogBase} from "../../utils/DialogBase";
 import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} from "../../utils/DialogComponents";
@@ -25,7 +24,7 @@ interface Component_Export {
   type: string;
   repeating_id: string;
   old_character_id: string;
-  attributes: Array<CharacterSheetAttributeAttributes>;
+  attributes: Array<Roll20.CharacterSheetAttributeAttributes>;
 }
 
 interface Import_Dialog_Type_Group {
@@ -36,12 +35,12 @@ interface Import_Dialog_Type_Group {
 interface Import_Dialog_Imported_Attribute {
   old_repeating_id: string;
   new_repeating_id: string;
-  attribute: CharacterSheetAttribute;
+  attribute: Roll20.CharacterSheetAttribute;
 }
 
 class Import_Component_Dialog extends DialogBase<string> {
 
-  pc: Character;
+  pc: Roll20.Character;
   types: Array<Import_Dialog_Type_Group> = [];
   import_button: HTMLButtonElement;
   num_checked = 0;
@@ -71,7 +70,7 @@ class Import_Component_Dialog extends DialogBase<string> {
     this.update_import_button_state();
   }
 
-  public show(pc: Character, data: Component_Bundle_Export) {
+  public show(pc: Roll20.Character, data: Component_Bundle_Export) {
     this.types = [];
     this.pc = pc;
     this.num_checked = 0;
@@ -343,12 +342,12 @@ interface Export_Dialog_Component_Group {
 
 interface Export_Dialog_Component_Property {
   name: string;
-  attribute: CharacterSheetAttributeAttributes;
+  attribute: Roll20.CharacterSheetAttributeAttributes;
 }
 
 class Export_Component_Dialog extends DialogBase<string> {
 
-  pc: Character;
+  pc: Roll20.Character;
   types: Array<Export_Dialog_Type_Group> = [];
 
   export_individual_files = false;
@@ -359,7 +358,7 @@ class Export_Component_Dialog extends DialogBase<string> {
     super(undefined, {minWidth: "30%"});
   }
 
-  public show(pc: Character) {
+  public show(pc: Roll20.Character) {
     this.pc = pc;
     this.num_checked = 0;
     super.internalShow();
@@ -412,7 +411,7 @@ class Export_Component_Dialog extends DialogBase<string> {
         continue;
       }
 
-      var attributes: Array<CharacterSheetAttributeAttributes> = [];
+      var attributes: Array<Roll20.CharacterSheetAttributeAttributes> = [];
       for(const prop of component.properties) {
         attributes.push(prop.attribute);
       }
@@ -748,7 +747,7 @@ const get_default_character_save = (): any => {
 const SHEET_ID = "r20es-handout-button-enabled-sheet";
 
 const get_default_character_blobs = () => {
-  const blob: CharacterBlobs = {
+  const blob: Roll20.CharacterBlobs = {
     bio: null
   };
 
@@ -760,7 +759,7 @@ const get_default_character_blobs = () => {
   return blob;
 };
 
-const overwrite_char_v1 = (pc: Character, data: any): Promise<any> => {
+const overwrite_char_v1 = (pc: Roll20.Character, data: any): Promise<any> => {
   return new Promise((resolve, reject) => {
     //console.log("Schema 1");
 
@@ -799,7 +798,7 @@ const overwrite_char_v1 = (pc: Character, data: any): Promise<any> => {
   });
 }
 
-const overwrite_char_v2 = (pc: Character, data: any): Promise<any> => {
+const overwrite_char_v2 = (pc: Roll20.Character, data: any): Promise<any> => {
   return new Promise((resolve, reject) => {
     //console.log("Schema 2");
 
@@ -907,7 +906,7 @@ const overwrite_char_v2 = (pc: Character, data: any): Promise<any> => {
   });
 }
 
-const overwrite_handout_v3 = (handout: Handout , data: any): Promise<any> => {
+const overwrite_handout_v3 = (handout: Roll20.Handout , data: any): Promise<any> => {
   return new Promise((resolve, reject) => {
 
     let save = {

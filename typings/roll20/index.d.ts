@@ -1,7 +1,11 @@
-declare namespace Roll20 {
-  export function generateUUID(): string;
+export {}
 
-  export interface JukeboxFileStructure {
+declare global {
+
+function generateUUID(): string;
+
+namespace Roll20 {
+  interface JukeboxFileStructure {
       id: string;
       // name
       n: string;
@@ -11,7 +15,7 @@ declare namespace Roll20 {
       i: string[];
   }
 
-  export interface JukeboxSongAttributes {
+  interface JukeboxSongAttributes {
       id: string;
       loop: boolean;
       playing: boolean;
@@ -23,11 +27,11 @@ declare namespace Roll20 {
       volume: number;
   }
 
-  export interface JukeboxSong extends SyncObject<JukeboxSongAttributes> {
+  interface JukeboxSong extends SyncObject<JukeboxSongAttributes> {
 
   }
 
-  export interface SyncObject<TAttribs> {
+  interface SyncObject<TAttribs> {
       save: (data?: TAttribs | any, extra?: any) => TAttribs;
       syncedSave: (data? : TAttribs | any) => TAttribs;
 
@@ -44,37 +48,37 @@ declare namespace Roll20 {
       toJSON: () => TAttribs;
   }
 
-  export interface CharacterBlobs {
+  interface CharacterBlobs {
       gmnotes?: string;
       defaulttoken?: string;
       bio?: string;
   }
 
-  export interface RollableTableEntryAttributes {
+  interface RollableTableEntryAttributes {
       name: string;
       id: string;
       weight: number;
       avatar: string;
   }
 
-  export interface RollableTableEntry extends SyncObject<RollableTableEntryAttributes> {
+  interface RollableTableEntry extends SyncObject<RollableTableEntryAttributes> {
 
   }
 
-  export interface RollableTableAttributes {
+  interface RollableTableAttributes {
 
   }
 
-  export interface RollableTable extends SyncObject<RollableTableAttributes> {
+  interface RollableTable extends SyncObject<RollableTableAttributes> {
       tableitems: ObjectStorage<RollableTableEntry>;
   }
 
-  export interface PlayerAttributes {
+  interface PlayerAttributes {
       macrobar: string;
       displayname: string;
   }
 
-  export interface MacroAttributes {
+  interface MacroAttributes {
       action: string;
       id: string;
       istokenaction: boolean;
@@ -82,15 +86,15 @@ declare namespace Roll20 {
       visibleto: string;
   }
 
-  export interface Macro extends SyncObject<MacroAttributes> {
+  interface Macro extends SyncObject<MacroAttributes> {
 
   }
 
-  export interface Player extends SyncObject<PlayerAttributes> {
+  interface Player extends SyncObject<PlayerAttributes> {
       macros: ObjectStorage<Macro>
   }
 
-  export interface HandoutAttributes {
+  interface HandoutAttributes {
       archived: boolean;
       avatar: string;
       controlledby: string;
@@ -102,26 +106,26 @@ declare namespace Roll20 {
       tags: string;
   }
 
-  export interface HandoutBlobs {
+  interface HandoutBlobs {
       notes?: string;
       gmnotes?: string;
   }
 
-  export interface Handout extends SyncObject<HandoutAttributes>, IBlobObject<HandoutBlobs> {
+  interface Handout extends SyncObject<HandoutAttributes>, IBlobObject<HandoutBlobs> {
       collection: ObjectStorage<Handout>;
       editview: HandoutEditor;
   }
 
-  export interface IEditorDialog {
+  interface IEditorDialog {
       el: HTMLElement;
       render: () => void;
   }
 
-  export interface HandoutEditor extends IEditorDialog {
+  interface HandoutEditor extends IEditorDialog {
 
   }
 
-  export interface CharacterAttributes {
+  interface CharacterAttributes {
       name: string;
       avatar: string;
       tags: string;
@@ -139,22 +143,22 @@ declare namespace Roll20 {
       mancerstep?: string;
   }
 
-  export interface CharacterSheetAttributeAttributes {
+  interface CharacterSheetAttributeAttributes {
     name: string;
     current: string;
     max: string;
     id: string;
   }
 
-  export interface CharacterSheetAttribute extends SyncObject<CharacterSheetAttributeAttributes>{
+  interface CharacterSheetAttribute extends SyncObject<CharacterSheetAttributeAttributes>{
     view: CharacterSheetAttributeView;
   }
 
-  export interface CharacterSheetAttributeView {
+  interface CharacterSheetAttributeView {
     rebindEvents: (char: Character) => void;
   }
 
-  export interface CharacterAbilityAttributes {
+  interface CharacterAbilityAttributes {
     name: string;
     description: string;
     istokenaction: boolean;
@@ -162,17 +166,17 @@ declare namespace Roll20 {
     order: number;
   }
 
-  export interface CharacterAbility extends SyncObject<CharacterAbilityAttributes> {
+  interface CharacterAbility extends SyncObject<CharacterAbilityAttributes> {
 
   }
 
-  export interface IBlobObject<TBlobs> {
+  interface IBlobObject<TBlobs> {
       _blobcache: TBlobs;
       updateBlobs: (blobs: TBlobs) => void;
       _getLatestBlob: (blobName: string, callback: (blob: string) => void) => void;
   }
 
-  export interface Character extends SyncObject<CharacterAttributes>, IBlobObject<CharacterBlobs> {
+  interface Character extends SyncObject<CharacterAttributes>, IBlobObject<CharacterBlobs> {
       attribs: ObjectStorage<CharacterSheetAttribute>;
       abilities: ObjectStorage<CharacterAbility>;
       view: CharacterView;
@@ -201,7 +205,7 @@ declare namespace Roll20 {
 
   }
 
-  export interface CharacterView {
+  interface CharacterView {
       render: () => void;
       $el: any;
       showDialog: () => void;
@@ -210,7 +214,7 @@ declare namespace Roll20 {
       rebindEvents: (char: Character) => void;
   }
 
-  export interface CampaignAttributes {
+  interface CampaignAttributes {
       turnorder: string;
       playerpageid: string;
       jukeboxfolder: string;
@@ -220,7 +224,7 @@ declare namespace Roll20 {
       bar3_color: string;
   }
 
-  export interface Campaign extends SyncObject<CampaignAttributes> {
+  interface Campaign extends SyncObject<CampaignAttributes> {
       handouts: ObjectStorage<Handout>;
       characters: ObjectStorage<Character>;
       rollabletables: ObjectStorage<RollableTable>;
@@ -230,12 +234,12 @@ declare namespace Roll20 {
       activePage: () => Page;
   }
 
-  export interface MapTokenAttributes {
+  interface MapTokenAttributes {
       page_id: string;
       controlledby: string;
   }
 
-  export interface PageAttributes {
+  interface PageAttributes {
 
     vttes_default_camera_enabled: boolean;
     vttes_default_camera_x: number;
@@ -275,26 +279,26 @@ declare namespace Roll20 {
       zorder: string[]; // comma separated list of token ids
   }
 
-  export interface Page extends SyncObject<PageAttributes> {
+  interface Page extends SyncObject<PageAttributes> {
       thepaths: ObjectStorageWithBackbone<PathToken> | null;
       thegraphics: ObjectStorageWithBackbone<Token> | null;
       thetexts: ObjectStorageWithBackbone<TextToken> | null;
       addImage: (token: object, force_snap?: boolean, unused_1?: boolean, unused_2?: boolean, unused_3?: boolean, addToFrontAndFireModifier?: boolean) => Token;
   }
 
-  export interface BackboneFirebase {
+  interface BackboneFirebase {
       reference: Firebase
   }
 
-  export type FirebaseEventTypes = "value" | "child_added" | "child_removed" | "child_changed" | "child_moved";
+  type FirebaseEventTypes = "value" | "child_added" | "child_removed" | "child_changed" | "child_moved";
 
-  export interface FirebaseReference<T> {
+  interface FirebaseReference<T> {
       val: () => T;
       key: string;
       getPriority: () => number;
   }
 
-  export interface Firebase {
+  interface Firebase {
       // https://www.firebase.com/docs/web/api/query/on.html
       on: (event: FirebaseEventTypes, callback: Function) => void;
 
@@ -302,10 +306,10 @@ declare namespace Roll20 {
       off: (event?: FirebaseEventTypes, callback?: Function) => void;
   }
 
-  export interface TextTokenAttributes extends MapTokenAttributes {}
-  export interface TextToken extends SyncObject<TextTokenAttributes> { }
+  interface TextTokenAttributes extends MapTokenAttributes {}
+  interface TextToken extends SyncObject<TextTokenAttributes> { }
 
-  export interface PathTokenAttributes extends MapTokenAttributes {
+  interface PathTokenAttributes extends MapTokenAttributes {
       controlledby: string;
       fill:  string; // transparent
       groupwith: string;
@@ -326,7 +330,7 @@ declare namespace Roll20 {
   }
   type TokenViewPermissions = "hidden" | "editors" | "everyone";
 
-  export interface TokenAttributes extends MapTokenAttributes{
+  interface TokenAttributes extends MapTokenAttributes{
       night_vision_effect: string | null
       night_vision_distance: number
       vttes_dimming_start: number
@@ -400,22 +404,22 @@ declare namespace Roll20 {
       type: string;
   }
 
-  export interface Token extends SyncObject<TokenAttributes> {
+  interface Token extends SyncObject<TokenAttributes> {
       character?: Character;
 
   }
 
-  export interface PathToken extends SyncObject<PathTokenAttributes> {
+  interface PathToken extends SyncObject<PathTokenAttributes> {
 
   }
 
-  export interface FrameRecorder {
+  interface FrameRecorder {
       clear : () => void;
       shutdown : () => void;
       startup: () => void;
   }
 
-  export interface CanvasObject {
+  interface CanvasObject {
       _element: HTMLImageElement;
       // try_get_canvas_object_model
       top: number;
@@ -458,12 +462,12 @@ declare namespace Roll20 {
       height: number;
   }
 
-  export interface PlayerSettings {
+  interface PlayerSettings {
       refreshMacroBar: () => void;
       refreshRollsList: () => void;
   }
 
-  export interface InitiativeData {
+  interface InitiativeData {
       _pageid: string;
       custom: string;
       id: string;
@@ -471,19 +475,19 @@ declare namespace Roll20 {
       formula?: string;
   }
 
-  export interface InitiativeTracker {
+  interface InitiativeTracker {
       nextTurn: () => void;
       addTokenToList: (uuid: string, name?: string, formula?: string) => void;
       cleanList: () => InitiativeData[];
       model: Campaign;
   }
 
-  export interface Chat {
+  interface Chat {
       doChatInput: (message: string, /* unknown */ type?: string, callbackUUID?: string) => void;
       incoming: (playSound: boolean, data: any) => void;
   }
 
-  export interface ChatMessage {
+  interface ChatMessage {
     avatar: string | null;
     content: string | null;
     playerid: string | null;
@@ -499,12 +503,12 @@ declare namespace Roll20 {
   interface InlineRoll {
       results: InlineRollResults;
   }
-  export interface RollCallbackData {
+  interface RollCallbackData {
       // todo
       inlinerolls: InlineRoll[];
   }
 
-  export interface PingData {
+  interface PingData {
       left: number;
       top: number;
       radius: number;
@@ -513,12 +517,12 @@ declare namespace Roll20 {
       currentLayer: string;
   }
 
-  export interface LocalPingData {
+  interface LocalPingData {
       downx: number; // left
       downy: number; // top
   }
 
-  export interface Engine {
+  interface Engine {
       frame_recorder : FrameRecorder
       gm_layer_opacity: number;
       selected: () => CanvasObject[];
@@ -544,16 +548,16 @@ declare namespace Roll20 {
       setZoom: (coef: number, b?: any, c?: any) => void;
   }
 
-  export interface TokenEditor {
+  interface TokenEditor {
       removeRadialMenu: () => void;
       closeContextMenu: () => void;
   }
 
-  export interface CharacterEditor extends IEditorDialog {
+  interface CharacterEditor extends IEditorDialog {
       model: Character;
       collection: ObjectStorage<Character>
   }
-  export interface Canvas {
+  interface Canvas {
     getObjects: () => CanvasObject[];
     containsPoint: (e: MouseEvent, obj: CanvasObject) => boolean;
     width: number;
@@ -561,19 +565,19 @@ declare namespace Roll20 {
     freeDrawingBrush: FreeDrawingBrush;
   }
 
-  export interface FreeDrawingBrush {
+  interface FreeDrawingBrush {
     width: number;
   }
 
-  export interface Utils {
+  interface Utils {
       setupAvatar: (element: JQuery<any>, parentObject: any) => void;
   }
 
-  export interface Canvas_Overlay {
+  interface Canvas_Overlay {
       drawBackground: (e: CanvasRenderingContext2D, t: any) => void;
   }
 
-  export interface D20 {
+  interface D20 {
       canvas_overlay: Canvas_Overlay;
       Campaign: Campaign;
       engine: Engine;
@@ -585,28 +589,28 @@ declare namespace Roll20 {
       journal: D20Journal;
   }
 
-  export interface D20Journal {
+  interface D20Journal {
       customSheets: {
           workerScripts: string[];
       }
   }
 
-  export interface D20Jukebox {
+  interface D20Jukebox {
       lastFolderStructure: JukeboxFileStructure[];
       addItemToFolderStructure: (songId: string, folderId: string) => void;
       addFolderToFolderStructure: (name: string) => string;
   }
 
-  export interface GlobalJukebox {
+  interface GlobalJukebox {
       playlist: ObjectStorage<JukeboxSong>;
       soundObjs: {[id: string]: any}
   }
 
-  export interface ObjectStorageWithBackbone<T> extends ObjectStorage<T> {
+  interface ObjectStorageWithBackbone<T> extends ObjectStorage<T> {
       backboneFirebase: BackboneFirebase;
   }
 
-  export interface ObjectStorage<T> {
+  interface ObjectStorage<T> {
       length: number;
       models: T[];
       get: (uuid: string) => T;
@@ -619,14 +623,14 @@ declare namespace Roll20 {
       //reset: () => ObjectStorage<T>; local only, doesn't sync with firebase
   }
 
-  export interface R20ESKeys  {
+  interface R20ESKeys  {
     altDown: boolean
     shiftDown: boolean
     ctrlDown: boolean
     metaDown: boolean
   }
 
-  export interface R20ES {
+  interface R20ES {
     onDocumentMouseUp: (e: any) => void;
 
     onLoadingOverlayHide: () => void;
@@ -674,23 +678,23 @@ declare namespace Roll20 {
     have_configs_been_loaded: boolean;
   }
 
-  export interface Mousetrap {
+  interface Mousetrap {
     bind: (keys: string, cb: Function) => void;
     unbind: (keys: string, cb?: Function) => void;
   }
 
 
-  export interface SoundManager {
+  interface SoundManager {
     createSound: (sound: {id: string, url: string}) => any;
-  }
-
-  export interface R20ESChrome {
-    readyCallbacks: Array<Function>;
   }
 }
 
+interface R20ESChrome {
+  readyCallbacks: Array<Function>;
+}
+
 interface Window {
-  r20esChrome: Roll20.R20ESChrome;
+  r20esChrome: R20ESChrome;
 
   d20setMode: (str: string) => void;
   Jukebox: Roll20.GlobalJukebox;
@@ -712,20 +716,82 @@ interface Window {
   injectWebsiteOK: boolean;
   hasInjectedModules: boolean;
 
-
   USERSCRIPT_VTT_BUNDLE_DATA : string | undefined;
   USERSCRIPT_BASE_DATA : string | undefined;
   USERSCRIPT_APP_DATA : string | undefined;
 }
 
-declare module 'roll20' {
-  export = Roll20;
+const BUILD_CONSTANT_VERSION: string;
+const BUILD_CONSTANT_COMMIT: string;
+const BUILD_CONSTANT_BRANCH: string;
+const BUILD_CONSTANT_TARGET_PLATFORM : string;
+const BUILD_CONSTANT_CHANGELOG: string;
+const BUILD_CONSTANT_VTTES_IS_DEV: boolean;
+const BUILD_CONSTANT_LOGO_B64: string;
+
+namespace VTTES {
+  interface Module_Mod {
+    includes: string;
+    find: string;
+    patch: string;
+
+    stability_checks?: Array<string>;
+  }
+
+  const enum Config_View_Type {
+    Slider="slider",
+    Dropdown="dropdown",
+    Checkbox="checkbox",
+    Number="number",
+    Color="color",
+    MouseButtonIndex="mouse_button_index",
+    Text="string",
+  }
+
+  interface Config_View {
+    type: Config_View_Type;
+    display: string;
+
+    sliderMin?: number;
+    sliderMax?: number;
+
+    dropdownValues?: Record<string | number, string>;
+
+    onlyWhenHasB20?: boolean;
+  }
+
+  const enum Module_Category {
+    canvas = "Canvas",
+    exportImport = "Exporting/Importing",
+    freedom = "Libre",
+    initiative = "Initiative",
+    token = "Token",
+    journal = "Journal",
+    misc = "Misc.",
+  }
+
+  interface Module_Config {
+    filename: string;
+    id: string;
+    name: string;
+    description: string;
+    category: Module_Category;
+    gmOnly: boolean;
+
+    force?: boolean;
+    forceShowConfig?: boolean;
+
+    media?: Record<string, string>
+
+    mods?: Array<Module_Mod>;
+
+    configView?: Record<string, Config_View>;
+    config?: Record<string,any>;
+
+    urls?: Record<string, string>;
+  }
+
 }
 
-declare const BUILD_CONSTANT_VERSION: string;
-declare const BUILD_CONSTANT_COMMIT: string;
-declare const BUILD_CONSTANT_BRANCH: string;
-declare const BUILD_CONSTANT_TARGET_PLATFORM : string;
-declare const BUILD_CONSTANT_CHANGELOG: string;
-declare const BUILD_CONSTANT_VTTES_IS_DEV: boolean;
-declare const BUILD_CONSTANT_LOGO_B64: string;
+}
+

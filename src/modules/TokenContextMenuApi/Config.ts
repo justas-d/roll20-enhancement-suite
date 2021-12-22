@@ -1,6 +1,11 @@
-import MakeConfig from '../MakeConfig'; import Category from '../Category';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
-    id: "tokenContextMenuApiModule",
-    force: true
-});
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
+  id: "tokenContextMenuApiModule",
+  name: "tokenContextMenuApiModule",
+  description: "",
+  category: VTTES.Module_Category.misc,
+  gmOnly: false,
+  force: true,
+};

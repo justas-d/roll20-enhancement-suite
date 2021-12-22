@@ -2,7 +2,6 @@ import {
     IMacroGenerator,
     IMacroFactory, IGeneratedMacro
 } from '../modules/MacroGenerator/IMacroGenerator'
-import { Character } from 'roll20';
 import lexCompare from "../utils/LexicographicalComparator";
 import {Optional} from "../utils/TypescriptUtils";
 import { create } from 'underscore';
@@ -72,7 +71,7 @@ let dataSet: {[id: string]: RepeatingDataSet} = {
 	},
 };
 
-const tryGetRepeatingName = (character: Character, group: string, abilityId: string, nameSuffix: string): Optional<string> => {
+const tryGetRepeatingName = (character: Roll20.Character, group: string, abilityId: string, nameSuffix: string): Optional<string> => {
     const query = `${group}_${abilityId}_${nameSuffix}`;
     const name = character.attribs.models.find(a => a.get("name") === query);
 
@@ -92,7 +91,7 @@ const tryGetRepeatingName = (character: Character, group: string, abilityId: str
     return name.attributes.current;
 };
 
-const getAbilityIdsOfGroup = (character: Character, group: string) => {
+const getAbilityIdsOfGroup = (character: Roll20.Character, group: string) => {
     let table = {};
 
     // create a sorted table so that we can create abilities that reference actions by index.
@@ -110,7 +109,7 @@ const getAbilityIdsOfGroup = (character: Character, group: string) => {
     return character.repeatingKeyOrder(Object.keys(table), group);
 };
 
-const generateMacroDataForRepeating = (char: Character,
+const generateMacroDataForRepeating = (char: Roll20.Character,
                                        group: string,
                                        nameAttrib: string,
                                        macroFactory: (idx: number) => string,
@@ -163,7 +162,7 @@ let macroFactories: IMacroFactory[] = [];
 for (let name in dataSet) {
     const data = dataSet[name];
 
-    let folderGenerator = (char: Character) => {
+    let folderGenerator = (char: Roll20.Character) => {
         const macros = generateMacroDataForRepeating(char, data.group, data.name, data.macro, data.hasMultiAttacks, true);
         macros.sort((a, b) => lexCompare(a, b, (d: IGeneratedMacro) => d.name));
 

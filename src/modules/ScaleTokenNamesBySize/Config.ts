@@ -1,11 +1,12 @@
-import MakeConfig from '../MakeConfig'; import Category from '../Category';
-import ConfigViews from "../../utils/ConfigViews";
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "scaleTokenNamesBySize",
   name: `Scale Token Names By Size`,
   description: `Scales canvas token names proportionally by their size. Smaller tokens display smaller names while larger ones have large names.`,
-  category: Category.canvas,
+  category: VTTES.Module_Category.canvas,
+  gmOnly: false,
 
   mods: [
     {
@@ -20,17 +21,17 @@ export default MakeConfig(__dirname, {
   configView: {
     widthThreshold: {
       display: "The unit width of a token. Nameplates will not be scaled when a token has this width.",
-      type: ConfigViews.Number
+      type: VTTES.Config_View_Type.Number
     },
 
     scaleIfLarger: {
       display: "Scale nameplate if token width is larger than the unit width.",
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
     },
 
     scaleIfSmaller: {
       display: "Scale nameplate if token is smaller than the unit width.",
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
     }
   },
 
@@ -39,4 +40,4 @@ export default MakeConfig(__dirname, {
     scaleIfLarger: false,
     scaleIfSmaller: true,
   }
-});
+};

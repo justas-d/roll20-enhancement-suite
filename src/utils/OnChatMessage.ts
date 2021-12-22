@@ -1,5 +1,3 @@
-import { FirebaseReference, ChatMessage } from "roll20";
-
 let chat_firebase: any = null;
 
 type Callback = (ref: FirebaseReference<ChatMessage>, key: string) => void;

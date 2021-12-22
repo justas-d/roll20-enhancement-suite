@@ -1,12 +1,11 @@
 import { R20Module } from "../../utils/R20Module"
 import { R20 } from "../../utils/R20";
-import { Page } from "roll20";
 import {IOModuleCommon} from "../IOModuleCommon";
 import {IResult} from "../../utils/Result";
 import {IApplyableJukeboxPlaylist, JukeboxIO} from "../../utils/JukeboxIO";
 import { DOM } from "../../utils/DOM";
 
-const does_page_have_default_camera_settings = (page: Page) => {
+const does_page_have_default_camera_settings = (page: Roll20.Page) => {
   if(typeof(page.attributes.vttes_default_camera_enabled) != "boolean") return false;
   if(typeof(page.attributes.vttes_default_camera_zoom) != "number") return false;
   if(typeof(page.attributes.vttes_default_camera_x) != "number") return false;
@@ -15,7 +14,7 @@ const does_page_have_default_camera_settings = (page: Page) => {
   return true;
 }
 
-const does_page_have_default_camera_enabled = (page: Page) => {
+const does_page_have_default_camera_enabled = (page: Roll20.Page) => {
   if(!does_page_have_default_camera_settings(page)) {
     return false;
   }

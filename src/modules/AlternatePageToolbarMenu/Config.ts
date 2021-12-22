@@ -1,12 +1,12 @@
-import MakeConfig from '../MakeConfig'; 
-import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "alternativePageToolbarMenu",
   name: "Alternative Page Toolbar Menu",
   description: "Replaces the default page toolbar menu with a more concise one. Right clicking the name of the page will enable you to edit it. Vivaldi users: double right-click to edit name.",
-  category: Category.canvas,
+  category: VTTES.Module_Category.canvas,
+  gmOnly: false,
 
   media: {
     "page_toolbar.png": "Alternative page toolbar menu on the right side."
@@ -14,7 +14,7 @@ export default MakeConfig(__dirname, {
 
   configView: {
     opacity: {
-      type: ConfigViews.Slider,
+      type: VTTES.Config_View_Type.Slider,
       display: "Opacity",
 
       sliderMin: 0,
@@ -22,7 +22,7 @@ export default MakeConfig(__dirname, {
     },
 
     location: {
-      type: ConfigViews.Dropdown,
+      type: VTTES.Config_View_Type.Dropdown,
       display: "Location",
 
       dropdownValues: {
@@ -36,26 +36,4 @@ export default MakeConfig(__dirname, {
     opacity: 1,
     location: "right"
   },
-
-  mods: [
-    /*
-    { // multi-axis drag
-      "includes": "vtt.bundle.js",
-      "find": `e",axis:"x"`,
-      "patch": `e"`
-    },
-
-    { // multi-axis drag
-      "includes": "vtt.bundle.js",
-      "find": `,axis:"x"}).addTouch()`,
-      "patch": `}).addTouch()`
-    },
-
-    { // no tooltips in toolbar
-      "includes": "vtt.bundle.js",
-      "find": `<div class='pictos duplicate showtip' title='Duplicate Page'>;</div><div class='pictos settings showtip' title='Page Settings'>y</div></div>`,
-      "patch": `<div class='pictos duplicate'>;</div><div class='pictos settings'>y</div></div>`
-    }
-    */
-  ]
-});
+};

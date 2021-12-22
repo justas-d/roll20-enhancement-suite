@@ -1,12 +1,12 @@
-import MakeConfig from '../MakeConfig';
-import Category from '../Category';
-import ConfigViews from '../../utils/ConfigViews';
+import TransformDirname from '../../utils/TransformDirname'
 
-export default MakeConfig(__dirname, {
+export default <VTTES.Module_Config> {
+  filename: TransformDirname(__dirname),
   id: "rememberTextToolSettings",
   name: "Remember Text Tool Settings",
   description: "Remembers the last used settings for the text tool.",
-  category: Category.canvas,
+  category: VTTES.Module_Category.canvas,
+  gmOnly: false,
 
   config: {
     copyTextSettingsOnSelect: false,
@@ -18,25 +18,24 @@ export default MakeConfig(__dirname, {
   configView: {
     copyTextSettingsOnSelect: {
       display: "Mirror selected text settings?",
-      type: ConfigViews.Checkbox,
+      type: VTTES.Config_View_Type.Checkbox,
     },
 
     color: {
       display: "Current Text Color",
-      type: ConfigViews.Text,
+      type: VTTES.Config_View_Type.Text,
     },
 
     size: {
       display: "Current Text Size",
-      type: ConfigViews.Number,
+      type: VTTES.Config_View_Type.Number,
     },
 
     font: {
       display: "Current Text Font",
-      type: ConfigViews.Text,
+      type: VTTES.Config_View_Type.Text,
     },
   },
-
 
   mods: [
     {
@@ -50,6 +49,4 @@ export default MakeConfig(__dirname, {
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`,
     }
   ]
-});
-
-
+};

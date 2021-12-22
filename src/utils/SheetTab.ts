@@ -1,5 +1,4 @@
 import {R20} from "./R20";
-import {Character} from "roll20";
 import {DOM} from "./DOM";
 
 export class InternalSheetTabData {
@@ -52,7 +51,7 @@ export class SheetTab<T> {
     public renderFx: (instance?: SheetTabSheetInstanceData<T>) => HTMLElement;
     public id: string;
 
-    public predicate: ((char: Character) => boolean) | null;
+    public predicate: ((char: Roll20.Character) => boolean) | null;
     public onShow: ((instance?: SheetTabSheetInstanceData<T>) => void) | null;
     public byIdSheetData: {[charId: string]: SheetTabSheetInstanceData<T>} = {};
 
@@ -92,7 +91,7 @@ export class SheetTab<T> {
     public static add<T>(name: string,
                       renderFx: (instance?: SheetTabSheetInstanceData<T>) => HTMLElement,
                       onShow?: (instance?: SheetTabSheetInstanceData<T>) => void,
-                      predicate? : (char: Character) => boolean) {
+                      predicate? : (char: Roll20.Character) => boolean) {
         const data = SheetTab._getInternalData();
         let tab = new SheetTab(name, renderFx, `r20es-character-sheet-tab-${data.idTop++}`, onShow);
         tab.predicate = predicate;

@@ -1,5 +1,4 @@
 import {R20Module} from "../../utils/R20Module"
-import {CanvasObject} from "roll20";
 import {R20} from "../../utils/R20";
 
 class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
@@ -11,7 +10,7 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
         R20.renderAll();
     }
 
-    getScale = (token: CanvasObject) => {
+    getScale = (token: Roll20.CanvasObject) => {
         const cfg = this.getHook().config;
         let scale = token.width / cfg.widthThreshold;
 
@@ -21,7 +20,7 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
         return scale;
     };
 
-    private prepNameplateBack = (token: CanvasObject, e: CanvasRenderingContext2D) => {
+    private prepNameplateBack = (token: Roll20.CanvasObject, e: CanvasRenderingContext2D) => {
         try {
             const cfg = this.getHook().config;
             let scale = this.getScale(token);
@@ -41,7 +40,7 @@ class ScaleTokenNamesBySizeModule extends R20Module.OnAppLoadBase {
         }
     };
 
-    private prepNameplateText = (token: CanvasObject, e: CanvasRenderingContext2D) => {
+    private prepNameplateText = (token: Roll20.CanvasObject, e: CanvasRenderingContext2D) => {
         try {
             let scale = this.getScale(token) - 1;
             token._nameplate_data.position[1] += token._nameplate_data.font_size * scale;
