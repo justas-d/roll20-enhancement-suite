@@ -18,10 +18,10 @@ export default <VTTES.Module_Config> {
     {
       includes: "vtt.bundle.js",
       find: `\`/audio_library/play/\${campaign_id}/\${D.split("-")[0]}\``,
-      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(k)) ? D : >>R20ES_MOD_FIND>>)`,
+      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(B)) ? D : >>R20ES_MOD_FIND>>)`,
 
       stability_checks: [
-        'if(k.get("playing")&&k.get("softstop")==!1)',
+        `if(B.get("playing")&&B.get("softstop")==!1)`,
       ],
     },
     {

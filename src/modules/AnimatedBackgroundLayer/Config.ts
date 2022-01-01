@@ -45,7 +45,7 @@ export default <VTTES.Module_Config> {
       }`,
 
       stability_checks: [
-        'd20.engine.setZoom=(A,k,D)',
+        `d20.engine.setZoom=(A,B,D)`,
       ],
     }
   ]
