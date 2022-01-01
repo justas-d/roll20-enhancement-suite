@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import {VTTES_MODULE_CONFIGS}from '../src/Configs';
 import GTag from './GTag'
 import NavBar from './NavBar'
-import { trash } from "./you_cant_just_define_a_global_variable";
 
 function FeatureCard(props) {
     const cfg = props.config;
