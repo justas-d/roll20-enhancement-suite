@@ -40,61 +40,61 @@ export default <VTTES.Module_Config> {
     {
       includes: "vtt.bundle.js",
       find: `y:[0,1]};`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(A,B); }`,
+      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(I,j); }`,
 
       stability_checks: [
-        `y=function(A,B,D,z,N,F)`,
+        `P=function(I,j,q,U,H,ne)`,
       ],
     },
 
     {
       includes: "vtt.bundle.js",
-      find: "x:B.x-d20.engine.currentCanvasOffset[0],",
+      find: "x:j.x-d20.engine.currentCanvasOffset[0],",
       patch: `
-vttes_radius_mode: B.vttes_radius_mode,
-vttes_box_mode: B.vttes_box_mode,
-vttes_cone_mode: B.vttes_cone_mode,
-vttes_cone_degrees: B.vttes_cone_degrees,
-vttes_line_mode: B.vttes_line_mode,
-vttes_line_width: B.vttes_line_width,
-vttes_ruler_mode: B.vttes_ruler_mode,
+vttes_radius_mode: j.vttes_radius_mode,
+vttes_box_mode: j.vttes_box_mode,
+vttes_cone_mode: j.vttes_cone_mode,
+vttes_cone_degrees: j.vttes_cone_degrees,
+vttes_line_mode: j.vttes_line_mode,
+vttes_line_width: j.vttes_line_width,
+vttes_ruler_mode: j.vttes_ruler_mode,
 >>R20ES_MOD_FIND>>
 `,
       stability_checks: [
-        `_.each(d20.engine.measurements,function(B)`,
+        `_.each(d20.engine.measurements,function(j)`,
       ],
     },
 
     // NOTE(justasd): will replace two occurances.
     {
       includes: "vtt.bundle.js",
-      find: "color:B.color,flags:B.flags,",
+      find: "color:j.color,flags:j.flags,",
       patch: `
-vttes_radius_mode: B.vttes_radius_mode,
-vttes_box_mode: B.vttes_box_mode,
-vttes_cone_mode: B.vttes_cone_mode,
-vttes_cone_degrees: B.vttes_cone_degrees,
-vttes_line_mode: B.vttes_line_mode,
-vttes_line_width: B.vttes_line_width,
-vttes_ruler_mode: B.vttes_ruler_mode,
+vttes_radius_mode: j.vttes_radius_mode,
+vttes_box_mode: j.vttes_box_mode,
+vttes_cone_mode: j.vttes_cone_mode,
+vttes_cone_degrees: j.vttes_cone_degrees,
+vttes_line_mode: j.vttes_line_mode,
+vttes_line_width: j.vttes_line_width,
+vttes_ruler_mode: j.vttes_ruler_mode,
 >>R20ES_MOD_FIND>>
 `,
       stability_checks: [
-        `var W=function(A,B)`,
+        `var W=function(I,j)`,
       ],
     },
     {
       includes: "vtt.bundle.js",
-      find: "d20.engine.announceMeasure=function(A){",
+      find: "d20.engine.announceMeasure=function(I){",
       patch: `>>R20ES_MOD_FIND>>
 if(window.r20es && window.r20es.extra_ruler_set_mode) {
-  A.vttes_radius_mode = window.r20es.extra_ruler.radius_mode;
-  A.vttes_box_mode = window.r20es.extra_ruler.box_mode;
-  A.vttes_cone_mode = window.r20es.extra_ruler.cone_mode;
-  A.vttes_cone_degrees = window.r20es.extra_ruler.cone_degrees;
-  A.vttes_line_mode = window.r20es.extra_ruler.line_mode;
-  A.vttes_line_width = window.r20es.extra_ruler.line_width;
-  A.vttes_ruler_mode = window.r20es.extra_ruler.ruler_mode;
+  I.vttes_radius_mode = window.r20es.extra_ruler.radius_mode;
+  I.vttes_box_mode = window.r20es.extra_ruler.box_mode;
+  I.vttes_cone_mode = window.r20es.extra_ruler.cone_mode;
+  I.vttes_cone_degrees = window.r20es.extra_ruler.cone_degrees;
+  I.vttes_line_mode = window.r20es.extra_ruler.line_mode;
+  I.vttes_line_width = window.r20es.extra_ruler.line_width;
+  I.vttes_ruler_mode = window.r20es.extra_ruler.ruler_mode;
 }
 `,
     },

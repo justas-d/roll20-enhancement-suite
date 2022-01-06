@@ -11,11 +11,12 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `u.defaulttoken=i.model._blobcache.defaulttoken`,
-      patch: `u.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(i, d) : i.model._blobcache.defaulttoken)`,
+      find: `f.defaulttoken=i.model._blobcache.defaulttoken`,
+
+      patch: `f.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(i, u) : i.model._blobcache.defaulttoken)`,
 
       stability_checks: [
-        `const d=i.model.collection.create(f);setTimeout(()=>{const g={};`,
+        `const u=i.model.collection.create(g);setTimeout(()=>{const a={};`,
       ],
     },
   ],

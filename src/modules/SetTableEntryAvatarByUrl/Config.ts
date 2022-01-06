@@ -16,8 +16,8 @@ export default <VTTES.Module_Config> {
   mods: [
     { // add table entry && table ids to popup
       includes: "vtt.bundle.js",
-      find: `y.$el.is(":visible")&&y.render()}),this.$el.on("click",".deleteitem"`,
-      patch: `y.$el.is(":visible")&&y.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", y.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", y.model.id),this.$el.on("click",".deleteitem"`,
+      find: `A.$el.is(":visible")&&A.render()}),this.$el.on("click",".deleteitem"`,
+      patch: `A.$el.is(":visible")&&A.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", A.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", A.model.id),this.$el.on("click",".deleteitem"`,
     },
   ]
 };

@@ -16,8 +16,8 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `y.push(A[0]);`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(y[0]); }`,
+      find: `A.push(D[0]);`,
+      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(A[0]); }`,
     },
   ],
 };
