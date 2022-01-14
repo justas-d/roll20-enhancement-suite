@@ -123,21 +123,23 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
       const retry_interval = 1000;
       const check = () => {
 
-        body = iframe.contentDocument.body;
-        //console.log("body", body);
-        if(body) {
-          const dialog = body.querySelector("#dialog-window");
+        if(iframe.contentDocument) {
+          body = iframe.contentDocument.body;
+          //console.log("body", body);
+          if(body) {
+            const dialog = body.querySelector("#dialog-window");
 
-          //console.log("dialog", dialog);
+            //console.log("dialog", dialog);
 
-          if(dialog) {
-            navTabsRoot = dialog.querySelector(".nav-tabs");
+            if(dialog) {
+              navTabsRoot = dialog.querySelector(".nav-tabs");
 
-            //console.log("navTabsRoot", navTabsRoot);
+              //console.log("navTabsRoot", navTabsRoot);
 
-            if(navTabsRoot) {
-              ok();
-              return;
+              if(navTabsRoot) {
+                ok();
+                return;
+              }
             }
           }
         }
@@ -148,7 +150,7 @@ class SheetTabApiModule extends R20Module.OnAppLoadBase {
       setTimeout(check, retry_interval);
     });
 
-    const timeout = promiseWait(10000)
+    const timeout = promiseWait(10000);
 
     await Promise.race([retry, timeout]);
 
