@@ -1,5 +1,5 @@
 {
-    "current": "1.26.8",
+    "current": "1.26.9",
     "versions": {
         "1.4.0": {
             "info": {
@@ -1971,6 +1971,18 @@
         "1.26.8": {
             "info": {
                 "title": "More Module Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix various modules not working."
+                }
+            ]
+        },
+        "1.26.9": {
+            "info": {
+                "title": "More More Module Fixes",
                 "media": ""
             },
             "changes": [
