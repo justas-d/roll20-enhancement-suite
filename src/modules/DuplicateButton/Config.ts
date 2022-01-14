@@ -24,7 +24,7 @@ export default <VTTES.Module_Config> {
         $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
 
       stability_checks: [
-        `var k=m.attr("data-itemid")`,
+        `var x=m.attr("data-itemid")`,
       ],
     },
   ]

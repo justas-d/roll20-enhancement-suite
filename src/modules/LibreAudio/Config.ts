@@ -19,15 +19,15 @@ export default <VTTES.Module_Config> {
       includes: "vtt.bundle.js",
       find: `\`/audio_library/play/\${campaign_id}/\${V.split("-")[0]}\``,
 
-      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(D)) ? V : >>R20ES_MOD_FIND>>)`,
+      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(M)) ? V : >>R20ES_MOD_FIND>>)`,
 
       stability_checks: [
-        `if(D.get("playing")&&D.get("softstop")==!1)`,
+        `if(M.get("playing")&&M.get("softstop")==!1)`,
       ],
     },
     {
       includes: "vtt.bundle.js",
-      find: `d20.Campaign.players.filter(U=>U.get("online")).length>15`,
+      find: `d20.Campaign.players.filter(j=>j.get("online")).length>15`,
       patch: "false",
     }
   ]

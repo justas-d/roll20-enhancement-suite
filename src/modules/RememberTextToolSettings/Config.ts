@@ -45,7 +45,7 @@ export default <VTTES.Module_Config> {
     },
     {
       includes: "vtt.bundle.js",
-      find: `$("#font-size").val(pe).trigger("keyup"),$("#font-color").val(he).trigger("change-silent"),$("#font-family").val(re);`,
+      find: `$("#font-size").val(he).trigger("keyup"),$("#font-color").val(ge).trigger("change-silent"),$("#font-family").val(re);`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`,
     }
   ]
