@@ -15,17 +15,17 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `this._positionAndScaleStatusIcons(c,f.length),u.save(),`,
+      find: `this._positionAndScaleStatusIcons(t,b.length),d.save(),`,
 
       patch: `
 if(window.r20es.statusDraw) { 
-  if(!window.r20es.statusDraw(u, this, f, c)) { 
+  if(!window.r20es.statusDraw(d, this, b, t)) { 
       return;
   } 
 } 
 else { 
-  this._positionAndScaleStatusIcons(c,f.length);
-  u.save();
+  this._positionAndScaleStatusIcons(t,b.length);
+  d.save();
 }
 `
     }
