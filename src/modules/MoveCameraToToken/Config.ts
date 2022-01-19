@@ -16,8 +16,10 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `A.push(I[0]);`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(A[0]); }`,
+      // NOTE(justasd): search for nextTurn() {
+      // 2022-01-19
+      find: `T.push(U[0]);`,
+      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.moveCameraTo) { window.r20es.moveCameraTo(T[0]); }`,
     },
   ],
 };
