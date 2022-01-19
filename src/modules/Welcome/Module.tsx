@@ -25,7 +25,7 @@ class WelcomeModule extends R20Module.OnAppLoadBase {
 <br/>
 
 <a href="${Config.discordInvite}">
-<img style="margin-right: 5px; width: 26px; height: 26px" src="https://discordapp.com/assets/1c8a54f25d101bdc607cec7228247a9a.svg"/> <span style="color: orange;"><b>Discord Server</b></span>
+<img style="margin-right: 5px; width: 26px; height: 26px" src="https://discordapp.com/assets/1c8a54f25d101bdc607cec7228247a9a.svg"/> <span style="color: orange;"><b>VTTES Discord Server</b></span>
 </a>
 
 <br/>
