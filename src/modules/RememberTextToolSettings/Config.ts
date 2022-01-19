@@ -43,9 +43,12 @@ export default <VTTES.Module_Config> {
       find: `g.type=="text"&&($("#font-size").val(g.model.get("font_size"))`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) >>R20ES_MOD_FIND>>`,
     },
+
+    // NOTE(justasd): search for d20.engine.editText = function
+    // 2022-01-19
     {
       includes: "vtt.bundle.js",
-      find: `$("#font-size").val(he).trigger("keyup"),$("#font-color").val(ge).trigger("change-silent"),$("#font-family").val(re);`,
+      find: `$("#font-size").val(te).trigger("keyup"),$("#font-color").val(oe).trigger("change-silent"),$("#font-family").val(Z);`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`,
     }
   ]

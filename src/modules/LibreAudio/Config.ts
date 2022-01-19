@@ -27,7 +27,7 @@ export default <VTTES.Module_Config> {
     },
     {
       includes: "vtt.bundle.js",
-      find: `d20.Campaign.players.filter(j=>j.get("online")).length>15`,
+      find: `d20.Campaign.players.filter(U=>U.get("online")).length>15`,
       patch: "false",
     }
   ]

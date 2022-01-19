@@ -24,7 +24,9 @@ export default <VTTES.Module_Config> {
         $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
 
       stability_checks: [
-        `var x=m.attr("data-itemid")`,
+        // NOTE(justasd): search for showtoplayers
+        // 2022-01-19
+        `var k=m.attr("data-itemid")`,
       ],
     },
   ]
