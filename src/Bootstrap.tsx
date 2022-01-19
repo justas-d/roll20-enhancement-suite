@@ -16,10 +16,6 @@ const LOCALSTORAGE_SAVE_DATA_KEY = "vttes_userscript_config";
 
 export const bootstrap = () => {
 
-  if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
-    window.enhancementSuiteEnabled = true;
-  }
-
   // @FirefoxExtensionReloading
   window.hasInjectedModules = false;
 

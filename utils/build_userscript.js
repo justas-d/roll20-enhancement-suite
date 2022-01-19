@@ -88,6 +88,9 @@ const meta = `// ==UserScript==
 `;
 
 script = `
+
+unsafeWindow.enhancementSuiteEnabled = true;
+
 const now = Date.now();
 
 // @UserscriptScriptFetching
