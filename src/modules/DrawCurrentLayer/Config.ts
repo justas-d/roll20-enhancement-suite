@@ -95,8 +95,8 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: "function setMode(i){",
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(i);}",
+      find: "function setMode(A){",
+      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(A);}",
     },
   ],
 };
