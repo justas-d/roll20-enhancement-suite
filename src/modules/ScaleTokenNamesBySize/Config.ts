@@ -11,10 +11,12 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `u.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),u.fillStyle="rgb(0,0,0)",u.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+p+this._nameplate_data.padding)`,
+      // NOTE(justasd): search for _drawNameplate: function(d)
+      // 2022-01-19
+      find: `d.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),d.fillStyle="rgb(0,0,0)",d.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+m+this._nameplate_data.padding)`,
     
-      patch: `window.r20es && window.r20es.prepNameplateBack && window.r20es.prepNameplateBack(this, u), u.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),u.fillStyle="rgb(0,0,0)",
-              window.r20es && window.r20es.prepNameplateText && window.r20es.prepNameplateText(this, u), u.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+p+this._nameplate_data.padding)`
+      patch: `window.r20es && window.r20es.prepNameplateBack && window.r20es.prepNameplateBack(this, d), d.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),d.fillStyle="rgb(0,0,0)",
+              window.r20es && window.r20es.prepNameplateText && window.r20es.prepNameplateText(this, d), d.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+m+this._nameplate_data.padding)`
     }
   ],
 
