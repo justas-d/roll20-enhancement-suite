@@ -16,9 +16,30 @@ export default <VTTES.Module_Config> {
   mods: [
     { // add table entry && table ids to popup
       includes: "vtt.bundle.js",
-      find: `A.$el.is(":visible")&&A.render()}),this.$el.on("click",".deleteitem"`,
-      patch: `A.$el.is(":visible")&&A.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", A.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", A.model.id),this.$el.on("click",".deleteitem"`,
+      // NOTE(justasd): search for tmpl_tableitemeditor
+      // 2022-01-19
+      find: `T.$el.is(":visible")&&T.render()}),this.$el.on("click",".deleteitem"`,
+
+      patch: `T.$el.is(":visible")&&T.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", T.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", T.model.id),this.$el.on("click",".deleteitem"`,
     },
+
+    // NOTE(justasd): TEMPFIX as they messed up somewhere.
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // FIXME REMOVE ASAP
+    // 2022-01-19
+    {
+      includes: "vtt.bundle.js",
+      find: `_.isFinite`,
+      patch: `isFinite`,
+    }
   ]
 };
 
