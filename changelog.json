@@ -1,5 +1,5 @@
 {
-    "current": "1.26.10",
+    "current": "1.26.11",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2001,6 +2001,18 @@
                 {
                     "id": "",
                     "content": "Fix various modules not working (thanks, Yorith the Dreamer, for the report!)"
+                }
+            ]
+        },
+        "1.26.11": {
+            "info": {
+                "title": "More^4 Module Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix various modules not working (thanks, Altia, for the report!)"
                 }
             ]
         }
