@@ -17,17 +17,17 @@ export default <VTTES.Module_Config> {
     // play libreaudio sounds
     {
       includes: "vtt.bundle.js",
-      find: `\`/audio_library/play/\${campaign_id}/\${V.split("-")[0]}\``,
+      find: `\`/audio_library/play/\${campaign_id}/\${J.split("-")[0]}\``,
 
-      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(M)) ? V : >>R20ES_MOD_FIND>>)`,
+      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(z)) ? J : >>R20ES_MOD_FIND>>)`,
 
       stability_checks: [
-        `if(M.get("playing")&&M.get("softstop")==!1)`,
+        `if(z.get("playing")&&z.get("softstop")==!1)`,
       ],
     },
     {
       includes: "vtt.bundle.js",
-      find: `d20.Campaign.players.filter(U=>U.get("online")).length>15`,
+      find: `d20.Campaign.players.filter(K=>K.get("online")).length>15`,
       patch: "false",
     }
   ]
