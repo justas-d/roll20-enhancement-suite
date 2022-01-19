@@ -16,8 +16,8 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `this._drawNameplate(u)),u.restore(),this`,
-      patch: `this._drawNameplate(u)),u.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(u, this)),this`,
+      find: `this._drawNameplate(d)),d.restore(),this`,
+      patch: `this._drawNameplate(d)),d.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(d, this)),this`,
     },
   ],
 
