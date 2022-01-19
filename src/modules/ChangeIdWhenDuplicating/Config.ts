@@ -11,12 +11,16 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `f.defaulttoken=i.model._blobcache.defaulttoken`,
+      // NOTE(justasd): search for CharacterEditorView =
+      // 2022-01-19
+      find: `b.defaulttoken=A.model._blobcache.defaulttoken`,
 
-      patch: `f.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(i, u) : i.model._blobcache.defaulttoken)`,
+      patch: `b.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(A, d) : i.model._blobcache.defaulttoken)`,
 
       stability_checks: [
-        `const u=i.model.collection.create(g);setTimeout(()=>{const a={};`,
+        // NOTE(justasd): search for CharacterEditorView =
+        // 2022-01-19
+        `setTimeout(()=>{let h=d.get("attrorder");`,
       ],
     },
   ],
