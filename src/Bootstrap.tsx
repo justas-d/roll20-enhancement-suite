@@ -277,19 +277,16 @@ export const bootstrap = () => {
     });
 
     /*
-      NOTE(justasd): script order as of 2021-12-01
-      running https://app.roll20.net/v2/js/jquery-1.9.1.js
-      running https://app.roll20.net/v2/js/jquery.migrate.js
-      running https://app.roll20.net/js/featuredetect.js?2
-      running https://app.roll20.net/v2/js/patience.js
-      running https://app.roll20.net/editor/startjs/?timestamp=
-      running https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?
-      running https://app.roll20.net/js/d20/loading.js?v=11
-      running https://cdn.roll20.net/production/base.js
-      running https://cdn.roll20.net/production/app.js
-      running https://app.roll20.net/assets/firebase.8.8.1.js
-      running https://cdn.roll20.net/production/vtt.bundle.js
-      running https://app.roll20.net/js/tutorial_tips.js
+      NOTE(justasd): script order as of 2022-01-21
+      0 https://app.roll20.net/v2/js/jquery-1.9.1.js
+      1 https://app.roll20.net/v2/js/jquery.migrate.js
+      2 https://app.roll20.net/js/featuredetect.js?2
+      3 https://app.roll20.net/v2/js/patience.js
+      4 https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?
+      5 https://app.roll20.net/editor/startjs/?timestamp=
+      6 https://app.roll20.net/js/d20/loading.js?v=11
+      7 https://cdn.roll20.net/production/vtt.bundle.js
+      8 https://app.roll20.net/js/tutorial_tips.js
      */
 
     const now = Date.now();
@@ -298,8 +295,8 @@ export const bootstrap = () => {
     jobs.push(fetch_script(1, "https://app.roll20.net/v2/js/jquery.migrate.js?n"));
     jobs.push(fetch_script(2, "https://app.roll20.net/js/featuredetect.js?2n"));
     jobs.push(fetch_script(3, "https://app.roll20.net/v2/js/patience.js?n"));
+    jobs.push(fetch_script(4, `https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n${now}`));
 
-    jobs.push(fetch_script(5, `https://app.roll20.net/js/jquery-ui.1.9.0.custom.min.js?n${now}`));
     jobs.push(fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11"));
 
     if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
@@ -327,9 +324,7 @@ export const bootstrap = () => {
               });
             };
 
-            handle_script(7, data.BASE, "https://cdn.roll20.net/production/base.js");
-            handle_script(8, data.APP, "https://cdn.roll20.net/production/app.js");
-            handle_script(10, data.VTT_BUNDLE, "https://cdn.roll20.net/production/vtt.bundle.js");
+            handle_script(7, data.VTT_BUNDLE, "https://cdn.roll20.net/production/vtt.bundle.js");
 
             window.removeEventListener("message", listener);
             ok();
@@ -342,17 +337,10 @@ export const bootstrap = () => {
     else if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
       // @UserscriptScriptFetching
       jobs.push(fetch_script_from_userscript(
-        7, "USERSCRIPT_BASE_DATA", `https://cdn.roll20.net/production/base.js?n${now}`)
-      );
-      jobs.push(fetch_script_from_userscript(
-        8, "USERSCRIPT_APP_DATA", `https://cdn.roll20.net/production/app.js?n${now}`)
-      );
-      jobs.push(fetch_script_from_userscript(
-        10, "USERSCRIPT_VTT_BUNDLE_DATA", `https://cdn.roll20.net/production/vtt.bundle.js?n${now}`)
+        7, "USERSCRIPT_VTT_BUNDLE_DATA", `https://cdn.roll20.net/production/vtt.bundle.js?n${now}`)
       );
     }
-    jobs.push(fetch_script(9, "https://app.roll20.net/assets/firebase.8.8.1.js?n"));
-    jobs.push(fetch_script(11, "https://app.roll20.net/js/tutorial_tips.js?n"));
+    jobs.push(fetch_script(8, "https://app.roll20.net/js/tutorial_tips.js?n"));
     
     let script_nonce = "";
     jobs.push(new Promise<void>(ok => {
@@ -399,7 +387,7 @@ export const bootstrap = () => {
           startjs_url = startjs_url.slice(0, idx) + "?n=1&" + startjs_url.slice(idx+1);
           console.log("startjs_url after", startjs_url);
 
-          await fetch_script(4, startjs_url);
+          await fetch_script(5, startjs_url);
 
           ok();
         }

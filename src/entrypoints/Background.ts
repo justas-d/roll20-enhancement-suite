@@ -21,8 +21,6 @@ if(doesBrowserNotSupportResponseFiltering()) {
         results[key] = text;
       };
 
-      jobs.push(fetch_job("https://cdn.roll20.net/production/app.js?n", "APP"));
-      jobs.push(fetch_job("https://cdn.roll20.net/production/base.js?n", "BASE"));
       jobs.push(fetch_job("https://cdn.roll20.net/production/vtt.bundle.js?n", "VTT_BUNDLE"));
 
       Promise.all(jobs).then(() => {
@@ -50,7 +48,7 @@ if(doesBrowserNotSupportResponseFiltering()) {
       editor_requested_at = request.timeStamp;
     }
 
-    //console.log(request.url);
+    console.log(request.url);
 
     // NOTE(justasd): ignore any requests from iframes. We need this for char sheets to work as they
     // request some of the same scripts (jquery, patience etc) as the editor and we don't want to
@@ -98,21 +96,6 @@ if(doesBrowserNotSupportResponseFiltering()) {
     }
     else if(request.url.includes("app.roll20.net/js/d20/loading.js?v=11")) {
       if(!request.url.includes("app.roll20.net/js/d20/loading.js?n=11&v=11")) {
-        cancel = true;
-      }
-    }
-    else if(request.url.includes("app.roll20.net/assets/firebase.8.8.1.js")) {
-      if(!request.url.includes("app.roll20.net/assets/firebase.8.8.1.js?n")) {
-        cancel = true;
-      }
-    }
-    else if(request.url.includes("cdn.roll20.net/production/base.js")) {
-      if(!request.url.includes("cdn.roll20.net/production/base.js?n")) {
-        cancel = true;
-      }
-    }
-    else if(request.url.includes("cdn.roll20.net/production/app.js")) {
-      if(!request.url.includes("cdn.roll20.net/production/app.js?n")) {
         cancel = true;
       }
     }
