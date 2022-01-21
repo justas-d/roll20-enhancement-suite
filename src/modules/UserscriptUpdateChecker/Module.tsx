@@ -51,7 +51,7 @@ class UserscriptUpdateChecker extends R20Module.OnAppLoadBase {
 `);
           }
           else {
-            console.error("Userscript is up to date!");
+            console.log("Userscript is up to date!");
           }
         }
       } catch(err) {
