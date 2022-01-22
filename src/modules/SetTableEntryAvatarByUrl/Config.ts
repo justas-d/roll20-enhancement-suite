@@ -22,24 +22,6 @@ export default <VTTES.Module_Config> {
 
       patch: `T.$el.is(":visible")&&T.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", T.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", T.model.id),this.$el.on("click",".deleteitem"`,
     },
-
-    // NOTE(justasd): TEMPFIX as they messed up somewhere.
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // FIXME REMOVE ASAP
-    // 2022-01-19
-    {
-      includes: "vtt.bundle.js",
-      find: `_.isFinite`,
-      patch: `isFinite`,
-    }
   ]
 };
 
