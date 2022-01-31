@@ -2,13 +2,12 @@ import { VTTES_MODULE_CONFIGS } from "./Configs";
 import { VTTES_MODULES }from "./Modules";
 import { Config } from "./utils/Config";
 import { safeCall, findByIdAndRemove } from "./utils/MiscUtils";
-import showProblemPopup from "./utils/ProblemPopup";
 import { DOM } from "./utils/DOM";
 import {EventEmitter} from "./utils/EventEmitter";
 import { saveAs } from 'save-as'
 import {isChromium} from "./utils/BrowserDetection";
 import {apply_mods_to_text} from './HookUtils';
-import {getBrowser} from "./utils/MiscUtils";
+import browser from 'browser-detect';
 
 import { dialog_polyfill_script, dialog_polyfill_css } from "./dialog_polyfill";
 
@@ -27,26 +26,36 @@ export const bootstrap = () => {
       return;
     }
 
-    if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
-      showProblemPopup(
-        <div>
-          {`window.d20: ${typeof (window.d20)} ${window.d20}`}<br />
-          {`window.r20es: ${typeof (window.r20es)} ${window.r20es}`}<br />
-          {`window.hasInjectedModules: ${typeof (window.hasInjectedModules)} ${window.hasInjectedModules}`}<br/>
-          {"Is userscript!"}<br/>
-        </div>
-      );
-    }
-    else {
-      showProblemPopup(
-        <div>
-          {`window.d20: ${typeof (window.d20)} ${window.d20}`}<br />
-          {`window.r20es: ${typeof (window.r20es)} ${window.r20es}`}<br />
-          {`window.hasInjectedModules: ${typeof (window.hasInjectedModules)} ${window.hasInjectedModules}`}<br/>
+    const browser_info = browser();
 
-        </div>
-      );
-    }
+    const popup = (
+      <div className="r20es-welcome">
+        <h2>VTTES - Uh oh!</h2>
+        <p>Looks like loading is taking a while. There might be a bug somewhere.</p>
+        <p>Please try:</p>
+        <ul>
+          <li>Refreshing the page.</li>
+          <li>Disabling all other extensions.</li>
+          {browser_info.name !== "firefox" && <li>Using Firefox.</li>}
+        </ul>
+
+        <p>If this persists, please visit the <a href={Config.discordInvite}>Discord server</a> and let us know.</p>
+
+        <p className="r20es-code">
+          {`window.d20: ${typeof (window.d20)} ${window.d20}`}<br />
+          {`window.r20es: ${typeof (window.r20es)} ${window.r20es}`}<br />
+          {`window.hasInjectedModules: ${typeof (window.hasInjectedModules)} ${window.hasInjectedModules}`}<br/>
+          {`VTTES Version: ${BUILD_CONSTANT_VERSION}`}<br/>
+          {`Browser: ${browser_info.name} ${browser_info.versionNumber}`}<br/>
+          {BUILD_CONSTANT_TARGET_PLATFORM === "userscript" && "Is userscript!"}<br/>
+        </p>
+
+        <button onClick={() => popup.remove()}>OK</button>
+      </div> as any
+    );
+
+    const root = document.getElementById("playerzone");
+    root.parentElement.insertBefore(popup, root);
   }, 25 * 1000);
 
   const inject_dialog_stuff = () => {
