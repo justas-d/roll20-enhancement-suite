@@ -1,5 +1,5 @@
 {
-    "current": "1.26.14",
+    "current": "1.26.15",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2061,6 +2061,46 @@
                 {
                     "id": "",
                     "content": "Fix turn tracker modules."
+                }
+            ]
+        },
+        "1.26.15": {
+            "info": {
+                "title": "Fixes (thanks, darthbeep, for the report!)",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Make the disable player drawings module fully load pages."
+                },
+                {
+                    "id": "",
+                    "content": "Make the disable player drawings module not be enabled by default for extra performance."
+                },
+                {
+                    "id": "",
+                    "content": "Make the character token modifier load all pages when updating all tokens."
+                },
+                {
+                    "id": "",
+                    "content": "Fix animation disable module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix initiative modules."
+                },
+                {
+                    "id": "",
+                    "content": "Fix remember text tool settings module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix set table entry avatar by URL module."
+                },
+                {
+                    "id": "",
+                    "content": "Show browser and VTTES version on the 'Uh Oh' popup."
                 }
             ]
         }
