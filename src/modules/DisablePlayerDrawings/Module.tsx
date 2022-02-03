@@ -87,6 +87,12 @@ class DisablePlayerDrawings extends R20Module.OnAppLoadBase {
       return;
     }
 
+    // TODO(justasd): @HACK
+    // This will ensure that thepaths and thetexts are created before we access them.
+    // It's not performant however.
+    // 2022-02-03
+    page.fullyLoadPage();
+
     // NOTE(justas): initialization of backboneFirebase.reference is
     // delayed a bit here for whatever reason by roll20
     // So we're delaying too
