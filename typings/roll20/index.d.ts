@@ -280,10 +280,12 @@ namespace Roll20 {
   }
 
   interface Page extends SyncObject<PageAttributes> {
-      thepaths: ObjectStorageWithBackbone<PathToken> | null;
-      thegraphics: ObjectStorageWithBackbone<Token> | null;
-      thetexts: ObjectStorageWithBackbone<TextToken> | null;
-      addImage: (token: object, force_snap?: boolean, unused_1?: boolean, unused_2?: boolean, unused_3?: boolean, addToFrontAndFireModifier?: boolean) => Token;
+    thepaths: ObjectStorageWithBackbone<PathToken> | undefined;
+    thegraphics: ObjectStorageWithBackbone<Token> | undefined;
+    thetexts: ObjectStorageWithBackbone<TextToken> | undefined;
+    addImage: (token: object, force_snap?: boolean, unused_1?: boolean, unused_2?: boolean, unused_3?: boolean, addToFrontAndFireModifier?: boolean) => Token;
+
+    fullyLoadPage: () => void;
   }
 
   interface BackboneFirebase {
@@ -607,7 +609,8 @@ namespace Roll20 {
   }
 
   interface ObjectStorageWithBackbone<T> extends ObjectStorage<T> {
-      backboneFirebase: BackboneFirebase;
+    backboneFirebase: BackboneFirebase;
+    init_promise: Promise<void>;
   }
 
   interface ObjectStorage<T> {
