@@ -714,7 +714,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
       }
     };
 
-    const onClickUpdateAllTokens = (e: Event) => {
+    const onClickUpdateAllTokens = async (e: Event) => {
       e.stopPropagation();
       if(!confirm("Are you sure you want to do this? " +
           "This will update ALL tokens in this campaign that represent this character." +
@@ -725,9 +725,16 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
       beginWork();
       const pages = R20.getAllPages();
-      for (const page of pages) {
-        // Note(Justas): sometimes this is undefined. I cannot repro this at all.
-        if(!page.thegraphics) continue;
+      for(const page of pages) {
+
+        page.fullyLoadPage();
+
+        if(!page.thegraphics) {
+          console.error("Page thegraphics are undefined!", page);
+          continue;
+        }
+
+        await page.thegraphics.init_promise;
 
         for (const token of page.thegraphics.models) {
           if (!token.character) continue;
