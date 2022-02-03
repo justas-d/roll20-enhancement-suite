@@ -17,119 +17,87 @@ import {removeByReference} from "../../utils/ArrayUtils";
 import {nearly_format_file_url} from "../../utils/MiscUtils";
 import {Optional} from "../../utils/TypescriptUtils";
 
-interface BaseAnimRunner {
-  render_frame: (page: Roll20.Page, canvas: HTMLCanvasElement, roll20Canvas: HTMLCanvasElement, time: number) => boolean;
-  init: (cfg: any, canvas: HTMLCanvasElement) => void;
-  start: (page: Roll20.Page, canvas: HTMLCanvasElement) => void;
-  end: (canvas: HTMLCanvasElement) => void;
-  can_play: (page: Roll20.Page) => boolean;
-  on_setting_change: (name: string, oldVal: any, newVal: any) => void;
-  on_zoom: (coef: number) => void;
-  dispose: () => void;
-}
+const get_main_canvas = (): Optional<HTMLCanvasElement> => {
+  const beforeRoot = ($(`#maincanvas`)[0] || $(`#finalcanvas`)[0]) as HTMLCanvasElement;
+  if (!beforeRoot) {
+    console.error(`[AnimatedBackgrounds] could not find beforeRoot!`);
+  }
+  return beforeRoot;
+};
 
-class AnimBgUtils {
-  static get_main_canvas = (): Optional<HTMLCanvasElement> => {
-    const beforeRoot = ($(`#maincanvas`)[0] || $(`#finalcanvas`)[0]) as HTMLCanvasElement;
-    if (!beforeRoot) {
-      console.error(`[AnimatedBackgrounds] could not find beforeRoot!`);
-    }
-    return beforeRoot;
-  };
-
-  static get_canvas_root_size = (child: HTMLCanvasElement = undefined): {x: number, y: number} => {
-    if(!child) {
-      child = AnimBgUtils.get_main_canvas();
-    }
-
-    if(!child) {
-      return {x: 0, y: 0};
-    }
-    const parent = child.parentElement;
-
-    return {
-      x: parseInt(parent.style.width.replace("px", "")),
-      y: parseInt(parent.style.height.replace("px", "")),
-    }
-  };
-
-  static is_anim_enabled = (page: Roll20.Page): boolean => {
-    const val = page.attributes[AnimatedBackgroundLayer.propVideoEnabled];
-    if (typeof val !== "boolean") return false;
-    return val;
-  };
-
-  static set_anim_enabled = (page: Roll20.Page, state: boolean): void => {
-    page.save({
-      [AnimatedBackgroundLayer.propVideoEnabled]: state,
-    });
-  };
-
-  static get_video_source(page: Roll20.Page): string {
-    const val = page.attributes[AnimatedBackgroundLayer.propVideoSource];
-    if (typeof val !== "string") return "";
-    return val;
+const get_canvas_root_size = (child: HTMLCanvasElement = undefined): {x: number, y: number} => {
+  if(!child) {
+    child = get_main_canvas();
   }
 
-  static set_video_source = (page: Roll20.Page, source: string) => {
-    return page.save({
-      [AnimatedBackgroundLayer.propVideoSource]: source,
-    });
-  };
-}
+  if(!child) {
+    return {x: 0, y: 0};
+  }
+  const parent = child.parentElement;
 
-class VideoRunner implements BaseAnimRunner {
+  return {
+    x: parseInt(parent.style.width.replace("px", "")),
+    y: parseInt(parent.style.height.replace("px", "")),
+  }
+};
+
+const is_anim_enabled = (page: Roll20.Page): boolean => {
+  const val = page.attributes[AnimatedBackgroundLayer.propVideoEnabled];
+  if (typeof val !== "boolean") return false;
+  return val;
+};
+
+const set_anim_enabled = (page: Roll20.Page, state: boolean): void => {
+  page.save({
+    [AnimatedBackgroundLayer.propVideoEnabled]: state,
+  });
+};
+
+const get_video_source = (page: Roll20.Page): string => {
+  const val = page.attributes[AnimatedBackgroundLayer.propVideoSource];
+  if (typeof val !== "string") return "";
+  return val;
+};
+
+const set_video_source = (page: Roll20.Page, source: string) => {
+  return page.save({
+    [AnimatedBackgroundLayer.propVideoSource]: source,
+  });
+};
+
+class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
+  static readonly propVideoSource = "r20es_video_src";
+  static readonly propVideoEnabled = "r20es_video_enabled";
+
+  is_playing_video: boolean = false;
+  canvas: HTMLCanvasElement;
+  roll20_canvas: HTMLCanvasElement;
+
+  original_resize_function: (width: number, height: number) => void;
+  show_settings_element: HTMLElement;
+  setup_dialog: AnimBackgroundSetup;
+
+  current_page: Roll20.Page;
+
+  events: EventSubscriber[] = [];
+
   ctx: CanvasRenderingContext2D;
   video: HTMLVideoElement;
 
-  on_setting_change = (name: string, oldVal: any, newVal: any): void => {
-    if (name === "muteAudio" && this.video) {
-      this.video.muted = newVal;
-    }
+  constructor() {
+    super(__dirname);
 
-    if (name === "audioVolume" && this.video) {
-      this.set_volume(newVal);
-    }
-  };
-
-  on_zoom = (coef: number): void => {
-    console.log("video SET ZOOM", coef);
-
-    if(this.ctx) {
-      this.ctx.restore();
-      this.ctx.save();
-      this.ctx.scale(coef, coef);
-    }
-  };
-
-  init = (cfg: any, canvas: HTMLCanvasElement) => {
-    this.ctx = canvas.getContext("2d");
+    this.canvas = <canvas/>;
+    this.ctx = this.canvas.getContext("2d");
     this.ctx.save();
 
-    this.video = <video loop={true} autoplay={true} muted={cfg.muteAudio}/>;
-    this.set_volume(cfg.audioVolume);
-  };
-
-  set_volume(newVolume: number) {
-    if (!this.video) {
-      return;
-    }
-
-    try {
-      this.video.volume = newVolume;
-    } catch (e) {
-      this.video.volume = 0.1;
-    }
+    this.video = <video/>
   }
 
-  can_play = (page: Roll20.Page) => {
-    return AnimBgUtils.get_video_source(page).length > 0 && AnimBgUtils.is_anim_enabled(page);
-  };
-
-  render_frame = (page: Roll20.Page, canvas: HTMLCanvasElement, roll20Canvas: HTMLCanvasElement, time: number): boolean => {
-    if(this.ctx && this.video) {
-      const bbX = page.attributes.width * 70;
-      const bbY = page.attributes.height * 70;
+  render_loop = (time: number) => {
+    if(this.is_playing_video) {
+      const bbX = this.current_page.attributes.width * 70;
+      const bbY = this.current_page.attributes.height * 70;
 
       const fitted = scaleToFit(this.video.videoWidth, this.video.videoHeight, bbX, bbY);
 
@@ -143,81 +111,29 @@ class VideoRunner implements BaseAnimRunner {
       const fillMaxX = Math.ceil(R20.getCanvasWidth() / R20.getCanvasZoom());
       const fillMaxY = R20.getCanvasHeight() / R20.getCanvasZoom();
 
-      this.ctx.fillStyle = page.attributes.background_color;
+      this.ctx.fillStyle = this.current_page.attributes.background_color;
       this.ctx.fillRect(0, fitted.y - R20.getCanvasOffsetY(), fillMaxX, fillMaxY);
       this.ctx.fillRect(fitted.x - R20.getCanvasOffsetX(), 0, fillMaxX, fillMaxY);
 
-      return true;
-    }
-    return false;
-  };
-
-  start = (page: Roll20.Page, canvas: HTMLCanvasElement) => {
-    this.video.src = AnimBgUtils.get_video_source(page);
-    this.video.play();
-  };
-
-  end = (canvas: HTMLCanvasElement) => {
-    canvas.style.display = "none";
-
-    this.video.pause();
-    this.video.src = "";
-  };
-
-  dispose = () => {
-    if(this.ctx) this.ctx = null;
-    if(this.video) this.video = null;
-  }
-}
-
-class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
-  static readonly propVideoSource = "r20es_video_src";
-  static readonly propVideoEnabled = "r20es_video_enabled";
-
-  private _isPlaying: boolean = false;
-  private canvas: HTMLCanvasElement;
-  roll20Canvas: HTMLCanvasElement;
-
-  private _originalResize: (width: number, height: number) => void;
-  private _showSettingsWidget: HTMLElement;
-  private _dialog: AnimBackgroundSetup;
-
-  private current_page: Roll20.Page;
-
-  private _events: EventSubscriber[] = [];
-  private current_runner:  BaseAnimRunner;
-
-  constructor() {
-    super(__dirname);
-  }
-
-  render_loop = (time: number) => {
-    if (this._isPlaying && this.current_page && this.current_runner) {
-      if(this.current_runner.render_frame(this.current_page, this.canvas, this.roll20Canvas, time)) {
-        requestAnimationFrame(this.render_loop);
-      }
+      requestAnimationFrame(this.render_loop);
     }
   };
-
-  err_report_missing_current_runner_in(where: string) {
-    console.log(`[${where}]: current_runner is null, bailing.`);
-  }
 
   beginVideo = () => {
-    if(!this.current_runner) {
-      this.err_report_missing_current_runner_in("beginVideo");
-      return;
-    }
-
     console.log("[AnimBackgrounds] beginVideo while current_runner");
 
-    this._isPlaying = true;
+    this.is_playing_video = true;
 
     this.canvas.style.display = "block";
 
     const try_start = () => {
       try {
-        this.current_runner.start(this.current_page, this.canvas);
+        const src = get_video_source(this.current_page);
+        this.video.setAttribute("vttes-src", src);
+        this.video.src = src;
+        this.video.play();
+
+        console.log(this.video);
         console.log("[AnimBackgrounds] current_runner.start succeeded!");
       }
       catch(err) {
@@ -227,7 +143,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
     try_start();
 
-    if (isChromium()) {
+    if(isChromium()) {
       const interactionEvents = [
         "mousedown",
         "scroll",
@@ -237,12 +153,12 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
       const onInteract = () => {
         try_start();
 
-        for (const ev of interactionEvents) {
+        for(const ev of interactionEvents) {
           document.body.removeEventListener(ev, onInteract);
         }
       };
 
-      for (const ev of interactionEvents) {
+      for(const ev of interactionEvents) {
         document.body.addEventListener(ev, onInteract);
       }
     }
@@ -256,61 +172,44 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
   };
 
   endVideo() {
-    if(!this.current_runner) {
-      this.err_report_missing_current_runner_in("endVideo");
-      return;
-    }
-
     console.log("[AnimBackgrounds] endVideo while current_runner");
 
-    this._isPlaying = false;
-    if(this.canvas) {
-      this.current_runner.end(this.canvas);
-    }
+    const was_playing = this.is_playing_video;
+    this.is_playing_video = false;
 
-    R20.renderAll();
+    this.canvas.style.display = "none";
+
+    this.video.pause();
+    this.video.src = "";
+
+    if(was_playing) {
+      R20.renderAll();
+    }
   }
 
-  onPropChange = () => {
-    if(!this.current_runner) {
-      return;
-    }
+  can_play = () => {
+    return get_video_source(this.current_page).length > 0
+        && is_anim_enabled(this.current_page);
+  };
 
+  onPropChange = () => {
     console.log("[AnimBackgrounds] onPropChange while current_runner");
 
     this.endVideo();
 
-    if(this.current_runner.can_play(this.current_page)) {
+    if(this.can_play()) {
       this.beginVideo();
     }
   };
 
-  cleanupPage() {
-    console.log("[AnimBackgrounds] cleanupPage");
-
-    this.endVideo();
-
-    for (const ev of this._events) {
-      ev.unsubscribe();
-    }
-
-    if(this.current_runner) {
-      this.current_runner.dispose();
-    }
-
-    if(this.canvas) {
-      this.canvas.remove();
-      this.canvas = null;
-    }
-  }
-
   initPage = () => {
-    this.cleanupPage();
+    this.endVideo();
 
     const page = R20.getCurrentPage();
 
     const pageGetter = () => page;
-    this._events = [
+
+    this.events = [
       EventSubscriber.subscribe(`change:${AnimatedBackgroundLayer.propVideoSource}`, this.onPropChange, pageGetter),
       EventSubscriber.subscribe(`change:${AnimatedBackgroundLayer.propVideoEnabled}`, this.onPropChange, pageGetter),
       EventSubscriber.subscribe(`change:height`, this.onPropChange, pageGetter),
@@ -321,32 +220,14 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
     R20.renderAll();
 
-    {
-      this.canvas = <canvas/>;
-
-      const root = AnimBgUtils.get_main_canvas();
-
-      if(root) {
-        root.parentNode.insertBefore(this.canvas, root);
-        this.canvas.width = root.width;
-        this.canvas.height = root.height;
-        this.roll20Canvas = root;
-      }
-
-      // TODO figure out which runner we need for this page / null
-      const cfg = this.getHook().config;
-      this.current_runner = new VideoRunner();
-      this.current_runner.init(cfg, this.canvas);
-
-      if (this.current_runner && this.current_runner.can_play(this.current_page)) {
-        this.beginVideo();
-      }
+    if(this.can_play()) {
+      this.beginVideo();
     }
   };
 
   onResizeCanvas = (width: number, height: number) => {
-    if(this._isPlaying) {
-      console.log("[AnimBackgrounds] onResizeCanvas while _isPlaying");
+    if(this.is_playing_video) {
+      console.log("[AnimBackgrounds] onResizeCanvas while is_playing_video");
 
       this.canvas.width = width;
       this.canvas.height = height;
@@ -357,30 +238,48 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
   };
 
   overrideSetCanvasSize = (width: number, height: number) => {
-    this._originalResize(width, height);
+    this.original_resize_function(width, height);
     this.onResizeCanvas(width, height);
   };
 
   onSetZoom = (coef: number) => {
-    if (this._isPlaying) {
-      console.log("[AnimBackgrounds] onSetZoom while _isPlaying");
-      this.current_runner.on_zoom(coef);
+    if(this.is_playing_video) {
+      console.log("[AnimBackgrounds] onSetZoom while is_playing_video");
+
+      this.ctx.restore();
+      this.ctx.save();
+      this.ctx.scale(coef, coef);
     }
   };
 
-  ui_show_configuration_dialog = () => {
-    this._dialog.show(this, this.current_page);
+  ui_show_configurationsetup_dialog = () => {
+    this.setup_dialog.show(this, this.current_page);
   };
 
+  set_volume(newVolume: number) {
+    if(!this.video) {
+      return;
+    }
+
+    try {
+      this.video.volume = newVolume;
+    } catch (e) {
+      this.video.volume = 0.1;
+    }
+  }
+
   onSettingChange(name: string, oldVal: any, newVal: any) {
-    if(this.current_runner) {
-      console.log("[AnimBackgrounds] onSettingChange while current_runner");
-      this.current_runner.on_setting_change(name, oldVal, newVal);
+    if(name === "muteAudio" && this.video) {
+      this.video.muted = newVal;
+    }
+
+    if(name === "audioVolume" && this.video) {
+      this.set_volume(newVal);
     }
   }
 
   trampoline_draw_background = (e: CanvasRenderingContext2D, t : any) =>{
-    if(this._isPlaying) {
+    if(this.is_playing_video) {
       const old_fill = e.fillStyle;
       const old_global_compo_op = e.globalCompositeOperation;
 
@@ -409,7 +308,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
   setup() {
     console.log("video before ==================================");
 
-    this._originalResize = window.d20.engine.setCanvasSize;
+    this.original_resize_function = window.d20.engine.setCanvasSize;
     window.d20.engine.setCanvasSize = this.overrideSetCanvasSize;
 
     window.r20es.onZoomChange = this.onSetZoom;
@@ -421,7 +320,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     this.initPage();
     window.r20es.onPageChange.on(this.initPage);
 
-    if (R20.isGM()) {
+    if(R20.isGM()) {
       const widgetStyle = {
         cursor: "pointer",
         position: "absolute",
@@ -435,9 +334,9 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         borderRadius: "3px;",
       };
 
-      this._showSettingsWidget = (
+      this.show_settings_element = (
         <div title="Animated Background Setup (VTTES)" style={widgetStyle}
-             onClick={this.ui_show_configuration_dialog}
+             onClick={this.ui_show_configurationsetup_dialog}
         >
           <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/32/film.png"
             maxWidth="28" maxHeight="28" alt="ANIM"
@@ -445,19 +344,56 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         </div>
       );
 
-      document.body.appendChild(this._showSettingsWidget);
-      console.log(this._showSettingsWidget);
+      document.body.appendChild(this.show_settings_element);
+      console.log(this.show_settings_element);
     }
 
-    this._dialog = new AnimBackgroundSetup();
+    this.setup_dialog = new AnimBackgroundSetup();
+
+    {
+      const cfg = this.getHook().config;
+      this.video.loop = true;
+      this.video.autoplay = true;
+      this.video.muted = cfg.muteAudio;
+      this.set_volume(cfg.audioVolume);
+    }
+
+    {
+      const root = get_main_canvas();
+
+      if(root) {
+        root.parentNode.insertBefore(this.canvas, root);
+        this.canvas.width = root.width;
+        this.canvas.height = root.height;
+        this.roll20_canvas = root;
+      }
+
+      //this.video.addEventListener("ended", event => {
+      //  var src = this.video.getAttribute("vttes-src");
+      //  this.video.src = src;
+      //  this.video.play();
+      //  console.log("MANUAL LOOP!");
+      //});
+    }
   }
 
   dispose() {
     super.dispose();
 
-    this.cleanupPage();
+    console.log("[AnimBackgrounds] cleanupPage");
 
-    window.d20.engine.setCanvasSize = this._originalResize;
+    this.endVideo();
+
+    for(const ev of this.events) {
+      ev.unsubscribe();
+    }
+
+    this.ctx = null;
+    this.video = null;
+    this.canvas.remove();
+    this.canvas = null;
+
+    window.d20.engine.setCanvasSize = this.original_resize_function;
 
     window.r20es.onZoomChange = null;
     window.r20es.onResizeCanvas = null;
@@ -465,14 +401,10 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     window.d20.canvas_overlay.drawBackground = this.original_canvas_overlay_draw_background;
     this.original_canvas_overlay_draw_background = null;
 
-    this._showSettingsWidget.remove();
-    this._showSettingsWidget = null;
+    this.show_settings_element.remove();
+    this.show_settings_element = null;
 
-    this._dialog.dispose();
-
-    if(this.current_runner) {
-      this.current_runner.dispose();
-    }
+    this.setup_dialog.dispose();
 
     window.r20es.onPageChange.off(this.initPage);
   }
@@ -530,11 +462,11 @@ class AnimBackgroundSetup extends DialogBase<null> {
     this.page = page;
 
     this.internalShow();
-    this.ui_verify_media_url(AnimBgUtils.get_video_source(page), false);
+    this.ui_verify_media_url(get_video_source(page), false);
   };
 
   onChangeEnabled = (e) => {
-    AnimBgUtils.set_anim_enabled(this.page, e.target.checked);
+    set_anim_enabled(this.page, e.target.checked);
   };
 
   ui_is_invalid_media_url = false;
@@ -545,7 +477,7 @@ class AnimBackgroundSetup extends DialogBase<null> {
   };
 
   ui_on_update_url_input = (url: string) => {
-    AnimBgUtils.set_video_source(this.page, url);
+    set_video_source(this.page, url);
     this.ui_verify_media_url(url, true);
   };
 
@@ -597,8 +529,8 @@ class AnimBackgroundSetup extends DialogBase<null> {
   public render() {
     const hist = this.module_get_history();
     const hist_widgets = [];
-    const is_enabled = AnimBgUtils.is_anim_enabled(this.page);
-    const video_source = AnimBgUtils.get_video_source(this.page);
+    const is_enabled = is_anim_enabled(this.page);
+    const video_source = get_video_source(this.page);
 
     if(this.show_history) {
       const set_url = (widget, url) => widget.setAttribute(this.ui_history_url_attrib, url);
