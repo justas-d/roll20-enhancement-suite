@@ -1,5 +1,5 @@
 {
-    "current": "1.26.15",
+    "current": "1.26.16",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2101,6 +2101,22 @@
                 {
                     "id": "",
                     "content": "Show browser and VTTES version on the 'Uh Oh' popup."
+                }
+            ]
+        },
+        "1.26.16": {
+            "info": {
+                "title": "Fixes & Tweaks",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Add a link to a hosting guide for animated backgrounds in the dialog menu."
+                },
+                {
+                    "id": "",
+                    "content": "Fix set table entry avatar by URL module not working."
                 }
             ]
         }
