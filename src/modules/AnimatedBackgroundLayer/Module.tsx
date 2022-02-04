@@ -581,6 +581,16 @@ class AnimBackgroundSetup extends DialogBase<null> {
 
           <br/>
 
+          <div>
+            <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
+              onClick={() => {
+                window.open("https://gist.github.com/justas-d/b4bc420993844d989c10e05226787e70", "_blank");
+              }}
+            >Places to host the backgrounds</a>
+          </div>
+
+          <br/>
+
           <div style={{display: "grid", gridTemplateColumns: "auto auto", rowGap: "4px"}}>
             <b>Enabled?</b>
             <div>
