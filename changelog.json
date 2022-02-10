@@ -1,5 +1,5 @@
 {
-    "current": "TODO",
+    "current": "1.26.17",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2120,15 +2120,27 @@
                 }
             ]
         },
-        "TODO": {
+        "1.26.17": {
             "info": {
-                "title": "",
+                "title": "Module Fixes",
                 "media": ""
             },
             "changes": [
                 {
                     "id": "",
-                    "content": "1.26.16 page"
+                    "content": "Fix the duplicate button module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix audio not playing."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the set table entry from URL module."
+                },
+                {
+                    "id": "",
+                    "content": "Thanks LordRoseheart, Gebri and Lyra for the report!"
                 }
             ]
         }
