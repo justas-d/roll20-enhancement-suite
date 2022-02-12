@@ -1,5 +1,5 @@
 {
-    "current": "1.26.17",
+    "current": "1.26.18",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2141,6 +2141,46 @@
                 {
                     "id": "",
                     "content": "Thanks LordRoseheart, Gebri and Lyra for the report!"
+                }
+            ]
+        },
+        "1.26.18": {
+            "info": {
+                "title": "More Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the extra rulers module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix libre audio."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the remember text tool settings module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the duplicate button module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix initiative tracker modules."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the animation disable module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the animated background layer module."
+                },
+                {
+                    "id": "",
+                    "content": "Thanks, Andele3025, Maddie, Lyra and Oldewyrm for the report!"
                 }
             ]
         }
