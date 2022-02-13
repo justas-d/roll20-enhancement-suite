@@ -40,9 +40,7 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      // NOTE(justasd): search for change.textedit
-      // 2022-02-12
-      find: `p.type=="text"&&($("#font-size").val(p.model.get("font_size"))`,
+      find: `g.type=="text"&&($("#font-size").val(g.model.get("font_size"))`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) >>R20ES_MOD_FIND>>`,
     },
 
@@ -50,7 +48,7 @@ export default <VTTES.Module_Config> {
     // 2022-01-19
     {
       includes: "vtt.bundle.js",
-      find: `$("#font-size").val(le).trigger("keyup"),$("#font-color").val(we).trigger("change-silent"),$("#font-family").val(me);`,
+      find: `$("#font-size").val(se).trigger("keyup"),$("#font-color").val(me).trigger("change-silent"),$("#font-family").val(ce);`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`,
     }
   ]
