@@ -1,5 +1,5 @@
 {
-    "current": "1.26.18",
+    "current": "1.26.19",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2181,6 +2181,46 @@
                 {
                     "id": "",
                     "content": "Thanks, Andele3025, Maddie, Lyra and Oldewyrm for the report!"
+                }
+            ]
+        },
+        "1.26.19": {
+            "info": {
+                "title": "More^2 Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the set table entry avatar by url module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix remember text tool settings module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix libre audio."
+                },
+                {
+                    "id": "",
+                    "content": "Fix extra rulers."
+                },
+                {
+                    "id": "",
+                    "content": "Fix initiative modules."
+                },
+                {
+                    "id": "",
+                    "content": "Fix animation disable module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the animated background layer module."
+                },
+                {
+                    "id": "",
+                    "content": "Thanks, Oldewyrm, Axecleft and Lyra for the report!"
                 }
             ]
         }
