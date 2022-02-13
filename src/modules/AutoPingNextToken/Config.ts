@@ -17,8 +17,8 @@ export default <VTTES.Module_Config> {
       includes: "vtt.bundle.js",
       // NOTE(justasd): search for nextTurn() {
       // 2022-01-19
-      find: `g.push(t[0]);`,
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.pingInitiativeToken) {window.r20es.pingInitiativeToken(g[0]);}"
+      find: `p.push(t[0]);`,
+      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.pingInitiativeToken) {window.r20es.pingInitiativeToken(p[0]);}"
     },
   ],
 };
