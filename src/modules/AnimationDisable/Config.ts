@@ -19,7 +19,7 @@ export default <VTTES.Module_Config> {
 
       // NOTE(justasd): search for * 30)
       // 2022-01-19
-      find: `setTimeout(function(){$(t).addClass("open"),m.find(".button div.hasnumber").textfill(20)},g*30),g++`,
+      find: `setTimeout(function(){$(t).addClass("open"),m.find(".button div.hasnumber").textfill(20)},p*30),p++`,
 
       patch: `;
       if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(t).addClass("open");m.find(".button div.hasnumber").textfill(20);}
