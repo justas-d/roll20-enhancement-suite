@@ -40,11 +40,11 @@ export default <VTTES.Module_Config> {
     {
       includes: "vtt.bundle.js",
       find: `y:[0,1]};`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(B,H); }`,
+      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(B,q); }`,
 
       // search for d20.engine.getDistanceInScale({
       stability_checks: [
-        `G=function(B,H,J,ee,q,W)`,
+        `G=function(B,q,K,te,V,W)`,
       ],
     },
 
@@ -52,16 +52,15 @@ export default <VTTES.Module_Config> {
       includes: "vtt.bundle.js",
       // NOTE(justasd): search for d20.engine.drawMeasurements =
       // 2022-01-19
-      find: "x:H.x-d20.engine.currentCanvasOffset[0],",
-
+      find: "x:q.x-d20.engine.currentCanvasOffset[0],",
       patch: `
-vttes_radius_mode: H.vttes_radius_mode,
-vttes_box_mode: H.vttes_box_mode,
-vttes_cone_mode: H.vttes_cone_mode,
-vttes_cone_degrees: H.vttes_cone_degrees,
-vttes_line_mode: H.vttes_line_mode,
-vttes_line_width: H.vttes_line_width,
-vttes_ruler_mode: H.vttes_ruler_mode,
+vttes_radius_mode: q.vttes_radius_mode,
+vttes_box_mode: q.vttes_box_mode,
+vttes_cone_mode: q.vttes_cone_mode,
+vttes_cone_degrees: q.vttes_cone_degrees,
+vttes_line_mode: q.vttes_line_mode,
+vttes_line_width: q.vttes_line_width,
+vttes_ruler_mode: q.vttes_ruler_mode,
 >>R20ES_MOD_FIND>>
 `,
     },
@@ -71,16 +70,15 @@ vttes_ruler_mode: H.vttes_ruler_mode,
       includes: "vtt.bundle.js",
       // NOTE(justasd): search for diagonals % 2,
       // 2022-01-19
-      find: "color:H.color,flags:H.flags,",
-
+      find: "color:q.color,flags:q.flags,",
       patch: `
-vttes_radius_mode: H.vttes_radius_mode,
-vttes_box_mode: H.vttes_box_mode,
-vttes_cone_mode: H.vttes_cone_mode,
-vttes_cone_degrees: H.vttes_cone_degrees,
-vttes_line_mode: H.vttes_line_mode,
-vttes_line_width: H.vttes_line_width,
-vttes_ruler_mode: H.vttes_ruler_mode,
+vttes_radius_mode: q.vttes_radius_mode,
+vttes_box_mode: q.vttes_box_mode,
+vttes_cone_mode: q.vttes_cone_mode,
+vttes_cone_degrees: q.vttes_cone_degrees,
+vttes_line_mode: q.vttes_line_mode,
+vttes_line_width: q.vttes_line_width,
+vttes_ruler_mode: q.vttes_ruler_mode,
 >>R20ES_MOD_FIND>>
 `,
     },
