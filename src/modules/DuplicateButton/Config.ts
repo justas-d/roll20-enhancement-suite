@@ -19,14 +19,14 @@ export default <VTTES.Module_Config> {
 
       patch: `
         $("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]", function () {
-          if(window.r20es && window.r20es.onJournalDuplicate) window.r20es.onJournalDuplicate(r.attr("data-itemid"))
+          if(window.r20es && window.r20es.onJournalDuplicate) window.r20es.onJournalDuplicate(i.attr("data-itemid"))
         }),
         $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
 
       stability_checks: [
         // NOTE(justasd): search for showtoplayers
         // 2022-01-19
-        `const u=r.attr("data-itemid");`,
+        `const u=i.attr("data-itemid");`,
       ],
     },
   ]
