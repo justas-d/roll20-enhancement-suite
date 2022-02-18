@@ -1,5 +1,5 @@
 {
-    "current": "1.26.20",
+    "current": "1.26.21",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2237,6 +2237,26 @@
                 {
                     "id": "",
                     "content": "Thanks, L0st and Lyra, for the report!"
+                }
+            ]
+        },
+        "1.26.21": {
+            "info": {
+                "title": "Fix^2",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix set table entry avatar by url module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix libre audio."
+                },
+                {
+                    "id": "",
+                    "content": "Thanks, Bonesicord, for the report!"
                 }
             ]
         }
