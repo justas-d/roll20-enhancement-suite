@@ -18,9 +18,9 @@ export default <VTTES.Module_Config> {
       includes: "vtt.bundle.js",
       // NOTE(justasd): search for tmpl_tableitemeditor
       // 2022-01-19
-      find: `M.$el.is(":visible")&&M.render()}),this.$el.on("click",".deleteitem"`,
+      find: `T.$el.is(":visible")&&T.render()}),this.$el.on("click",".deleteitem"`,
 
-      patch: `M.$el.is(":visible")&&M.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", M.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", M.model.id),this.$el.on("click",".deleteitem"`,
+      patch: `T.$el.is(":visible")&&T.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", T.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", T.model.id),this.$el.on("click",".deleteitem"`,
     },
   ]
 };
