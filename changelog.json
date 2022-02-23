@@ -1,5 +1,5 @@
 {
-    "current": "1.26.22",
+    "current": "1.26.23",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2277,6 +2277,34 @@
                 {
                     "id": "",
                     "content": "Thanks, serenitygrant and Diego W.M.C, for the report!"
+                }
+            ]
+        },
+        "1.26.23": {
+            "info": {
+                "title": "Fix^4",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the remember text tool settings module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the libre audio module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the extra rulers module."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the animated background module."
+                },
+                {
+                    "id": "",
+                    "content": "Thanks, charlie ok, Oldewyrm, Axecleft and Teiroi for the report!"
                 }
             ]
         }
