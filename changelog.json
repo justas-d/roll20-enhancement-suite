@@ -1,5 +1,5 @@
 {
-    "current": "1.26.23",
+    "current": "1.26.24",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2305,6 +2305,18 @@
                 {
                     "id": "",
                     "content": "Thanks, charlie ok, Oldewyrm, Axecleft and Teiroi for the report!"
+                }
+            ]
+        },
+        "1.26.24": {
+            "info": {
+                "title": "Fix^5",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Bunch of module fixes."
                 }
             ]
         }
