@@ -48,7 +48,7 @@ export default <VTTES.Module_Config> {
     // 2022-01-19
     {
       includes: "vtt.bundle.js",
-      find: `$("#font-size").val(se).trigger("keyup"),$("#font-color").val(me).trigger("change-silent"),$("#font-family").val(ce);`,
+      find: `$("#font-size").val(q).trigger("keyup"),$("#font-color").val(ae).trigger("change-silent"),$("#font-family").val(re),$("#font-stroke").val(ce).trigger("change-silent");`,
       patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`,
     }
   ]
