@@ -17,9 +17,9 @@ export default <VTTES.Module_Config> {
     // play libreaudio sounds
     {
       includes: "vtt.bundle.js",
-      find: `\`/audio_library/play/\${campaign_id}/\${J.split("-")[0]}\``,
+      find: `\`/audio_library/play/\${campaign_id}/\${W.split("-")[0]}\``,
 
-      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(H)) ? J : >>R20ES_MOD_FIND>>)`,
+      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(H)) ? W : >>R20ES_MOD_FIND>>)`,
 
       stability_checks: [
         `if(H.get("playing")&&H.get("softstop")==!1)`,
