@@ -13,22 +13,26 @@ export default <VTTES.Module_Config> {
   },
 
   mods: [
-
-    // play libreaudio sounds
     {
       includes: "vtt.bundle.js",
-      find: `\`/audio_library/play/\${campaign_id}/\${W.split("-")[0]}\``,
 
-      patch: `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(H)) ? W : >>R20ES_MOD_FIND>>)`,
-
-      stability_checks: [
-        `if(H.get("playing")&&H.get("softstop")==!1)`,
+      stencils: [
+        {
+          search_from: `Unable to play music...Flash blocked`,
+          find: [`if(`, 2, `.get("playing")&&`, 2, `.get("softstop")==!1)`],
+        },
+        {
+          search_from: `dismiss_myaudiocap`,
+          find: [`\`/audio_library/play/\${campaign_id}/\${`, 1, `.split("-")[0]}\``],
+          replace: [
+            `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(`, 2, `)) ? `, 1, ` : `, 0, `)`
+          ]
+        },
+        {
+          find: [ `"My Audio"){if(d20.Campaign.players.filter(`,3,`=>`,3,`.get("online")).length>15` ],
+          replace: [ `"My Audio"){if(false` ],
+        },
       ],
     },
-    {
-      includes: "vtt.bundle.js",
-      find: `d20.Campaign.players.filter(K=>K.get("online")).length>15`,
-      patch: "false",
-    }
   ]
 };

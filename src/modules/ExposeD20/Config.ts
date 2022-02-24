@@ -11,8 +11,12 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `var exports=exports||{},`,
-      patch: `window.d20 = d20; var exports=exports||{},`,
+      find_replace: [
+        {
+          find: `var exports=exports||{},`,
+          replace: `window.d20 = d20; var exports=exports||{},`,
+        },
+      ],
     },
   ],
 };

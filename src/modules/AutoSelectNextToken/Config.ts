@@ -15,10 +15,15 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      // NOTE(justasd): search for nextTurn() {
-      // 2022-01-19
-      find: `g.push(t[0]);`,
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.selectInitiativeToken) { window.r20es.selectInitiativeToken(g[0]);}"
+      stencils: [
+        {
+          search_from: "nextTurn(){",
+          find: [ `splice(0,1);`,1,`.push(`,-1,`[0]);` ],
+          replace: [
+            0, `if(window.r20es && window.r20es.selectInitiativeToken) {window.r20es.selectInitiativeToken(`,1,`[0]);}`
+          ],
+        },
+      ],
     },
   ],
 }

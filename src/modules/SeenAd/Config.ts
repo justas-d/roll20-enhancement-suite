@@ -11,8 +11,12 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "/editor/startjs",
-      find: `$(document).on("ready", function() { d20ext.showGoogleAd(); });`,
-      patch: `d20ext.seenad = true; /* replaced */ `,
+      find_replace: [
+        {
+          find: `$(document).on("ready", function() { d20ext.showGoogleAd(); });`,
+          replace: `d20ext.seenad = true; /* replaced */ `,
+        }
+      ]
     },
   ],
 };

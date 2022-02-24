@@ -733,12 +733,29 @@ const BUILD_CONSTANT_VTTES_IS_DEV: boolean;
 const BUILD_CONSTANT_LOGO_B64: string;
 
 namespace VTTES {
-  interface Module_Mod {
-    includes: string;
+
+  interface Replace_Stencil {
+    search_from?: string;
+    search_from_index_offset?: number;
+    find: Array<string | number>;
+    replace?: Array<string | number>;
+
+    debug_find?: boolean;
+    debug_replace?: boolean;
+  }
+
+  interface Find_Replace {
     find: string;
-    patch: string;
+    replace: string;
 
     stability_checks?: Array<string>;
+  }
+
+  interface Module_Mod {
+    includes: string;
+
+    stencils?: Array<Replace_Stencil>;
+    find_replace?: Array<Find_Replace>;
   }
 
   const enum Config_View_Type {

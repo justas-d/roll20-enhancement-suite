@@ -13,10 +13,14 @@ export default <VTTES.Module_Config> {
       includes: "vtt.bundle.js",
       // NOTE(justasd): search for _drawNameplate: function(d)
       // 2022-01-19
-      find: `d.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),d.fillStyle="rgb(0,0,0)",d.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+m+this._nameplate_data.padding)`,
-    
-      patch: `window.r20es && window.r20es.prepNameplateBack && window.r20es.prepNameplateBack(this, d), d.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),d.fillStyle="rgb(0,0,0)",
-              window.r20es && window.r20es.prepNameplateText && window.r20es.prepNameplateText(this, d), d.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+m+this._nameplate_data.padding)`
+      find_replace: [
+        {
+          find: `d.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),d.fillStyle="rgb(0,0,0)",d.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+m+this._nameplate_data.padding)`,
+        
+          replace: `window.r20es && window.r20es.prepNameplateBack && window.r20es.prepNameplateBack(this, d), d.fillRect(...this._nameplate_data.position,...this._nameplate_data.size),d.fillStyle="rgb(0,0,0)",
+                  window.r20es && window.r20es.prepNameplateText && window.r20es.prepNameplateText(this, d), d.fillText(this._nameplate_data.name,0,this._nameplate_data.position[1]+m+this._nameplate_data.padding)`
+        }
+      ]
     }
   ],
 

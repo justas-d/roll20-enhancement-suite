@@ -13,56 +13,57 @@ export default <VTTES.Module_Config> {
   },
 
   mods: [
-
-    { // radial button proportionally timed animation
-      includes: "vtt.bundle.js",
-
-      // NOTE(justasd): search for * 30)
-      // 2022-01-19
-      find: `setTimeout(function(){$(t).addClass("open"),m.find(".button div.hasnumber").textfill(20)},g*30),g++`,
-
-      patch: `;
-      if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(t).addClass("open");m.find(".button div.hasnumber").textfill(20);}
-      else { >>R20ES_MOD_FIND>>; }
-      `,
-    },
-
-    { // radial final
-      includes: "vtt.bundle.js",
-
-      // NOTE(justasd): search for * 30)
-      // 2022-01-19
-      find: `setTimeout(function(){m.find(".button").addClass("animcomplete")},250)`,
-
-      patch: `1;
-      if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { m.find(".button").addClass("animcomplete");}
-      else { >>R20ES_MOD_FIND>>; }`,
-    },
-
-    // toolbar anim
     {
       includes: "vtt.bundle.js",
-      // NOTE(justasd): search for pagetoolbar.noClosing
-      // 2022-01-19
-      find: `l.animate({top:"-1px"},300).removeClass("closed"),`,
 
-      patch: `l.animate({top:"-1px"},
-    (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
-  ).removeClass("closed"),`,
+      find_replace: [
+        // radial button proportionally timed animation
+        {
+          // NOTE(justasd): search for * 30)
+          // 2022-01-19
+          find: `setTimeout(function(){$(t).addClass("open"),m.find(".button div.hasnumber").textfill(20)},g*30),g++`,
+
+          replace: `;
+          if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(t).addClass("open");m.find(".button div.hasnumber").textfill(20);}
+          else { >>R20ES_MOD_FIND>>; }
+          `,
+        },
+
+        // radial final
+        {
+          // NOTE(justasd): search for * 30)
+          // 2022-01-19
+          find: `setTimeout(function(){m.find(".button").addClass("animcomplete")},250)`,
+
+          replace : `1;
+          if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { m.find(".button").addClass("animcomplete");}
+          else { >>R20ES_MOD_FIND>>; }`,
+
+        },
+
+        // toolbar anim
+        {
+          // NOTE(justasd): search for pagetoolbar.noClosing
+          // 2022-01-19
+          find: `l.animate({top:"-1px"},300).removeClass("closed"),`,
+
+          replace: `l.animate({top:"-1px"},
+        (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
+      ).removeClass("closed"),`,
+        },
+
+        // toolbar anim
+        {
+          // NOTE(justasd): search for pagetoolbar.noClosing
+          // 2022-01-19
+          find: `l.animate({top:\`-\${l.height()}px\`},300,()=>{l.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(()=>{$("#page-toolbar .pages input:text").trigger("blur")})})`,
+
+          replace: `l.animate({top:"-"+l.height()+"px"},
+        (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
+        function(){l.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(function(){$("#page-toolbar .pages input").trigger("blur")})})`,
+        },
+      ]
     },
-
-    // toolbar anim
-    {
-      includes: "vtt.bundle.js",
-      // NOTE(justasd): search for pagetoolbar.noClosing
-      // 2022-01-19
-      find: `l.animate({top:\`-\${l.height()}px\`},300,()=>{l.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(()=>{$("#page-toolbar .pages input:text").trigger("blur")})})`,
-
-
-      patch: `l.animate({top:"-"+l.height()+"px"},
-    (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
-    function(){l.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(function(){$("#page-toolbar .pages input").trigger("blur")})})`,
-    }
   ],
 
   configView: {

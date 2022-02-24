@@ -12,8 +12,12 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `$("#loading-overlay").hide()`,
-      patch: `$("#loading-overlay").hide();if(window.r20es && window.r20es.onLoadingOverlayHide) window.r20es.onLoadingOverlayHide(); `
+      find_replace: [
+        {
+          find: `$("#loading-overlay").hide()`,
+          replace: `$("#loading-overlay").hide();if(window.r20es && window.r20es.onLoadingOverlayHide) window.r20es.onLoadingOverlayHide(); `
+        },
+      ],
     },
   ],
 };

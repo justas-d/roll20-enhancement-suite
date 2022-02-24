@@ -14,14 +14,22 @@ export default <VTTES.Module_Config> {
   },
 
   mods: [
-    { // add table entry && table ids to popup
+    { 
       includes: "vtt.bundle.js",
-      // NOTE(justasd): search for tmpl_tableitemeditor
-      // 2022-01-19
-      find: `M.$el.is(":visible")&&M.render()}),this.$el.on("click",".deleteitem"`,
 
-      patch: `M.$el.is(":visible")&&M.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}", M.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}", M.model.id),this.$el.on("click",".deleteitem"`,
-    },
+      stencils: [
+
+        // add table entry && table ids to popup
+        {
+          search_from: "tmpl_tableitemeditor",
+          // M.$el.is(":visible")&&M.render()}),
+          find: [ `()=>{`,1,`.$el.is(":visible")&&`,1,`.render()}),this.$el.on("click",".deleteitem"` ],
+          replace: [ 
+            `()=>{`,1,`.$el.is(":visible")&&`,1,`.render()}),this.el.setAttribute("${Vars.TABLE_ID_ATTRIBUTE}",`,1,`.model.collection.rollabletable.id),this.el.setAttribute("${Vars.TABLE_ENTRY_ID_ATTRIBUTE}",`,1,`.model.id),this.$el.on("click",".deleteitem"`
+          ]
+        },
+      ],
+    }
   ]
 };
 

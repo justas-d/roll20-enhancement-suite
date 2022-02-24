@@ -16,22 +16,27 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `<button class='broadcasthandout btn'>Show to Players</button>`,
-      patch: `<button class='vttes_overwrite_handout btn' style='position: absolute; top: 10px; right: 316px'>Overwrite</button><button class='vttes_export_handout btn' style='position: absolute; top: 10px; right: 250px'>Export</button> >>R20ES_MOD_FIND>>`,
-    },
-    {
-      includes: "vtt.bundle.js",
-      find: `$("body").on("click",".broadcasthandout",`,
-      patch: `
-      $("body").on("click",".vttes_overwrite_handout", (e) => {
-        if(window.r20es && window.r20es.overwrite_handout) {
-          window.r20es.overwrite_handout(e);
+
+      find_replace: [
+        {
+          find: `<button class='broadcasthandout btn'>Show to Players</button>`,
+          replace: `<button class='vttes_overwrite_handout btn' style='position: absolute; top: 10px; right: 316px'>Overwrite</button><button class='vttes_export_handout btn' style='position: absolute; top: 10px; right: 250px'>Export</button> >>R20ES_MOD_FIND>>`,
+        },
+
+        {
+          find: `$("body").on("click",".broadcasthandout",`,
+          replace: `
+          $("body").on("click",".vttes_overwrite_handout", (e) => {
+            if(window.r20es && window.r20es.overwrite_handout) {
+              window.r20es.overwrite_handout(e);
+            }
+          }), $("body").on("click",".vttes_export_handout", (e) => {
+            if(window.r20es && window.r20es.export_handout) {
+              window.r20es.export_handout(e);
+            }
+          }), >>R20ES_MOD_FIND>>`,
         }
-      }), $("body").on("click",".vttes_export_handout", (e) => {
-        if(window.r20es && window.r20es.export_handout) {
-          window.r20es.export_handout(e);
-        }
-      }), >>R20ES_MOD_FIND>>`,
+      ]
     },
   ],
 };

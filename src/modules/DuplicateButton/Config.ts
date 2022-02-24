@@ -15,18 +15,23 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
 
-      patch: `
-        $("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]", function () {
-          if(window.r20es && window.r20es.onJournalDuplicate) window.r20es.onJournalDuplicate(r.attr("data-itemid"))
-        }),
-        $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
+      stencils: [
+        {
+          search_from: "data-action-type=showtoplayers",
+          find: [ `const `,-1,`=`,1,`.attr("data-itemid");` ],
+        },
 
-      stability_checks: [
-        // NOTE(justasd): search for showtoplayers
-        // 2022-01-19
-        `const u=r.attr("data-itemid");`,
+        {
+          find: [ `$("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"` ],
+
+          replace: [`
+            $("#journalitemmenu ul").on(mousedowntype, "li[data-action-type=r20esduplicate]", function () {
+              if(window.r20es && window.r20es.onJournalDuplicate) window.r20es.onJournalDuplicate(`,1,`.attr("data-itemid"))
+            }),
+            $("#journalitemmenu ul").on(mousedowntype,"li[data-action-type=showtoplayers]"`,
+          ]
+        }
       ],
     },
   ]

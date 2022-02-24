@@ -40,16 +40,29 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `p.type=="text"&&($("#font-size").val(p.model.get("font_size"))`,
-      patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) >>R20ES_MOD_FIND>>`,
-    },
+      stencils: [
+        // NOTE(justasd): search for d20.engine.editText = function
+        // 2022-01-19
+        {
+          search_from: "d20.engine.editText=function",
+          // matches $("#font-size").val(le).trigger("keyup"), $("#font-color").val(we).trigger("change-silent"), $("#font-family").val(me);
+          // 2022-02-24
+          find: [ `.get("fill");`,1,`var` ],
+          replace: [ `.get("fill"); 
+if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { 
+`,1,`
+}
+var `,
+        ]
+        },
+      ],
 
-    // NOTE(justasd): search for d20.engine.editText = function
-    // 2022-01-19
-    {
-      includes: "vtt.bundle.js",
-      find: `$("#font-size").val(X).trigger("keyup"),$("#font-color").val(ge).trigger("change-silent"),$("#font-family").val(ae),$("#font-stroke").val(xe).trigger("change-silent");`,
-      patch: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { >>R20ES_MOD_FIND>> }`,
-    }
+      find_replace: [
+        {
+          find: `p.type=="text"&&($("#font-size").val(p.model.get("font_size"))`,
+          replace: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) >>R20ES_MOD_FIND>>`,
+        },
+      ],
+    },
   ]
 };

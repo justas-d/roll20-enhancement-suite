@@ -90,7 +90,7 @@ const removeAllChildren = function(root) {
   }
 }
 
-const escapeRegExp = (str) => {
+export const escapeRegExp = (str) => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 

@@ -95,8 +95,13 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: "function setMode(A){",
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(A);}",
+
+      stencils: [
+        {
+          find: [ `function setMode(`, 1, `){` ],
+          replace: [ 0, `if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(`,1,`);}` ],
+        },
+      ],
     },
   ],
 };

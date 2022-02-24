@@ -17,31 +17,36 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "patience.js",
-      find: `document.querySelectorAll('head')[0]`,
-      patch: `document.body`,
-    },
-    {
-      includes: "patience.js",
-      find: `</style>`,
-      patch: ``,
-    },
-    {
-      includes: "patience.js",
-      find: `<style id="patience__styles" type="text/css" media="screen">`,
-      patch: ``,
-    },
-    {
-      includes: "patience.js",
-      find: `patinetHeader.innerHTML += patientStyles;`,
-      patch: 
-      `{
-        const el = document.createElement("style");
-        el.id = 'patience__styles';
-        el.type = 'text/css';
-        el.media = 'screen';
-        el.innerText = patientStyles;
-        patinetHeader.appendChild(el);
-      }`
+
+      find_replace: [
+        {
+          find: `document.querySelectorAll('head')[0]`,
+          replace: `document.body`,
+        },
+
+        {
+          find: `</style>`,
+          replace: ``,
+        },
+
+        {
+          find: `<style id="patience__styles" type="text/css" media="screen">`,
+          replace: ``,
+        },
+
+        {
+          find: `patinetHeader.innerHTML += patientStyles;`,
+          replace: 
+          `{
+            const el = document.createElement("style");
+            el.id = 'patience__styles';
+            el.type = 'text/css';
+            el.media = 'screen';
+            el.innerText = patientStyles;
+            patinetHeader.appendChild(el);
+          }`
+        },
+      ],
     },
   ],
 };

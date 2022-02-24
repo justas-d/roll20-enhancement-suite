@@ -35,18 +35,21 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `updateCanvasZoom:()=>d20.engine.canvasZoom=G.canvasZoom`,
+      stencils: [
+        {
+          find: [ `d20.engine.setZoom=(`,2,`,` ],
+        },
+        {
+          find: [ `updateCanvasZoom:()=>d20.engine.canvasZoom=`,1,`.canvasZoom` ],
 
-      patch: `updateCanvasZoom:()=> {
-        if(window.r20es && window.r20es.onZoomChange) {
-          window.r20es.onZoomChange(L);
-        }
-        d20.engine.canvasZoom = G.canvasZoom;
-      }`,
-
-      stability_checks: [
-        `d20.engine.setZoom=(L,z,P)`,
-      ],
+          replace: [ `updateCanvasZoom:()=> {
+            if(window.r20es && window.r20es.onZoomChange) {
+              window.r20es.onZoomChange(`,2,`);
+            }
+            d20.engine.canvasZoom = `,1,`.canvasZoom;
+          }`, ],
+        },
+      ]
     }
   ]
 };

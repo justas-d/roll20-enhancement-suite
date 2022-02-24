@@ -27,78 +27,77 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find: `function setMode(A){`,
-      patch: `>>R20ES_MOD_FIND>>{window.d20setMode=setMode;}`,
-    },
 
-    {
-      includes: "vtt.bundle.js",
-      find: `function setMode(A){`,
-      patch: ">>R20ES_MOD_FIND>>if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(A);}",
-    },
+      stencils: [
+        {
+          find: [ `function setMode(`, 1, `){` ],
+          replace: [ 0, `window.d20setMode=setMode; if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(`, 1, `);}` ],
+        },
 
-    {
-      includes: "vtt.bundle.js",
-      find: `y:[0,1]};`,
-      patch: `>>R20ES_MOD_FIND>>if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(L,z); }`,
+        // search for d20.engine.getDistanceInScale({
+        // G = function(B, H, J, ee, q, W)
+        {
+          search_from: "[-10.16,-24.53]",
+          search_from_index_offset: -700,
+          find: [ `},`,-1,`=function(`,2,`,`,3,`,`]
+        },
 
-      // search for d20.engine.getDistanceInScale({
-      stability_checks: [
-        `W=function(L,z,P,G,K,te)`,
-      ],
-    },
+        {
+          find: [ `y:[0,1]};` ],
+          replace: [ 0, `if(window.r20es && window.r20es.render_extra_rulers) { window.r20es.render_extra_rulers(`,2,`,`,3,`); }` ],
+        },
 
-    {
-      includes: "vtt.bundle.js",
-      // NOTE(justasd): search for d20.engine.drawMeasurements =
-      // 2022-01-19
-      find: "x:z.x-d20.engine.currentCanvasOffset[0],",
+        // NOTE(justasd): search for d20.engine.drawMeasurements =
+        // 2022-01-19
+        {
+          search_from: "d20.engine.drawMeasurements=function",
+          find: [ `,x:`,4,`.x-d20.engine.currentCanvasOffset[0],`],
+          replace: [ 0,`
+vttes_radius_mode: `,4,`.vttes_radius_mode,
+vttes_box_mode: `,4,`.vttes_box_mode,
+vttes_cone_mode: `,4,`.vttes_cone_mode,
+vttes_cone_degrees: `,4,`.vttes_cone_degrees,
+vttes_line_mode: `,4,`.vttes_line_mode,
+vttes_line_width: `,4,`.vttes_line_width,
+vttes_ruler_mode: `,4,`.vttes_ruler_mode,`
+          ],
+        },
 
-      patch: `
-vttes_radius_mode: z.vttes_radius_mode,
-vttes_box_mode: z.vttes_box_mode,
-vttes_cone_mode: z.vttes_cone_mode,
-vttes_cone_degrees: z.vttes_cone_degrees,
-vttes_line_mode: z.vttes_line_mode,
-vttes_line_width: z.vttes_line_width,
-vttes_ruler_mode: z.vttes_ruler_mode,
->>R20ES_MOD_FIND>>
-`,
-    },
+        {
+          // NOTE(justasd): will replace two occurances.
+          // NOTE(justasd): search for diagonals % 2,
+          // 2022-01-19
 
-    // NOTE(justasd): will replace two occurances.
-    {
-      includes: "vtt.bundle.js",
-      // NOTE(justasd): search for diagonals % 2,
-      // 2022-01-19
-      find: "color:z.color,flags:z.flags,",
+          search_from: "[-10.16,-24.53]",
+          search_from_index_offset: -1700,
+          find: [ `color:`,5,`.color,flags:`,5,`.flags,` ],
 
+          replace: [ 0,`
+vttes_radius_mode: `,5,`.vttes_radius_mode,
+vttes_box_mode: `,5,`.vttes_box_mode,
+vttes_cone_mode: `,5,`.vttes_cone_mode,
+vttes_cone_degrees: `,5,`.vttes_cone_degrees,
+vttes_line_mode: `,5,`.vttes_line_mode,
+vttes_line_width: `,5,`.vttes_line_width,
+vttes_ruler_mode: `,5,`.vttes_ruler_mode,`
+          ]
+        },
 
-      patch: `
-vttes_radius_mode: z.vttes_radius_mode,
-vttes_box_mode: z.vttes_box_mode,
-vttes_cone_mode: z.vttes_cone_mode,
-vttes_cone_degrees: z.vttes_cone_degrees,
-vttes_line_mode: z.vttes_line_mode,
-vttes_line_width: z.vttes_line_width,
-vttes_ruler_mode: z.vttes_ruler_mode,
->>R20ES_MOD_FIND>>
-`,
-    },
-    {
-      includes: "vtt.bundle.js",
-      find: `d20.engine.announceMeasure=function(L){`,
-      patch: `>>R20ES_MOD_FIND>>
+        {
+          find: [ `d20.engine.announceMeasure=function(`,6,`){` ],
+          replace: [ 0,`
 if(window.r20es && window.r20es.extra_ruler_set_mode) {
-  L.vttes_radius_mode = window.r20es.extra_ruler.radius_mode;
-  L.vttes_box_mode = window.r20es.extra_ruler.box_mode;
-  L.vttes_cone_mode = window.r20es.extra_ruler.cone_mode;
-  L.vttes_cone_degrees = window.r20es.extra_ruler.cone_degrees;
-  L.vttes_line_mode = window.r20es.extra_ruler.line_mode;
-  L.vttes_line_width = window.r20es.extra_ruler.line_width;
-  L.vttes_ruler_mode = window.r20es.extra_ruler.ruler_mode;
-}
-`,
+  `,6,`.vttes_radius_mode = window.r20es.extra_ruler.radius_mode;
+  `,6,`.vttes_box_mode = window.r20es.extra_ruler.box_mode;
+  `,6,`.vttes_cone_mode = window.r20es.extra_ruler.cone_mode;
+  `,6,`.vttes_cone_degrees = window.r20es.extra_ruler.cone_degrees;
+  `,6,`.vttes_line_mode = window.r20es.extra_ruler.line_mode;
+  `,6,`.vttes_line_width = window.r20es.extra_ruler.line_width;
+  `,6,`.vttes_ruler_mode = window.r20es.extra_ruler.ruler_mode;
+}`,
+          ],
+        },
+      ],
     },
   ]
 };
