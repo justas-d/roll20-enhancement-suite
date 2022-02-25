@@ -82,7 +82,7 @@ export const apply_mods_to_text = (
 
               let end_index = into_what.indexOf(end_str, start_index + start_str.length);
               if(end_index < 0) {
-                console.error("STENCIL: failed to find index of stencil part at index ${i}", end_str, stencil, mod);
+                console.error(`STENCIL: failed to find index of stencil part at index ${i}`, end_str, stencil, mod);
                 continue stencil_loop;
               }
 
@@ -91,7 +91,7 @@ export const apply_mods_to_text = (
 
                 if(typeof(groups[group_index]) == "string") {
                   if(groups[group_index] != value) {
-                    console.error(`$Mismatched values between the same group! Group is {group_index} and the current value is '${groups[group_index]}', whereas the new value is '${value}'.`, stencil, mod);
+                    console.error(`$Mismatched values between the same group! Group is ${group_index} and the current value is '${groups[group_index]}', whereas the new value is '${value}'.`, stencil, mod);
                     continue stencil_loop;
                   }
                 }
@@ -131,8 +131,7 @@ export const apply_mods_to_text = (
           }
         }
 
-        console.log("======================STENCIL REPLACE DATA ===========================");
-        console.log(replace_data);
+        console.log("Stencil replace data", replace_data);
         replace_loop: for(const replace of replace_data) {
           if(replace.stencil.debug_replace) {
             debugger;
@@ -162,14 +161,13 @@ export const apply_mods_to_text = (
             }
           }
 
-          console.log("======================STENCIL REPLACE ===========================");
 
           const cmd : Replace = {
             find: cutout,
             replace: str
           };
 
-          console.log(cmd);
+          console.log("Generated replace:", cmd);
 
           generated_replaces.push(cmd);
         }

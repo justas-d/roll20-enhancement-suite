@@ -16,53 +16,65 @@ export default <VTTES.Module_Config> {
     {
       includes: "vtt.bundle.js",
 
-      find_replace: [
+      stencils: [
+
         // radial button proportionally timed animation
         {
-          // NOTE(justasd): search for * 30)
-          // 2022-01-19
-          find: `setTimeout(function(){$(t).addClass("open"),m.find(".button div.hasnumber").textfill(20)},g*30),g++`,
+          search_from: "*30),",
+          search_from_index_offset: -300,
 
-          replace: `;
-          if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { $(t).addClass("open");m.find(".button div.hasnumber").textfill(20);}
-          else { >>R20ES_MOD_FIND>>; }
-          `,
+          // setTimeout(function(){$(t).addClass("open"),m.find(".button div.hasnumber").textfill(20)},g*30),g++
+          find: [ `setTimeout(function(){$(`,1,`).addClass("open"),`,2,`.find(".button div.hasnumber").textfill(20)},`,3,`*30),`,3,`++` ],
+          replace: [
+`
+if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { 
+  $(`,1,`).addClass("open");`,2,`.find(".button div.hasnumber").textfill(20);
+} 
+else { 
+  `,0,` 
+}`,
+          ]
         },
 
         // radial final
         {
-          // NOTE(justasd): search for * 30)
-          // 2022-01-19
-          find: `setTimeout(function(){m.find(".button").addClass("animcomplete")},250)`,
+          search_from: "*30),",
 
-          replace : `1;
-          if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { m.find(".button").addClass("animcomplete");}
-          else { >>R20ES_MOD_FIND>>; }`,
-
+          // setTimeout(function(){m.find(".button").addClass("animcomplete")},250)
+          find: [ `setTimeout(function(){`,2,`.find(".button").addClass("animcomplete")},250)` ],
+          replace: [ 
+`
+1;
+if(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disableRadial")) { 
+  `,2,`.find(".button").addClass("animcomplete");
+}
+else { 
+  `,0,` 
+}`,
+          ],
         },
 
         // toolbar anim
         {
-          // NOTE(justasd): search for pagetoolbar.noClosing
-          // 2022-01-19
-          find: `l.animate({top:"-1px"},300).removeClass("closed"),`,
-
-          replace: `l.animate({top:"-1px"},
-        (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
-      ).removeClass("closed"),`,
+          search_from: "if(d20.pagetoolbar.noClosing)return;",
+          // ?(l.animate({top:"-1px"},300).removeClass("closed"),`
+          find: [ `?(`,4,`.animate({top:"-1px"},300).removeClass("closed"),` ],
+          replace: [ `?(`,4,`.animate({top:"-1px"},(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300).removeClass("closed"),`, ],
         },
 
         // toolbar anim
         {
-          // NOTE(justasd): search for pagetoolbar.noClosing
-          // 2022-01-19
-          find: `l.animate({top:\`-\${l.height()}px\`},300,()=>{l.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(()=>{$("#page-toolbar .pages input:text").trigger("blur")})})`,
+          search_from: "if(d20.pagetoolbar.noClosing)return;",
+          // l.animate({top:\`-\${l.height()}px\`},300,()=>{l.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(()=>{$("#page-toolbar .pages input:text").trigger("blur")})})
+          find: [ `:(`,4,`.animate({top:\`-\${`,4,`.height()}px\`},300,()=>{`,4,`.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(()=>{$("#page-toolbar .pages input:text").trigger("blur")})})` ],
 
-          replace: `l.animate({top:"-"+l.height()+"px"},
-        (window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
-        function(){l.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(function(){$("#page-toolbar .pages input").trigger("blur")})})`,
+          replace: [ 
+`:(`,4,`.animate({top:"-"+`,4,`.height()+"px"},
+(window.r20es && window.r20es.shouldDoCustomAnim && window.r20es.shouldDoCustomAnim("disablePageToolbar")) ? 1 : 300,
+function(){`,4,`.addClass("closed"),$("#page-toolbar .pages").hide(),_.delay(function(){$("#page-toolbar .pages input").trigger("blur")})})`,
+          ],
         },
-      ]
+      ],
     },
   ],
 

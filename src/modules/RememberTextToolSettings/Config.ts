@@ -53,15 +53,19 @@ if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) {
 `,1,`
 }
 var `,
-        ]
+          ]
         },
-      ],
-
-      find_replace: [
         {
-          find: `p.type=="text"&&($("#font-size").val(p.model.get("font_size"))`,
-          replace: `if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) >>R20ES_MOD_FIND>>`,
-        },
+          search_from: `"fontSize",parseInt`,
+          search_from_index_offset: -1000,
+          
+
+          // $("body").on("shape_selected","#editor",(A,p)=>{p.type=="text"
+          find: [ `$("body").on("shape_selected","#editor",(`,3,`,`,4,`)=>{`,4,`.type=="text"` ],
+          replace: [
+            `$("body").on("shape_selected","#editor",(`,3,`,`,4,`)=>{if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es)`,4,`.type=="text"`,
+          ]
+        }
       ],
     },
   ]
