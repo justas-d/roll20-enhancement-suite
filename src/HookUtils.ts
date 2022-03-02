@@ -31,12 +31,15 @@ export const apply_mods_to_text = (
         continue;
       }
 
-      if(mod.stencils) {
+      if(mod.stencils && !mod.debug_disable_stencils) {
+        //console.log("===========STENCILS FOR", config);
         let groups = {};
         let replace_data: Array<Stencil_Data> = [];
         let generated_replaces: Array<Replace> = [];
 
         stencil_loop: for(const stencil of mod.stencils) {
+          if(stencil.debug_disable) continue;
+          
           if(stencil.debug_find) {
             debugger;
           }
@@ -175,6 +178,8 @@ export const apply_mods_to_text = (
         for(const replace of generated_replaces) {
           into_what = replaceAll(into_what, replace.find, replace.replace);
         }
+
+        //console.log("Generated groups:", groups);
       }
 
       if(mod.find_replace) {

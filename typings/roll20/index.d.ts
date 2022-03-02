@@ -742,6 +742,7 @@ namespace VTTES {
 
     debug_find?: boolean;
     debug_replace?: boolean;
+    debug_disable?: boolean;
   }
 
   interface Find_Replace {
@@ -756,6 +757,8 @@ namespace VTTES {
 
     stencils?: Array<Replace_Stencil>;
     find_replace?: Array<Find_Replace>;
+
+    debug_disable_stencils?: boolean;
   }
 
   const enum Config_View_Type {
