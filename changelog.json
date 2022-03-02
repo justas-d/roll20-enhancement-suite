@@ -1,5 +1,5 @@
 {
-    "current": "1.27.0",
+    "current": "1.27.1",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2329,6 +2329,22 @@
                 {
                     "id": "",
                     "content": "Some internal changes to hopefully improve stability across Roll20 updates."
+                }
+            ]
+        },
+        "1.27.1": {
+            "info": {
+                "title": "Minor Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix animation disable and remember text tool settings modules."
+                },
+                {
+                    "id": "",
+                    "content": "More internal changes for stability."
                 }
             ]
         }
