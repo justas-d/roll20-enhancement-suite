@@ -39,7 +39,7 @@ export default <VTTES.Module_Config> {
         {
           search_from: "[-10.16,-24.53]",
           search_from_index_offset: -700,
-          find: [ `)};var `,-1,`=function(`,2,`,`,3,`,`]
+          find: [ `;var `,-1,`=function(`,2,`,`,3,`,`]
         },
 
         {
