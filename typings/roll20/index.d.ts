@@ -722,6 +722,10 @@ interface Window {
   USERSCRIPT_VTT_BUNDLE_DATA : string | undefined;
   USERSCRIPT_BASE_DATA : string | undefined;
   USERSCRIPT_APP_DATA : string | undefined;
+
+  Sprig: Function;
+
+  sprig_safe_trampoline: Function;
 }
 
 const BUILD_CONSTANT_VERSION: string;

@@ -15,6 +15,19 @@ const LOCALSTORAGE_SAVE_DATA_KEY = "vttes_userscript_config";
 
 export const bootstrap = () => {
 
+  // @SprigWorkaround
+  if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome" ||
+     BUILD_CONSTANT_TARGET_PLATFORM === "userscript"
+  ) {
+    window.sprig_safe_trampoline = (...args) => {
+      try {
+        window.Sprig(...args);
+      } catch(ex) {
+      }
+    }
+    console.log("Installed sprig_safe_trampoline");
+  }
+
   // @FirefoxExtensionReloading
   window.hasInjectedModules = false;
 

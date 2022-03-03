@@ -53,6 +53,7 @@ import CustomPathWidth from "./modules/CustomPathWidth/Config"
 import ExtraRulers from "./modules/ExtraRulers/Config"
 import FixPatienceJs from "./modules/FixPatienceJs/Config"
 import UserscriptUpdateChecker from "./modules/UserscriptUpdateChecker/Config"
+import SprigWorkaround from "./modules/SprigWorkaround/Config"
 
 const VTTES_MODULE_CONFIGS: Record<string, VTTES.Module_Config> = {};
 const addCfg = (cfg: VTTES.Module_Config) => VTTES_MODULE_CONFIGS[cfg.id] = cfg;
@@ -108,6 +109,7 @@ addCfg(CameraStartPosition);
 addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
 addCfg(ExtraRulers);
+addCfg(SprigWorkaround);
 
 if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript" ||
    BUILD_CONSTANT_TARGET_PLATFORM === "chrome" 
