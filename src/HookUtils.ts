@@ -32,7 +32,7 @@ export const apply_mods_to_text = (
       }
 
       if(mod.stencils && !mod.debug_disable_stencils) {
-        //console.log("===========STENCILS FOR", config);
+        console.log("===========STENCILS FOR", config);
         let groups = {};
         let replace_data: Array<Stencil_Data> = [];
         let generated_replaces: Array<Replace> = [];
@@ -179,7 +179,7 @@ export const apply_mods_to_text = (
           into_what = replaceAll(into_what, replace.find, replace.replace);
         }
 
-        //console.log("Generated groups:", groups);
+        console.log("Generated groups:", groups);
       }
 
       if(mod.find_replace) {
