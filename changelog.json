@@ -1,5 +1,5 @@
 {
-    "current": "1.27.3",
+    "current": "1.27.4",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2377,6 +2377,34 @@
                 {
                     "id": "",
                     "content": "Fix Roll20 crashing if the cdn.userleap domain is blocked."
+                }
+            ]
+        },
+        "1.27.4": {
+            "info": {
+                "title": "More Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Some styling fixes."
+                },
+                {
+                    "id": "",
+                    "content": "Fix token layer drawing (thanks, ElementalSword, for the report!)."
+                },
+                {
+                    "id": "",
+                    "content": "Fix token bar position adjust."
+                },
+                {
+                    "id": "",
+                    "content": "Fix scale token names by size."
+                },
+                {
+                    "id": "",
+                    "content": "Fix change id when duplicating."
                 }
             ]
         }
