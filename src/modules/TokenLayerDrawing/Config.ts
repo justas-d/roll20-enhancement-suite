@@ -16,10 +16,15 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-      find_replace: [
+      stencils: [
         {
-          find: `this._drawNameplate(d)),d.restore(),this`,
-          replace: `this._drawNameplate(d)),d.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(d, this)),this`,
+          // this._drawNameplate(d)),d.restore(),this
+          find: [
+            `this._nameplate_data&&this._drawNameplate(`,1,`)),u.restore()`,
+          ],
+          replace: [
+`this._nameplate_data&&this._drawNameplate(`,1,`)),`,1,`.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(`,1,`, this))`
+          ],
         },
       ],
     },
