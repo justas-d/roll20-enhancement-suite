@@ -18,12 +18,12 @@ export default <VTTES.Module_Config> {
           // 2022-01-19
           find: `b.defaulttoken=A.model._blobcache.defaulttoken`,
 
-          replace: `b.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(A, d) : i.model._blobcache.defaulttoken)`,
+          replace: `b.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(A, u) : i.model._blobcache.defaulttoken)`,
 
           stability_checks: [
             // NOTE(justasd): search for CharacterEditorView =
             // 2022-01-19
-            `setTimeout(()=>{let h=d.get("attrorder");`,
+            `setTimeout(()=>{let h=u.get("attrorder");`
           ],
         },
       ],
