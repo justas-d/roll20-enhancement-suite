@@ -1308,7 +1308,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         <input 
           type="button" 
           onClick={this.on_export_click} 
-          className="btn" 
+          className="button" 
           style={{width:"auto"}}
           data-characterid={data.characterId}
           value="Export"
@@ -1317,7 +1317,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
         <input 
           type="button" 
           onClick={this.on_overwrite_character_click} 
-          className="btn" 
+          className="button" 
           style={{width:"auto"}}
           data-characterid={data.characterId}
           value={canEdit ? "Overwrite" : "You do not have permission to edit this character"}
@@ -1348,7 +1348,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
         <input 
           type="button" 
-          className="btn" 
+          className="button" 
           onClick={this.on_export_components_click} 
           style={{width:"auto"}}
           data-characterid={data.characterId}
@@ -1357,7 +1357,7 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
 
         <input 
           type="button" 
-          className="btn" 
+          className="button" 
           style={{width:"auto"}}
           onClick={this.on_import_components_click} 
           data-characterid={data.characterId}

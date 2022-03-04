@@ -89,6 +89,25 @@ export const bootstrap = () => {
           margin: 10px 30px 10px 30px;
           overflow: auto;
       }
+      
+      .r20es-settings-dialog h1 { color: #333; }
+      .r20es-settings-dialog h2 { color: #333; }
+      .r20es-settings-dialog h3 { color: #333; }
+      .r20es-settings-dialog h4 { color: #333; }
+      .r20es-settings-dialog h5 { color: #333; }
+      .r20es-settings-dialog h6 { color: #333; }
+      .r20es-settings-dialog input[type=number] { color: #555; }
+      .r20es-settings-dialog input[type=text] { color: #555; }
+      .r20es-settings-dialog select { color: #555; }
+      .r20es-dialog h1 { color: #333; }
+      .r20es-dialog h2 { color: #333; }
+      .r20es-dialog h3 { color: #333; }
+      .r20es-dialog h4 { color: #333; }
+      .r20es-dialog h5 { color: #333; }
+      .r20es-dialog h6 { color: #333; }
+      .r20es-dialog input[type=number] { color: #555; }
+      .r20es-dialog input[type=text] { color: #555; }
+      .r20es-dialog select { color: #555; }
 
       .r20es-dialog>.dialog-footer {
           position: sticky;
@@ -162,14 +181,16 @@ export const bootstrap = () => {
           padding-left: 8px;
       }
 
+      .r20es-welcome h3 { color: #333; }
       .r20es-welcome {
           background-color: #ffffff;
+          color: #333;
           max-width: 30%;
           right: 20%;
           top: 5%;
           position: absolute;
           padding: 10px;
-          z-index: 10000;
+          z-index: 11000;
           border: 1px solid black;
       }
 

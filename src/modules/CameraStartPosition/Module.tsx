@@ -171,6 +171,7 @@ class CameraStartPositionModule extends R20Module.OnAppLoadBase {
       borderLeft: "1px solid gray",
       borderRight: "1px solid gray",
       maxWidth: "450px",
+      color: "#333",
     };
 
     let controls = null;
@@ -209,7 +210,7 @@ class CameraStartPositionModule extends R20Module.OnAppLoadBase {
 
     this.menu_widget = (
       <div style={style}>
-        <h3>Default Camera Position (VTTES)</h3>
+        <h3 style={{color: "#333"}}>Default Camera Position (VTTES)</h3>
         <p>This controls the location of the default camera.</p>
         <p>When this is enabled, when players enter a page, their camera location and zoom level will be set to the one configured here.</p>
         <b>Players must have the extension installed for this to work.</b>

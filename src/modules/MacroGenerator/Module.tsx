@@ -382,17 +382,17 @@ console.log(e.target);
     private renderSheet = (instance: SheetTabSheetInstanceData<null>) => {
       return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <button 
+          <input
+            type="button"
             style={{ 
               width: "50%", 
               height: "30px"
             }} 
-            className="btn" 
+            className="button" 
             onClick={this.onButtonClick}
             data-characterid={instance.characterId}
-          >
-            Open Generate Macros Dialog
-          </button>
+            value="Open Generate Macros Dialog"
+          />
         </div>
       );
     }
