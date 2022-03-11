@@ -26,22 +26,18 @@
 ## Discord
 We've got a [Discord Server](https://discord.gg/pKxxvuM). Come say hi, discuss new features, report issues etc.
 
-## Contributing
-Awesome, contributing is always welcome and appretiatied!
+## Issues/Contributing
+If you want to make changes to the code that you hope to be merged into the master branch, please either message me privately or ping me on our Discord before doing any work.
 
-If you'd like to contribute code please first start a discussion by opening an issue.
+If you'd like to make a suggestion, please visit our Discord.
 
-If there are any questions regarding the codebase - open an issue.
+To report any issues, head over to the Discord issues channel.
 
-If you want to suggest a feature or report a bug - open an issue.
-
-Or <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"><a class="bmc-button" target="_blank" href="https://justas-d.github.io/roll20-enhancement-suite/contribute.html"><img src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"><span style="margin-left:5px">Buy me a coffee</span></a>
+If you'd like to support the project financially, <a href="https://justas-d.github.io/roll20-enhancement-suite/contribute.html">consider donating</a>.
 
 ## Building
 
 See [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS.md)
-
----
 
 ## License
 The source code is licensed under GPL-3.0.
