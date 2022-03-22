@@ -181,7 +181,12 @@ export const bootstrap = () => {
           padding-left: 8px;
       }
 
+      .r20es-welcome h1 { color: #333; }
+      .r20es-welcome h2 { color: #333; }
       .r20es-welcome h3 { color: #333; }
+      .r20es-welcome h4 { color: #333; }
+      .r20es-welcome h5 { color: #333; }
+      .r20es-welcome h6 { color: #333; }
       .r20es-welcome {
           background-color: #ffffff;
           color: #333;
