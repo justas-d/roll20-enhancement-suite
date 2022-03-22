@@ -245,13 +245,14 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
             : "left: 128px"};
     opacity: ${cfg.opacity};
 }
-
-#page-toolbar .handle {
-    ${cfg.location === "right"
-            ? "right: -30px !important; left: unset;"
-            : "left: -30px; right: unset !important;"};
-}
 `;
+        if(cfg.location === "left") {
+          variableStyle += `
+            #page-toolbar .handle {
+              "left: -30px; right: unset !important;"
+            }
+          `;
+        }
 
         this.addStyleAsElement(AlternativePageToolbarMenu.constantSheetId, constantStyle);
         this.addStyleAsElement(AlternativePageToolbarMenu.variableSheetId, variableStyle);
