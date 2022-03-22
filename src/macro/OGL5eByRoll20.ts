@@ -177,7 +177,7 @@ for(let name in dataSet) {
       let retval: string[] = [];
 
       for(const macro of macros) {
-        retval.push(`[${macro.name}](~${macro.macro})`);
+        retval.push(`[${macro.name}](~${macro.macro}) `);
       }
 
       return retval;

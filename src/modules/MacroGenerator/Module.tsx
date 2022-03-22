@@ -236,7 +236,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
         // generate an array of macros in wanted categories
         let data: IGeneratedMacro[] = [];
 
-        const makeFolderHeader = (title: string= "") => `/w @{character_name} @{wtype} &{template:default}{{name=@{character_name} ${title}}}`;
+        const makeFolderHeader = (title: string= "") => `/w @{character_name} @{wtype} &{template:default}{{name=@{character_name} ${title}}} `;
         const getCategoryName = (factory: IMacroFactory) => factory.categoryNameModifier ? factory.categoryNameModifier(factory.name) : factory.name;
 
         let uberFolderBuffer = makeFolderHeader();
@@ -266,7 +266,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
                         let buffer = makeFolderHeader(name);
 
                         for (const str of folder) {
-                            buffer += `{{${str}}}`;
+                            buffer += `{{${str}}} `;
                         }
 
                         data.push({
@@ -286,7 +286,7 @@ class MacroGeneratorModule extends R20Module.SimpleBase {
                         }
 
                         const name = getCategoryName(factory);
-                        uberFolderBuffer += `{{• ${name}=${buffer}}}`;
+                        uberFolderBuffer += `{{• ${name}=${buffer}}} `;
 
                         break;
                     }
