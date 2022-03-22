@@ -41,14 +41,14 @@ class ChangelogWidget extends DOM.ElementBase {
         const changelogData: IChangelog = JSON.parse(BUILD_CONSTANT_CHANGELOG);
 
         if (listAllVersions) {
-            console.log("in list all");
-            console.log(changelogData.versions);
+            //console.log("in list all");
+            //console.log(changelogData.versions);
             for (const versionName in changelogData.versions) {
                 this.prepareChanges(changelogData.versions[versionName], versionName)
             }
 
         } else {
-            console.log("in else");
+            //console.log("in else");
             const current = changelogData.versions[changelogData.current];
             this.prepareChanges(current, changelogData.current)
         }
@@ -60,7 +60,7 @@ class ChangelogWidget extends DOM.ElementBase {
     }
 
     private prepareChanges(version: IVersion, semverString: string) {
-        console.log(`prep ${version.info.title}`);
+        //console.log(`prep ${version.info.title}`);
         this.preparedData.push({
             data: version,
             mediaUrl: strIsNullOrEmpty(version.info.media) ? "" : Config.website + version.info.media,
