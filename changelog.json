@@ -1,5 +1,5 @@
 {
-    "current": "1.27.4",
+    "current": "1.27.5",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2405,6 +2405,34 @@
                 {
                     "id": "",
                     "content": "Fix change id when duplicating."
+                }
+            ]
+        },
+        "1.27.5": {
+            "info": {
+                "title": "Spring Cleaning",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix weird things happening to character attributes when importing a character (thanks, springwoods and Feistykitten, for the report!) "
+                },
+                {
+                    "id": "",
+                    "content": "Fix character importing requiring a page refresh sometimes for sheets to load on Firefox."
+                },
+                {
+                    "id": "",
+                    "content": "Tweaked the position of the toolbar button when the alternate toolbar menu module is on."
+                },
+                {
+                    "id": "",
+                    "content": "Add spaces to generated macros."
+                },
+                {
+                    "id": "",
+                    "content": "Styling fixes on the changelog popup."
                 }
             ]
         }
