@@ -614,16 +614,25 @@ namespace Roll20 {
   }
 
   interface ObjectStorage<T> {
-      length: number;
-      models: T[];
-      get: (uuid: string) => T;
-      getByCid: (cid: string) => T;
-      create: (initialState?: T | any) => T;
-      find: (predicate: (element: T) => boolean) => T;
-      map: <TOut>(selector: (element: T) => TOut)=> TOut[];
+    length: number;
+    models: T[];
+    get: (uuid: string) => T;
+    getByCid: (cid: string) => T;
+    create: (initialState?: T | any, options?: any) => T;
+    find: (predicate: (element: T) => boolean) => T;
+    map: <TOut>(selector: (element: T) => TOut)=> TOut[];
 
-      backboneFirebase: BackboneFirebase;
-      //reset: () => ObjectStorage<T>; local only, doesn't sync with firebase
+    // Add a model, or list of models to the set. Pass **silent** to avoid
+    // firing the `add` event for every new model.
+    add: (obj: T | Array<T>, options?: any) => ObjectStorage<T>;
+
+    // When you have more items than you want to add or remove individually, you can reset the
+    // entire set with a new list of models, without firing any `add` or `remove` events. Fires
+    // `reset` when finished.  Pass **silent** to avoid firing the `reset` event and other events
+    // from the looks of it as it propagates.
+    reset: (models: Array<T>, options?: any) => ObjectStorage<T>;
+
+    backboneFirebase: BackboneFirebase;
   }
 
   interface R20ESKeys  {

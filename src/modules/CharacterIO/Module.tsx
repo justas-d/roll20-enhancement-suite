@@ -150,7 +150,7 @@ class Import_Component_Dialog extends DialogBase<string> {
           data.max = replaceAll(attribute.max || "", component.old_character_id, this.pc.attributes.id);
         }
 
-        const new_attrib = this.pc.attribs.create(data);
+        const new_attrib = this.pc.attribs.create(data, { silent: true });
 
         imported_attributes.push({
           old_repeating_id: component.repeating_id,
@@ -788,13 +788,13 @@ const overwrite_char_v1 = (pc: Roll20.Character, data: any): Promise<any> => {
     blobs.bio = data.bio;
     pc.updateBlobs(blobs);
 
-    for(let importAttrib of data.attribs) {
-      pc.attribs.create(importAttrib);
-    }
-
     pc.save(save, { success: (v) => {
       resolve();
     }});
+
+    for(const attrib of data.attribs) {
+      pc.attribs.create(attrib, { silent: true });
+    }
   });
 }
 
@@ -841,7 +841,7 @@ const overwrite_char_v2 = (pc: Roll20.Character, data: any): Promise<any> => {
     // some attributes store the id of the exported character
     // we replace them here with the new id 
 
-    if(data.oldId) {
+       if(data.oldId) {
       let jsonData = JSON.stringify(data);
       jsonData = replaceAll(jsonData, data.oldId, pc.attributes.id);
       data = JSON.parse(jsonData);
@@ -890,19 +890,16 @@ const overwrite_char_v2 = (pc: Roll20.Character, data: any): Promise<any> => {
       pc.updateBlobs(blobs);
     }
 
-    for(let importAttrib of data.attribs) {
-      pc.attribs.create(importAttrib);
-    }
-
-    for(let abil of data.abilities) {
-      pc.abilities.create(abil);
-    }
-
-    //console.log(save);
-
     pc.save(save, { success: (v) => {
       resolve();
     }});
+
+    for(const attrib of data.attribs) {
+      pc.attribs.create(attrib, { silent: true });
+    }
+    for(const ability of data.abilities) {
+      pc.abilities.create(ability, { silent: true });
+    }
   });
 }
 
