@@ -20,7 +20,7 @@ export default <VTTES.Module_Config> {
         {
           // this._drawNameplate(d)),d.restore(),this
           find: [
-            `this._nameplate_data&&this._drawNameplate(`,1,`)),u.restore()`,
+            `this._nameplate_data&&this._drawNameplate(`,1,`)),`,1,`.restore()`,
           ],
           replace: [
 `this._nameplate_data&&this._drawNameplate(`,1,`)),`,1,`.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(`,1,`, this))`
