@@ -12,21 +12,20 @@ export default <VTTES.Module_Config> {
     {
       includes: "vtt.bundle.js",
 
-      find_replace: [
+      stencils: [
         {
-          // NOTE(justasd): search for CharacterEditorView =
-          // 2022-01-19
-          find: `b.defaulttoken=A.model._blobcache.defaulttoken`,
-
-          replace: `b.defaulttoken = ((window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(A, u) : i.model._blobcache.defaulttoken)`,
-
-          stability_checks: [
-            // NOTE(justasd): search for CharacterEditorView =
-            // 2022-01-19
-            `setTimeout(()=>{let h=u.get("attrorder");`
-          ],
+          search_from: `_template:$("#tmpl_charactereditor")`,
+          // 1 is the new character
+          // 2 is the old character
+          //const c = w.model.collection.create(h);
+          find: [`name}\`;const `,1,`=`,2,`.model.collection.create`],
         },
-      ],
+        {
+          search_from: `_template:$("#tmpl_charactereditor")`,
+          find: [ `model._blobcache.defaulttoken&&(`,3,`.defaulttoken=`,2,`.model._blobcache.defaulttoken` ],
+          replace: [ `model._blobcache.defaulttoken&&(`,3,`.defaulttoken = (window.r20es && window.r20es.replaceIdOnDupe) ? window.r20es.replaceIdOnDupe(`,2,`, `,1,`) : `,2,`.model._blobcache.defaulttoken` ],
+        }
+      ]
     },
   ],
 };
