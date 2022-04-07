@@ -1,5 +1,5 @@
 {
-    "current": "1.27.6",
+    "current": "1.27.7",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2449,6 +2449,18 @@
                 {
                     "id": "",
                     "content": "Fix the change id when duplicating module."
+                }
+            ]
+        },
+        "1.27.7": {
+            "info": {
+                "title": "Hit Dice Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the hit dice module from not working until the token's character sheet has been opened (thanks, hightouch, for the report!)."
                 }
             ]
         }
