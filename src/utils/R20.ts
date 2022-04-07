@@ -564,6 +564,17 @@ ${content}
       window.d20.engine.canvas.freeDrawingBrush.width = size;
     }
 
+    export const ensure_character_attributes_are_loaded = async (character: Roll20.Character) => {
+      if(character.attribs.backboneFirebase) {
+        return;
+      }
+  
+      // @ts-ignore
+      character.attribs.backboneFirebase = new BackboneFirebase(character.attribs);
+
+      await character.attribs.backboneFirebase.reference.once("value");
+    }
+
     export const wipeObjectStorage = <T>(storage: Roll20.ObjectStorage<Roll20.SyncObject<T>>): void => {
 
         const len = storage.length;

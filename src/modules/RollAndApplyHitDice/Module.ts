@@ -46,7 +46,7 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
     model.save(save);
   };
 
-  private onClickMenuItem = (e) => {
+  private onClickMenuItem = async (e) => {
 
     const objects = R20.getSelectedTokens();
     const config = this.getHook().config;
@@ -65,6 +65,8 @@ class RollAndApplyHitDiceModule extends R20Module.SimpleBase {
           this.reportNoCharacter();
           continue;
         }
+
+        await R20.ensure_character_attributes_are_loaded(char);
 
         const attribs = char.attribs;
 

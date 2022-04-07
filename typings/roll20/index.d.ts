@@ -306,6 +306,8 @@ namespace Roll20 {
 
       // https://www.firebase.com/docs/web/api/query/off.html
       off: (event?: FirebaseEventTypes, callback?: Function) => void;
+
+      once: (event?: FirebaseEventTypes, callback?: Function) => Promise<void>;
   }
 
   interface TextTokenAttributes extends MapTokenAttributes {}
