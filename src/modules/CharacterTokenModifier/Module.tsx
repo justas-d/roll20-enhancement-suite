@@ -601,6 +601,7 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
   };
 
   private renderWidget = (instance: SheetTabSheetInstanceData<TabInstanceData>) => {
+
     const campaign = R20.getCampaign().attributes;
     const data = this.getUserData(instance);
 
@@ -836,13 +837,6 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
       instance.rerender();
     };
 
-    const refreshButton = (
-      <button onClick={onRefresh} className="btn">Refresh</button>
-    ) as HTMLInputElement;
-    const updateDefaultTokenButton = (
-      <button onClick={onUpdateDefaultToken} className="btn">Update default token</button>
-    ) as HTMLInputElement;
-
     const progressWidget = (
       <span style={{marginLeft: "auto", marginRight: "auto"}}>
       </span>
@@ -855,26 +849,6 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
     const endWork = () => {
       progressWidget.innerText = "Done!";
     };
-
-    if (!R20.isGM()) {
-      const addTooltip = (elem: HTMLElement) => {
-        // Note(Justas): tipsy on FF has this neat HTML tooltip that gets disabled when live is set to true.
-        // However, that tooltip doesn't work on Chrome unless live is set to true.
-        // So we set live to true if we're on Chrome.
-        // @ts-ignore
-        $(elem).tipsy({
-          live: isChromium(),
-        });
-      };
-
-      updateDefaultTokenButton.title = "Players do not have permission to update the default token but they can update already placed tokens. Try updating all tokens.";
-      updateDefaultTokenButton.disabled = true;
-      addTooltip(updateDefaultTokenButton);
-
-      refreshButton.title = "Players do not have permissions to read default character tokens.";
-      refreshButton.disabled = true;
-      addTooltip(refreshButton);
-    }
 
     const borderString = "1px solid lightgray";
 
@@ -1055,14 +1029,40 @@ class CharacterTokenModifierModule extends R20Module.OnAppLoadBase {
 
         <div style={{marginTop: "16px", marginBottom: "16px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr"}}>
           <span style="float: left">
-            {refreshButton}
+            {(() => { 
+              if(R20.isGM()) {
+                return <button 
+                  onClick={onRefresh} 
+                  className="btn"
+                >
+                  Refresh
+                </button>
+              }
+              else {
+                return <span>Players do not have permissions to read default character tokens.</span>
+              }
+              return null;
+            })()}
           </span>
 
           {progressWidget}
 
           <span style="float: right">
             <button onClick={onClickUpdateAllTokens} style="margin-right: 8px" className="btn">Update all tokens</button>
-            {updateDefaultTokenButton}
+            {(() => { 
+              if(R20.isGM()) {
+                return <button 
+                  onClick={onUpdateDefaultToken} 
+                  className="btn"
+                >
+                  Update default token
+                </button>
+              }
+              else {
+                return <span>Players do not have permission to update the default token but they can update already placed tokens. Try updating all tokens.</span>
+              }
+              return null;
+            })()}
           </span>
         </div>
       </div>

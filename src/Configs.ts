@@ -46,7 +46,6 @@ import TokenBarPositionAdjust from "./modules/TokenBarPositionAdjust/Config"
 import PerformanceImprovements from "./modules/PerformanceImprovements/Config"
 import ChromeUpdateChecker from "./modules/ChromeUpdateChecker/Config"
 import CharacterAvatarFromURL from "./modules/CharacterAvatarFromURL/Config"
-import HideTipsyPopup from "./modules/HideTipsyPopup/Config"
 import CameraStartPosition from "./modules/CameraStartPosition/Config"
 import HandoutImageFromURL  from "./modules/HandoutImageFromURL/Config"
 import CustomPathWidth from "./modules/CustomPathWidth/Config"
@@ -104,7 +103,6 @@ addCfg(HidePlayerList);
 addCfg(SetTableEntryAvatarByUrl);
 addCfg(PerformanceImprovements);
 addCfg(CharacterAvatarFromURL);
-addCfg(HideTipsyPopup);
 addCfg(CameraStartPosition);
 addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
