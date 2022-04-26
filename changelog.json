@@ -1,5 +1,5 @@
 {
-    "current": "1.27.7",
+    "current": "1.27.8",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2461,6 +2461,22 @@
                 {
                     "id": "",
                     "content": "Fix the hit dice module from not working until the token's character sheet has been opened (thanks, hightouch, for the report!)."
+                }
+            ]
+        },
+        "1.27.8": {
+            "info": {
+                "title": "Stupid Popup Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the stupid popup on the top left of your screen (BIG thank you to Keldin145014 for providing info on it!)"
+                },
+                {
+                    "id": "",
+                    "content": "Remove the 'Hide Tipsy Popup' module."
                 }
             ]
         }
