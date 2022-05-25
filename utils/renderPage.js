@@ -39,7 +39,7 @@ const buildPage = (fx, resource) => {
 }
 
 buildPage(<About/>, "about");
-//buildPage(<Features/>, "features");
+buildPage(<Features/>, "features");
 buildPage(<Index/>, "index");
 buildPage(<Chrome/>, "chrome");
 

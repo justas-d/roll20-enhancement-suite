@@ -40,9 +40,9 @@ function FeatureCard(props) {
 
 function Features() {
   const cards = [];
-  for (const id in VTTES_MODULE_CONFIGS) {
+  for(const id in VTTES_MODULE_CONFIGS) {
     const config = VTTES_MODULE_CONFIGS[id];
-    if (config.name && config.description) {
+    if(config.name && config.description) {
       cards.push(<div>
         <h2 id={id}>{config.name}</h2>
         <FeatureCard key={id} config={config} />
