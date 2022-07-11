@@ -13,6 +13,21 @@ import {Dialog, DialogBody, DialogFooter, DialogFooterContent, DialogHeader} fro
 import { zipSync, strToU8} from 'fflate';
 import lexCompare from "../../utils/LexicographicalComparator";
 
+interface Character_Ability_Bundle_Export {
+  schema_version: number;
+  type: "vttes_character_ability_bundle";
+  abilities: Array<Character_Ability_Export>;
+}
+
+interface Character_Ability_Export {
+  id: string;
+  name: string;
+  description: string;
+  istokenaction: boolean;
+  action: string;
+  order: number;
+}
+
 interface Component_Bundle_Export {
   schema_version: number;
   type: "vttes_component_bundle";
@@ -105,7 +120,6 @@ class Import_Component_Dialog extends DialogBase<string> {
     const components = [];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
       if(!el.checked) continue;
 
       var repeating_id = el.getAttribute("repeating_id");
@@ -193,8 +207,6 @@ class Import_Component_Dialog extends DialogBase<string> {
     const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
-
       if(!el.checked) {
         el.checked = true;
         this.num_checked += 1;
@@ -208,7 +220,6 @@ class Import_Component_Dialog extends DialogBase<string> {
     const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
       if(el.checked) {
         el.checked = false;
         this.num_checked -= 1;
@@ -222,9 +233,10 @@ class Import_Component_Dialog extends DialogBase<string> {
     const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
-      el.checked = true;
-      this.num_checked += 1;
+      if(!el.checked) {
+        el.checked = true;
+        this.num_checked += 1;
+      }
     }
 
     this.update_import_button_state();
@@ -236,7 +248,6 @@ class Import_Component_Dialog extends DialogBase<string> {
     const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
       el.checked = false;
     }
 
@@ -293,10 +304,15 @@ class Import_Component_Dialog extends DialogBase<string> {
       );
     }
 
-    this.import_button = <input className="r20btn btn btn-success" type="button" onClick={this.on_click_import} value="Import Selected" />
-    if(rows.length <= 0) {
-      this.import_button.disabled = true;
-    }
+    this.import_button = (
+      <input 
+        className="r20btn btn btn-success" 
+        type="button" 
+        onClick={this.on_click_import} 
+        value="Import Selected"
+        disabled={true}
+      />
+    );
 
     return (
       <Dialog>
@@ -392,7 +408,6 @@ class Export_Component_Dialog extends DialogBase<string> {
     const all_components: Array<Component_Export> = [];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
       if(!el.checked) continue;
 
       var type_key = el.getAttribute("type_key");
@@ -476,8 +491,6 @@ class Export_Component_Dialog extends DialogBase<string> {
     const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
-
       if(!el.checked) {
         el.checked = true;
         this.num_checked += 1;
@@ -491,7 +504,6 @@ class Export_Component_Dialog extends DialogBase<string> {
     const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
       if(el.checked) {
         el.checked = false;
         this.num_checked -= 1;
@@ -505,9 +517,10 @@ class Export_Component_Dialog extends DialogBase<string> {
     const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
 
     for(const el of all_els) {
-      if(el.hasOwnProperty("checked")) continue;
-      el.checked = true;
-      this.num_checked += 1;
+      if(!el.checked) {
+        el.checked = true;
+        this.num_checked += 1;
+      }
     }
 
     this.update_export_button_state();
@@ -695,6 +708,414 @@ class Export_Component_Dialog extends DialogBase<string> {
             <button className="btn" onClick={this.on_select_all_checkboxes}>Select All</button>
           </div>
           {columns}
+        </DialogBody>
+
+        <DialogFooter>
+          <DialogFooterContent >
+            <div style={{display:"grid"}}>
+              <div style={{marginBottom: "10px"}}>
+                {zip_checkbox}
+                <span style={{cursor: "pointer"}} onclick={() => zip_checkbox.click()}>
+                  Export to individual files, zipped.
+                </span>
+              </div>
+
+              <div style={{display:"grid", gridTemplateColumns: "1fr 1fr", gridGap: "16px"}}>
+                <input className="r20btn btn" type="button" onClick={this.close} value="Close" />
+                {this.export_button}
+              </div>
+
+            </div>
+          </DialogFooterContent>
+        </DialogFooter>
+      </Dialog>
+
+    );
+  }
+}
+
+class Import_Ability_Dialog extends DialogBase<string> {
+
+  pc: Roll20.Character;
+  import_button: HTMLButtonElement;
+  num_checked = 0;
+  data: Character_Ability_Bundle_Export;
+
+  public constructor() {
+    super(undefined, {minWidth: "30%"});
+  }
+
+  update_import_button_state = () => {
+    if(this.num_checked <= 0) {
+      this.import_button.disabled = true;
+    }
+    else {
+      this.import_button.disabled = false;
+    }
+  }
+
+  on_check = (e) => {
+    var el = e.target as HTMLInputElement;
+    if(el.checked) {
+      this.num_checked += 1;
+    }
+    else {
+      this.num_checked -= 1;
+    }
+
+    this.update_import_button_state();
+  }
+
+  public show(pc: Roll20.Character, data: Character_Ability_Bundle_Export) {
+    this.pc = pc;
+    this.num_checked = 0;
+    this.data = data;
+
+    super.internalShow();
+  }
+
+  on_click_import = (e) => {
+    const root = this.getRoot();
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(!el.checked) {
+        var id = el.getAttribute("id");
+
+        var found = false;
+        for(var index = 0; index < this.data.abilities.length; index++) {
+          var ability = this.data.abilities[index];
+          if(ability.id == id) {
+            found = true;
+            this.data.abilities.splice(index, 1);
+            break;
+          }
+        }
+
+        if(!found) {
+          console.error(`Could not find ability with id '${id}'.`);
+        }
+      }
+    }
+
+    for(const ability of this.data.abilities) {
+      this.pc.abilities.create({
+        id: R20.generateUUID(),
+        name: ability.name,
+        description: ability.description,
+        istokenaction: ability.istokenaction,
+        action: ability.action,
+        order: ability.order
+      });
+    }
+ 
+    this.close();
+
+    R20.rerender_character_sheet(this.pc);
+  }
+
+  on_select_all = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(!el.checked) {
+        el.checked = true;
+        this.num_checked += 1;
+      }
+    }
+    this.update_import_button_state();
+  }
+
+  on_unselect_all = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.checked) {
+        el.checked = false;
+        this.num_checked -= 1;
+      }
+    }
+    this.update_import_button_state();
+  }
+
+  protected render() {
+
+    const rows = [];
+
+    for(const ability of this.data.abilities) {
+      const checkbox = (<input 
+        className="vttes-component" 
+        type="checkbox" 
+        onChange={this.on_check}
+        style={{marginRight: "4px"}}
+      />);
+
+      checkbox.setAttribute("id", ability.id);
+
+      const el = (
+        <div>
+          {checkbox}
+          {ability.name}
+        </div>
+      );
+
+      rows.push(el);
+    }
+
+    this.import_button = (
+      <input 
+        className="r20btn btn btn-success" 
+        type="button" 
+        onClick={this.on_click_import} 
+        value="Import Selected"
+        disabled={true}
+      />
+    );
+
+    return (
+      <Dialog>
+        <DialogHeader>
+          <h2>Ability Import</h2>
+        </DialogHeader>
+
+        <DialogBody>
+            
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+          }}>
+            <button className="btn" onClick={this.on_select_all}>Select All</button>
+            <button className="btn" onClick={this.on_unselect_all}>Unselect All</button>
+          </div>
+          {rows}
+        </DialogBody>
+
+        <DialogFooter>
+          <DialogFooterContent >
+            <div style={{display:"grid", gridTemplateColumns: "1fr 1fr", gridGap: "16px"}}>
+              <input className="r20btn btn" type="button" onClick={this.close} value="Close" />
+              {this.import_button}
+            </div>
+          </DialogFooterContent>
+        </DialogFooter>
+      </Dialog>
+    );
+  }
+}
+
+class Export_Ability_Dialog extends DialogBase<string> {
+
+  pc: Roll20.Character;
+
+  export_individual_files = false;
+  num_checked = 0;
+  export_button: HTMLButtonElement;
+  abilities: Array<Character_Ability_Export>
+
+  public constructor() {
+    super(undefined, {minWidth: "30%"});
+  }
+
+  public show(pc: Roll20.Character) {
+    this.pc = pc;
+    this.num_checked = 0;
+    this.abilities = [];
+
+    for(const ability of this.pc.abilities.models) {
+      this.abilities.push({
+        action: ability.attributes.action,
+        description: ability.attributes.description,
+        id: ability.id,
+        istokenaction: ability.attributes.istokenaction,
+        name: ability.attributes.name,
+        order: ability.attributes.order
+      });
+    }
+
+    this.abilities.sort((a, b) => lexCompare(a, b, (d) => d.name));
+
+    super.internalShow();
+  }
+
+  update_export_button_state = () => {
+    if(this.num_checked <= 0) {
+      this.export_button.disabled = true;
+    }
+    else {
+      this.export_button.disabled = false;
+    }
+  }
+
+  on_check = (e) => {
+    var el = e.target as HTMLInputElement;
+    if(el.checked) {
+      this.num_checked += 1;
+    }
+    else {
+      this.num_checked -= 1;
+    }
+
+    this.update_export_button_state();
+  }
+
+  on_click_export = (e) => {
+    const root = this.getRoot();
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(!el.checked) {
+        var id = el.getAttribute("id");
+
+        var found = false;
+        for(var index = 0; index < this.abilities.length; index++) {
+          var ability = this.abilities[index];
+          if(ability.id == id) {
+            found = true;
+            this.abilities.splice(index, 1);
+            break;
+          }
+        }
+
+        if(!found) {
+          console.error(`Could not find ability with id '${id}'.`);
+        }
+      }
+    }
+
+    console.log(this.abilities);
+
+    if(this.export_individual_files) {
+      let fs = {};
+
+      for(const ability of this.abilities) {
+        let key = `${this.pc.attributes.name} ${ability.name} ${ability.id}.vttes_character_ability_bundle`;
+
+        // NOTE(justasd): path separators make the fflate confused so we yeet them
+        // 2021-06-26
+        key = replaceAll(key, "/", "");
+        key = replaceAll(key, "\\", "");
+
+        let data: Character_Ability_Bundle_Export = {
+          schema_version: 1,
+          type: "vttes_character_ability_bundle",
+          abilities: [ ability ],
+        };
+
+        const json = JSON.stringify(data, null, 2);
+        const bytes = strToU8(json);
+
+        fs[key] = bytes;
+      }
+
+      const zipped = zipSync(fs);
+
+      const zip_blob = new Blob([zipped], { type: 'application/octet-stream' });
+      var file_name = "Abilities from " + this.pc.attributes.name + ".zip";
+
+      saveAs(zip_blob, file_name);
+    }
+    else {
+      let data: Character_Ability_Bundle_Export = {
+        schema_version: 1,
+        type: "vttes_character_ability_bundle",
+        abilities: this.abilities,
+      };
+
+      const file_name = "Abilities from " + this.pc.attributes.name + ".vttes_character_ability_bundle";
+
+      const json_data = JSON.stringify(data, null, 2);
+      const json_blob = new Blob([json_data], { type: 'data:application/javascript;charset=utf-8' });
+      saveAs(json_blob, file_name);
+    }
+    this.close();
+  }
+
+  on_select_all = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(!el.checked) {
+        el.checked = true;
+        this.num_checked += 1;
+      }
+    }
+    this.update_export_button_state();
+  }
+
+  on_unselect_all = (e) => {
+    const root = e.target.parentElement.parentElement;
+    const all_els = root.querySelectorAll(`input.vttes-component`) as any as any[];
+
+    for(const el of all_els) {
+      if(el.checked) {
+        el.checked = false;
+        this.num_checked -= 1;
+      }
+    }
+    this.update_export_button_state();
+  }
+
+  protected render() {
+
+    const rows = [];
+    for(const ability of this.abilities) {
+      const checkbox = (<input 
+        className="vttes-component" 
+        type="checkbox" 
+        onChange={this.on_check}
+        style={{marginRight: "4px"}}
+      />);
+
+      checkbox.setAttribute("id", ability.id);
+
+      const el = (
+        <div>
+          {checkbox}
+          {ability.name}
+        </div>
+      );
+
+      rows.push(el);
+    }
+
+    this.export_button = (
+      <input 
+        disabled={true} 
+        className="r20btn btn btn-success" 
+        type="button" 
+        onClick={this.on_click_export} 
+        value="Export Selected"
+      />
+    );
+
+    const zip_checkbox = (
+      <input 
+        checked={this.export_individual_files}
+        type="checkbox" style={{marginRight: "4px"}}
+        onChange={(e) => { this.export_individual_files = e.target.checked; }}
+      />
+    );
+
+    return (
+      <Dialog>
+        <DialogHeader>
+          <h2>Ability Export</h2>
+        </DialogHeader>
+
+        <DialogBody>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gridGap: "5px",
+            alignItems: "center",
+          }}>
+            <button className="btn" onClick={this.on_select_all}>Select All</button>
+            <button className="btn" onClick={this.on_unselect_all}>Unselect All</button>
+          </div>
+          {rows}
         </DialogBody>
 
         <DialogFooter>
@@ -1080,6 +1501,61 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
     return pc;
   }
 
+  export_ability_dialog: Export_Ability_Dialog;
+  import_ability_dialog: Import_Ability_Dialog;
+
+
+  on_import_abilities_click = async (e: any) => {
+    e.stopPropagation();
+
+    const pc = this.getPc(e.target);
+    if(!pc) return;
+
+    const file_selector_element = (
+      <input 
+        type="file"
+        accept=".vttes_character_ability_bundle"
+      />
+    );
+    
+    const listener = async () => {
+      file_selector_element.removeEventListener("change", listener);
+      const f_handle = file_selector_element.files[0];
+
+      try {
+        const data = await this.try_convert_file_handle_to_json(f_handle) as Character_Ability_Bundle_Export
+
+        if(data.schema_version == 1) {
+          if(data.type == "vttes_character_ability_bundle") {
+            this.import_ability_dialog.show(pc, data);
+          }
+          else {
+            throw `Unsupported data type: ${data.type}`;
+          }
+        }
+        else {
+          throw `Unsupported version: ${data.schema_version}`;
+        }
+      }
+      catch(e) {
+        alert(e);
+        console.log(e);
+      }
+    };
+
+    file_selector_element.click();
+    file_selector_element.addEventListener("change", listener);
+  }
+
+  on_export_abilities_click = (e: any) => {
+    e.stopPropagation();
+
+    const pc = this.getPc(e.target);
+    if(!pc) return;
+
+    this.export_ability_dialog.show(pc);
+  }
+
   export_component_dialog: Export_Component_Dialog;
   import_component_dialog: Import_Component_Dialog;
 
@@ -1282,86 +1758,134 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
       <div style={{
         display:"grid", 
         gridTemplateColumns:"1fr 1fr", 
-        gridTemplateRows:"1fr 1fr", 
-        columnGap: "16px"
+        columnGap: "16px",
+        rowGap: "32px",
       }}>
-        <div style={{width:"100%",display:"inline-block"}}>
-          <h3>Export</h3>
+        <div>
+          <div style={{width:"100%",display:"inline-block"}}>
+            <h3>Export</h3>
 
-          <p>
-            Export this character as a VTTES character JSON file.
-          </p>
+            <p>
+              Export this character as a VTTES character JSON file.
+            </p>
 
+          </div>
+
+          <input 
+            type="button" 
+            onClick={this.on_export_click} 
+            className="button" 
+            style={{width:"auto"}}
+            data-characterid={data.characterId}
+            value="Export"
+          />
         </div>
 
-        <div style={{width:"100%",display:"inline-block"}}>
-          <h3>Overwrite</h3>
+        <div>
+          <div style={{width:"100%",display:"inline-block"}}>
+            <h3>Overwrite</h3>
 
-          <p>
-            Overwrite this character with the character stored in the selected VTTES character JSON file.
-          </p>
+            <p>
+              Overwrite this character with the character stored in the selected VTTES character JSON file.
+            </p>
+          </div>
+
+
+          <input 
+            type="button" 
+            onClick={this.on_overwrite_character_click} 
+            className="button" 
+            style={{width:"auto"}}
+            data-characterid={data.characterId}
+            value={canEdit ? "Overwrite" : "You do not have permission to edit this character"}
+            disabled={!canEdit}
+          />
         </div>
 
-        <input 
-          type="button" 
-          onClick={this.on_export_click} 
-          className="button" 
-          style={{width:"auto"}}
-          data-characterid={data.characterId}
-          value="Export"
-        />
+        <div>
+          <div style={{width:"100%",display:"inline-block"}}>
+            <h3>Export Components</h3>
 
-        <input 
-          type="button" 
-          onClick={this.on_overwrite_character_click} 
-          className="button" 
-          style={{width:"auto"}}
-          data-characterid={data.characterId}
-          value={canEdit ? "Overwrite" : "You do not have permission to edit this character"}
-          disabled={!canEdit}
-        />
+            <p>
+              Export individual items, weapons, spells, traits etc of a character/NPC.
+            </p>
+            <p>
+              <i>
+              Note that only the D&D 5e OGL sheet is supported at the time. However, other sheets should work (albeit they won't be user-friendly).
+              </i>
+            </p>
 
-        <div style={{width:"100%",display:"inline-block"}}>
-          <h3>Export Components</h3>
+          </div>
 
-          <p>
-            Export individual items, weapons, spells, traits etc of a character/NPC.
-          </p>
-          <p>
-            <i>
-            Note that only the D&D 5e OGL sheet is supported at the time. However, other sheets should work (albeit they won't be user-friendly).
-            </i>
-          </p>
-
+          <input 
+            type="button" 
+            className="button" 
+            onClick={this.on_export_components_click} 
+            style={{width:"auto"}}
+            data-characterid={data.characterId}
+            value="Export Components"
+          />
         </div>
 
-        <div style={{width:"100%",display:"inline-block"}}>
-          <h3>Import Components</h3>
+        <div>
+          <div style={{width:"100%",display:"inline-block"}}>
+            <h3>Import Components</h3>
 
-          <p>
-            Import components that were previously exported using the export components feature.
-          </p>
+            <p>
+              Import components that were previously exported using the export components feature.
+            </p>
+          </div>
+
+          <input 
+            type="button" 
+            className="button" 
+            style={{width:"auto"}}
+            onClick={this.on_import_components_click} 
+            data-characterid={data.characterId}
+            value={canEdit ? "Import Components" : "You do not have permission to edit this character"}
+            disabled={!canEdit}
+          />
         </div>
 
-        <input 
-          type="button" 
-          className="button" 
-          onClick={this.on_export_components_click} 
-          style={{width:"auto"}}
-          data-characterid={data.characterId}
-          value="Export Components"
-        />
+        <div>
+          <div style={{width:"100%",display:"inline-block"}}>
+            <h3>Export Abilities</h3>
 
-        <input 
-          type="button" 
-          className="button" 
-          style={{width:"auto"}}
-          onClick={this.on_import_components_click} 
-          data-characterid={data.characterId}
-          value={canEdit ? "Import Components" : "You do not have permission to edit this character"}
-          disabled={!canEdit}
-        />
+            <p>
+              Export character abilities individually or as a bundle.
+            </p>
 
+          </div>
+
+          <input 
+            type="button" 
+            className="button" 
+            onClick={this.on_export_abilities_click} 
+            style={{width:"auto"}}
+            data-characterid={data.characterId}
+            value="Export Abilities"
+          />
+        </div>
+
+        <div>
+          <div style={{width:"100%",display:"inline-block"}}>
+            <h3>Import Abilities</h3>
+
+            <p>
+              Export character abilities individually or as a bundle.
+            </p>
+          </div>
+
+          <input 
+            type="button" 
+            className="button" 
+            style={{width:"auto"}}
+            onClick={this.on_import_abilities_click} 
+            data-characterid={data.characterId}
+            value={canEdit ? "Import Abilities" : "You do not have permission to edit this character"}
+            disabled={!canEdit}
+          />
+        </div>
       </div>
     )
   };
@@ -1369,6 +1893,9 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
   setup = () => {
     this.export_component_dialog = new Export_Component_Dialog();
     this.import_component_dialog = new Import_Component_Dialog();
+    
+    this.export_ability_dialog = new Export_Ability_Dialog();
+    this.import_ability_dialog = new Import_Ability_Dialog();
 
     this.sheetTab = SheetTab.add("Export & Overwrite", this.render_character_tab_widget);
     this.add_journal_widget();
@@ -1502,8 +2029,12 @@ class CharacterIOModule extends R20Module.OnAppLoadBase {
   dispose = () => {
     super.dispose();
 
-    if(this.export_component_dialog) this.export_component_dialog.dispose();
-    if(this.import_component_dialog) this.import_component_dialog.dispose();
+    this.export_component_dialog.dispose();
+    this.import_component_dialog.dispose();
+
+    this.export_ability_dialog.dispose();
+    this.import_ability_dialog.dispose();
+
     if(this.sheetTab) this.sheetTab.dispose();
     findByIdAndRemove(CharacterIOModule.journalWidgetId);
 
