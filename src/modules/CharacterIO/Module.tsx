@@ -104,10 +104,6 @@ class Import_Component_Dialog extends DialogBase<string> {
       type.components.push(component);
     }
 
-    for(const type of this.types) {
-      type.components.sort((a, b) => lexCompare(a, b, (d) => d.name));
-    }
-
     this.types.sort((a, b) => lexCompare(a, b, (d) => d.name));
 
     super.internalShow();
@@ -313,6 +309,9 @@ class Import_Component_Dialog extends DialogBase<string> {
         disabled={true}
       />
     );
+    if(this.num_checked > 0) {
+      this.import_button.disabled = false;
+    }
 
     return (
       <Dialog>
@@ -587,6 +586,23 @@ class Export_Component_Dialog extends DialogBase<string> {
         attribute: attrib.attributes,
       });
     }
+  
+    var preset_order: { [key: string]: number } | null = null;
+    {
+      var repeating_action_order_key = this.pc.attribs.models.find(
+        a => a.attributes.name === "_reporder_repeating_actions"
+      );
+
+      if(repeating_action_order_key) {
+        preset_order = {};
+        var split = repeating_action_order_key.attributes.current.split(',');
+
+        for(var index = 0; index < split.length; index++) {
+          var key = split[index];
+          preset_order[key] = index;
+        }
+      }
+    }
     
     for(const type of this.types) {
       for(const component of type.components) {
@@ -632,7 +648,20 @@ class Export_Component_Dialog extends DialogBase<string> {
 
         component.name = name;
       }
-      type.components.sort((a, b) => lexCompare(a, b, (d) => d.name));
+
+      if(preset_order) {
+        type.components.sort((a, b) => {
+          var order_a = preset_order[a.repeating_id];
+          var order_b = preset_order[b.repeating_id];
+          if(typeof(order_a) == "number" && typeof(order_b) == "number") {
+            return order_a - order_b;
+          }
+          return lexCompare(a, b, d => d.repeating_id);
+        });
+      }
+      else {
+        type.components.sort((a, b) => lexCompare(a, b, (d) => d.name));
+      }
     }
 
     this.types.sort((a, b) => lexCompare(a, b, (d) => d.key));
@@ -850,7 +879,10 @@ class Import_Ability_Dialog extends DialogBase<string> {
         type="checkbox" 
         onChange={this.on_check}
         style={{marginRight: "4px"}}
+        checked={true}
       />);
+
+      this.num_checked += 1;
 
       checkbox.setAttribute("id", ability.id);
 
@@ -873,6 +905,10 @@ class Import_Ability_Dialog extends DialogBase<string> {
         disabled={true}
       />
     );
+    if(this.num_checked > 0) {
+      this.import_button.disabled = false;
+    }
+
 
     return (
       <Dialog>
@@ -934,7 +970,7 @@ class Export_Ability_Dialog extends DialogBase<string> {
       });
     }
 
-    this.abilities.sort((a, b) => lexCompare(a, b, (d) => d.name));
+    //this.abilities.sort((a, b) => lexCompare(a, b, (d) => d.name));
 
     super.internalShow();
   }
