@@ -19,7 +19,7 @@ export default <VTTES.Module_Config> {
       stencils: [
         {
           search_from: "data-action-type=showtoplayers",
-          find: [ `const `,-1,`=`,1,`.attr("data-itemid");` ],
+          find: [ `const `,-1,`=`,1,`.attr("data-itemid")` ],
         },
 
         {
