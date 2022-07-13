@@ -207,7 +207,7 @@ export const apply_mods_to_text = (
           into_what = replace.result;
 
           {
-            const str = `REPLACING: Replace count: ${replace.count} Find: '${find_replace.find}' Patch: '${patch}'.`;
+            const str = `REPLACING (${config.filename}): Replace count: ${replace.count} Find: '${find_replace.find}' Patch: '${patch}'.`;
 
             if(replace.count <= 0) {
               console.error(str, config);
