@@ -1,5 +1,5 @@
 {
-    "current": "1.28.2",
+    "current": "1.28.3",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2525,6 +2525,18 @@
                 {
                     "id": "",
                     "content": "Fixed a similar issue that caused non Firefox browsers to barf when loading Roll20."
+                }
+            ]
+        },
+        "1.28.3": {
+            "info": {
+                "title": "Radial Compact Mode Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the compact radial token menu not displaying attribute colors (thanks, Starblind, for the report!)"
                 }
             ]
         }
