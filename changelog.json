@@ -1,5 +1,5 @@
 {
-    "current": "1.28.1",
+    "current": "1.28.2",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2513,6 +2513,18 @@
                 {
                     "id": "",
                     "content": "Fixed the Duplicate Button module causing issues."
+                }
+            ]
+        },
+        "1.28.2": {
+            "info": {
+                "title": "Loading Fix 2.0",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed a similar issue that caused non Firefox browsers to barf when loading Roll20."
                 }
             ]
         }
