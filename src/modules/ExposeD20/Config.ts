@@ -29,8 +29,8 @@ export default <VTTES.Module_Config> {
           // So yeeting this seems fine.
           //
           // 2022-07-13
-          find: `if(!v)throw new Error("Automatic publicPath is not supported in this browser");`,
-          replace: `if(!v)v="";`,
+          find: `throw new Error("Automatic publicPath is not supported in this browser");`,
+          replace: `{}`,
         },
       ],
     },
