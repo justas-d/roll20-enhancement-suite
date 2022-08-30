@@ -133,6 +133,7 @@ export const bootstrap = () => {
           /*height: 100%;*/
           display: grid;
           grid-template-rows: auto auto auto;
+          color: #0f0f0f;
       }
 
       .r20es-dialog th {
