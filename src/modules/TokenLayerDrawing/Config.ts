@@ -18,14 +18,15 @@ export default <VTTES.Module_Config> {
       includes: "vtt.bundle.js",
       stencils: [
         {
-          // this._drawNameplate(d)),d.restore(),this
+          // this._drawStatusIcons(c), c.restore(), this
           find: [
-            `this._nameplate_data&&this._drawNameplate(`,1,`)),`,1,`.restore()`,
+            `this._drawStatusIcons(`,1,`),`,1,`.restore(),`,
           ],
           replace: [
-`this._nameplate_data&&this._drawNameplate(`,1,`)),`,1,`.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(`,1,`, this))`
+            `this._drawStatusIcons(`,1,`),`,1,`.restore(),(window.r20es && window.r20es.tokenDrawBg && window.r20es.tokenDrawBg(`,1,`, this)),`,
           ],
         },
+
       ],
     },
   ],
