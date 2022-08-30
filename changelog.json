@@ -1,5 +1,5 @@
 {
-    "current": "1.28.4",
+    "current": "1.28.5",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2549,6 +2549,30 @@
                 {
                     "id": "",
                     "content": "Fixed PDFs not properly loading on Chrome & Userscript."
+                }
+            ]
+        },
+        "1.28.5": {
+            "info": {
+                "title": "Token Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix the token layer drawing module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fix the custom token resize dialog being too big."
+                },
+                {
+                    "id": "",
+                    "content": "Disabled the scale token name module as updating it would be technically impractical in terms of performance."
+                },
+                {
+                    "id": "",
+                    "content": "Fix dialog text being unreadable in dark mode."
                 }
             ]
         }
