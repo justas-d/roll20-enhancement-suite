@@ -664,8 +664,7 @@ namespace Roll20 {
     };
 
     is_drawing_bars_at_the_bottom: boolean;
-    prepNameplateBack: Function;
-    prepNameplateText: Function;
+    doNameplateScaling: Function;
     togglePageToolbar: () => void;
     tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
     pingInitiativeToken: (token: Token) => void;
