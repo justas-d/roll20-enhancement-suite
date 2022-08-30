@@ -19,7 +19,7 @@ export default class TokenResizeDialog extends DialogBase<string> {
     private static readonly checkboxId = "r20es-token-resize-move-tokens-checkbox";
 
     constructor() {
-        super(null, {height: "auto"});
+        super(null);
     }
 
     public show(moduleConfig: any, cont: (moveTokens: boolean) => void) {
