@@ -88,6 +88,11 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
     super(__dirname);
 
     this.canvas = <canvas/>;
+    // NOTE(justasd): Without this, the 'id="token-properties-layer"' div which is responsible for
+    // showing nameplates and healthbars, won't render properly with the animated backgrounds
+    // enabled.
+    // 2022-08-31.
+    this.canvas.style.position = "absolute";
     this.ctx = this.canvas.getContext("2d");
     this.ctx.save();
 
