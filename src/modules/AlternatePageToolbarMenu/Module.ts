@@ -47,17 +47,19 @@ const constantStyle = `
 }
 
 #page-toolbar {
-    right: unset;
-    left: unset;
-    max-width: 486px;
+  right: unset;
+  left: unset;
+  max-width: 486px;
 
-    max-height: 80%;
-    width: 100%;
-    height: 100%;
+  max-height: 80%;
+  width: 100%;
+  height: 100%;
 
-    background-color: #222;
+  background-color: #222;
 
-    border-radius: unset;
+  border-radius: unset;
+
+  z-index: 10500;
 }
 
 #page-toolbar .pages .availablepage span input {
