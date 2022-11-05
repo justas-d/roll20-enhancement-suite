@@ -68,7 +68,7 @@ class TableIOModule extends R20Module.OnAppLoadBase {
 
   tryInsertTableWidget(target: HTMLElement) {
     if (!target.className) return false;
-    if (target.className !== "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix") return false;
+    if (target.className !== "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle") return false;
     if (target.getElementsByClassName(TableIOModule.tableWidgetClass).length > 0) return false;
 
     const table = this.getTableId(target);
@@ -166,7 +166,9 @@ class TableIOModule extends R20Module.OnAppLoadBase {
     this.pasteDialog.getRoot().addEventListener("close", this.onPasteDialogClose);
 
     // @COPYPASTE from CharacterIOModule
-    const existingHeaders = document.querySelectorAll(".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix") as any;
+    const existingHeaders = document.querySelectorAll(
+      ".ui-dialog-titlebar, .ui-widget-header, .ui-corner-all,  .ui-helper-clearfix"
+    ) as any;
 
     for (const header of existingHeaders) {
       this.tryInsertTableWidget(header);
