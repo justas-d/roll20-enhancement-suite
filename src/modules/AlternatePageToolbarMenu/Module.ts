@@ -243,7 +243,7 @@ class AlternativePageToolbarMenu extends R20Module.OnAppLoadBase {
         let variableStyle = `
 #page-toolbar {
     ${cfg.location === "right"
-            ? "right: 400px"
+            ? "right: 440px"
             : "left: 128px"};
     opacity: ${cfg.opacity};
 }
