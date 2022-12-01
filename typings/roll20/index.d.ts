@@ -578,7 +578,8 @@ namespace Roll20 {
   }
 
   interface Canvas_Overlay {
-      drawBackground: (e: CanvasRenderingContext2D, t: any) => void;
+    drawBackground: (e: CanvasRenderingContext2D, t: any) => void;
+    drawGrid: (e: CanvasRenderingContext2D) => void;
   }
 
   interface D20 {

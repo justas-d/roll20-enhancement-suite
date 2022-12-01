@@ -18,11 +18,12 @@ import {nearly_format_file_url} from "../../utils/MiscUtils";
 import {Optional} from "../../utils/TypescriptUtils";
 
 const get_main_canvas = (): Optional<HTMLCanvasElement> => {
-  const beforeRoot = ($(`#maincanvas`)[0] || $(`#finalcanvas`)[0]) as HTMLCanvasElement;
-  if (!beforeRoot) {
-    console.error(`[AnimatedBackgrounds] could not find beforeRoot!`);
+  //const beforeRoot = ($(`#maincanvas`)[0] || $(`#finalcanvas`)[0]) as HTMLCanvasElement;
+  const canvas = document.querySelector("#babylonCanvas") as HTMLCanvasElement;
+  if(!canvas) {
+    console.error(`[AnimatedBackgrounds] could not find rendering canvas!`);
   }
-  return beforeRoot;
+  return canvas;
 };
 
 const get_canvas_root_size = (child: HTMLCanvasElement = undefined): {x: number, y: number} => {
@@ -285,6 +286,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
   trampoline_draw_background = (e: CanvasRenderingContext2D, t : any) =>{
     if(this.is_playing_video) {
+      e.imageSmoothingEnabled = false;
       const old_fill = e.fillStyle;
       const old_global_compo_op = e.globalCompositeOperation;
 
@@ -299,6 +301,26 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
           Math.ceil(R20.getCanvasHeight() / zoom)
         );
       }
+
+      // :AnimatedBackgroundAABug
+      // NOTE(justasd):
+      // Since 2022-11-30 a bug has appeared in the DOM canvas compositing where the
+      // opacity/blending of the Roll20 final canvas isn't properly utilized, maybe clipped, or
+      // lost, such that when the browser composites the video canvas with the final canvas images,
+      // the edges of the final canvas aren't anti-aliased any more.
+      //
+      // This creates high-frequency aliasing in sub-pixel grids and makes them look completely
+      // broken.
+      //
+      // We may need to move away from having a separate video canvas that the browser composites
+      // for us into manual compositing with a bunch of hooks into the Roll20 rendering loop.
+      //
+      // But for now, we're hacking around it by drawing our own grid early and increasing the side
+      // of the square grid.
+      //
+      // 2022-12-01
+      e.globalCompositeOperation = "source-over";
+      window.d20.canvas_overlay.drawGrid(e);
 
       e.fillStyle = old_fill;
       e.globalCompositeOperation = old_global_compo_op;

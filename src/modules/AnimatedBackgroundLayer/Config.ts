@@ -35,6 +35,15 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
+
+      find_replace: [
+        { 
+          // :AnimatedBackgroundAABug
+          find: `x.beginPath(),x.lineWidth=1;`,
+          replace: `x.beginPath(),x.lineWidth=1+(1/d20.engine.canvasZoom);`,
+        },
+      ],
+
       stencils: [
         {
           find: [ `d20.engine.setZoom=(`,2,`,` ],
