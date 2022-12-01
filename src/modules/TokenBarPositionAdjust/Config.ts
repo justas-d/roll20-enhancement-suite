@@ -21,7 +21,7 @@ export default <VTTES.Module_Config> {
           find: [ `},this._icon_defaults);this._positionAndScaleStatusIcons(`,1,`,`,2,`.length),`,3,`.save(),`, ],
           replace: [ 
 `},this._icon_defaults);
-if(window.r20es.statusDraw) { 
+if(window.r20es && window.r20es.statusDraw) { 
   if(!window.r20es.statusDraw(`,3,`, this, `,2,`, `,1,`)) { 
     return;
   } 
