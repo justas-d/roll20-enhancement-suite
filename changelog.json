@@ -1,5 +1,5 @@
 {
-    "current": "1.28.8",
+    "current": "1.28.9",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2609,6 +2609,30 @@
                 {
                     "id": "",
                     "content": "Fix 'Export' button not showing up on rollable table dialogs (thanks, UndefinedSnail and Sparc0, for the report!)"
+                }
+            ]
+        },
+        "1.28.9": {
+            "info": {
+                "title": "Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fix animated backgrounds not rendering."
+                },
+                {
+                    "id": "",
+                    "content": "Fix token layer switching module."
+                },
+                {
+                    "id": "",
+                    "content": "Move the page toolbar, camera start position and animated background layer buttons to the left a bit."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed Roll20 sometimes not working if VTTES is disabled."
                 }
             ]
         }
