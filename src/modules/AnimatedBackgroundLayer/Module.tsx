@@ -286,7 +286,6 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
   trampoline_draw_background = (e: CanvasRenderingContext2D, t : any) =>{
     if(this.is_playing_video) {
-      e.imageSmoothingEnabled = false;
       const old_fill = e.fillStyle;
       const old_global_compo_op = e.globalCompositeOperation;
 
@@ -313,10 +312,12 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
       // broken.
       //
       // We may need to move away from having a separate video canvas that the browser composites
-      // for us into manual compositing with a bunch of hooks into the Roll20 rendering loop.
+      // for us into manual compositing with a bunch of hooks into the Roll20 rendering loop. The
+      // problem with that is that it creates a spaghetti mess of 'insecure' uses of the canvas due
+      // to what I think has something to do with CORS.
       //
-      // But for now, we're hacking around it by drawing our own grid early and increasing the side
-      // of the square grid.
+      // For now, we're hacking around it by drawing our own grid early and increasing the side of
+      // the square grid.
       //
       // 2022-12-01
       e.globalCompositeOperation = "source-over";
