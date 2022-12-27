@@ -1,5 +1,5 @@
 {
-    "current": "1.28.9",
+    "current": "1.28.10",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2633,6 +2633,18 @@
                 {
                     "id": "",
                     "content": "Fixed Roll20 sometimes not working if VTTES is disabled."
+                }
+            ]
+        },
+        "1.28.10": {
+            "info": {
+                "title": "Animated Background Opacity Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Implemented an experimental animatied background opacity bug fix."
                 }
             ]
         }
