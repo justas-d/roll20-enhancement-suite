@@ -94,9 +94,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
   };
 
   manual_composite = () => {
-    // TODO
     try {
-      // @ts-ignore
       var final_canvas = window.d20.engine.final_canvas;
 
       // NOTE(Justas): equivalent to a glClear(GL_COLOR_BUFFER_BIT)
@@ -183,15 +181,13 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
 
     R20.renderAll();
 
-    // @ts-ignore
-    window.r20es.manual_composite = this.manual_composite; // TODO
+    window.r20es.manual_composite = this.manual_composite;
   };
 
   endVideo() {
     console.log("[AnimBackgrounds] endVideo while current_runner");
 
-    // @ts-ignore
-    window.r20es.manual_composite = undefined; // TODO
+    window.r20es.manual_composite = undefined;
 
     const was_playing = this.is_playing_video;
     this.is_playing_video = false;
@@ -705,210 +701,4 @@ export default () => {
   new AnimatedBackgroundLayer().install();
 };
 
-
-// :AnimatedBackgroundAABug
-// NOTE(justasd):
-// Since 2022-11-30 a bug has appeared in the DOM canvas compositing where the
-// opacity/blending of the Roll20 final canvas isn't properly utilized, maybe clipped, or
-// lost, such that when the browser composites the video canvas with the final canvas images,
-// the edges of the final canvas aren't anti-aliased any more.
-//
-// This creates high-frequency aliasing in sub-pixel grids and makes them look completely
-// broken.
-//
-// We may need to move away from having a separate video canvas that the browser composites
-// for us into manual compositing with a bunch of hooks into the Roll20 rendering loop. The
-// problem with that is that it creates a spaghetti mess of 'insecure' uses of the canvas due
-// to what I think has something to do with CORS.
-//
-// For now, we're hacking around it by drawing our own grid early and increasing the side of
-// the square grid.
-//
-// 2022-12-01
-//
-// Notes:
-/*
-  
-   Done on the 2022-12-15 vtt.bundle.js file
-
-  renderLoop calls compositeCanvases and then this ft function? lt is a babylon
-  HtmlElementTexture the engine of the babylon library seems to be webgl2 on top of the
-  babylonCanvas element Maybe the webgl2 context of that engine is somehow not friendly to
-  alpha?
-
-    function ft() {
-      lt == null || lt.update(!0)
-    }
-
-  The call to this ft function
-    which is just (0,_engine_babylonSetup__WEBPACK_IMPORTED_MODULE_53__.i$)()
-  seems to somehow be responsible for presenting the composited canvases to the screen. If we
-  comment this out, we see nothing drawn except the token headers and such which are not part
-  of the canvas drawing pipeline.
-
-  We can look at update by searching for
-
-    update(o = null) {
-
-  The update method ends up calling
-    b.updateDynamicTexture
-
-  Which, when commented out, makes it so that nothing is drawn to the screen.
-
-  The 
-    this.onLoadObservable.notifyObservers(this)
-
-  part in update seems to not be responsible for drawing.
-
-  
-  {
-    find: `b.updateDynamicTexture(this._texture,D,o===null?!0:o,!1,this._format)`,
-    replace: `b.updateDynamicTexture(this._texture, D, o === null ? !0 : o, true, this._format)`,
-  },
-  The find and replace makes the updateDynamicTexture premultiply the alpha of the texture and that seems to effect the result.
-  So something in there is the culprit I think. Maybe something to do with the format?
-
-  2022-12-15
-
-
-  n.texImage2D(i, 0, b, C, p, g)
-
-  =>
-
-  texImage2D(
-    TEXTURE_2D, // bound to this._texture
-    0, 
-    this._getRGBABufferInternalSizedFormat(t.type, C), // GL_RGBA8
-    this._getInternalFormat(r || t.format), // GL_RGBA
-    this._getWebGLTextureType(t.type), // GL_UNSIGNED_BYTE
-    g // this.element
-  );
-
-
-  // WebGL1 api call??
-  texImage2D(target, level, internalformat, format, type, pixels) // pixels cannot be a TypedArray or a DataView or null
-
-  using a webgl2 call doesn't change anything
-    texImage2D(target, level, internalformat, width, height, border, format, type, source)
-    {
-      find: `n.texImage2D(t,0,y,C,p,g)`,
-      replace: `console.log("webgl2");n.texImage2D(t, 0, y, g.width, g.height, 0, C, p, g)`,
-    }
-
-  What is the target texture?
-    seems to be a "canvasTexture"
-
-    function Ft(Ve) {
-      tt = new l.HtmlElementTexture("canvasTexture", Ve, {
-          engine: qe
-      }), tt.hasAlpha = !0, tt.wrapU = 0, tt.wrapV = 0, Ke()
-    }
-
-    Docs for HtmlElementTexture:
-
-      new HtmlElementTexture(
-        name: string, element: HTMLCanvasElement | HTMLVideoElement, options: IHtmlElementTextureOptions
-      ): HtmlElementTexture
-
-        Instantiates a HtmlElementTexture from the following parameters.
-
-        Parameters
-        name: string
-        Defines the name of the texture
-
-        element: HTMLCanvasElement | HTMLVideoElement
-        Defines the video or canvas the texture is filled with
-
-        options: IHtmlElementTextureOptions
-        Defines the other none mandatory texture creation options
-
-        Returns HtmlElementTexture
-
-    What happens if we don't pass Ve to HtmlElementTexture
-      Black screen
-
-    TODO : what if we hijack Ve to be our own canvas? What are the results?
-
-  
-  What is the Ve argument?
-    Ft(Ve) is called by
-      engine_babylonSetup__WEBPACK_IMPORTED_MODULE_53__.em)(d20.engine.final_canvas),
-
-    So Ve is d20.engine.final_canvas
-
-
-  TODO : where do we use this target texture later?
-
-  Waybe we can set the engine to be webgl2?
-    Using webgl2 doesn't help!
-
-    {
-      find: `"webgl"`,
-      replace: `"webgl2"`,
-    },
-
-    {
-      find: `"experimental-webgl"`,
-      replace: `"webgl2"`,
-    },
-
-  The _inputElement of the Babylon engine used in the HtmlElementTexture is
-  div.canvas-container which is the div that contains the babylon canvas? 
-  Is that meaningful?
-
-  Okay _renderingCanvas is canvas#babylonCanvas which is the canvas that's actually displayed
-  to the user.
-
-  TODO : how do we blit to this canvas? Search for _renderingCanvas uses
-    Can't find any kind of blit code that direclty uses _renderingCanvas
-    getInputElement returns _renderingCanvas but it only seems to be used for input code
-
-    getRenderingCanvas POI:
-      }, pt.D.prototype._renderViews = function() {
-
-      Looks like babylon has it's own render loop via _renderLoop or something!
-
-  Modify the clear of babylon to not clear alpha?
-    _clear() {
-        (this.autoClearDepthAndStencil || this.autoClear) && this._engine.clear(this.clearColor, this.autoClear || this.forceWireframe || this.forcePointsCloud, this.autoClearDepthAndStencil, this.autoClearDepthAndStencil)
-    }
-
-    where this.ClearColor is a: 1 b: 0.3 g: 0.2 r: 0.2
-
-    clear(O, L, Y, q=!1) {
-        const X = this.stencilStateComposer.useStencilGlobalOnly;
-        this.stencilStateComposer.useStencilGlobalOnly = !0,
-        this.applyStates(),
-        this.stencilStateComposer.useStencilGlobalOnly = X;
-        let Z = 0;
-        L && O && (this._gl.clearColor(O.r, O.g, O.b, O.a !== void 0 ? O.a : 1),
-        Z |= this._gl.COLOR_BUFFER_BIT),
-        Y && (this.useReverseDepthBuffer ? (this._depthCullingState.depthFunc = this._gl.GEQUAL,
-        this._gl.clearDepth(0)) : this._gl.clearDepth(1),
-        Z |= this._gl.DEPTH_BUFFER_BIT),
-        q && (this._gl.clearStencil(0),
-        Z |= this._gl.STENCIL_BUFFER_BIT),
-        this._gl.clear(Z)
-    }
-
-    No difference with
-      {
-        find: `gl.clearColor(`,
-        replace: `gl.clearColor(0,0,0,0),console.log(`,
-      },
-
-
-  TODO : _renderForCamera(ne, de, pe=!0) { may be interesting
-
-  TODO : Could also be that the blend mode with which babylon is drawing is somehow incompatible with alpha
-
-  The material used for rendering the fullsceen quad:
-    g.x.DefaultMaterialFactory = Nr=>new xn("default material",Nr)
-
-
-  this._renderingManager.render(null, null, !0, !0),
-
-  Jesus this bablyon thing is a fucking mess. Can't Roll20 just bit blit the composited canvases??????????????????
-
-*/
 

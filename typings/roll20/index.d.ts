@@ -550,6 +550,8 @@ namespace Roll20 {
 
       setCanvasSize: (width: number, height: number) => void;
       setZoom: (coef: number, b?: any, c?: any) => void;
+
+      final_canvas: HTMLCanvasElement;
   }
 
   interface TokenEditor {
@@ -646,6 +648,8 @@ namespace Roll20 {
   }
 
   interface R20ES {
+    manual_composite: () => void;
+
     onDocumentMouseUp: (e: any) => void;
 
     onLoadingOverlayHide: () => void;
