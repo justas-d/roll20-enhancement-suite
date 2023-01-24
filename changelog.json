@@ -1,5 +1,5 @@
 {
-    "current": "1.28.10",
+    "current": "1.28.11",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2645,6 +2645,22 @@
                 {
                     "id": "",
                     "content": "Implemented an experimental animatied background opacity bug fix."
+                }
+            ]
+        },
+        "1.28.11": {
+            "info": {
+                "title": "Extra Rulers & Token Select fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed the Extra Rulers UI not showing."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed the 'Not selecting!' UI not showing."
                 }
             ]
         }
