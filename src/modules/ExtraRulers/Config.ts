@@ -30,8 +30,8 @@ export default <VTTES.Module_Config> {
 
       stencils: [
         {
-          find: [ `function setMode(`, 1, `){` ],
-          replace: [ 0, `window.d20setMode=setMode; if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(`, 1, `);}` ],
+          find: [ `}setMode(`,1,`){` ],
+          replace: [ 0, `if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(`,1,`);}` ],
         },
 
         // search for d20.engine.getDistanceInScale({

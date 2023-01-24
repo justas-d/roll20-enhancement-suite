@@ -714,7 +714,6 @@ interface R20ESChrome {
 interface Window {
   r20esChrome: R20ESChrome;
 
-  d20setMode: (str: string) => void;
   Jukebox: Roll20.GlobalJukebox;
   Campaign: Roll20.Campaign;
   d20: Roll20.D20;

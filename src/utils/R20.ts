@@ -416,9 +416,8 @@ namespace R20 {
     }
 
     export const enter_measure_mode = () => {
-      window.d20setMode("measure");
+      $("#measure").trigger("click");
     };
-
 
     export const get_camera_x = () => {
       return $("#editor-wrapper").scrollLeft();
