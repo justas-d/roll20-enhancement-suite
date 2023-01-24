@@ -117,7 +117,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
         this.manual_composite_canvas.height
       );
 
-      console.log("composite");
+      //console.log("composite");
     } catch(e) {
       console.error("composite ex");
       console.error(e);
