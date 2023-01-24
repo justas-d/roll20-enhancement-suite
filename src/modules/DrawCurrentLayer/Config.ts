@@ -98,7 +98,7 @@ export default <VTTES.Module_Config> {
 
       stencils: [
         {
-          find: [ `function setMode(`, 1, `){` ],
+          find: [ `}setMode(`,1,`){` ],
           replace: [ 0, `if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(`,1,`);}` ],
         },
       ],
