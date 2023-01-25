@@ -29,10 +29,23 @@ export default <VTTES.Module_Config> {
       includes: "vtt.bundle.js",
 
       stencils: [
+        // NOTE(justasd): This code is for the Roll20 2023-01-24 patch, but that was reverted on
+        // 2023-01-25. We keep both the pre 24th and post 24th setMode stencils around in case more
+        // reverts are done.
+        // Delete one of these in a few months once setMode is solid.
+        // :SetModeRevert
+        // 2023-01-25
         {
           find: [ `}setMode(`,1,`){` ],
           replace: [ 0, `if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(`,1,`);}` ],
         },
+        // This is pre 2023-01-24 code.
+        {
+          find: [ `function setMode(`,7,`){` ],
+          replace: [ 0, `if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(`,7,`);}` ],
+        },
+
+
 
         // search for d20.engine.getDistanceInScale({
         // G = function(B, H, J, ee, q, W)

@@ -95,12 +95,20 @@ export default <VTTES.Module_Config> {
   mods: [
     {
       includes: "vtt.bundle.js",
-
+      
+      // NOTE(justasd): See :SetModeRevert
+      // 2023-01-25
       stencils: [
         {
           find: [ `}setMode(`,1,`){` ],
           replace: [ 0, `if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(`,1,`);}` ],
         },
+
+        {
+          find: [ `function setMode(`,2,`){` ],
+          replace: [ 0, `if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(`,2,`);}` ],
+        },
+
       ],
     },
   ],
