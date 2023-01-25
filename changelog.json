@@ -1,5 +1,5 @@
 {
-    "current": "1.28.11",
+    "current": "1.28.12",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2661,6 +2661,22 @@
                 {
                     "id": "",
                     "content": "Fixed the 'Not selecting!' UI not showing."
+                }
+            ]
+        },
+        "1.28.12": {
+            "info": {
+                "title": "Extra Rulers & Token Select fixes 2: Electric Boogaloo",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed Extra rulers and 'Not selecting!' UI from showing due to Roll20 code reverts."
+                },
+                {
+                    "id": "",
+                    "content": "Added a revert failsafe for Extra Rulers and Token Layer Drawing."
                 }
             ]
         }
