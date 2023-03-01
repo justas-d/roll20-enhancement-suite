@@ -95,7 +95,7 @@ module.exports = (_env, argv) => {
 
     // prep source code
     const filename = `r20es_${git.version}_source.zip`;
-    shell.exec(`git archive -o ${filename} HEAD ":(exclude)page"`);
+    shell.exec(`git archive -o ${filename} HEAD ":(exclude)page" ":(exclude)utils"`);
 
     fs.readFile(filename, (err, data) => {
       if (err) throw err;
