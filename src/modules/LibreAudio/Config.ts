@@ -4,7 +4,7 @@ export default <VTTES.Module_Config> {
   filename: TransformDirname(__dirname),
   id: "libreAudio",
   name: "Libre Audio",
-  description: "Allows creation and playback of tracks via their URL. Removes the 16 listener cap on My Audio Tracks. Refreshing the page is recommended after disabling/enabling this module in order to avoid issues.",
+  description: "Allows creation and playback of tracks via their URL. Removes the 16 listener cap on My Audio Tracks. Refreshing the page is recommended after disabling/enabling this module in order to avoid issues. Players need to have VTTES installed to hear tracks added via Libre Audio.",
   category: VTTES.Module_Category.freedom,
   gmOnly: false,
 
