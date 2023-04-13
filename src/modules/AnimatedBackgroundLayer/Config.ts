@@ -56,8 +56,8 @@ export default <VTTES.Module_Config> {
           search_from: `requestAnimationFrame(d20.engine.renderLoop)`,
           search_from_index_offset: -4000,
 
-          find: [ `(0,_engine_babylonSetup__WEBPACK_IMPORTED_MODULE`,3,`)()}` ],
-          replace: [ `(window.r20es.manual_composite != null ? window.r20es.manual_composite() : (0,_engine_babylonSetup__WEBPACK_IMPORTED_MODULE`,3,`)())}` ],
+          find: [`currentPageScene)==null||`,3,`.updateCanvasTexture()`],
+          replace: [`currentPageScene) == null || (window.r20es.manual_composite != null ? window.r20es.manual_composite() : `,3,`.updateCanvasTexture())`],
         },
       ]
     }
