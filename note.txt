@@ -1,0 +1,6 @@
+On arch, we seemingly need to export the following for building to work
+
+export NODE_OPTIONS=--openssl-legacy-provider
+
+This is bad
+
