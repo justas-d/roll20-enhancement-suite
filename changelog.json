@@ -1,5 +1,5 @@
 {
-    "current": "1.28.12",
+    "current": "1.28.13",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2677,6 +2677,22 @@
                 {
                     "id": "",
                     "content": "Added a revert failsafe for Extra Rulers and Token Layer Drawing."
+                }
+            ]
+        },
+        "1.28.13": {
+            "info": {
+                "title": "Small Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed animated backgrounds rendering on top of everything else."
+                },
+                {
+                    "id": "",
+                    "content": "Add some notes saying that other players need VTTES installed to hear libre audio and see animated backgrounds."
                 }
             ]
         }
