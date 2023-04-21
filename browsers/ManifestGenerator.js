@@ -55,6 +55,12 @@ const gen = (browser, origVersionName) => {
       ]
     },
 
+    browser_specific_settings: {
+      gecko: {
+        id: '{ffed5dfa-f0e1-403d-905d-ac3f698660a7}',
+      }
+    },
+
     web_accessible_resources: [
       '*.tsx',
       '*.ts',
