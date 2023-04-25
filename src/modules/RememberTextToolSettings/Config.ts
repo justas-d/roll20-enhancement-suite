@@ -47,12 +47,12 @@ export default <VTTES.Module_Config> {
           search_from: "d20.engine.editText=function",
           // matches $("#font-size").val(le).trigger("keyup"), $("#font-color").val(we).trigger("change-silent"), $("#font-family").val(me);
           // 2022-02-24
-          find: [ `.get("stroke");`,1,`const` ],
-          replace: [ `.get("fill"); 
+          find: [ `.get("fontStyle");`,1,`const` ],
+          replace: [ `.get("fontStyle"); 
 if((window.r20es && window.r20es.copyTextSettingsOnSelect) || !window.r20es) { 
 `,1,`
 }
-var `,
+const `,
           ]
         },
         {

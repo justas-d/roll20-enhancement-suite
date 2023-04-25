@@ -36,7 +36,7 @@ export default <VTTES.Module_Config> {
         // :SetModeRevert
         // 2023-01-25
         {
-          find: [ `}setMode(`,1,`){` ],
+          find: [ `})}setMode(`,1,`){` ],
           replace: [ 0, `if(window.r20es && window.r20es.extra_ruler_set_mode) {window.r20es.extra_ruler_set_mode(`,1,`);}` ],
         },
         // This is pre 2023-01-24 code.
