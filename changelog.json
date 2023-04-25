@@ -1,5 +1,5 @@
 {
-    "current": "1.28.13",
+    "current": "1.28.14",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2693,6 +2693,26 @@
                 {
                     "id": "",
                     "content": "Add some notes saying that other players need VTTES installed to hear libre audio and see animated backgrounds."
+                }
+            ]
+        },
+        "1.28.14": {
+            "info": {
+                "title": "Bug Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed extra rulers UI not showing up (thanks, 'i am goofy', for the report!)"
+                },
+                {
+                    "id": "",
+                    "content": "Fixed the 'Not Selecting!' UI not showing up."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed the 'Remember Text Tool' module settings mirroring option not working."
                 }
             ]
         }
