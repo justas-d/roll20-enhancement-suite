@@ -341,6 +341,7 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
       this.setConfigValue("box_mode", val);
       window.r20es.extra_ruler.box_mode = val;
     };
+
     this.box_el = (
       <div style={{marginLeft: "8px", display: "none"}}>
         <select 
@@ -366,15 +367,28 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
       this.setConfigValue("cone_degrees", val);
       window.r20es.extra_ruler.cone_degrees = val;
     };
+
+    const cone_degree_input = (
+      <input 
+        value={window.r20es.extra_ruler.cone_degrees} 
+        type="number" 
+        style={{width: "64px", margin: "0"}}
+        onchange={cone_degrees_change}
+      />
+    );
+
+    const reset_degrees = () => {
+      const val = 1.0 * (180.0/3.14159265359);
+      this.setConfigValue("cone_degrees", val);
+      window.r20es.extra_ruler.cone_degrees = val;
+      cone_degree_input.value = val;
+    }
+
     this.cone_el = (
       <div style={{marginLeft: "8px", display: "none"}}>
 
-        <input 
-          value={window.r20es.extra_ruler.cone_degrees} 
-          type="number" 
-          style={{width: "64px", margin: "0"}}
-          onchange={cone_degrees_change}
-        />
+        {cone_degree_input}
+
         <span style={{marginLeft: "2px"}}>degrees</span>
 
         <select 
@@ -385,6 +399,19 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
           <option value={CONSTS.CONE_MODE_FLAT}>Flat</option>
           <option value={CONSTS.CONE_MODE_ROUNDED}>Rounded</option>
         </select>
+
+        <button 
+          className="btn"
+          style={{
+            paddingBottom: "0px",
+            paddingTop: "0px",
+            transform: "translateY(-2px)",
+          }}
+          onClick={reset_degrees}
+        >
+          Reset Degrees
+        </button>
+
       </div>
     );
 
