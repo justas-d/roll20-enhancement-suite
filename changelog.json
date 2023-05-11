@@ -1,5 +1,5 @@
 {
-    "current": "1.28.14",
+    "current": "1.28.15",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2713,6 +2713,22 @@
                 {
                     "id": "",
                     "content": "Fixed the 'Remember Text Tool' module settings mirroring option not working."
+                }
+            ]
+        },
+        "1.28.15": {
+            "info": {
+                "title": "Arrow Key Movement Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed canvas arrow key movement breaking the token arrow key movement."
+                },
+                {
+                    "id": "",
+                    "content": "Added a 'Reset' button to the Cone ruler UI."
                 }
             ]
         }
