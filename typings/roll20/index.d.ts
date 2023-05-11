@@ -697,10 +697,13 @@ namespace Roll20 {
   }
 
   interface Mousetrap {
-    bind: (keys: string, cb: Function) => void;
+    bind: (keys: string, cb: Function) => Mousetrap_Data;
     unbind: (keys: string, cb?: Function) => void;
   }
 
+  interface Mousetrap_Data {
+    _directMap: Record<string, Function>;
+  }
 
   interface SoundManager {
     createSound: (sound: {id: string, url: string}) => any;
