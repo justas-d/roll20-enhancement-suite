@@ -1,5 +1,5 @@
 {
-    "current": "1.28.15",
+    "current": "1.28.16",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2729,6 +2729,34 @@
                 {
                     "id": "",
                     "content": "Added a 'Reset' button to the Cone ruler UI."
+                }
+            ]
+        },
+        "1.28.16": {
+            "info": {
+                "title": "Some bug fixes and slight improvements",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Added a message saying that the preview UI is not supported for the time being."
+                },
+                {
+                    "id": "",
+                    "content": "Added an option to the force background color module to force change the backdrop color."
+                },
+                {
+                    "id": "",
+                    "content": "Added an option to the force background color module to only force change the backdrop and canvas colors when they are default values."
+                },
+                {
+                    "id": "",
+                    "content": "Added option to change the light color in the character token editor."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed the force background color module from not setting the background color to the right color when animated backgrounds are on."
                 }
             ]
         }
