@@ -14,13 +14,24 @@ export default <VTTES.Module_Config> {
 
   configView: {
     backgroundColor: {
-      display: "Background Color",
+      display: "Canvas Background Color",
       type: VTTES.Config_View_Type.Color,
+    },
+    backdrop_color: {
+      display: "Backdrop Color",
+      type: VTTES.Config_View_Type.Color,
+    },
+
+    only_force_if_default: {
+      display: "Only force Canvas and Backdrop colors if the page has it set to default",
+      type: VTTES.Config_View_Type.Checkbox,
     },
   },
 
   config: {
     backgroundColor: [13,14,15],
+    backdrop_color: [10,11,12],
+    only_force_if_default: true,
     enabled: false,
   },
 };

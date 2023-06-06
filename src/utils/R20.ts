@@ -22,6 +22,11 @@ namespace R20 {
         B20Background = "background"
     }
 
+    export function getBackgroundStyle() {
+        return window.d20.engine.backgroundColor;
+    }
+
+
     export function setBackgroundStyle(bgStyle: string) {
         window.d20.engine.backgroundColor = bgStyle;
     }

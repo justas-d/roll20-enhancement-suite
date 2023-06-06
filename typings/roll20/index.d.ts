@@ -246,37 +246,40 @@ namespace Roll20 {
     vttes_default_camera_y: number;
     vttes_default_camera_zoom: number;
 
-      adv_fow_dim_reveals: boolean
-      adv_fow_enabled: boolean
-      adv_fow_grid_size: number
-      adv_fow_show_grid: boolean
-      archived: boolean
-      background_color: string;
-      diagonaltype: string;
-      fog_opacity: number;
-      grid_opacity:number;
-      grid_type: string;
-      gridcolor: string;
-      gridlabels: boolean;
-      height: number;
-      jukeboxtrigger: string;
-      lightenforcelos: boolean;
-      lightglobalillum: boolean;
-      lightrestrictmove: boolean;
-      lightupdatedrop: boolean;
-      name: string;
-      placement: number;
-      revealedAreas: string;
-      scale_number: number;
-      scale_units: string;
-      showdarkness: boolean;
-      showgrid: boolean;
-      showlighting: boolean;
-      snapping_increment: number;
-      thumbnail: string;
-      version: number;
-      width: number;
-      zorder: string[]; // comma separated list of token ids
+    wrapperColor: string;
+    useAutoWrapper: boolean;
+
+    adv_fow_dim_reveals: boolean
+    adv_fow_enabled: boolean
+    adv_fow_grid_size: number
+    adv_fow_show_grid: boolean
+    archived: boolean
+    background_color: string;
+    diagonaltype: string;
+    fog_opacity: number;
+    grid_opacity:number;
+    grid_type: string;
+    gridcolor: string;
+    gridlabels: boolean;
+    height: number;
+    jukeboxtrigger: string;
+    lightenforcelos: boolean;
+    lightglobalillum: boolean;
+    lightrestrictmove: boolean;
+    lightupdatedrop: boolean;
+    name: string;
+    placement: number;
+    revealedAreas: string;
+    scale_number: number;
+    scale_units: string;
+    showdarkness: boolean;
+    showgrid: boolean;
+    showlighting: boolean;
+    snapping_increment: number;
+    thumbnail: string;
+    version: number;
+    width: number;
+    zorder: string[]; // comma separated list of token ids
   }
 
   interface Page extends SyncObject<PageAttributes> {
@@ -286,6 +289,12 @@ namespace Roll20 {
     addImage: (token: object, force_snap?: boolean, unused_1?: boolean, unused_2?: boolean, unused_3?: boolean, addToFrontAndFireModifier?: boolean) => Token;
 
     fullyLoadPage: () => void;
+
+    view : Page_View;
+  }
+
+  interface Page_View {
+    updateWrapperColor: Function;
   }
 
   interface BackboneFirebase {

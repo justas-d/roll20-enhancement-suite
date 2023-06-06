@@ -85,7 +85,7 @@ class AnimatedBackgroundLayer extends R20Module.OnAppLoadBase {
       const fillMaxX = Math.ceil(R20.getCanvasWidth() / R20.getCanvasZoom());
       const fillMaxY = R20.getCanvasHeight() / R20.getCanvasZoom();
 
-      this.ctx.fillStyle = this.current_page.attributes.background_color;
+      this.ctx.fillStyle = R20.getBackgroundStyle();
       this.ctx.fillRect(0, fitted.y - R20.getCanvasOffsetY(), fillMaxX, fillMaxY);
       this.ctx.fillRect(fitted.x - R20.getCanvasOffsetX(), 0, fillMaxX, fillMaxY);
 
