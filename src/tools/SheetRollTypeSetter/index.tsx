@@ -15,7 +15,7 @@ const ALL_ATTRIB_DATAS: Array<IConfigurableAttribute> = [
     value_display_map: {
       "{{always=1}} {{r2=[[@{d20}": "Always Roll Advantage",
       "@{advantagetoggle}": "Advantage Toggle",
-      "{{query=1}} ?{Advantage?|Normal Roll,&#123&#123normal=1&#125&#125 &#123&#123r2=[[0d20|Advantage,&#123&#123advantage=1&#125&#125 &#123&#123r2=[[@{d20}|Disadvantage,&#123&#123disadvantage=1&#125&#125 &#123&#123r2=[[@{d20}}": "Query Advantage",
+      "@{queryadvantage}": "Query Advantage",
       "{{normal=1}} {{r2=[[0d20": "Never Roll Advantage",
     }
   },

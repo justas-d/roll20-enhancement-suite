@@ -22,6 +22,10 @@ namespace R20 {
         B20Background = "background"
     }
 
+    export function is_using_new_ui_preview() {
+      return document.body.querySelector("#master-toolbar") !== null;
+    }
+
     export function getBackgroundStyle() {
         return window.d20.engine.backgroundColor;
     }
