@@ -427,6 +427,9 @@ const UpdatedLightSettings = ({attribs}) => {
         Center
       </div>
 
+      <h4 style={{marginTop: "16px"}}>Light Color</h4>
+      <ColorWidget style={{marginBottom: "8px"}} propName={"lightColor"} token={attribs}/>
+
     </div>
   );
 }
