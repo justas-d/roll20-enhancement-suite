@@ -338,9 +338,6 @@ export const bootstrap = () => {
     if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
       // @ChromeScriptFetching
       jobs.push(new Promise<void>(ok => {
-        console.log("Bootstrap sending VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS");
-        window.postMessage({VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS: true}, Config.appUrl);
-
         const listener = (msg) => {
           if(msg.origin !== Config.appUrl) {
             return;
@@ -368,6 +365,9 @@ export const bootstrap = () => {
         };
 
         window.addEventListener("message", listener);
+
+        console.log("Bootstrap sending VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS");
+        window.postMessage({VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS: true}, Config.appUrl);
       }));
     }
     else if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
