@@ -8,25 +8,24 @@ if(doesBrowserNotSupportResponseFiltering()) {
 
   // @ChromeScriptFetching
   getBrowser().runtime.onMessage.addListener((request, sender, send_response) => {
+
+
     if(request.VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND) {
-      console.log("got VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND");
 
-      const jobs = [];
-      const results = {};
+      (async function () {
+        console.log("got VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND");
 
-      const fetch_job = async (url: string, key: string) => {
-        console.log("fetching", url, key);
-        const req = await fetch(url);
+        const req = await fetch(`https://cdn.roll20.net/production/vtt.bundle.js?n${Date.now()}`);
         const text = await req.text();
-        results[key] = text;
-      };
 
-      jobs.push(fetch_job("https://cdn.roll20.net/production/vtt.bundle.js?n", "VTT_BUNDLE"));
+        const results = {
+          VTT_BUNDLE: text,
+        };
 
-      Promise.all(jobs).then(() => {
         console.log("VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND results:", results);
+
         send_response(results);
-      });
+      })();
 
       return true;
     }
