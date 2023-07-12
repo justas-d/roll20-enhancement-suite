@@ -15,6 +15,7 @@ shell.exec("git push --tags");
 
 console.log(`Deploying version ${deployData.version} for:`);
 
+/*
 if(typeof (deployData.firefox) !== "undefined") {
   console.log(`  Firefox: ${deployData.firefox}`);
 
@@ -32,6 +33,7 @@ if(typeof (deployData.firefox) !== "undefined") {
     console.log(err);
   });
 }
+*/
 
 {
   const client = new Discord.Client();
