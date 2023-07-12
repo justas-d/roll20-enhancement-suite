@@ -33,5 +33,6 @@ export default <VTTES.Module_Config> {
     showStartupGuide: true,
     showChangelog: true,
     previousVersion: "",
+    has_shown_ui_preview_incompatibility_message: false,
   },
 };
