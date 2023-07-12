@@ -17,7 +17,7 @@ export default <VTTES.Module_Config> {
           search_from: `throw new Error("Automatic publicPath is not supported in this browser");`,
           search_from_index_offset: -20,
           find: [ `if(!`,1,`)throw new Error("Automatic publicPath is not supported in this browser");` ],
-          replace: [ `if(!`,1,`){`,1,`="https://cdn.roll20.net/production/";}` ],
+          replace: [ 1,` = "https://cdn.roll20.net/production/";` ],
         },
       ],
     },
