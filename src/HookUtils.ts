@@ -17,6 +17,7 @@ export const apply_mods_to_text = (
   url: string,
   configs: Record<string, VTTES.Module_Config>,
 ): string => {
+  console.log(`Applying mods to url ${url}`);
 
   for(const config_id in configs) {
     const config = configs[config_id];
@@ -182,8 +183,7 @@ export const apply_mods_to_text = (
         console.log("Generated groups:", groups);
       }
 
-      if(mod.find_replace) {
-
+      if(mod.find_replace && !mod.debug_disable_find_replace) {
         for(const find_replace of mod.find_replace) {
           if(BUILD_CONSTANT_VTTES_IS_DEV) {
             if(find_replace.stability_checks) {

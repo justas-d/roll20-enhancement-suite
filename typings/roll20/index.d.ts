@@ -789,6 +789,7 @@ namespace VTTES {
     find_replace?: Array<Find_Replace>;
 
     debug_disable_stencils?: boolean;
+    debug_disable_find_replace?: boolean;
   }
 
   const enum Config_View_Type {

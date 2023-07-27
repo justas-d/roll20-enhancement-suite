@@ -14,7 +14,7 @@ export default <VTTES.Module_Config> {
       find_replace: [
         {
           find: `$(document).on("ready", function() { d20ext.showGoogleAd(); });`,
-          replace: `d20ext.seenad = true; /* replaced */ `,
+          replace: `d20ext.seenad = true; d20ext.showingAds = false; d20ext.adComplete = true; /* replaced */ `,
         }
       ]
     },
