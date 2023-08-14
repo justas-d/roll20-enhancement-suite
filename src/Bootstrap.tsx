@@ -136,14 +136,14 @@ export const bootstrap = () => {
           color: #0f0f0f;
       }
 
-      .r20es-dialog th {
-          white-space: nowrap;
+      html.dark .r20es-dialog th {
+        color: #0f0f0f !important;
       }
 
       .r20es-dialog th {
+          white-space: nowrap;
           padding: 4px;
           padding-left: 8px;
-          color: #0f0f0f;
       }
 
       .r20es-dialog tr {
