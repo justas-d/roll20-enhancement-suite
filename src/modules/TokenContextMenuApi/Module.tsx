@@ -61,7 +61,7 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
   try_get_actions_menu_template() {
     const template = document.body.querySelector("#tmpl_actions_menu");
     if(template == null) {
-      // TODO
+      console.error("TokenContextMenu: failed to find tmpl_actions_menu");
     }
     return template as HTMLElement | null;
   }
@@ -72,9 +72,7 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
 
     var template = this.try_get_actions_menu_template();
     if(template) {
-      console.log(template)
       let text = template.innerHTML;
-      console.log(text);
 
       this.original_actions_menu_template = text;
 
@@ -90,8 +88,6 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
       //
       // 2023-08-14
       text = replaceAll(text, `this.get("represents")`, `(this && this.get && this.get("represents"))`)
-
-      console.log(text);
 
       template.innerHTML = text;
     }
