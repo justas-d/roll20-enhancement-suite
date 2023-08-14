@@ -143,6 +143,7 @@ export const bootstrap = () => {
       .r20es-dialog th {
           padding: 4px;
           padding-left: 8px;
+          color: #0f0f0f;
       }
 
       .r20es-dialog tr {

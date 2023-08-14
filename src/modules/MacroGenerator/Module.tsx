@@ -65,7 +65,7 @@ class PickMacroGeneratorsDialog extends DialogBase<null> {
                     <input style={{ verticalAlign: "middle", marginRight: "4px" }} type="checkbox" value={factoryIndex} checked/>
                     <span style={{ verticalAlign: "middle" }}>{data.name}</span>
                     { data.createFolderEntries &&
-                        <span style={{float: "right", paddingRight: "16px", color: "lightgray"}}>Folderable</span>
+                        <span style={{float: "right", paddingRight: "16px", color: "#757575"}}>Folderable</span>
                     }
                 </div>
 
