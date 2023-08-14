@@ -1,5 +1,5 @@
 {
-    "current": "1.28.18",
+    "current": "1.28.19",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2781,6 +2781,30 @@
                 {
                     "id": "",
                     "content": "Fixed sometimes getting stuck on the loading screen."
+                }
+            ]
+        },
+        "1.28.19": {
+            "info": {
+                "title": "Bug Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed context menus not showing up when right-clicking on empty space (Roll20 bug)."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed the macro generator module font color being unreadable in dark mode."
+                },
+                {
+                    "id": "",
+                    "content": "Rebound Extra Rulers hotkeys that start with q to start with g instead."
+                },
+                {
+                    "id": "",
+                    "content": "Listed available hotkeys on the extra rulers module description."
                 }
             ]
         }
