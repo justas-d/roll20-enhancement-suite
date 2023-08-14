@@ -494,19 +494,19 @@ class ExtraRulers extends R20Module.OnAppLoadBase {
 
     this.redraw_ruler_config_display();
 
-	  window.Mousetrap.bind("q q", this.hotkey_ruler_normal);
-		window.Mousetrap.bind("q r", this.hotkey_ruler_radius);
-		window.Mousetrap.bind("q c", this.hotkey_ruler_cone);
-		window.Mousetrap.bind("q e", this.hotkey_ruler_box);
-		window.Mousetrap.bind("q w", this.hotkey_ruler_line);
+	  window.Mousetrap.bind("g q", this.hotkey_ruler_normal);
+		window.Mousetrap.bind("g r", this.hotkey_ruler_radius);
+		window.Mousetrap.bind("g c", this.hotkey_ruler_cone);
+		window.Mousetrap.bind("g e", this.hotkey_ruler_box);
+		window.Mousetrap.bind("g w", this.hotkey_ruler_line);
   }
 
   dispose_quick = () => {
-		window.Mousetrap.unbind("q q", this.hotkey_ruler_normal);
-		window.Mousetrap.unbind("q r", this.hotkey_ruler_radius);
-		window.Mousetrap.unbind("q c", this.hotkey_ruler_cone);
-		window.Mousetrap.unbind("q e", this.hotkey_ruler_box);
-		window.Mousetrap.unbind("q w", this.hotkey_ruler_line);
+		window.Mousetrap.unbind("g q", this.hotkey_ruler_normal);
+		window.Mousetrap.unbind("g r", this.hotkey_ruler_radius);
+		window.Mousetrap.unbind("g c", this.hotkey_ruler_cone);
+		window.Mousetrap.unbind("g e", this.hotkey_ruler_box);
+		window.Mousetrap.unbind("g w", this.hotkey_ruler_line);
 
     window.r20es.render_extra_rulers = null;
     window.r20es.extra_ruler_set_mode = null;

@@ -6,7 +6,7 @@ export default <VTTES.Module_Config> {
   filename: TransformDirname(__dirname),
   id: "extraRulers",
   name: "Extra Rulers",
-  description: "Adds radius, box, thick line and cone ruler options. Other players need to have VTTES installed to see them.",
+  description: "Adds radius, box, thick line and cone ruler options. Other players need to have VTTES installed to see them. Available hotkeys: g q -> normal ruler; g r -> radius ruler; g c -> cone ruler; g e -> box ruler; g w -> line ruler.",
   category: VTTES.Module_Category.canvas,
   gmOnly: false,
 
