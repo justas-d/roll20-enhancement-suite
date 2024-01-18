@@ -1,5 +1,5 @@
 {
-    "current": "1.28.19",
+    "current": "1.28.20",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2805,6 +2805,42 @@
                 {
                     "id": "",
                     "content": "Listed available hotkeys on the extra rulers module description."
+                }
+            ]
+        },
+        "1.28.20": {
+            "info": {
+                "title": "New UI Fixes",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Removed the 'remember text tool settings' module as it's not reasonable to have due to internal state management fiascos."
+                },
+                {
+                    "id": "",
+                    "content": "Removed 'extra rulers' as Roll20 has better rulers now."
+                },
+                {
+                    "id": "",
+                    "content": "Removed the new UI warning."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed the 'draw current layer' module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed the 'mouse click select' token module not working."
+                },
+                {
+                    "id": "",
+                    "content": "Fixed the option to create a token from an image not appearing in the new context menu."
+                },
+                {
+                    "id": "",
+                    "content": "The option for a custom custom path length is now available all the time on the path tool and will be used when a new value is set."
                 }
             ]
         }
