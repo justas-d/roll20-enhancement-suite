@@ -57,6 +57,3 @@ export const layerInfo: { [id: string]: ILayerInfo } = {
     },
 };
 
-export const makeLayerButtonSelector = (info: ILayerInfo): string => {
-    return `#editinglayer li.${info.toolName}`
-};

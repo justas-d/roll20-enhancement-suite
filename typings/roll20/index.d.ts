@@ -683,6 +683,7 @@ namespace Roll20 {
     tokenDrawBg: (ctx: CanvasRenderingContext2D, graphic: CanvasObject) => void;
     pingInitiativeToken: (token: Token) => void;
     setModePrologue: (mode: string) => void;
+    update_layer_indicator: (mode: string) => void;
     selectInitiativeToken: (token: Token) => void;
     keys: R20ESKeys;
     replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
@@ -739,6 +740,8 @@ interface Window {
   r20es: Roll20.R20ES;
   r20esInstalledModuleTable: {[id: string]: any};
   r20esDisposeTable: {[id: string]: any};
+
+  r20es_set_layer: (name: string) => void;
 
   enhancementSuiteEnabled: boolean;
   injectBackgroundOK: boolean;

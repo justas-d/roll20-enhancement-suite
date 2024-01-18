@@ -96,19 +96,31 @@ export default <VTTES.Module_Config> {
     {
       includes: "vtt.bundle.js",
       
-      // NOTE(justasd): See :SetModeRevert
-      // 2023-01-25
       stencils: [
         {
-          find: [ `})}setMode(`,1,`){` ],
-          replace: [ 0, `if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(`,1,`);}` ],
+          search_from: `name:"MasterToolbar"`,
+          find: [ `},setMode(`,2,`,`,3,`){` ],
+          replace: [ `},setMode(`,2,`,`,3,`){if(window.r20es != null && window.r20es.setModePrologue != null) { window.r20es.setModePrologue(`,2,`); }` ],
+        },
+
+
+				{
+          search_from: `@change-mode="onChangeMode"`,
+          find: [ `onChangeMode(`,4,`){` ],
+          replace: [ `onChangeMode(`,4,`){if(window.r20es != null && window.r20es.setModePrologue != null) { window.r20es.setModePrologue(`,4,`); }` ],
         },
 
         {
-          find: [ `function setMode(`,2,`){` ],
-          replace: [ 0, `if(window.r20es && window.r20es.setModePrologue) {window.r20es.setModePrologue(`,2,`);}` ],
+          find: [ `window.currentEditingLayer="`,1,`"` ],
+          replace: [ `if(window.r20es != null && window.r20es.update_layer_indicator != null) { window.r20es.update_layer_indicator(`,1,`); }
+            window.currentEditingLayer="`,1,`"` ],
         },
 
+        {
+          find: [ `window.currentEditingLayer=this.name` ],
+          replace: [ `if(window.r20es != null && window.r20es.update_layer_indicator != null) { window.r20es.update_layer_indicator(this.name); }
+            window.currentEditingLayer=this.name` ],
+        },
       ],
     },
   ],

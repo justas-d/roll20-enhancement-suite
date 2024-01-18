@@ -8,6 +8,8 @@ import { replaceAll} from "../../utils/MiscUtils";
 class TokenContextMenuApiModule extends R20Module.SimpleBase {
   private _observer: MutationObserver;
 
+  private elements: Array<HTMLElement> = [];
+
   public constructor() {
     super(__dirname);
   }
@@ -91,9 +93,52 @@ class TokenContextMenuApiModule extends R20Module.SimpleBase {
 
       template.innerHTML = text;
     }
+
+    {
+      const ctx_menu = document.querySelector(".context-menu");
+      if(ctx_menu == null) {
+        console.error(".context-menu is not found while registering TokenContextMenuApi stuff for non-token menus");
+      }
+      else {
+        const all = TokenContextMenu.getInternalData().widgets;
+
+        for(const key in all) {
+          const data = all[key];
+
+          if(data.options && data.options.mustHaveSelection) {
+            continue;
+          }
+
+          const btn = $(".context-menu button").first().clone()[0];
+
+          // @ts-ignore
+          btn.children[1].innerText = data.text;
+          btn.children[0].remove();
+
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            R20.hideTokenRadialMenu();
+            R20.hideTokenContextMenu();
+
+            data.callback();
+          });
+          btn.id = data.id;
+
+          ctx_menu.appendChild(btn);
+
+          this.elements.push(btn);
+        }
+      }
+    }
   }
 
   public dispose() {
+    for(var el of this.elements) {
+      el.remove();
+    }
+    this.elements = [];
+
     const all = TokenContextMenu.getInternalData().widgets;
 
     if(this.original_actions_menu_template != null) {

@@ -103,11 +103,11 @@ add_module(Mod_Settings);
 add_module(Mod_SheetTabApi);
 add_module(Mod_TableIO);
 add_module(Mod_TokenBarPositionAdjust);
-add_module(Mod_TokenContextMenuApi);
 add_module(Mod_TokenFromImg);
 add_module(Mod_TokenLayerDrawing);
 add_module(Mod_TokenResize);
 add_module(Mod_TransparentPaper);
 add_module(Mod_Welcome);
+add_module(Mod_TokenContextMenuApi);
 
 export { VTTES_MODULES };

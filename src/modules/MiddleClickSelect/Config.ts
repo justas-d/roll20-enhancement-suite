@@ -101,5 +101,19 @@ export default <VTTES.Module_Config> {
     modCtrl: false,
     modMeta: false,
     mouseButtonIndex: 1,
-  }
+  },
+
+  mods: [
+    {
+      includes: "vtt.bundle.js",
+      
+      stencils: [
+        {
+
+          find: [ `Mousetrap.bind("o",()=>(`,1,`("objects",!0)` ],
+          replace: [ `window.r20es_set_layer = (a) => {`,1,`(a,true);}, Mousetrap.bind("o",()=>(`,1,`("objects",!0)` ],
+        },
+      ],
+    },
+  ],
 };

@@ -647,6 +647,14 @@ class AnimBackgroundSetup extends DialogBase<null> {
           <br/>
 
           <div>
+            <b>Rulers, lighting and fog might not work with animated backgrounds enabled! </b>
+            <div>Please use the built-in animated token feature if you need these.</div>
+          </div>
+
+
+          <br/>
+
+          <div>
             <a href={"javascript:void(0) // workaround for underpopup dialog from roll20 regarding leaving the site"}
               onClick={() => {
                 window.open("https://gist.github.com/justas-d/b4bc420993844d989c10e05226787e70", "_blank");

@@ -73,20 +73,6 @@ View the full details <a style="color: orange" class="bmc-button" target="_blank
     if(elem) {
       root.parentElement.insertBefore(elem, root);
     }
-    
-    if(R20.is_using_new_ui_preview()) {
-      if(!cfg.has_shown_ui_preview_incompatibility_message) {
-        alert("VTTES does not support the new UI preview during its testing phase! Using it will make some VTTES functionality unavailable.\n\nPlease turn the new preview UI off in the Roll20 settings to continue using VTTES.\n\nThis message will not be shown again.");
-
-        cfg.has_shown_ui_preview_incompatibility_message = true;
-        window.r20es.save_configs();
-      }
-
-      setTimeout(() => {
-        R20.saySystem("<div><b>VTTES does not support the new UI preview during its testing phase!</b></div><div>Using it will make some VTTES functionality unavailable.</div><div>Please turn the new preview UI off in the Roll20 settings to continue using VTTES.</div>");
-      }, 5000);
-
-    }
   }
 
   public dispose() {

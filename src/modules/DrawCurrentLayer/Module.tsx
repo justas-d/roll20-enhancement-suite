@@ -1,7 +1,7 @@
 import {R20Module} from '../../utils/R20Module'
 import {R20} from '../../utils/R20';
 import {copy, findByIdAndRemove} from '../../utils/MiscUtils';
-import {ILayerInfo, layerInfo, makeLayerButtonSelector} from "../../utils/LayerInfo";
+import {ILayerInfo, layerInfo } from "../../utils/LayerInfo";
 import {DOM} from "../../utils/DOM";
 
 class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
@@ -14,8 +14,6 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
   }
 
   private createWidget() {
-    console.log("Creating widget");
-
     const root = document.getElementById("playerzone");
     console.log(root);
 
@@ -92,7 +90,6 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
 
     root.appendChild(widget);
 
-
     this.render(layerInfo[R20.getCurrentLayer()]);
     this.updateModeIndicator(R20.getCurrentToolName());
   }
@@ -106,58 +103,33 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
     this.createWidget();
   }
 
-  private getButton = (layer: ILayerInfo) => $(makeLayerButtonSelector(layer));
-
-  private turnOffListener(button: JQuery<HTMLElement>) {
-    // @ts-ignore
-    button.off("click", this.onToolChange);
-  }
-
   public setup() {
     if (!R20.isGM()) return;
 
     this.createWidget();
-
-    const hookListeners = (button: JQuery) => {
-      this.turnOffListener(button);
-      button.on("click", this.onToolChange);
-    };
-
-    for (const key in layerInfo) {
-      const layer = layerInfo[key];
-      const btn = this.getButton(layer);
-      hookListeners(btn);
-    }
-
+   
     window.r20es.setModePrologue = this.updateModeIndicator;
-
-    // Note(Justas): betteR20 only adds the dynamic lighting button a bit later after setup is called
-    // which means we've got to wait a while.
-    if (this.getButton(layerInfo[R20.CanvasLayer.B20Foreground]).length <= 0) {
-      setTimeout(() => {
-        hookListeners(this.getButton(layerInfo[R20.CanvasLayer.B20Foreground]));
-        hookListeners(this.getButton(layerInfo[R20.CanvasLayer.B20Weather]));
-        hookListeners(this.getButton(layerInfo[R20.CanvasLayer.Lighting]));
-      }, 10000);
-    }
+    window.r20es.update_layer_indicator = this.update_layer_indicator;
   }
 
-  private onToolChange = (e: Event) => {
-    console.log("tool changed!");
-    const target = e.target as HTMLElement;
-
+  update_layer_indicator = (new_layer: string) => {
     for (const key in layerInfo) {
       const layer = layerInfo[key];
-      if (!target.classList.contains(layer.toolName)) continue;
 
-      this.render(layerInfo[key]);
+      if(new_layer != key) continue;
+
+      this.render(layer);
       break;
     }
   };
 
   private updateModeIndicator = (mode: string) => {
+    //console.log(`new mode: ${mode}`);
+
     const div = document.getElementById(DrawCurrentLayerModule.selectId);
-    if (!div) return;
+    if (!div) {
+      return;
+    }
 
     div.style.display = (mode === "select" ? "none" : "block");
   };
@@ -173,13 +145,9 @@ class DrawCurrentLayerModule extends R20Module.OnAppLoadBase {
   public dispose() {
     super.dispose();
 
-    for (const key in layerInfo) {
-      const layer = layerInfo[key];
-
-      this.turnOffListener(this.getButton(layer));
-    }
-
     window.r20es.setModePrologue = null;
+    window.r20es.update_layer_indicator = null;
+
     this.removeWidget();
   }
 }

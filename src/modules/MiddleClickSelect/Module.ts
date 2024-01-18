@@ -1,6 +1,6 @@
 import { R20Module } from "../../utils/R20Module";
 import { R20 } from "../../utils/R20";
-import {layerInfo, makeLayerButtonSelector} from "../../utils/LayerInfo";
+import {layerInfo } from "../../utils/LayerInfo";
 
 class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
   constructor() {
@@ -18,16 +18,6 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
     if(cfg.modCtrl && !window.r20es.keys.ctrlDown) return;
     if(cfg.modMeta && !window.r20es.keys.metaDown) return;
 
-    const canSelectBitmap = {
-      [R20.CanvasLayer.GMTokens]: cfg.switchToGmLayer,
-      [R20.CanvasLayer.PlayerTokens]: cfg.switchToTokenLayer,
-      [R20.CanvasLayer.Map]: cfg.switchToMapLayer,
-      [R20.CanvasLayer.Lighting]: cfg.switchToLightsLayer,
-      [R20.CanvasLayer.B20Foreground]: cfg.switchToForegroundLayer,
-      [R20.CanvasLayer.B20Weather]: cfg.switchToWeatherLayer,
-      [R20.CanvasLayer.B20Background]: cfg.switchToBackgroundLayer
-    };
-
     let idx = objs.length;
 
     while(idx-- > 0) {
@@ -44,18 +34,18 @@ class MiddleClickSelectModule extends R20Module.OnAppLoadBase {
 
         const layer = model.get<R20.CanvasLayer>("layer");
 
-        if(!canSelectBitmap[layer])  {
-          //console.log("But not selecting due to it not being within the bitmap.");
-          continue;
-        }
+             if(layer === R20.CanvasLayer.GMTokens &&         !cfg.switchToGmLayer) continue;
+        else if(layer === R20.CanvasLayer.PlayerTokens &&     !cfg.switchToTokenLayer) continue;
+        else if(layer === R20.CanvasLayer.Map &&              !cfg.switchToMapLayer) continue;
+        else if(layer === R20.CanvasLayer.Lighting &&         !cfg.switchToLightsLayer) continue;
+        else if(layer === R20.CanvasLayer.B20Foreground &&    !cfg.switchToForegroundLayer) continue;
+        else if(layer === R20.CanvasLayer.B20Weather   &&     !cfg.switchToWeatherLayer) continue;
+        else if(layer === R20.CanvasLayer.B20Background &&    !cfg.switchToBackgroundLayer) continue;
 
         if(R20.getCurrentLayer() !== layer) {
-          const layerData = layerInfo[layer];
-          const el = $(makeLayerButtonSelector(layerData));
-          // NOTE(justasd):
-          // This is likely going to throw something about 'apply', but it's fine.
-          // 2022-12-01
-          el.trigger("click");
+          console.log(`SWITCH to ${layer}`);
+
+          window.r20es_set_layer(layer);
         }
 
         if(cfg.select) {

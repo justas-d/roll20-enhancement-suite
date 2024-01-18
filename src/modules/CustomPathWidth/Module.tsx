@@ -2,12 +2,9 @@ import {R20Module} from '../../utils/R20Module'
 import { DOM } from '../../utils/DOM'
 import { R20 } from "../../utils/R20";
 
-const BUTTON_CLASS = "vttes-character-image-from-url";
-
 class CustomPathWidth extends R20Module.OnAppLoadBase {
 
-  opt: HTMLOptionElement;
-  size_el: HTMLElement;
+  observer: MutationObserver;
 
   constructor() {
     super(__dirname);
@@ -15,10 +12,9 @@ class CustomPathWidth extends R20Module.OnAppLoadBase {
   
   on_size_el_change = (e) => {
     const input = e.target as HTMLInputElement;
-    this.opt.value = input.value;
-    this.opt.innerText = `Custom (${input.value})`;
 
     const val_number = parseInt(input.value, 10);
+
     R20.set_drawing_brush_size(val_number);
 
     const selected_tokens = R20.getSelectedTokens();
@@ -33,80 +29,38 @@ class CustomPathWidth extends R20Module.OnAppLoadBase {
     }
   }
 
-  either_show_or_hide_custom_size_input = (select: HTMLSelectElement) => {
-    const option = select.selectedOptions[0];
+  observer_callback = (muts) => {
 
-    if(option.innerText.startsWith("Custom")) {
-      this.size_el.style.removeProperty("display");
+    for(let e of muts) {
+      for(const added of e.addedNodes) {
+        if(added.id === "draw-options-outer") {
+
+          var size_el = (
+            <li>
+              <span style={{
+                marginRight: "4px"
+              }}>
+                (or) Custom size:
+              </span>
+              <input value="20" onchange={this.on_size_el_change} type="number"></input>
+            </li>
+          );
+
+          added.appendChild(size_el);
+        }
+      }
     }
-    else {
-      this.size_el.style.display = "none";
-    }
-
-  }
-
-  on_change_select = (e) => {
-    const select = e.target as HTMLSelectElement;
-    this.either_show_or_hide_custom_size_input(select);
-  }
-
-  try_get_select_element = (): HTMLSelectElement => {
-    const select = document.querySelector("#path_width");
-    if(!select) {
-      console.error("Could not find the path_width element");
-      return null;
-    }
-    return select as HTMLSelectElement;
-  }
-
-  on_shape_selected = (e, t) => {
-
-    const select = this.try_get_select_element();
-    if(select) {
-      this.either_show_or_hide_custom_size_input(select);
-    }
-  }
+  };
 
   setup() {
-    const select = this.try_get_select_element();
-    if(!select) return;
-
-    {
-      this.opt = (<option value="20">Custom (20)</option>);
-
-      select.insertBefore(this.opt, select.firstChild);
-      select.addEventListener("change", this.on_change_select);
-    }
-
-    {
-      const root = select.parentElement.parentElement;
-      this.size_el = (
-        <li style={{display: "none"}}>
-          <span style={{
-            fontSize: "0.65em",
-            marginRight: "4px"
-          }}>
-            Size:
-          </span>
-          <input value="20" onchange={this.on_size_el_change} type="number"></input>
-        </li>
-      );
-      root.appendChild(this.size_el);
-    }
-
-    $("body").on("shape_selected", "#editor", this.on_shape_selected);
+    this.observer = new MutationObserver(this.observer_callback);
+    this.observer.observe(document.body, { childList: true, subtree: true });
   }
 
   dispose() {
-    if(this.opt) this.opt.remove();
-    if(this.size_el) this.size_el.remove();
-
-    const select = this.try_get_select_element();
-    if(select) {
-      select.removeEventListener("change", this.on_change_select);
+    if(this.observer) {
+      this.observer.disconnect();
     }
-
-    $("body").off("shape_selected", "#editor", this.on_shape_selected);
 
     super.dispose();
   }
