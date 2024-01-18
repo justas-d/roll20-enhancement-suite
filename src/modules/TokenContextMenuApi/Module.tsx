@@ -5,7 +5,7 @@ import { findByIdAndRemove } from "../../utils/MiscUtils";
 import { TokenContextMenu } from "../../utils/TokenContextMenu";
 import { replaceAll} from "../../utils/MiscUtils";
 
-class TokenContextMenuApiModule extends R20Module.SimpleBase {
+class TokenContextMenuApiModule extends R20Module.OnAppLoadBase {
   private _observer: MutationObserver;
 
   private elements: Array<HTMLElement> = [];
