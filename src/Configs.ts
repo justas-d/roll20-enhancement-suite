@@ -50,7 +50,6 @@ import CharacterAvatarFromURL from "./modules/CharacterAvatarFromURL/Config"
 import CameraStartPosition from "./modules/CameraStartPosition/Config"
 import HandoutImageFromURL  from "./modules/HandoutImageFromURL/Config"
 import CustomPathWidth from "./modules/CustomPathWidth/Config"
-import ExtraRulers from "./modules/ExtraRulers/Config"
 import FixPatienceJs from "./modules/FixPatienceJs/Config"
 import UserscriptUpdateChecker from "./modules/UserscriptUpdateChecker/Config"
 
@@ -106,7 +105,6 @@ addCfg(CharacterAvatarFromURL);
 addCfg(CameraStartPosition);
 addCfg(HandoutImageFromURL);
 addCfg(CustomPathWidth);
-addCfg(ExtraRulers);
 
 if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript" ||
    BUILD_CONSTANT_TARGET_PLATFORM === "chrome" 
