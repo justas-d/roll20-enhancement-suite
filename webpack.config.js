@@ -49,7 +49,7 @@ const changelog = fs.readFileSync(changelogFile, "utf8");
 module.exports = (_env, argv) => {
   let env = _env || {};
 
-  const logo_data_b64 = "data:image/svg+xml;base64," + btoa(fs.readFileSync("./assets/logo/logo.svg", "utf8"));
+  const logo_data_b64 = "data:image/svg+xml;base64," + Buffer.from(fs.readFileSync("./assets/logo/logo.svg", "utf8")).toString('base64');
 
   const browsers = env.browsers && env.browsers.split(',');
   if (!browsers || browsers.length <= 0) {
