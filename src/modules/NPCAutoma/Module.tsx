@@ -24,8 +24,6 @@ class NPCAutomaModule extends R20Module.SimpleBase {
         if(!data.id || data.id === NPCAutomaModule.getPreviousDataId()) return;
         NPCAutomaModule.setPreviousDataId(data.id);
         const obj = R20.getCurrentPageTokenByUUID(data.id);
-        console.log("object");
-        console.log(obj);
         let automaSpeed = 1000/NPCAutomaModule.cfg[ADJUSTABLE_AUTMOMA_SPEED_CONFIG_KEY];
         if (obj) {
             R20.selectToken(obj);
@@ -33,12 +31,9 @@ class NPCAutomaModule extends R20Module.SimpleBase {
             if (!model || model.get("layer") !== "objects") return;
             const attr = NPCAutomaModule.getCharacterAttributes(model.character);
             let secondModel = NPCAutomaModule.findClosestNeighbor(model);
-            console.log("secondModel");
-            console.log(secondModel);
             if (attr.npc  == "1") {
                 NPCAutomaModule.moveNPC(model, action => {
                     if(NPCAutomaModule.checkNeighborTokens(model)) {
-                        console.log("do damage");
                         NPCAutomaModule.doDamage(model, secondModel, (_,o) => {
                             NPCAutomaModule.advanceNPCInitiative(model, secondModel);
                         });
@@ -82,7 +77,6 @@ class NPCAutomaModule extends R20Module.SimpleBase {
         }
         npc_attacks = npc_attacks - 1;
         let attackText = "%{selected|repeating_npcaction_$" + npc_attacks + "_npc_action}";
-        console.log(attackText);
         let damage = 0;
         R20.say(attackText, R20.generateUUID(), (_,o) => {
             let targetname = secondModel.get("name");
