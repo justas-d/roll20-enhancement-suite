@@ -1,4 +1,4 @@
-import {ADJUSTABLE_AUTMOMA_SPEED_CONFIG_KEY, GENERATE_VALUES_CONFIG_KEY} from "./Constants";
+import {ADJUSTABLE_AUTMOMA_SPEED_CONFIG_KEY, GENERATE_VALUES_CONFIG_KEY, HEALTH_BAR_CONFIG_KEY} from "./Constants";
 import TransformDirname  from '../../utils/TransformDirname'
 
 export default <VTTES.Module_Config> {
@@ -78,6 +78,15 @@ export default <VTTES.Module_Config> {
         [GENERATE_VALUES_CONFIG_KEY]: {
             type: VTTES.Config_View_Type.Checkbox,
             display: "Add buttons to generate default values for Ally and Enemy NPCs to the Journal Context Menu"
+        },
+        [HEALTH_BAR_CONFIG_KEY]: {
+            display: "HP Bar",
+            type: VTTES.Config_View_Type.Dropdown,
+            dropdownValues: {
+                bar1_value: "Bar 1",
+                bar2_value: "Bar 2",
+                bar3_value: "Bar 3"
+            }
         }
     },
     config: {
@@ -85,6 +94,7 @@ export default <VTTES.Module_Config> {
         showMove: true,
         [ADJUSTABLE_AUTMOMA_SPEED_CONFIG_KEY]: 1,
         [GENERATE_VALUES_CONFIG_KEY]: true,
-        npcCrit: true
+        npcCrit: true,
+        [HEALTH_BAR_CONFIG_KEY]: "bar3_value",
     }
 };

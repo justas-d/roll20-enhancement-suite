@@ -1,7 +1,7 @@
 import { R20Module } from "../../utils/R20Module";
 import { R20 } from "../../utils/R20";
 import SayCallback = R20.SayCallback;
-import {ADJUSTABLE_AUTMOMA_SPEED_CONFIG_KEY, GENERATE_VALUES_CONFIG_KEY} from "./Constants";
+import {ADJUSTABLE_AUTMOMA_SPEED_CONFIG_KEY, GENERATE_VALUES_CONFIG_KEY, HEALTH_BAR_CONFIG_KEY} from "./Constants";
 import { findByIdAndRemove } from "../../utils/MiscUtils";
 import { DOM } from "../../utils/DOM";
 
@@ -10,7 +10,6 @@ class NPCAutomaModule extends R20Module.SimpleBase {
     static cfg;
     private static readonly allyId = "window.r20es-ally-journal";
     private static readonly enemyId = "window.r20es-enemy-journal";
-    private static automaError = false;
     constructor() {
         super(__dirname);
     }
@@ -22,10 +21,11 @@ class NPCAutomaModule extends R20Module.SimpleBase {
     }
 
     private static play(data: Roll20.Token) {
-        NPCAutomaModule.automaError = false;
         if(!data.id || data.id === NPCAutomaModule.getPreviousDataId()) return;
         NPCAutomaModule.setPreviousDataId(data.id);
         const obj = R20.getCurrentPageTokenByUUID(data.id);
+        console.log("object");
+        console.log(obj);
         let automaSpeed = 1000/NPCAutomaModule.cfg[ADJUSTABLE_AUTMOMA_SPEED_CONFIG_KEY];
         if (obj) {
             R20.selectToken(obj);
@@ -33,9 +33,12 @@ class NPCAutomaModule extends R20Module.SimpleBase {
             if (!model || model.get("layer") !== "objects") return;
             const attr = NPCAutomaModule.getCharacterAttributes(model.character);
             let secondModel = NPCAutomaModule.findClosestNeighbor(model);
+            console.log("secondModel");
+            console.log(secondModel);
             if (attr.npc  == "1") {
                 NPCAutomaModule.moveNPC(model, action => {
                     if(NPCAutomaModule.checkNeighborTokens(model)) {
+                        console.log("do damage");
                         NPCAutomaModule.doDamage(model, secondModel, (_,o) => {
                             NPCAutomaModule.advanceNPCInitiative(model, secondModel);
                         });
@@ -52,7 +55,7 @@ class NPCAutomaModule extends R20Module.SimpleBase {
     
 
     private static advanceNPCInitiative (model: Roll20.Token,secondModel: Roll20.Token) {
-        if (NPCAutomaModule.getCharacterAttributes(model.character).npc === "1" && NPCAutomaModule.getCharacterAttributes(secondModel.character).npc === "1" && NPCAutomaModule.cfg.autoNext && !NPCAutomaModule.automaError) {
+        if (NPCAutomaModule.getCharacterAttributes(model.character).npc === "1" && NPCAutomaModule.getCharacterAttributes(secondModel.character).npc === "1" && NPCAutomaModule.cfg.autoNext) {
             R20.advanceInitiative();
         }
     }
@@ -78,39 +81,32 @@ class NPCAutomaModule extends R20Module.SimpleBase {
             return;
         }
         npc_attacks = npc_attacks - 1;
-        let whichAttack = model.character.attributes.abilorder.split(",")[npc_attacks];
-        let attackText;
-        if (whichAttack === "" || whichAttack === undefined) {
-            attackText = model.character.abilities.models[npc_attacks].attributes.action
-        } else if(attackText = model.character.abilities.get(whichAttack) === undefined) {
-            NPCAutomaModule.automaError = true;
-            R20.say(model.get("name") + "'s character is improperly configured for automated attacks/damage, exiting automa");
-            callback(null,null);
-            return;
-        } else {
-            attackText = model.character.abilities.get(whichAttack).attributes.action;
-        }
+        let attackText = "%{selected|repeating_npcaction_$" + npc_attacks + "_npc_action}";
+        console.log(attackText);
+        let damage = 0;
         R20.say(attackText, R20.generateUUID(), (_,o) => {
-            if (o.inlinerolls.length < 6) {
-                NPCAutomaModule.automaError = true;
-                R20.say(model.get("name") + "'s character is not configured for automated attacks/damage, exiting automa");
-                callback(null,null);
-                return;
-            }
-            const attack = o.inlinerolls[0].results.total;
-            const crit = (o.inlinerolls[0].results.rolls[0].results[0].v === 20) && NPCAutomaModule.cfg.npcCrit;
-            const critFail = (o.inlinerolls[0].results.rolls[0].results[0].v === 1) && NPCAutomaModule.cfg.npcCrit;
-            let damage = NPCAutomaModule.calcuateDamage(o,crit);
             let targetname = secondModel.get("name");
-            if ((ac <= attack || crit) && !critFail && NPCAutomaModule.getCharacterAttributes(secondModel.character).npc === "1") {
-                R20.say(targetname + " took **" + damage + "** damage");
-                secondModel.save({bar3_value: secondModel.attributes.bar3_value - damage});
+            const healthBar = NPCAutomaModule.cfg[HEALTH_BAR_CONFIG_KEY];
+            if (!o.hasOwnProperty("inlinerolls")) {
+                R20.say(model.get("name") + "'s action did not result in a roll - not adjusting enemy hp. Review npc_attack attribute to confirm properly configure for multiattack.");
+            } else if (o.inlinerolls.length < 6) {
+                R20.say(model.get("name") + "'s action is not configured for automated attacks/damage");
+            } else {
+                const attack = o.inlinerolls[0].results.total;
+                const crit = (o.inlinerolls[0].results.rolls[0].results[0].v === 20) && NPCAutomaModule.cfg.npcCrit;
+                const critFail = (o.inlinerolls[0].results.rolls[0].results[0].v === 1) && NPCAutomaModule.cfg.npcCrit;
+                damage = NPCAutomaModule.calcuateDamage(o,crit);
+                if ((ac <= attack || crit) && !critFail && NPCAutomaModule.getCharacterAttributes(secondModel.character).npc === "1") {
+                    R20.say(targetname + " took **" + damage + "** damage");
+                    secondModel.attributes[healthBar] = secondModel.attributes[healthBar] - damage;
+                    secondModel.save();
+                }
             }
-            if(secondModel.attributes.bar3_value <= 0) {
+            if(secondModel.attributes[healthBar] <= 0 && damage > 0) {
                 secondModel.destroy();
                 R20.say("**" + model.get("name") + " has slain " + targetname + "!**");
                 secondModel = NPCAutomaModule.findClosestNeighbor(model);
-                if (npc_attacks > 0) {
+                if (npc_attacks > 0 && secondModel !== null) {
                     R20.say("/em " + model.get("name") + " attacks " + secondModel.get("name"), R20.generateUUID(), (_,o) => {
                         let ac = parseInt(NPCAutomaModule.getCharacterAttributes(secondModel.character).npc_ac);
                         NPCAutomaModule.resolveRolls(model, secondModel,ac,npc_attacks, (_,o) => {
@@ -269,6 +265,9 @@ class NPCAutomaModule extends R20Module.SimpleBase {
         let npc_attacks = null;
         let dtype = null;
         let rtype = null;
+        if (character.attribs.models.length === 0) {
+            R20.ensure_character_attributes_are_loaded(character);
+        }
         for (let att of character.attribs.models) {
             if (att.attributes.name === "npc") {
                 npc = att.attributes.current;
