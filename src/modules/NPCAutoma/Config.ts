@@ -14,11 +14,11 @@ export default <VTTES.Module_Config> {
         "'ally' (int) from the character sheet - set to 1 for ally NPCs",
         "'npc_speed' (int) from the character sheet - specifies the distance the token can move (assumes 5ft squares)",
         "'npc_attacks' (int) from the character sheet - the number of attacks the NPC can make",
-        "'bar3_value' token attribute - used for health/damage",
-        "a character ability/macro for each npc_attacks - called by index"
+        "'barx_value' token attribute - used for health/damage, see the 'HP Bar' config below",
+        "a character action for each npc_attacks - called by index"
     ],
     media: {
-        "movement.gif": "Showing Movement"
+        "automa.webm": "Automated NPC Battling"
     },
     mods: [
         {

@@ -837,6 +837,7 @@ namespace VTTES {
     id: string;
     name: string;
     description: string;
+    bulletList?: Array<string>;
     category: Module_Category;
     gmOnly: boolean;
 
