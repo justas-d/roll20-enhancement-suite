@@ -22,11 +22,16 @@ function FeatureCard(props) {
             </span>);
         }
     }
-
+    const bullets = [];
+    if (cfg.bulletList) {
+        for (const item in cfg.bulletList) {
+            bullets.push(<li>{cfg.bulletList[item]}</li>);
+        }
+    }
     return (
         <div className="feature-card">
             <div className="left">
-                <p>{cfg.description}</p>
+                <p>{cfg.description}{bullets}</p>
             </div>
 
             {media.length > 0 &&
