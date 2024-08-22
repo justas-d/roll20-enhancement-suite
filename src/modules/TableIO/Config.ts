@@ -16,7 +16,7 @@ export default <VTTES.Module_Config> {
 
   mods: [
     { // add table id to popup
-      includes: "vtt.bundle.js",
+      includes: "vtt.bundle",
       find_replace: [
         {
           find: `this.$el.on("click",".deleterollabletable"`,

@@ -10,7 +10,7 @@
 //
 //  mods: [
 //    {
-//      includes: "vtt.bundle.js",
+//      includes: "vtt.bundle",
 //      find_replace: [
 //        {
 //          //find: `render:function(c,o){`,
@@ -27,7 +27,7 @@
 //    },
 //
 //    {
-//      includes: "vtt.bundle.js",
+//      includes: "vtt.bundle",
 //
 //      // NOTE(justasd): search for _drawNameplate: function(d)
 //      // 2022-01-19

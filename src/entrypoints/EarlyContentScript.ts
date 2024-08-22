@@ -33,7 +33,7 @@ let waitedFor = 0;
         console.log("EarlyContentScript got VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS. Sending VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND");
 
         chrome.runtime.sendMessage(
-          {VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND: true},
+          {VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND: msg.data.VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS},
           (response) => {
             console.log("EarlyContentScript got VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND:", response);
             console.log("EarlyContentScript sending VTTES_CDN_SCRIPTS");

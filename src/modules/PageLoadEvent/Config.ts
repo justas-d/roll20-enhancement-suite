@@ -11,7 +11,7 @@ export default <VTTES.Module_Config> {
 
   mods: [
     {
-      includes: "vtt.bundle.js",
+      includes: "vtt.bundle",
       find_replace: [
         {
           find: `$("#loading-overlay").hide()`,

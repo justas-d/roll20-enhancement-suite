@@ -12,10 +12,12 @@ if(doesBrowserNotSupportResponseFiltering()) {
 
     if(request.VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND) {
 
+      var bundle_url = request.VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND;
+
       (async function () {
         console.log("got VTTES_WANTS_CDN_SCRIPTS_FROM_BACKGROUND");
 
-        const req = await fetch(`https://cdn.roll20.net/production/vtt.bundle.js?n${Date.now()}`);
+        const req = await fetch(`${bundle_url}?n${Date.now()}`);
         const text = await req.text();
 
         const results = {
@@ -103,8 +105,8 @@ if(doesBrowserNotSupportResponseFiltering()) {
         cancel = true;
       }
     }
-    else if(request.url.includes("cdn.roll20.net/production/vtt.bundle.js")) {
-      if(!request.url.includes("cdn.roll20.net/production/vtt.bundle.js?n")) {
+    else if(request.url.includes("cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle")) {
+      if(!request.url.includes("cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle?n")) {
         cancel = true;
       }
     }
@@ -141,7 +143,7 @@ if(doesBrowserNotSupportResponseFiltering()) {
 else {
   const redirect_targets = [
     "https://app.roll20.net/editor/startjs",
-    "https://cdn.roll20.net/production/vtt.bundle.js",
+    "https://cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle",
   ];
 
   // thanks, Firefox.

@@ -286,7 +286,7 @@ export const bootstrap = () => {
 
       text = do_replacing(text, url);
 
-      scripts.push({order: order, text: text, url: url});
+      scripts.push({order: order, text: text, id: url});
     };
 
     // @UserscriptScriptFetching
@@ -300,7 +300,7 @@ export const bootstrap = () => {
 
         if(did_we_get_it) {
           data = do_replacing(data, url);
-          scripts.push({order: order, text: data, url: url});
+          scripts.push({order: order, text: data, id: url});
           window[key] = undefined;
           ok();
           return;
@@ -336,47 +336,64 @@ export const bootstrap = () => {
 
     jobs.push(fetch_script(6, "https://app.roll20.net/js/d20/loading.js?n=11&v=11"));
 
-    if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
-      // @ChromeScriptFetching
-      jobs.push(new Promise<void>(ok => {
-        const listener = (msg) => {
-          if(msg.origin !== Config.appUrl) {
-            return;
-          }
+    if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome" || 
+       BUILD_CONSTANT_TARGET_PLATFORM === "userscript"
+    ) {
+      const script_elements = window.document.body.querySelectorAll("script") as any as HTMLScriptElement[];
+      let bundle_url = null;
 
-          if(msg.data.VTTES_CDN_SCRIPTS) {
-            console.log("Bootstrap got VTTES_CDN_SCRIPTS", msg.data);
-            const data = msg.data.VTTES_CDN_SCRIPTS;
+      for(const el of script_elements) {
+        if(el.src && el.src.includes("cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle")) {
+          bundle_url = el.src;
+        }
+      }
+      console.log(`Got bundle url: ${bundle_url}`);
+      if(bundle_url == null) {
+        alert("VTTES Error: Failed to find the bundle URL. VTTES will not function. Please report this on our Discord");
+        return;
+      }
 
-            const handle_script = (order: number, data: string, url: string) => {
-              data = do_replacing(data, url);
+      if(BUILD_CONSTANT_TARGET_PLATFORM === "chrome") {
+        // @ChromeScriptFetching
+        jobs.push(new Promise<void>(ok => {
+          const listener = (msg) => {
+            if(msg.origin !== Config.appUrl) {
+              return;
+            }
 
-              scripts.push({
-                order: order, 
-                text: data,
-                url: url
-              });
-            };
+            if(msg.data.VTTES_CDN_SCRIPTS) {
+              console.log("Bootstrap got VTTES_CDN_SCRIPTS", msg.data);
+              const data = msg.data.VTTES_CDN_SCRIPTS;
 
-            handle_script(7, data.VTT_BUNDLE, "https://cdn.roll20.net/production/vtt.bundle.js");
+              const handle_script = (order: number, data: string, url: string) => {
+                data = do_replacing(data, url);
 
-            window.removeEventListener("message", listener);
-            ok();
-          }
-        };
+                scripts.push({
+                  order: order, 
+                  text: data,
+                  id: url
+                });
+              };
 
-        window.addEventListener("message", listener);
+              handle_script(7, data.VTT_BUNDLE, bundle_url);
 
-        console.log("Bootstrap sending VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS");
-        window.postMessage({VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS: true}, Config.appUrl);
-      }));
+              window.removeEventListener("message", listener);
+              ok();
+            }
+          };
+
+          window.addEventListener("message", listener);
+
+          console.log("Bootstrap sending VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS");
+          window.postMessage({VTTES_BOOTSTRAP_WANTS_CDN_SCRIPTS: bundle_url}, Config.appUrl);
+        }));
+      }
+      else if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
+        // @UserscriptScriptFetching
+        jobs.push(fetch_script_from_userscript(7, "USERSCRIPT_VTT_BUNDLE_DATA", bundle_url));
+      }
     }
-    else if(BUILD_CONSTANT_TARGET_PLATFORM === "userscript") {
-      // @UserscriptScriptFetching
-      jobs.push(fetch_script_from_userscript(
-        7, "USERSCRIPT_VTT_BUNDLE_DATA", `https://cdn.roll20.net/production/vtt.bundle.js?n${now}`)
-      );
-    }
+
     jobs.push(fetch_script(8, "https://app.roll20.net/js/tutorial_tips.js?n"));
     
     let script_nonce = "";
@@ -445,7 +462,7 @@ export const bootstrap = () => {
 
       for(const el of scripts) {
 
-        console.log(`dumping ${el.url}`);
+        console.log(`dumping ${el.id}`);
         const script_el = document.createElement("script");
         script_el.type = "text/javascript";
         // @ts-ignore

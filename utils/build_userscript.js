@@ -66,8 +66,8 @@ const meta = `// ==UserScript==
 // @match        https://app.roll20.net/editor/#*
 // @match        https://app.roll20.net/editor/?*
 // @grant        GM.xmlHttpRequest
+// @grant        unsafeWindow
 // @connect      cdn.roll20.net
-// @run-at       document-start
 // @webRequest [{"selector":{"include":"*://browser.sentry-cdn.com/*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://www.datadoghq-browser-agent.com/datadog-rum.js"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://cdn.userleap.com/*"},"action":"cancel"}]
@@ -79,12 +79,27 @@ const meta = `// ==UserScript==
 // @webRequest [{"selector":{"include":"*://app.roll20.net/v2/js/patience.js","exclude":"*://app.roll20.net/v2/js/patience.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/editor/startjs/?timestamp*","exclude":"*://app.roll20.net/editor/startjs/?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/d20/loading.js?v=11","exclude":"*://app.roll20.net/js/d20/loading.js?n=11&v=11"},"action":"cancel"}]
-// @webRequest [{"selector":{"include":"*://cdn.roll20.net/production/vtt.bundle.js","exclude":"*://cdn.roll20.net/production/vtt.bundle.js?n*"},"action":"cancel"}]
+// @webRequest [{"selector":{"include":"*://cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle.*.js","exclude":"*://cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle.*.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/tutorial_tips.js","exclude":"*://app.roll20.net/js/tutorial_tips.js?n*"},"action":"cancel"}]
 // ==/UserScript==
 `;
 
 script = `
+
+const scripts = unsafeWindow.document.body.querySelectorAll("script");
+let bundle_url = null;
+
+for(const el of scripts) {
+  if(el.src && el.src.includes("cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle")) {
+    bundle_url = el.src;
+  }
+}
+console.log(\`Userscript bundle url: \${bundle_url}\`);
+
+if(bundle_url == null) {
+  alert("VTTES Error: Failed to find the bundle URL. VTTES will not function. Please report this on our Discord");
+  return;
+}
 
 unsafeWindow.enhancementSuiteEnabled = true;
 
@@ -93,7 +108,7 @@ const now = Date.now();
 // @UserscriptScriptFetching
 GM.xmlHttpRequest({
   method: "GET",
-  url: \`https://cdn.roll20.net/production/vtt.bundle.js?n\${now}\`,
+  url: \`\${bundle_url}?n\${now}\`,
   onload: (response) => {
     console.log("Userscript got vtt.bundle.js response:", response);
     unsafeWindow.USERSCRIPT_VTT_BUNDLE_DATA = response.responseText;
@@ -126,8 +141,8 @@ For development, use this loader script:
 // @description  try to take over the world!
 // @author       You
 // @match        https://app.roll20.net/editor/
-// @run-at       document-start
 // @grant        GM.xmlHttpRequest
+// @grant        unsafeWindow
 // @connect      cdn.roll20.net
 // @require      file:///work/vttes/builds/userscript/dev/vttes.user.js
 // @webRequest [{"selector":{"include":"*://browser.sentry-cdn.com/*"},"action":"cancel"}]
@@ -141,7 +156,8 @@ For development, use this loader script:
 // @webRequest [{"selector":{"include":"*://app.roll20.net/v2/js/patience.js","exclude":"*://app.roll20.net/v2/js/patience.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/editor/startjs/?timestamp*","exclude":"*://app.roll20.net/editor/startjs/?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/d20/loading.js?v=11","exclude":"*://app.roll20.net/js/d20/loading.js?n=11&v=11"},"action":"cancel"}]
-// @webRequest [{"selector":{"include":"*://cdn.roll20.net/production/vtt.bundle.js","exclude":"*://cdn.roll20.net/production/vtt.bundle.js?n*"},"action":"cancel"}]
+//
+// @webRequest [{"selector":{"include":"*://cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle.*.js","exclude":"*://cdn.roll20.net/vtt/legacy/production/latest/vtt.bundle.*.js?n*"},"action":"cancel"}]
 // @webRequest [{"selector":{"include":"*://app.roll20.net/js/tutorial_tips.js","exclude":"*://app.roll20.net/js/tutorial_tips.js?n*"},"action":"cancel"}]
 
 // ==/UserScript==

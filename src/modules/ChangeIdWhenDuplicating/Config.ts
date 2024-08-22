@@ -10,7 +10,7 @@ export default <VTTES.Module_Config> {
 
   mods: [
     {
-      includes: "vtt.bundle.js",
+      includes: "vtt.bundle",
 
       stencils: [
         {
