@@ -1,5 +1,5 @@
 {
-    "current": "1.28.21",
+    "current": "1.28.21.1",
     "versions": {
         "1.4.0": {
             "info": {
@@ -2847,6 +2847,22 @@
         "1.28.21": {
             "info": {
                 "title": "Loading Fix",
+                "media": ""
+            },
+            "changes": [
+                {
+                    "id": "",
+                    "content": "Fixed a failure to load on Firefox, Chrome and Userscript."
+                },
+                {
+                    "id": "",
+                    "content": "Beware that Jumpgate is not supported!"
+                }
+            ]
+        },
+        "1.28.21.1": {
+            "info": {
+                "title": "",
                 "media": ""
             },
             "changes": [
