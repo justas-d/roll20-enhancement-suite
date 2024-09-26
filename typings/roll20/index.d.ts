@@ -440,6 +440,7 @@ namespace Roll20 {
       angle: number;
       flipX: boolean;
       flipY: boolean;
+      model: Token;
       type: "path";
 
       _nameplate_data: {
@@ -511,6 +512,7 @@ namespace Roll20 {
 
   interface InlineRollResults {
       total: number;
+      rolls: any;
   }
 
   interface InlineRoll {
@@ -685,9 +687,12 @@ namespace Roll20 {
     setModePrologue: (mode: string) => void;
     update_layer_indicator: (mode: string) => void;
     selectInitiativeToken: (token: Token) => void;
+    npcAutoma: (token: Token) => void;
     keys: R20ESKeys;
     replaceIdOnDupe: (original: CharacterEditor, clone: Character) => void;
     onJournalDuplicate: (id: string) => void;
+    onJournalMakeAlly: (id: string) => void;
+    onJournalMakeEnemy: (id: string) => void;
     moveCameraTo: (tokenId: string) => void;
     hooks: {[id: string]: any};
     shouldDoCustomAnim: (key: string) => boolean;
@@ -832,6 +837,7 @@ namespace VTTES {
     id: string;
     name: string;
     description: string;
+    bulletList?: Array<string>;
     category: Module_Category;
     gmOnly: boolean;
 
