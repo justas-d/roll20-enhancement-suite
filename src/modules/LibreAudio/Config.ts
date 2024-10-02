@@ -23,7 +23,7 @@ export default <VTTES.Module_Config> {
         },
         {
           search_from: `dismiss_myaudiocap`,
-          find: [`\`/audio_library/play/\${campaign_id}/\${`, 1, `.split("-")[0]}\``],
+          find: [`\`\${window.IS_EMBEDDED?"/.proxy":""}/audio_library/play/\${campaign_id}/\${`, 1, `.split("-")[0]}\`` ],
           replace: [
             `((window.r20es && window.r20es.canPlaySound && window.r20es.canPlaySound(`, 2, `)) ? `, 1, ` : `, 0, `)`
           ]
