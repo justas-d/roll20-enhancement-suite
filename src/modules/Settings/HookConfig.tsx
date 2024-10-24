@@ -103,7 +103,12 @@ export default class HookConfig extends DOM.ElementBase {
                 urlHyperlinks.push(<a href="javascript:void(0)" onClick={() => window.open(url, "_blank")}>{msg}</a>);
             }
         }
-
+        const bullets = [];
+        if (this.hook.bulletList) {
+            for (const item in this.hook.bulletList) {
+                bullets.push(<li>{this.hook.bulletList[item]}</li>);
+            }
+        }
         return (
             <div className="more-settings">
 
@@ -113,7 +118,7 @@ export default class HookConfig extends DOM.ElementBase {
                         <hr style={{ marginTop: "4px" }} />
 
                         <div className="r20es-indent">
-                            <p>{this.hook.description}</p>
+                            <p>{this.hook.description}{bullets}</p>
 
                             <p>{urlHyperlinks}</p>
 
